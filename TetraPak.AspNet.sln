@@ -1,8 +1,39 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet", "TetraPak.AspNet\TetraPak.AspNet.csproj", "{FA78AD9F-783B-4279-BBDA-36692626BED4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{E23719F6-8894-49F5-8EE5-23EC59CF08FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.WebApp", "demo.WebApp\demo.WebApp.csproj", "{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.Auth", "..\TetraPak.Common\TetraPak.Auth\TetraPak.Auth.csproj", "{1976DF00-E837-46D7-A4D3-252A86F904E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.Common", "..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj", "{3F5B7F9B-6380-4915-B474-B9501A656E3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA78AD9F-783B-4279-BBDA-36692626BED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA78AD9F-783B-4279-BBDA-36692626BED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA78AD9F-783B-4279-BBDA-36692626BED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA78AD9F-783B-4279-BBDA-36692626BED4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1976DF00-E837-46D7-A4D3-252A86F904E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1976DF00-E837-46D7-A4D3-252A86F904E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1976DF00-E837-46D7-A4D3-252A86F904E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1976DF00-E837-46D7-A4D3-252A86F904E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8} = {E23719F6-8894-49F5-8EE5-23EC59CF08FD}
 	EndGlobalSection
 EndGlobal
