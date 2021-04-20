@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <UserSecretsId>575bc507-ab9c-4123-bbe8-863ebcf4dc3a</UserSecretsId>
+        <RootNamespace>WebAPI</RootNamespace>
+        <LangVersion>8</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_WebToolingArtifacts Remove="Properties\PublishProfiles\Azure DEV - tetrapak-demo-api.pubxml" />
+      <_WebToolingArtifacts Remove="Properties\PublishProfiles\Azure SB - tetrapak-demo-api.pubxml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="5.0.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings - Copy.json" />
+      <None Include="appsettings - Copy.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TetraPak.Api.Auth\TetraPak.Api.Auth.csproj" />
+    </ItemGroup>
+
+</Project>

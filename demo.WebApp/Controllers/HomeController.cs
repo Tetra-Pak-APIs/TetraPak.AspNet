@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using System.Security.Principal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using demo.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using TetraPak.AspNet;
 
 namespace demo.WebApp.Controllers
 {
@@ -13,16 +13,13 @@ namespace demo.WebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        [Authorize]
         public IActionResult Index()
         {
-            return View();
+            return View(new UserModel(User.Identity));
         }
 
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();
@@ -32,6 +29,29 @@ namespace demo.WebApp.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        }
+        
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+    }
+
+    public class UserModel
+    {
+        readonly IIdentity _identity;
+        
+        ClaimsIdentity ClaimsIdentity => _identity as ClaimsIdentity;
+        
+        public string UserName => _identity.Name;
+
+        public string FirstName => ClaimsIdentity?.FirstName();
+
+        public string LastName => ClaimsIdentity?.LastName();
+
+        public UserModel(IIdentity identity)
+        {
+            _identity = identity;
         }
     }
 }

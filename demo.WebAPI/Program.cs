@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace demo.WebApp
+namespace WebAPI
 {
     public class Program
     {
@@ -12,6 +13,12 @@ namespace demo.WebApp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging => 
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddAzureWebAppDiagnostics();
+                })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

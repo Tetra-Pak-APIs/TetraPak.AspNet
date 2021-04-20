@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <LangVersion>8</LangVersion>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.4.0-beta</PackageVersion>
+        <Title>Tetra Pak Api library </Title>
+        <Authors>Tetra Pak</Authors>
+        <Description>A common library for Tetra Pak API development</Description>
+        <Copyright>Tetra Pak</Copyright>
+        <RepositoryType>Git</RepositoryType>
+        <PackageReleaseNotes>Initial (pre) release</PackageReleaseNotes>
+        <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    </ItemGroup>
+
+</Project>
