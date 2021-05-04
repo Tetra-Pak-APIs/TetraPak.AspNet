@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
-namespace TetraPak.Api.Auth
+namespace TetraPak.AspNet.Api.Auth
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class TokenExchangeConfig 

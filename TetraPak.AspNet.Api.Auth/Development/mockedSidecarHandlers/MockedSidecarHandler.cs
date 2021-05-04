@@ -1,14 +1,11 @@
-﻿using System.IO;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using TetraPak.Api.Auth.Development;
 
-namespace TetraPak.Api.Auth.Development
+namespace TetraPak.AspNet.Api.Auth.Development
 {
     public abstract class MockedSidecarHandler
     {

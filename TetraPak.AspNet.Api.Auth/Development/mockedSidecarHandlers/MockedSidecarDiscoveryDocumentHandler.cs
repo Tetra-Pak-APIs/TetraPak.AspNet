@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using TetraPak.Auth;
 using TetraPak.Auth.OpenIdConnect;
 
-namespace TetraPak.Api.Auth.Development
+namespace TetraPak.AspNet.Api.Auth.Development
 {
     public class MockedSidecarDiscoveryDocumentHandler : MockedSidecarHandler
     {

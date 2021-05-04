@@ -7,10 +7,9 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using TetraPak.Api.Auth.Development;
 using TetraPak.Logging;
 
-namespace TetraPak.Api.Auth.Development
+namespace TetraPak.AspNet.Api.Auth.Development
 {
     public class MockedSidecarJwtBearerAssertionHandler : MockedSidecarHandler
     {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 
-namespace TetraPak.Api.Auth
+namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
