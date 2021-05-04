@@ -1,4 +1,4 @@
-﻿@model demo.WebApp.Controllers.UserModel
+﻿@model MainModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -6,14 +6,15 @@
 
 <div class="text-center">
     
-@functions {
+    @functions {
         string getUserDetails()
         {
             return Model.FirstName is null ? "" : $"({Model.FirstName} {Model.LastName})";
         }
-}
+    }
 
     <h1 class="display-4">HELLO WORLD!</h1>
     <p>If you can read this you have successfully integrated with the Tetra Pak Login API!</p>
     <p>USER: @Model.UserName @getUserDetails()</p>
+    <p>ACCESS TOKEN: @Model.AccessToken</p>
 </div>

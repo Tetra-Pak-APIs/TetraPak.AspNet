@@ -26,7 +26,7 @@ namespace TetraPak.AspNet
         public static void AddTetraPakWebClientAuthentication(this IServiceCollection services)
         {
             services.TryAddSingleton<TetraPakAuthConfig>();
-            services.AddScoped<IClaimsTransformation, TetraPakClaimsTransformation>();
+            services.AddTetraPakClaimsTransformation();
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakAuthConfig>();
@@ -233,7 +233,6 @@ namespace TetraPak.AspNet
                         },
                         OnMessageReceived = context =>
                         {
-                            var nisse = context.Request.Cookies;
                             return Task.CompletedTask;
                         },
                         // OnAuthorizationCodeReceived = context => obsolete
@@ -244,6 +243,8 @@ namespace TetraPak.AspNet
                         // },
                         OnTokenValidated = context =>
                         {
+                            var handler = new JwtSecurityTokenHandler();
+                            context.HttpContext.Items.Add(AmbientData.Keys.AccessToken, handler.WriteToken(context.SecurityToken));
                             return Task.CompletedTask;
                         },
                         OnTokenResponseReceived = context =>

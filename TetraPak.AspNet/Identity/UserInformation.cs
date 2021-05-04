@@ -4,11 +4,17 @@ using System.Linq;
 
 namespace TetraPak.AspNet.Identity
 {
+    /// <summary>
+    ///   Represents user information claims as a dictionary.
+    /// </summary>
     public class UserInformation
     {
         readonly IDictionary<string, string> _dictionary;
 
-        public string[] Types => _dictionary.Keys.ToArray();
+        /// <summary>
+        ///   The names of all keys (types of claims).
+        /// </summary>
+        public string[] Keys => _dictionary.Keys.ToArray();
 
         /// <summary>
         ///   Tries to obtain user information value.
@@ -46,6 +52,9 @@ namespace TetraPak.AspNet.Identity
             // todo Also replace Json Token with converted value to avoid converting twice
         }
 
+        /// <summary>
+        ///   Returns the user information as a <see cref="IDictionary{TKey,TValue}"/>.
+        /// </summary>
         public IDictionary<string, string> ToDictionary() => _dictionary;
 
         public UserInformation(IDictionary<string, string> dictionary)

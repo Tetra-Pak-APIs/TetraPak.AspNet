@@ -22,6 +22,28 @@ namespace demo.WebApp
             services.AddTetraPakOidcAuthentication(); // <-- add this
 
             services.AddControllersWithViews();
+
+            // services.AddCors(
+            //     options =>
+            //     {
+            //         options.AddPolicy("TetraPakLoginApi", builder => {
+            //             builder
+            //                 .AllowAnyHeader()
+            //                 .AllowAnyMethod()
+            //                 .Build();
+            //         });
+            //     });
+            
+            /* options =>
+            {
+                options.AddPolicy("TetraPakSsoCORS", builder =>
+                {
+                    builder
+                        .WithOrigins("https://sso.tetrapak.com")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,13 +61,32 @@ namespace demo.WebApp
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
+
+            // app.UseCors("TetraPakLoginApi");/*builder =>
+            // {
+            //     builder
+            //         .AllowAnyOrigin()
+            //         .AllowAnyHeader()
+            //         .AllowAnyMethod();
+            // });*/
             
             app.UseAuthentication(); // <-- add this
 
             app.UseAuthorization();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    var callback = context.Context.Request.Path.ToString();
+                    if (!context.Context.User.Identity.IsAuthenticated)
+                    {
+                        context.Context.Response.Redirect($"/api/token/authorize?from={callback}");
+                    }
+                }
+            });
 
             app.UseEndpoints(endpoints =>
             {

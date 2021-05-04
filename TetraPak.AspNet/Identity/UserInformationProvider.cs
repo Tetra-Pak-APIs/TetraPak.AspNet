@@ -25,20 +25,19 @@ namespace TetraPak.AspNet.Identity
         ///   Obtains (and, optionally, caches) user information. 
         /// </summary>
         /// <param name="accessToken">
-        ///   An access token, authenticating the requesting actor. 
+        ///     An access token, authenticating the requesting actor. 
         /// </param>
-        /// <param name="scope">
-        ///   (optional)<br/>
-        ///   One or more scope identifiers used to specify the requested user information.
-        /// </param>
+        /// <param name="logger"></param>
         /// <param name="cached">
-        ///   (optional; default=<c>true</c>)<br/>
-        ///   When set, the value will cache the downloaded result (and fetch it from the internal cache if present). 
+        ///     (optional; default=<c>true</c>)<br/>
+        ///     When set, the value will cache the downloaded result (and fetch it from the internal cache if present). 
         /// </param>
         /// <returns>
         ///   A <see cref="UserInformation"/> value.
         /// </returns>
-        public async Task<UserInformation> GetUserInformationAsync(string accessToken, IEnumerable<string> scope = null, bool cached = true)
+        public async Task<UserInformation> GetUserInformationAsync(
+            string accessToken, 
+            bool cached = true)
         {
             object value = null;
             lock (s_cache)
@@ -64,10 +63,15 @@ namespace TetraPak.AspNet.Identity
                     }
 
                     case UserInformation userInformation:
+                        using (Logger?.BeginScope($"Cached user information was found: {userInformation}"))
+                        {
+                            Logger?.LogDictionary(userInformation.ToDictionary(), LogLevel.Debug);
+                        }
                         return userInformation;
                 }
             }
 
+            Logger?.Debug("Obtains discovery document");
             var discoveryDocument = await _authConfig.GetDiscoveryDocumentAsync();
             if (discoveryDocument is null)
             {
@@ -91,6 +95,7 @@ namespace TetraPak.AspNet.Identity
 
         TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
         {
+            Logger?.Debug($"Calls user info endpoint: {userInfoUri}");
             var tcs = new TaskCompletionSource<UserInformation>();
             Task.Run(async () =>
             {

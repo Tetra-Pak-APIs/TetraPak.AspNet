@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 
-namespace TetraPak.Api.Auth
+namespace TetraPak.AspNet.Api.Auth
 {
     public static class TokenHelper
     {

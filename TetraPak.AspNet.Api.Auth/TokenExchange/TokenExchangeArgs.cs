@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace TetraPak.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth.TokenExchange
 {
     /// <summary>
     ///   Provides the options to be used for a token exchange process (see <see cref="ITokenExchangeService.ExchangeAsync"/>).

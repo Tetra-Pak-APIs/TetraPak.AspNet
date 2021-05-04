@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Identity
 {
     /// <summary>
-    ///   Provides easy access to Tetra Pak's user information infrastructure. 
+    ///   Provides easy access to Tetra Pak's user information services. 
     /// </summary>
     public class TetraPakUserInformation
     {
@@ -13,7 +14,7 @@ namespace TetraPak.AspNet.Identity
 
         // ILogger Logger => _authConfig.Logger;
 
-        public async Task<Outcome<UserInformation>> GetUserInformationAsync(string accessToken)
+        public async Task<Outcome<UserInformation>> GetUserInformationAsync(string accessToken, ILogger logger = null)
         {
             var loader = new UserInformationProvider(_authConfig);
             try

@@ -13,12 +13,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
-namespace TetraPak.Api.Auth
+namespace TetraPak.AspNet.Api.Auth
 {
     public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
     {

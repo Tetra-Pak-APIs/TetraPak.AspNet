@@ -7,8 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Identity;
 using TetraPak.Logging;
@@ -23,6 +25,9 @@ namespace TetraPak.AspNet
         readonly AmbientData _ambientData;
         readonly TetraPakUserInformation _userInformation;
 
+        ILogger Logger => _authConfig.Logger;
+
+        
         internal static OAuthTokenResponse TokenResponse
         {
             get => s_tokenResponse.Value;
@@ -31,29 +36,33 @@ namespace TetraPak.AspNet
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            switch (_authConfig.IdentitySource)
+            using (Logger?.BeginScope("ClaimsPrincipal transformation"))
             {
-                case TetraPakIdentitySource.IdToken:
-                    var idTokenOutcome = _ambientData.TryGetIdToken();
-                    if (idTokenOutcome)
-                        return mapFromIdToken(idTokenOutcome.Value);
+                switch (_authConfig.IdentitySource)
+                {
+                    case TetraPakIdentitySource.IdToken:
+                        Logger?.Debug("Source = Id Token");
+                        var idTokenOutcome = await _ambientData.GetIdTokenAsync();
+                        if (idTokenOutcome)
+                            return mapFromIdToken(idTokenOutcome.Value);
 
-                    _authConfig.Logger.Warning($"Could not populate identity from id token. No id token was available");
-                    break;
-                
-                case TetraPakIdentitySource.Api:
-                    var accessTokenOutcome = _ambientData.TryGetAccessToken();
-                    if (accessTokenOutcome)
-                        return await mapFromApiAsync(accessTokenOutcome.Value);
-
-                    _authConfig.Logger.Warning($"Could not populate identity from API. No access token was available");
-                    break;
-                
-                default:
-                    throw new NotSupportedException(
-                        $"Cannot transform claims principal from unsupported source: '{_authConfig.IdentitySource}'");
-            }
+                        _authConfig.Logger.Warning("Could not populate identity from id token. No id token was available");
+                        break;
             
+                    case TetraPakIdentitySource.Api:
+                        var accessTokenOutcome = await _ambientData.GetAccessTokenAsync();
+                        if (accessTokenOutcome)
+                            return await mapFromApiAsync(accessTokenOutcome.Value);
+                        
+                        _authConfig.Logger.Warning($"Could not populate identity from API. No access token was available");
+                        break;
+            
+                    default:
+                        throw new NotSupportedException(
+                            $"Cannot transform claims principal from unsupported source: '{_authConfig.IdentitySource}'");
+                }
+            }
+        
             return principal;
 
             ClaimsPrincipal mapFromIdToken(string idToken)
@@ -82,6 +91,7 @@ namespace TetraPak.AspNet
             
             async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
             {
+                Logger?.Debug("Fetches identity from Tetra Pak User Information Service");
                 var userInfoOutcome = await _userInformation.GetUserInformationAsync(accessToken);
                 if (!userInfoOutcome)
                 {
@@ -126,7 +136,8 @@ namespace TetraPak.AspNet
         public TetraPakClaimsTransformation(
             AmbientData ambientData, 
             TetraPakAuthConfig authConfig, 
-            TetraPakUserInformation userInformation)
+            TetraPakUserInformation userInformation,
+            IHttpContextAccessor httpContextAccessor)
         {
             _authConfig = authConfig;
             _ambientData = ambientData;
@@ -143,7 +154,7 @@ namespace TetraPak.AspNet
         {
             c.AddHttpContextAccessor();
             c.TryAddTransient<AmbientData>();
-            c.TryAddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
+            c.AddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 
-namespace TetraPak.Api.Auth.Development
+namespace TetraPak.AspNet.Api.Auth.Development
 {
     // todo Finish sidecar simulator (under construction)
     public static class MockedSidecarHelper

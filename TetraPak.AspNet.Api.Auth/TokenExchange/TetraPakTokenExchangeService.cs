@@ -5,10 +5,9 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TetraPak.Auth;
 using TetraPak.Auth.OpenIdConnect;
 
-namespace TetraPak.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth.TokenExchange
 {
     public class TetraPakTokenExchangeService : ITokenExchangeService
     {

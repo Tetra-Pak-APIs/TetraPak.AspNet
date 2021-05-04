@@ -9,14 +9,13 @@ using Microsoft.Extensions.Logging;
 using Tetrapak;
 using TetraPak.Auth.OpenIdConnect;
 using TetraPak.Logging;
-using ConfigurationSection = Tetrapak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakAuthConfig : ConfigurationSection
+    public class TetraPakAuthConfig : Tetrapak.Configuration.ConfigurationSection
     {
         static readonly object s_syncRoot = new();
         static readonly string[] s_defaultScope = { "general", "profile", "email", "openid" };
@@ -344,9 +343,12 @@ namespace TetraPak.AspNet.Auth
 #pragma warning restore 4014
         }
         
-        TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.IdToken)
+        TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.Api)
         {
             var s = Section[KeyIdentitySource];
+            if (s is null)
+                return useDefault;
+                
             if (s.Equals(SourceKeyIdToken, StringComparison.OrdinalIgnoreCase))
             {
                 s = nameof(TetraPakIdentitySource.IdToken);

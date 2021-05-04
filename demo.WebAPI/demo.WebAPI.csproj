@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TetraPak.Api.Auth\TetraPak.Api.Auth.csproj" />
+      <ProjectReference Include="..\TetraPak.AspNet.Api.Auth\TetraPak.AspNet.Api.Auth.csproj" />
     </ItemGroup>
 
 </Project>

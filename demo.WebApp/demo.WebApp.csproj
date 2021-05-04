@@ -5,7 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
+      <PackageReference Include="TetraPak.AspNet" Version="0.6.0-beta" />
+      <PackageReference Include="TetraPak.Common" Version="0.6.0-beta" />
     </ItemGroup>
 
 </Project>

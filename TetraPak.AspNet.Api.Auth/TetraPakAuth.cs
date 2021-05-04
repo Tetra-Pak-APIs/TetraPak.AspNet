@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Auth;
 
-namespace TetraPak.Api.Auth
+namespace TetraPak.AspNet.Api.Auth
 {
     public static class TetraPakAuth
     {
@@ -24,7 +24,7 @@ namespace TetraPak.Api.Auth
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddSidecarTunnel(
+        public static IServiceCollection AddSidecarJwtAuthentication(
             this IServiceCollection c,
             SidecarJwBearerAssertionOptions options = null)
         {
@@ -40,7 +40,7 @@ namespace TetraPak.Api.Auth
             return c;
         }
 
-        public static IApplicationBuilder UseSidecarTunnelAuthentication(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseSidecarJwtAuthentication(this IApplicationBuilder builder)
         {
             builder.Use((context, func) =>
             {

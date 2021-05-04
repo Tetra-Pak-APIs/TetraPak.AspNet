@@ -1,0 +1,65 @@
+﻿@using System.ComponentModel.Design
+@using System.Reflection.Metadata
+@model object
+
+@{
+    ViewBag.Title = "JavaScript makes a fetch ...";
+    Layout = "_Layout";
+}
+
+<h2>title</h2>
+<div id="user_info" ></div>
+
+@section Scripts
+{
+    <script type="application/javascript">
+    
+    function writeInformation(info) {
+        
+        $('#user_info').append(info);
+        
+    }
+
+    async function getUserInformationAsync() {
+        
+        try {
+            
+            let response = await fetch('/userInformation', {
+                headers: {
+                    Origin: 'https://localhost:5001'
+                }
+                // credentials: 'include',
+                // mode: 'cors'
+            });
+            if (response.ok) {
+                
+                const info = await response.json();
+                let userName = info.userName ?? '';
+                let firstName = info.firstName ?? '';
+                let lastName = info.lastName ?? '';
+                writeInformation('<p>name: ' + userName + ' (' + firstName + ' ' + lastName + ')</p>');
+                
+            } else {
+                
+                writeInformation('<p>ERROR FETCHING USER INFO</p>');
+                
+            }
+            
+        } catch (ex) {
+            
+            writeInformation(
+                '<p>ERROR FETCHING USER INFO</p>'+
+                '<p>' + ex + '</p>');
+            
+        }
+        
+    }
+    
+    $(document).ready(async function() {
+        
+        await getUserInformationAsync();
+        
+    });
+
+</script>
+}

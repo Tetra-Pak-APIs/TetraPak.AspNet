@@ -5,7 +5,7 @@
     /// </summary>
     public enum TetraPakIdentitySource
     {
-        IdToken,
-        Api
+        Api,
+        IdToken
     }
 }

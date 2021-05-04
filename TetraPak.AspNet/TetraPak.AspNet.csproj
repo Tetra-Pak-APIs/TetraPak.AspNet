@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>0.5.0-beta</PackageVersion>
+        <PackageVersion>0.6.0-beta</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Common</PackageProjectUrl>

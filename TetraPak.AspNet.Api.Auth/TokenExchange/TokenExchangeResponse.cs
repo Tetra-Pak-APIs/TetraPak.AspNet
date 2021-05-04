@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TetraPak.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth.TokenExchange
 {
     /// <summary>
     ///   Represents the response from a successful token exchange request (see <see cref="ITokenExchangeService.ExchangeAsync"/>).

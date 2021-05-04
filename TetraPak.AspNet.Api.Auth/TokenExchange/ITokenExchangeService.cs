@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TetraPak.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth.TokenExchange
 {
     /// <summary>
     ///   Implementors of this interface can be used for exchanging access tokens.  

@@ -6,7 +6,7 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.4.0-beta</PackageVersion>
+        <PackageVersion>0.6.0-beta</PackageVersion>
         <Title>Tetra Pak Api library </Title>
         <Authors>Tetra Pak</Authors>
         <Description>A common library for Tetra Pak API development</Description>
