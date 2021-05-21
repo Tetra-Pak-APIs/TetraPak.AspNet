@@ -5,21 +5,20 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TetraPak.Auth.OpenIdConnect;
 
 namespace TetraPak.AspNet.Api.Auth.TokenExchange
 {
     public class TetraPakTokenExchangeService : ITokenExchangeService
     {
-        readonly DiscoveryDocument _discovery;
+        readonly TetraPakApiAuthConfig _authConfig;
 
         protected ILogger<TetraPakTokenExchangeService> Logger { get; }
 
         /// <inheritdoc />
-        public Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(Credentials credentials, string accessToken, CancellationToken cancellationToken)
+        public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(Credentials credentials, string accessToken, CancellationToken cancellationToken)
         {
             var args = new TokenExchangeArgs(credentials, accessToken, "urn:ietf:params:oauth:token-type:id_token");
-            return ExchangeAsync(args, cancellationToken);
+            return await ExchangeAsync(args, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -35,10 +34,11 @@ namespace TetraPak.AspNet.Api.Auth.TokenExchange
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
+                var discovery = await _authConfig.GetDiscoveryDocumentAsync();
                 var dictionary = args.ToDictionary();
                 var content = new FormUrlEncodedContent(dictionary);
                 var response = await client.PostAsync(
-                    _discovery.TokenEndpoint, 
+                    discovery.TokenEndpoint, 
                     content, 
                     cancellationToken);
 
@@ -78,9 +78,9 @@ namespace TetraPak.AspNet.Api.Auth.TokenExchange
             return new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public TetraPakTokenExchangeService(DiscoveryDocument discovery, ILogger<TetraPakTokenExchangeService> logger)
+        public TetraPakTokenExchangeService(TetraPakApiAuthConfig authConfig, ILogger<TetraPakTokenExchangeService> logger)
         {
-            _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             Logger = logger;
         }
 

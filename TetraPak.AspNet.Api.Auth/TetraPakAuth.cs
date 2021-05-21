@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,16 +39,26 @@ namespace TetraPak.AspNet.Api.Auth
             return c;
         }
 
-        public static IApplicationBuilder UseSidecarJwtAuthentication(this IApplicationBuilder builder)
+        
+        /// <summary>
+        ///   Installs sidecar JWT authentication middleware. 
+        /// </summary>
+        /// <param name="app">
+        ///   An <see cref="IApplicationBuilder"/> instance.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="IApplicationBuilder"/> instance.
+        /// </returns>
+        public static IApplicationBuilder UseSidecarJwtAuthentication(this IApplicationBuilder app)
         {
-            builder.Use((context, func) =>
+            app.Use((context, func) =>
             {
                 Host ??= $"{context.Request.Scheme}://{context.Request.Host.Value}";
-                func();
-                return Task.CompletedTask;
+                return func();
             });
-            builder.UseAuthentication();
-            return builder;
+            app.UseAuthentication();
+            
+            return app;
         }
     }
 
@@ -71,5 +80,4 @@ namespace TetraPak.AspNet.Api.Auth
             AuthConfig = authConfig;
         }
     }
-    
 }

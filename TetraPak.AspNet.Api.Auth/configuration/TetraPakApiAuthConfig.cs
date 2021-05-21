@@ -16,12 +16,11 @@ namespace TetraPak.AspNet.Api.Auth
         public IEnumerable<TokenExchangeConfig> TokenExchanges { get; }
 
         public TetraPakApiAuthConfig(
-            IConfiguration configuration, 
+            IConfiguration configuration,
             ILogger<TetraPakApiAuthConfig> logger,
-            bool refreshDiscoveryDocument = true,
-            // AuthConfigAutomaticDiscoveryStrategy discoveryStrategy = AuthConfigAutomaticDiscoveryStrategy.SafeDiscovery, obsolete    
+            bool loadDiscoveryDocument = false,
             string sectionIdentifier = null)
-        : base(configuration, logger, refreshDiscoveryDocument, sectionIdentifier)
+        : base(configuration, logger, loadDiscoveryDocument, sectionIdentifier)
         {
             var s = Section["Environment"];
             TokenExchanges = TokenExchangeConfig.Init(Section, logger);

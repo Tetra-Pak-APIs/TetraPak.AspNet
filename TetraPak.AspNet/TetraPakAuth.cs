@@ -19,7 +19,7 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet
 {
     // https://mauridb.medium.com/using-oauth2-middleware-with-asp-net-core-2-0-b31ffef58cd0
-    public static class TetraPakAuth
+    public static partial class TetraPakAuth
     {
         const string TetraPakScheme = "TetraPak-LoginAPI";
 
@@ -48,9 +48,9 @@ namespace TetraPak.AspNet
                     // {
                     //     options.Events = new CookieAuthenticationEvents
                     //     {
-                    //         OnValidatePrincipal = context =>
+                    //         OnValidatePrincipal = async context =>
                     //         {
-                    //             return Task.CompletedTask;
+                    //             
                     //         }
                     //     };
                     // }
@@ -145,21 +145,24 @@ namespace TetraPak.AspNet
                 {
                     options.Events = new CookieAuthenticationEvents
                     {
-                        OnValidatePrincipal = context =>
+                        OnValidatePrincipal = async context =>
                         {
+                            if (!await context.RefreshTokenIfExpiredAsync(authConfig, logger))
+                                return;
+                            
+                            // transfer access and id token to HttpContext ...
                             trySetToken(AmbientData.Keys.AccessToken);
                             trySetToken(AmbientData.Keys.IdToken);
-                            return Task.CompletedTask;
-                            
+
                             void trySetToken(string key)
                             {
-                                var itemsKey = $".Token.{key}";
-                                if (!context.Properties.Items.ContainsKey(itemsKey)) 
+                                var token = context.Properties.GetTokenValue(key);
+                                if (string.IsNullOrWhiteSpace(token))
                                     return;
                                 
-                                context.HttpContext.Items[key] = context.Properties.Items[itemsKey];
+                                context.HttpContext.Items[key] = token;
                             }
-                        }
+                        },
                     };
                 })
                 .AddOpenIdConnect(TetraPakScheme, options =>
@@ -194,12 +197,12 @@ namespace TetraPak.AspNet
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        ValidateActor = false,
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidateActor = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = false,
-                        ValidateTokenReplay = false
+                        ValidateTokenReplay = true
                     };
                 
                     // options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "UserId");
@@ -216,7 +219,8 @@ namespace TetraPak.AspNet
                         },
                         OnTicketReceived = context =>
                         {
-                            authConfig.Logger?.Debug("OAuth token received");
+                            authConfig.Logger?.Debug("Token received");
+                            context.Properties.IsPersistent = true;
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context =>
@@ -273,6 +277,75 @@ namespace TetraPak.AspNet
                         }
                     };
             });
+        }
+    }
+    
+    static class CookieValidatePrincipalContextExtensions
+    {
+        public static async Task<bool> RefreshTokenIfExpiredAsync(
+            this CookieValidatePrincipalContext context,
+            TetraPakAuthConfig auth,
+            ILogger logger)
+        {
+            if (!isExpired())
+                return true;
+
+            var refreshToken = context.Properties.GetTokenValue(AmbientData.Keys.RefreshToken);
+            if (refreshToken is null)
+                return true;
+
+            var outcome = await auth.RefreshTokenAsync(refreshToken, logger);
+            if (!outcome)
+                return await fail();
+            
+            context.Properties.UpdateTokenValue(AmbientData.Keys.AccessToken, outcome.Value.AccessToken);
+            var expiresAt = outcome.Value.ExpiresInSeconds.HasValue
+                ? DateTimeOffset.UtcNow.AddSeconds(outcome.Value.ExpiresInSeconds.Value)
+                : DateTimeOffset.Now;
+            context.Properties.UpdateTokenValue(AmbientData.Keys.ExpiresAt, expiresAt.ToString());
+            if (outcome.Value.RefreshToken is { })
+            {
+                context.Properties.UpdateTokenValue(AmbientData.Keys.RefreshToken, outcome.Value.RefreshToken);
+            }
+
+            if (outcome.Value.IdToken is { })
+            {
+                context.Properties.UpdateTokenValue(AmbientData.Keys.RefreshToken, outcome.Value.IdToken);
+            }
+
+            context.ShouldRenew = true;
+            return true;
+  
+            bool isExpired()
+            {
+                var expiresAtString = context.Properties.GetTokenValue(AmbientData.Keys.ExpiresAt);
+                if (expiresAtString is null)
+                    return false;
+
+                var now = DateTimeOffset.UtcNow;
+                expiresAt = DateTimeOffset.Parse(expiresAtString);
+                var remainingTimeSpan = expiresAt.Subtract(now);
+                var refreshThresholdTimeSpan = TimeSpan.FromSeconds(auth.RefreshThreshold);
+                var result = remainingTimeSpan < refreshThresholdTimeSpan;
+                
+                logger.Trace(
+                    $">======< TOKEN TTL >======<\n"+
+                    $"  time (UTC): {now}\n"+
+                    $"  expires   : {expiresAt}\n"+
+                    $"  TTL       : {remainingTimeSpan}\n"+
+                    $"  threshold : {refreshThresholdTimeSpan}\n"+
+                    $"  expired   : {result}\n"+
+                    ">=========================<");
+                
+                return result;
+            }
+            
+            async Task<bool> fail()
+            {
+                context.RejectPrincipal();
+                await context.HttpContext.SignOutAsync();
+                return false;
+            }
         }
     }
 }

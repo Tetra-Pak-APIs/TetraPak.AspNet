@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using TetraPak.Auth.OpenIdConnect;
+using TetraPak.AspNet.OpenIdConnect;
 
 namespace TetraPak.AspNet.Api.Auth.Development
 {

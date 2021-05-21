@@ -2,9 +2,8 @@ using Microsoft.Extensions.Logging;
 
 namespace TetraPak.AspNet.Api.Controllers
 {
-    public abstract class ApiGatewayController<TBackend,TEndpoints> : BusinessApiController
-    where TBackend : BackendService<TEndpoints>
-    where TEndpoints : EndpointsConfig
+    public abstract class ApiGatewayController<TBackend> : BusinessApiController
+    where TBackend : IBackendService
     {
         public TBackend Backend { get; }
 
@@ -13,6 +12,5 @@ namespace TetraPak.AspNet.Api.Controllers
         {
             Backend = backend;
         }
-
     }
 }

@@ -6,8 +6,8 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Tetrapak;
-using TetraPak.Auth.OpenIdConnect;
+using Microsoft.Net.Http.Headers;
+using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
@@ -15,7 +15,7 @@ namespace TetraPak.AspNet.Auth
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakAuthConfig : Tetrapak.Configuration.ConfigurationSection
+    public class TetraPakAuthConfig : TetraPak.Configuration.ConfigurationSection
     {
         static readonly object s_syncRoot = new();
         static readonly string[] s_defaultScope = { "general", "profile", "email", "openid" };
@@ -30,6 +30,7 @@ namespace TetraPak.AspNet.Auth
         const string SourceKeyApi = "api";
         
         protected override string SectionIdentifier => "Auth-TetraPak"; 
+        protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
         
         string _authorityUrl;
         string _tokenIssuerUrl;
@@ -38,19 +39,17 @@ namespace TetraPak.AspNet.Auth
         string _clientSecret;
         string _callbackPath;
         string _authDomain;
+        string _authorizationHeader;
+        bool? _isPkceUsed;
+        int? _refreshThresholdSeconds;
         static  DiscoveryDocument s_discoveryDocument;
-        TaskCompletionSource<DiscoveryDocument> _discoverAsyncTcs;
+        TaskCompletionSource<DiscoveryDocument> _masterSourceTcs;
         
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
         public JwtBearerValidationConfig JwtBearerValidation { get; }
         
-        // /// <summary>
-        // ///   Gets configuration for how to obtain identity information.  obsolete
-        // /// </summary>
-        // public TetraPakIdentityConfig Identity { get; }
-
         /// <summary>
         ///   Gets the "well known" OIDC discovery document. The document will be downloaded and cached as needed.  
         /// </summary>
@@ -64,6 +63,26 @@ namespace TetraPak.AspNet.Auth
                 
             s_discoveryDocument = await discoverAsync();
             return s_discoveryDocument;
+        }
+
+        /// <summary>
+        ///   Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///   An invalid/empty value was assigned.
+        /// </exception>
+        public string AuthorizationHeader
+        {
+            get => _authorizationHeader ?? Section[nameof(AuthorizationHeader)] ?? HeaderNames.Authorization;
+
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException(nameof(value),
+                        $"{nameof(AuthorizationHeader)} must be a valid identifier");
+
+                _authorizationHeader = value;
+            }
         }
     
         /// <summary>
@@ -111,10 +130,10 @@ namespace TetraPak.AspNet.Auth
                 if (_authorityUrl is { })
                     return _authorityUrl;
                     
-                if (_discoverAsyncTcs is null)
+                if (_masterSourceTcs is null)
                     return _authorityUrl ?? defaultUrl("/oauth2/authorize");
 
-                var outcome = _discoverAsyncTcs.AwaitResult();
+                var outcome = _masterSourceTcs.AwaitResult();
                 return outcome
                     ? outcome.Value?.AuthorizationEndpoint
                     : string.Empty;
@@ -201,12 +220,64 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets a configured client secret.
         /// </summary>
+        [RestrictedValue]
         public string ClientSecret
         {
             get => _clientSecret ?? Section [nameof(ClientSecret)];
             set => _clientSecret = value;
         }
+
+        /// <summary>
+        ///  Gets or sets a value specifying whether PKCE is to be used where applicable.
+        /// </summary>
+        public bool IsPkceUsed
+        {
+            get => _isPkceUsed ?? parseBool(Section[nameof(IsPkceUsed)]);
+            set => _isPkceUsed = value;
+        }
+
+        /// <summary>
+        ///   Gets or sets the threshold time (in seconds) used for calculating when it is time
+        ///   to refresh the access token when a refresh token was provided.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        ///   The refresh threshold value is specified in seconds. When a token is validated for its
+        ///   TTL (time to live) this value is subtracted from the actual expiration time to calculate
+        ///   the remaining TTL. When the TTL is zero or negative, and a refresh token is available,
+        ///   a Refresh Flow will automatically be initiated to obtain a new access token.
+        /// </para>
+        /// <para>
+        ///   Setting this value to a positive value
+        ///   (negative values will automatically be converted to positive values)
+        ///   might be a good idea to account for response times in requests. 
+        /// </para>
+        /// </remarks>
+        public int RefreshThreshold
+        {
+            get => _refreshThresholdSeconds ?? parseInt(Section[nameof(RefreshThreshold)]);
+            set => _refreshThresholdSeconds = value;
+        }
+
+        static bool parseBool(string s, bool useDefault = false)
+        {
+            return string.IsNullOrWhiteSpace(s) 
+                ? useDefault 
+                : bool.TryParse(s, out var b) 
+                    ? b 
+                    : useDefault;
+        }
         
+        static int parseInt(string s, int useDefault = 0)
+        {
+            useDefault = Math.Abs(useDefault);
+            return string.IsNullOrWhiteSpace(s) 
+                ? useDefault 
+                : int.TryParse(s, out var result) 
+                    ? result 
+                    : useDefault;
+        }
+
         /// <summary>
         ///   Gets a configured callback path, or the default one (<see cref="DefaultCallbackPath"/>).  
         /// </summary>
@@ -259,17 +330,17 @@ namespace TetraPak.AspNet.Auth
             // ensures that the discovery document gets refreshed. If called a second time (from a different thread);
             // then just wait for the download process to finish by using a TaskCompletionSource (TCS)
         
-            bool waitForDownload;
+            bool waitForMasterSource;
             lock (s_syncRoot)
             {
-                waitForDownload = _discoverAsyncTcs is { };
+                waitForMasterSource = _masterSourceTcs is { };
             }
 
             // ReSharper disable InconsistentlySynchronizedField
-            if (waitForDownload)
-                return _discoverAsyncTcs.Task;
+            if (waitForMasterSource)
+                return _masterSourceTcs.Task;
             
-            _discoverAsyncTcs = new TaskCompletionSource<DiscoveryDocument>();
+            _masterSourceTcs = new TaskCompletionSource<DiscoveryDocument>();
             // ReSharper restore InconsistentlySynchronizedField
 
             Task.Run(async () =>
@@ -278,11 +349,15 @@ namespace TetraPak.AspNet.Auth
                 {
                     using (Logger?.BeginScope("Downloading Tetra Pak Auth configuration from discovery document"))
                     {
-                        var outcome = await DiscoveryDocument.LoadAsync(DiscoveryDocumentUrl, Logger
+
+                        var args = ReadDiscoveryDocumentArgs.FromMasterSource(this 
 #if DEBUG
                             , TimeSpan.FromSeconds(5)
 #endif
                             );
+                        // var args = ReadDiscoveryDocumentArgs.FromDefault(this); // nisse (just test with Default for now; I'm in a hurry getting it to work for Pardot -JR)                        
+
+                        var outcome = await DiscoveryDocument.ReadAsync(args);
                         if (!outcome)
                         {
                             Logger?.Error(outcome.Exception, "Could not download discovery document");
@@ -305,13 +380,14 @@ namespace TetraPak.AspNet.Auth
                 }
             });
 
-            return _discoverAsyncTcs.Task;
+            return _masterSourceTcs.Task;
             
             DiscoveryDocument done(DiscoveryDocument discoveryDocument)
             {
                 // ReSharper disable once InconsistentlySynchronizedField
                 s_discoveryDocument = discoveryDocument;
-                _discoverAsyncTcs.SetResult(discoveryDocument);
+                _masterSourceTcs.SetResult(discoveryDocument);
+                _masterSourceTcs = null;
                 return discoveryDocument;
             }
         }
@@ -335,13 +411,13 @@ namespace TetraPak.AspNet.Auth
                 : null;
         }
 
-        void initDiscoveryDocument(bool refreshDiscoveryDocument)
-        {
-#pragma warning disable 4014
-            if (s_discoveryDocument is null || refreshDiscoveryDocument)
-                discoverAsync();
-#pragma warning restore 4014
-        }
+//         void initDiscoveryDocument(bool refreshDiscoveryDocument) obsolete
+//         {
+// #pragma warning disable 4014
+//             if (s_discoveryDocument is null || refreshDiscoveryDocument)
+//                 discoverAsync();
+// #pragma warning restore 4014
+//         }
         
         TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.Api)
         {
@@ -380,23 +456,24 @@ namespace TetraPak.AspNet.Auth
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
         /// <param name="configuration">
-        ///   A <see cref="IConfiguration"/> instance.
+        ///     A <see cref="IConfiguration"/> instance.
         /// </param>
         /// <param name="logger">
-        ///   A <see cref="ILogger"/>.
+        ///     A <see cref="ILogger"/>.
         /// </param>
-        /// <param name="refreshDiscoveryDocument">
-        ///   (optional; default=<c>true</c>)<br/>
-        ///   When set, the instance will automatically ensure the discovery 
+        /// <param name="loadDiscoveryDocument">
+        ///     (optional; default = <c>false</c>)<br/>
+        ///     Specifies whether to automatically load the (remote) discovery document.
+        ///     <seealso cref="GetDiscoveryDocumentAsync"/>
         /// </param>
         /// <param name="sectionIdentifier">
-        ///   (optional; default=<see cref="SectionIdentifier"/>)<br/>
-        ///   A custom configuration section identifier. 
+        ///     (optional; default=<see cref="SectionIdentifier"/>)<br/>
+        ///     A custom configuration section identifier. 
         /// </param>
         public TetraPakAuthConfig(
-            IConfiguration configuration, 
+            IConfiguration configuration,
             ILogger<TetraPakAuthConfig> logger,
-            bool refreshDiscoveryDocument = false,
+            bool loadDiscoveryDocument = false,
             string sectionIdentifier = null) 
         : base(configuration, logger, sectionIdentifier)
         {
@@ -404,10 +481,14 @@ namespace TetraPak.AspNet.Auth
             Environment = s is { } 
                 ? Enum.Parse<RuntimeEnvironment>(s) 
                 : runtimeEnvironment() ?? RuntimeEnvironment.Production;
-            initDiscoveryDocument(refreshDiscoveryDocument);
-            JwtBearerValidation = new JwtBearerValidationConfig(Section, logger);
+            JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
+            _isPkceUsed = true;
+            if (loadDiscoveryDocument)
+            {
+                discoverAsync();
+            }
         }
     }
 }

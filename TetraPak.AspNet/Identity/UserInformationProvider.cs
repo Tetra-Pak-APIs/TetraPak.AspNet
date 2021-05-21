@@ -27,7 +27,6 @@ namespace TetraPak.AspNet.Identity
         /// <param name="accessToken">
         ///     An access token, authenticating the requesting actor. 
         /// </param>
-        /// <param name="logger"></param>
         /// <param name="cached">
         ///     (optional; default=<c>true</c>)<br/>
         ///     When set, the value will cache the downloaded result (and fetch it from the internal cache if present). 
@@ -35,9 +34,7 @@ namespace TetraPak.AspNet.Identity
         /// <returns>
         ///   A <see cref="UserInformation"/> value.
         /// </returns>
-        public async Task<UserInformation> GetUserInformationAsync(
-            string accessToken, 
-            bool cached = true)
+        public async Task<UserInformation> GetUserInformationAsync(string accessToken, bool cached = true)
         {
             object value = null;
             lock (s_cache)

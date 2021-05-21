@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -52,7 +51,7 @@ namespace TetraPak.AspNet.Api.Auth
                 }
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-#if UNSECURE__
+#if UNSECURE
                     ValidateLifetime = false,
                     ValidateAudience = false
                     ValidateLifetime = false,
@@ -80,16 +79,8 @@ namespace TetraPak.AspNet.Api.Auth
                 {
                     OnMessageReceived = context =>
                     {
-                        if (!Logger.IsEnabled(LogLevel.Debug))
-                            return Task.CompletedTask;
-                        
-                        var jwt = getJwtBearer(context);
-                        Logger.Debug($"Received message: {context.Request.Path.Value}");
-                        Logger.Debug(jwt is null
-                            ? "No JWT Bearer was supplied"
-                            : $"Received JWT Bearer: {tokenLogString(jwt)}");
-                        Logger.Debug($"Environment: {AuthConfig.Environment}");
-                        Logger.Debug($"Discovery document URL: {options.MetadataAddress}");
+                        readJwtSecurityTokenFromRequest(context, options, out var token);
+                        context.Token = token;
                         return Task.CompletedTask;
                     },
                     OnTokenValidated = context =>
@@ -150,22 +141,36 @@ namespace TetraPak.AspNet.Api.Auth
                 : audience;
         }
 
-        static JwtSecurityToken getJwtBearer(MessageReceivedContext context)
+        void readJwtSecurityTokenFromRequest(MessageReceivedContext context, JwtBearerOptions options, out string authorization)
         {
-            const string BearerQualifier = "Bearer ";
+            authorization = context.Request.Headers[AuthConfig.AuthorizationHeader];
+            var jwt = parseJwtSecurityToken(authorization);
+
+            if (!Logger.IsEnabled(LogLevel.Debug))
+                return;
             
-            var s = context.Request.Headers["Authorization"].FirstOrDefault();
+            Logger.Debug($"Received message: {context.Request.Path.Value}");
+            Logger.Debug(jwt is null
+                ? "No JWT Bearer was supplied"
+                : $"Received JWT Bearer: \n{tokenLogString(jwt)}");
+            Logger.Debug($"Environment: {AuthConfig.Environment}");
+            Logger.Debug($"Discovery document URL: {options.MetadataAddress}");
+        }
+
+        static JwtSecurityToken parseJwtSecurityToken(string s)
+        {
             if (s is null)
                 return null;
 
-            if (!s.StartsWith(BearerQualifier, StringComparison.InvariantCultureIgnoreCase))
-                return null;
-
+            var isBearer = s.StartsWith(
+                BearerToken.Qualifier, 
+                StringComparison.InvariantCultureIgnoreCase);
+            
             try
             {
-                var sJwt = s.Substring(BearerQualifier.Length).Trim();
+                var token = isBearer ? s[BearerToken.Qualifier.Length..].Trim() : s.Trim();
                 var handler = new JwtSecurityTokenHandler();
-                return handler.ReadJwtToken(sJwt);
+                return handler.ReadJwtToken(token);
             }
             catch (Exception e)
             {

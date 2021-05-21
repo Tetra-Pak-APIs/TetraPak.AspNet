@@ -14,7 +14,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet.Api", "Tetr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet.Api.Auth", "TetraPak.AspNet.Api.Auth\TetraPak.AspNet.Api.Auth.csproj", "{9BAEB705-9097-4839-A125-0AD6ABAF4131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuisDispatch", "..\..\_throw_away\LuisDispatch\LuisDispatch\LuisDispatch.csproj", "{D2CDD7A3-4DB2-4F08-90AA-69D35ED4BD85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuisDispatch", "..\..\SuMChatBot-API-Intergration\LuisDispatch.csproj", "{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_others_projects", "_others_projects", "{795C2A87-C568-4443-911E-EC3FA1CE342B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "..\..\_others_projects\cap-rebuildingkitAPI\api\api\api.csproj", "{E7A2EF76-24B2-42A6-89E9-8A30567C800C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,13 +50,19 @@ Global
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D2CDD7A3-4DB2-4F08-90AA-69D35ED4BD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2CDD7A3-4DB2-4F08-90AA-69D35ED4BD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2CDD7A3-4DB2-4F08-90AA-69D35ED4BD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2CDD7A3-4DB2-4F08-90AA-69D35ED4BD85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8} = {E23719F6-8894-49F5-8EE5-23EC59CF08FD}
 		{09C524DA-F015-4231-BF80-85CFE8502580} = {E23719F6-8894-49F5-8EE5-23EC59CF08FD}
+		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362} = {795C2A87-C568-4443-911E-EC3FA1CE342B}
+		{E7A2EF76-24B2-42A6-89E9-8A30567C800C} = {795C2A87-C568-4443-911E-EC3FA1CE342B}
 	EndGlobalSection
 EndGlobal

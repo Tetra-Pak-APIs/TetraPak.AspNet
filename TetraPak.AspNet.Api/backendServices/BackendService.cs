@@ -7,7 +7,7 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
-    public class BackendService<TEndpoints>
+    public class BackendService<TEndpoints> : IBackendService
     where TEndpoints : EndpointsConfig
     {
         protected IHttpClientProvider HttpClientProvider { get; }
@@ -74,5 +74,18 @@ namespace TetraPak.AspNet.Api
             Logger = logger;
         }
 
+    }
+
+    public interface IBackendService
+    {
+        Task<Outcome<HttpResponseMessage>> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken? cancellationToken = null);
+
+        Task<Outcome<HttpResponseMessage>> PostAsync(
+            string path,
+            HttpContent content,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null);
     }
 }
