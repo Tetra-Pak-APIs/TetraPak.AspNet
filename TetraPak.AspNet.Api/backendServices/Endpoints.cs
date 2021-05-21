@@ -43,6 +43,8 @@ namespace TetraPak.AspNet.Api
         public Endpoints(IConfiguration configuration, string sectionId = "Endpoints")
         : base(configuration, sectionId)
         {
+            if (string.IsNullOrEmpty(Host))
+                throw new InvalidOperationException($"Missing configuration: {this}.{nameof(Host)}");
         }
     }
 

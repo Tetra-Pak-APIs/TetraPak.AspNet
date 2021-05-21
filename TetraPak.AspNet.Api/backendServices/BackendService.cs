@@ -8,7 +8,7 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet.Api
 {
     public class BackendService<TEndpoints> : IBackendService
-    where TEndpoints : EndpointsConfig
+    where TEndpoints : Endpoints
     {
         protected IHttpClientProvider HttpClientProvider { get; }
 
@@ -25,7 +25,7 @@ namespace TetraPak.AspNet.Api
             {
                 Authentication = request.Headers.Authorization
             };
-            var clientOutcome = await HttpClientProvider.GetHttpClientAsync(clientOptions, cancellationToken, Logger);
+            var clientOutcome = await OnGetHttpClientAsync(clientOptions, cancellationToken);
             if (clientOutcome)
                 return Outcome<HttpResponseMessage>.Fail(new Exception("Could not initialize a HTTP client (see inner exception)", clientOutcome.Exception));
             
@@ -43,10 +43,10 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null)
         {
             var useCancellationToken = cancellationToken ?? CancellationToken.None;
-            var clientOutcome = await HttpClientProvider.GetHttpClientAsync(clientOptions, cancellationToken, Logger);
+            var clientOutcome = await OnGetHttpClientAsync(clientOptions, cancellationToken); // HttpClientProvider.GetHttpClientAsync(clientOptions, cancellationToken, Logger);
             if (!clientOutcome)
                 return Outcome<HttpResponseMessage>.Fail(new Exception("Could not initialize a HTTP client (see inner exception)", clientOutcome.Exception));
-
+            
             var client = clientOutcome.Value;
 #if DEBUG || LOG_DEBUG            
             Logger.Debug($"Sending request URI: {path}");
@@ -58,12 +58,32 @@ namespace TetraPak.AspNet.Api
      #endif
             Logger.Debug($"Sending request CONTENT: {contentString}");
 #endif
-            var response = await client.PostAsync(path, content, useCancellationToken);
+            var response = await client.PostAsync(path.TrimStart('/'), content, useCancellationToken);
             return response.IsSuccessStatusCode
                 ? Outcome<HttpResponseMessage>.Success(response)
                 : Outcome<HttpResponseMessage>.Fail(response);
         }
-      
+
+        protected virtual async Task<Outcome<HttpClient>> OnGetHttpClientAsync(HttpClientOptions clientOptions, CancellationToken? cancellationToken)
+        {
+            var clientOutcome = await HttpClientProvider.GetHttpClientAsync(clientOptions, cancellationToken, Logger);
+            if (!clientOutcome)
+                return Outcome<HttpClient>.Fail(new Exception("Could not initialize a HTTP client (see inner exception)", clientOutcome.Exception));
+
+            var client = clientOutcome.Value;
+            if (client.BaseAddress is {})
+                return clientOutcome;
+
+            if (string.IsNullOrWhiteSpace(Endpoints.BasePath))
+            {
+                client.BaseAddress = new Uri(Endpoints.Host.EnsurePostfix("/"));
+                return clientOutcome;
+            }
+            
+            client.BaseAddress = new Uri($"{Endpoints.Host.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/').EnsurePostfix("/")}");
+            return clientOutcome;
+        }
+
         public BackendService(
             TEndpoints endpoints, 
             IHttpClientProvider httpClientProvider, 
@@ -71,21 +91,9 @@ namespace TetraPak.AspNet.Api
         {
             HttpClientProvider = httpClientProvider;
             Endpoints = endpoints;
+            Endpoints.SetBackendService(this);
             Logger = logger;
         }
 
-    }
-
-    public interface IBackendService
-    {
-        Task<Outcome<HttpResponseMessage>> SendAsync(
-            HttpRequestMessage request,
-            CancellationToken? cancellationToken = null);
-
-        Task<Outcome<HttpResponseMessage>> PostAsync(
-            string path,
-            HttpContent content,
-            HttpClientOptions clientOptions = null,
-            CancellationToken? cancellationToken = null);
     }
 }
