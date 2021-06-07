@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
@@ -77,11 +76,14 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = context =>
+                    OnMessageReceived = async context =>
                     {
-                        readJwtSecurityTokenFromRequest(context, options, out var token);
-                        context.Token = token;
-                        return Task.CompletedTask;
+                        Logger.DebugAssembliesInUse();
+                        await Logger.Debug(context.Request);
+                        if (context.TryReadCustomAuthorization(options, AuthConfig, Logger, out var token))
+                        {
+                            context.Token = token;
+                        }   
                     },
                     OnTokenValidated = context =>
                     {
@@ -99,7 +101,6 @@ namespace TetraPak.AspNet.Api.Auth
                         }
 
                         // terminates the request (todo: Consider option to allow other authentication schemes)
-                        context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                         var response = IsDevelopment
                             ? new ApiErrorResponse(context.Exception.Message)
                             {
@@ -109,14 +110,14 @@ namespace TetraPak.AspNet.Api.Auth
                         context.Response.WriteAsync(response.ToJson(IsDevelopment, JsonIgnoreCondition.WhenWritingNull));
                         return Task.FromResult(0);
                     },
-                    // OnForbidden = context =>
-                    // {
-                    //     return Task.CompletedTask;
-                    // },
-                    // OnChallenge = context =>
-                    // {
-                    //     return Task.CompletedTask;
-                    // }
+                    OnForbidden = context =>
+                    {
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        return Task.CompletedTask;
+                    }
                 };
             }
         }
@@ -140,57 +141,7 @@ namespace TetraPak.AspNet.Api.Auth
                 ? _hostProvider.GetHost()
                 : audience;
         }
-
-        void readJwtSecurityTokenFromRequest(MessageReceivedContext context, JwtBearerOptions options, out string authorization)
-        {
-            authorization = context.Request.Headers[AuthConfig.AuthorizationHeader];
-            var jwt = parseJwtSecurityToken(authorization);
-
-            if (!Logger.IsEnabled(LogLevel.Debug))
-                return;
-            
-            Logger.Debug($"Received message: {context.Request.Path.Value}");
-            Logger.Debug(jwt is null
-                ? "No JWT Bearer was supplied"
-                : $"Received JWT Bearer: \n{tokenLogString(jwt)}");
-            Logger.Debug($"Environment: {AuthConfig.Environment}");
-            Logger.Debug($"Discovery document URL: {options.MetadataAddress}");
-        }
-
-        static JwtSecurityToken parseJwtSecurityToken(string s)
-        {
-            if (s is null)
-                return null;
-
-            var isBearer = s.StartsWith(
-                BearerToken.Qualifier, 
-                StringComparison.InvariantCultureIgnoreCase);
-            
-            try
-            {
-                var token = isBearer ? s[BearerToken.Qualifier.Length..].Trim() : s.Trim();
-                var handler = new JwtSecurityTokenHandler();
-                return handler.ReadJwtToken(token);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        static string tokenLogString(JwtSecurityToken jwt)
-        {
-            var sb = new StringBuilder();
-            foreach (var claim in jwt.Claims)
-            {
-                
-                sb.AppendLine($"{claim.Type}: {claim.Value}");
-            }
-
-            return sb.ToString();
-        }
-
+        
         public void Configure(string name, JwtBearerOptions options)
         {
             if (name == JwtBearerDefaults.AuthenticationScheme)

@@ -6,7 +6,7 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.7.0-beta</PackageVersion>
+        <PackageVersion>0.10.2-beta</PackageVersion>
         <Title>Tetra Pak Api library </Title>
         <Authors>Tetra Pak</Authors>
         <Description>A common library for Tetra Pak API development</Description>
@@ -15,6 +15,8 @@
         <PackageReleaseNotes>Initial (pre) release</PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
+        <AssemblyVersion>0.10.2</AssemblyVersion>
+        <FileVersion>0.10.2</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -30,6 +32,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

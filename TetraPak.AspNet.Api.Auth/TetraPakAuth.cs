@@ -29,6 +29,10 @@ namespace TetraPak.AspNet.Api.Auth
         {
             c.AddSingleton<HostProvider>();
             c.AddSingleton<TetraPakAuthConfig>();
+            
+            c.AddTetraPakWebApiClaimsTransformation();
+            c.AddTetraPakUserInformation();
+            
             c.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>(
                 p => new ConfigureJwtBearerOptions(p, 
                     p.GetService<HostProvider>(), 
@@ -39,7 +43,6 @@ namespace TetraPak.AspNet.Api.Auth
             return c;
         }
 
-        
         /// <summary>
         ///   Installs sidecar JWT authentication middleware. 
         /// </summary>

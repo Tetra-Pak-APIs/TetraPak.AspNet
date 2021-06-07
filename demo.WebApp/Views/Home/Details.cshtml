@@ -1,8 +1,11 @@
-﻿@model MainModel
+﻿@model DetailsModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewBag.Title = "DETAILS";
+    Layout = "_Layout";
 }
+
+<h2>@Model</h2>
 
 <div class="text-center">
     
@@ -15,8 +18,7 @@
 
     <h1 class="display-4">HELLO WORLD!</h1>
     <p>If you can read this you have successfully integrated with the Tetra Pak Login API!</p>
-    <p>USER NAME: @Model.UserName @getUserDetails()</p>
+    <p>USER: @Model.UserName @getUserDetails()</p>
+    <p>ACCESS TOKEN: @Model.AccessToken</p>
     
-    <p>@Html.ActionLink("DETAILS", "Details")</p>
-
 </div>

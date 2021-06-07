@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet
 {
@@ -18,7 +19,8 @@ namespace TetraPak.AspNet
             public const string ExpiresIn = "expires_in";
         }
 
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync() => _httpContextAccessor.HttpContext.GetAccessTokenAsync();
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
+            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
 
         // public Outcome<ActorToken> GetAccessToken()
         // {
@@ -28,7 +30,8 @@ namespace TetraPak.AspNet
         //     //     : Outcome<string>.Fail(new ArgumentOutOfRangeException());
         // }
         
-        public Task<Outcome<ActorToken>> GetIdTokenAsync() => _httpContextAccessor.HttpContext.GetIdTokenAsync();
+        public Task<Outcome<ActorToken>> GetIdTokenAsync(TetraPakAuthConfig authConfig) 
+            => _httpContextAccessor.HttpContext.GetIdTokenAsync(authConfig);
 
         // public Outcome<ActorToken> GetIdToken()
         // {
@@ -42,6 +45,20 @@ namespace TetraPak.AspNet
         {
             _httpContextAccessor = httpContextAccessor;
         }
+
+        /// <summary>
+        ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).
+        /// </summary>
+        public bool IsApiEndpoint()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            var endpoint = context?.GetEndpoint();
+            if (endpoint is null)
+                return false;
+
+            return false;
+        }
+        
     }
 
     public static class ClaimsIdentityExtensions

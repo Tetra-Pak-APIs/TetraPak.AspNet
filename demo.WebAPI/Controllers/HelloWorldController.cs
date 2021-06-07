@@ -15,8 +15,9 @@ namespace WebAPI.Controllers
         [HttpGet]
         public ActionResult Get()
         {
+            var userIdentity = User.Identity;
             _log.Debug("GET /helloworld");
-            return Ok("Hello World!");
+            return Ok(new { message = "Hello World!", userId = userIdentity.Name ?? "(unresolved)" } );
         }
         
         public HelloWorldController(ILogger<HelloWorldController> log)

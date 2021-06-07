@@ -22,28 +22,6 @@ namespace demo.WebApp
             services.AddTetraPakOidcAuthentication(); // <-- add this
 
             services.AddControllersWithViews();
-
-            // services.AddCors(
-            //     options =>
-            //     {
-            //         options.AddPolicy("TetraPakLoginApi", builder => {
-            //             builder
-            //                 .AllowAnyHeader()
-            //                 .AllowAnyMethod()
-            //                 .Build();
-            //         });
-            //     });
-            
-            /* options =>
-            {
-                options.AddPolicy("TetraPakSsoCORS", builder =>
-                {
-                    builder
-                        .WithOrigins("https://sso.tetrapak.com")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,14 +42,6 @@ namespace demo.WebApp
 
             app.UseRouting();
 
-            // app.UseCors("TetraPakLoginApi");/*builder =>
-            // {
-            //     builder
-            //         .AllowAnyOrigin()
-            //         .AllowAnyHeader()
-            //         .AllowAnyMethod();
-            // });*/
-            
             app.UseAuthentication(); // <-- add this
 
             app.UseAuthorization();

@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Api.Auth.TokenExchange
         public static IServiceCollection AddTetraPakTokenExchangeService(this IServiceCollection c)
         {
             c.TryAddSingleton<TetraPakApiAuthConfig>();
-            c.AddSingleton<ITokenExchangeService, TetraPakTokenExchangeService>();
+            c.TryAddSingleton<ITokenExchangeService, TetraPakTokenExchangeService>();
             return c;
         }
     }

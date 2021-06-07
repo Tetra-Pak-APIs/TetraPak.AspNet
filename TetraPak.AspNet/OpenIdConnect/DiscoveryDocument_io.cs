@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.Logging;
 
 
 namespace TetraPak.AspNet.OpenIdConnect
@@ -112,20 +113,18 @@ namespace TetraPak.AspNet.OpenIdConnect
                 var response = await client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    logger?.LogWarning("Failed to download discovery document. Status: {StatusCode} {Phrase}", 
-                        (int) response.StatusCode,
-                        response.ReasonPhrase);
+                    logger.Warning($"Failed to download discovery document. Status: {(int) response.StatusCode} {response.ReasonPhrase}");
                     return Outcome<DiscoveryDocument>.Fail();
                 }
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 var discoveryDocument = await JsonSerializer.DeserializeAsync<DiscoveryDocument>(stream);
-                logger?.LogDebug("Successfully downloaded discovery document from {Url}", url);
+                logger.Debug($"Successfully downloaded discovery document from {url}");
                 return Outcome<DiscoveryDocument>.Success(discoveryDocument);
             }
             catch (Exception ex)
             {
-                logger?.LogError(ex, "Failed to download discovery document");
+                logger.Error(ex, "Failed to download discovery document");
                 return Outcome<DiscoveryDocument>.Fail(new Exception("Failed to download discovery document", ex));
             }
         }

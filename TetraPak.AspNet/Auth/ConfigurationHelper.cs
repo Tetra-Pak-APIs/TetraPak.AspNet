@@ -16,7 +16,7 @@ namespace TetraPak.AspNet.Auth
             }
             catch (Exception ex)
             {
-                logger?.Error(ex, $"Invalid configuration section: '{key}'. {ex}");
+                logger.Error(ex, $"Invalid configuration section: '{key}'. {ex}");
                 return new List<T>();
             }
         }
@@ -29,7 +29,7 @@ namespace TetraPak.AspNet.Auth
             }
             catch (Exception ex)
             {
-                logger?.Error(ex, $"Invalid configuration section: '{key}'. {ex}");
+                logger.Error(ex, $"Invalid configuration section: '{key}'. {ex}");
                 return Array.Empty<T>();
             }
         }

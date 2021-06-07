@@ -1,24 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet", "TetraPak.AspNet\TetraPak.AspNet.csproj", "{FA78AD9F-783B-4279-BBDA-36692626BED4}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.AspNet", "TetraPak.AspNet\TetraPak.AspNet.csproj", "{FA78AD9F-783B-4279-BBDA-36692626BED4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{E23719F6-8894-49F5-8EE5-23EC59CF08FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.WebApp", "demo.WebApp\demo.WebApp.csproj", "{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo.WebApp", "demo.WebApp\demo.WebApp.csproj", "{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.Common", "..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj", "{3F5B7F9B-6380-4915-B474-B9501A656E3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.Common", "..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj", "{3F5B7F9B-6380-4915-B474-B9501A656E3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.WebAPI", "demo.WebAPI\demo.WebAPI.csproj", "{09C524DA-F015-4231-BF80-85CFE8502580}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo.WebAPI", "demo.WebAPI\demo.WebAPI.csproj", "{09C524DA-F015-4231-BF80-85CFE8502580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet.Api", "TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj", "{1D1C0D4C-BF00-46DA-B054-59B4B804BE2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.AspNet.Api", "TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj", "{1D1C0D4C-BF00-46DA-B054-59B4B804BE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet.Api.Auth", "TetraPak.AspNet.Api.Auth\TetraPak.AspNet.Api.Auth.csproj", "{9BAEB705-9097-4839-A125-0AD6ABAF4131}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuisDispatch", "..\..\SuMChatBot-API-Intergration\LuisDispatch.csproj", "{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.AspNet.Api.Auth", "TetraPak.AspNet.Api.Auth\TetraPak.AspNet.Api.Auth.csproj", "{9BAEB705-9097-4839-A125-0AD6ABAF4131}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_others_projects", "_others_projects", "{795C2A87-C568-4443-911E-EC3FA1CE342B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "..\..\_others_projects\cap-rebuildingkitAPI\api\api\api.csproj", "{E7A2EF76-24B2-42A6-89E9-8A30567C800C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{B1F612BB-3830-4DA4-8A58-019FFD4324C0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nugetproj", "aligncsproj\nugetproj.csproj", "{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.CLI", "TetraPak.CLI\TetraPak.CLI.csproj", "{C64723DC-C019-4B31-ABB7-6F654BAB6614}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projector", "projector\projector.csproj", "{219D05BC-BE89-4444-ABB0-CD46A56D4721}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,19 +57,29 @@ Global
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BAEB705-9097-4839-A125-0AD6ABAF4131}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7A2EF76-24B2-42A6-89E9-8A30567C800C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64723DC-C019-4B31-ABB7-6F654BAB6614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64723DC-C019-4B31-ABB7-6F654BAB6614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64723DC-C019-4B31-ABB7-6F654BAB6614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64723DC-C019-4B31-ABB7-6F654BAB6614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{219D05BC-BE89-4444-ABB0-CD46A56D4721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{219D05BC-BE89-4444-ABB0-CD46A56D4721}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{219D05BC-BE89-4444-ABB0-CD46A56D4721}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{219D05BC-BE89-4444-ABB0-CD46A56D4721}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8} = {E23719F6-8894-49F5-8EE5-23EC59CF08FD}
 		{09C524DA-F015-4231-BF80-85CFE8502580} = {E23719F6-8894-49F5-8EE5-23EC59CF08FD}
-		{5A276187-8ADD-4FFC-A8CB-2B1A5B608362} = {795C2A87-C568-4443-911E-EC3FA1CE342B}
-		{E7A2EF76-24B2-42A6-89E9-8A30567C800C} = {795C2A87-C568-4443-911E-EC3FA1CE342B}
+		{B58D08B4-29F7-4A0D-8866-B7DB87E7388C} = {B1F612BB-3830-4DA4-8A58-019FFD4324C0}
+		{219D05BC-BE89-4444-ABB0-CD46A56D4721} = {B1F612BB-3830-4DA4-8A58-019FFD4324C0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E71ABC65-23C8-4F3A-8C06-54F0016D832B}
 	EndGlobalSection
 EndGlobal

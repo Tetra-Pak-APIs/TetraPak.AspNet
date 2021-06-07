@@ -1,69 +1,135 @@
-﻿using System.Collections.Specialized;
-using System.Net;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Auth;
+using TetraPak.Configuration;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Debugging
 {
-    public static class LogExtensions
+    public  static partial class LogExtensions
     {
-        public static void DebugWebRequest(this ILogger logger, HttpWebRequest request, string body)
+        static bool s_isAssemblyVersionsAlreadyLogged;
+        static bool s_isAuthConfigAlreadyLogged;
+        static readonly object s_syncRoot = new();
+
+        public static void DebugAssembliesInUse(this IServiceCollection c, bool justOnce = true)
         {
-            if (logger is null)
+            var services = c.BuildServiceProvider();
+            var logger = services.GetService<ILogger<TetraPakAuthConfig>>();
+            logger.DebugAssembliesInUse(justOnce);
+        }
+
+        public static void DebugAssembliesInUse(this ILogger logger, bool justOnce = true)
+        {
+            if (logger is null || !logger.IsEnabled(LogLevel.Debug))
                 return;
-            
-            var sb = new StringBuilder();
-            sb.Append(request.Method.ToUpper());
-            sb.Append(' ');
-            sb.AppendLine(request.RequestUri.ToString());
-            addHeaders(sb, request.Headers);
-            if (body is null)
+
+            lock (s_syncRoot)
             {
-                logger.Debug(sb.ToString());
-                return;
+                if (justOnce && s_isAssemblyVersionsAlreadyLogged)
+                    return;
+
+                s_isAssemblyVersionsAlreadyLogged = true;
             }
-            sb.AppendLine();
-            sb.Append(body);
+
+            var sb = new StringBuilder();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            sb.AppendLine(">===== ASSEMBLIES =====<");
+            foreach (var assembly in assemblies)
+            {
+                sb.AppendLine(assembly.FullName);
+            }
+            sb.AppendLine(">======================<");
             logger.Debug(sb.ToString());
         }
 
-        public static void DebugWebResponse(this ILogger logger, HttpWebResponse response, string body)
+        public static void Debug(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)
         {
-            if (logger is null || response is null)
+            // ReSharper disable once InconsistentNaming
+            const int Indent = 3;
+            if (authConfig is null || !logger.IsEnabled(LogLevel.Debug))
                 return;
-            
-            var sb = new StringBuilder();
-            sb.Append((int) response.StatusCode);
-            sb.Append(' ');
-            sb.AppendLine(response.StatusCode.ToString());
-            addHeaders(sb, response.Headers);
-            if (body is null)
+
+            lock (s_syncRoot)
             {
-                logger.Debug(sb.ToString());
-                return;
+                if (justOnce && s_isAuthConfigAlreadyLogged)
+                    return;
+
+                s_isAuthConfigAlreadyLogged = true;
             }
 
-            sb.AppendLine();
-            sb.Append(body);
+            var sb = new StringBuilder();
+            sb.AppendLine(">===== AUTH CONFIGURATION =====<");
+            sb.AppendLine(authConfig.GetSectionIdentifier());
+            sb.AppendLine("{");
+            buildContent(authConfig, Indent);
+            sb.AppendLine("}");
+            sb.AppendLine(">==============================<");
             logger.Debug(sb.ToString());
-        }
 
-        static void addHeaders(StringBuilder sb, NameValueCollection headers)
-        {
-            foreach (string header in headers)
+            void buildContent(ConfigurationSection sct, int indent)
             {
-                var value = headers[header];
-                if (value is null)
+                var sIndent = new string(' ', indent);
+                var propertyInfos = sct.GetType().GetProperties().Where(i => i.CanRead);
+                foreach (var propertyInfo in propertyInfos)
                 {
-                    sb.AppendLine(header);
-                    continue;
+                    var jsonProperty = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>();
+                    var isRestricted = propertyInfo.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
+                    var key = jsonProperty?.Name ?? propertyInfo.Name;
+
+                    sb.Append(sIndent);
+                    sb.Append('"');
+                    sb.Append(key);
+                    sb.Append("\": ");
+                    try
+                    {
+                        if (isRestricted)
+                        {
+                            sb.AppendLine("\"**** RESTRICTED ****\",");
+                            continue;
+                        }
+                        
+                        var value = propertyInfo.GetValue(sct);
+                        if (value.IsCollection(out var _, out var items, out var _))
+                        {
+                            value = items.Cast<object>().ConcatCollection();
+                        }
+                        switch (value)
+                        {
+                            case null:
+                                sb.AppendLine("null,");
+                                continue;
+                            
+                            case string sValue:
+                                sb.Append('"');
+                                sb.Append(sValue);
+                                sb.AppendLine("\",");
+                                continue;
+                            
+                            case ConfigurationSection section:
+                                sb.AppendLine("{");
+                                buildContent(section, indent + Indent);
+                                sb.Append(sIndent);
+                                sb.AppendLine("},");
+                                continue;
+                        }
+
+                        sb.Append(value);
+                        sb.AppendLine(",");
+                    }
+                    catch (Exception ex)
+                    {
+                        sb.AppendLine($"\"** ERROR READING VALUE: {ex.Message} **\",");
+                    }
                 }
-                
-                sb.Append(header);
-                sb.Append('=');
-                sb.AppendLine(value);
             }
+            
+            
         }
     }
 }

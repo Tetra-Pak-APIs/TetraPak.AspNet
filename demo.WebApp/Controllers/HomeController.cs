@@ -6,21 +6,29 @@ using demo.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet;
+using TetraPak.AspNet.Auth;
 
 namespace demo.WebApp.Controllers
 {
     public class HomeController : Controller
     {
         readonly ILogger<HomeController> _logger;
-        readonly IConfiguration _configuration;
+        readonly TetraPakAuthConfig _authConfig;
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(new MainModel(User.Identity, await Request.HttpContext.GetAccessTokenAsync()));
+            
+            return View(new MainModel(User.Identity));
         }
 
         [Authorize]
+        public async Task<IActionResult> Details()
+        {
+            var token = await Request.HttpContext.GetAccessTokenAsync(_authConfig);
+            return View(new DetailsModel(User.Identity, token));
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -32,10 +40,10 @@ namespace demo.WebApp.Controllers
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
         
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, TetraPakAuthConfig authConfig)
         {
             _logger = logger;
-            _configuration = configuration;
+            _authConfig = authConfig;
         }
     }
 }

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Logging;
+using LoggerExtensions = TetraPak.Logging.LoggerExtensions;
 
 namespace TetraPak.AspNet.Auth
 {
@@ -40,6 +42,7 @@ namespace TetraPak.AspNet.Auth
         string _callbackPath;
         string _authDomain;
         string _authorizationHeader;
+        string _identityTokenHeader;
         bool? _isPkceUsed;
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument s_discoveryDocument;
@@ -49,6 +52,8 @@ namespace TetraPak.AspNet.Auth
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
         public JwtBearerValidationConfig JwtBearerValidation { get; }
+
+        internal string GetSectionIdentifier() => SectionIdentifier;
         
         /// <summary>
         ///   Gets the "well known" OIDC discovery document. The document will be downloaded and cached as needed.  
@@ -67,10 +72,12 @@ namespace TetraPak.AspNet.Auth
 
         /// <summary>
         ///   Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.
+        ///   The default value is <see cref="HeaderNames.Authorization"/>).
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///   An invalid/empty value was assigned.
         /// </exception>
+        /// <seealso cref="IsCustomAuthorizationHeader"/>
         public string AuthorizationHeader
         {
             get => _authorizationHeader ?? Section[nameof(AuthorizationHeader)] ?? HeaderNames.Authorization;
@@ -84,6 +91,35 @@ namespace TetraPak.AspNet.Auth
                 _authorizationHeader = value;
             }
         }
+
+        /// <summary>
+        ///   Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.
+        ///   The default value is <see cref="HeaderNames.Authorization"/>).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///   An invalid/empty value was assigned.
+        /// </exception>
+        /// <seealso cref="IsCustomAuthorizationHeader"/>
+        public string IdentityTokenHeader
+        {
+            get => _identityTokenHeader ?? Section[nameof(IdentityTokenHeader)] ?? AmbientData.Keys.IdToken;
+
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException(nameof(value),
+                        $"{nameof(IdentityTokenHeader)} must be a valid identifier");
+
+                _identityTokenHeader = value;
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether the configured authorization header is a custom one
+        ///   (default is <see cref="HeaderNames.Authorization"/>).
+        /// </summary>
+        /// <seealso cref="AuthorizationHeader"/>
+        public bool IsCustomAuthorizationHeader => AuthorizationHeader != HeaderNames.Authorization;
     
         /// <summary>
         ///   Gets the current runtime environment (DEV, TEST, PROD ...).
@@ -288,7 +324,8 @@ namespace TetraPak.AspNet.Auth
         }
         
         /// <summary>
-        ///   Specifies the source for identity claims (see <see cref="TetraPakIdentitySource"/>).
+        ///   Specifies the source for identity claims (see <see cref="TetraPakIdentitySource"/>),
+        ///   such as <see cref="TetraPakIdentitySource.Api"/> or <see cref="TetraPakIdentitySource.IdToken"/>).
         /// </summary>
         public TetraPakIdentitySource IdentitySource { get; set; }
 
@@ -296,34 +333,34 @@ namespace TetraPak.AspNet.Auth
         ///   Gets or sets a scope of identity claims to be requested while authenticating the identity.
         ///   When omitted a default scope will be used. 
         /// </summary>
-        public string[] Scope { get; set; } 
+        public string[] Scope { get; } 
 
-        void logSettings()
-        {
-            if (Logger is null)
-                return;
-            
-            var sb = new StringBuilder();
-            foreach (var property in GetType().GetProperties())
-            {
-                var jsonProperty = property.GetCustomAttribute<JsonPropertyNameAttribute>();
-                var isRestricted = property.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
-                var key = jsonProperty?.Name ?? property.Name;
-                var value = isRestricted ? "**********" : property.GetValue(this);
-                sb.AppendLine($"  {key}: {getValue(value)}");
-            }
-            Logger.LogInformation("Auth Configuration:\n{Configuration}", sb.ToString());
-
-            static string getValue(object value)
-            {
-                if (value is string s)
-                    return s;
-
-                return value.IsCollectionOf<string>(out var items) 
-                    ? items.ConcatCollection(" ") 
-                    : value?.ToString();
-            }
-        }
+        // void logSettings() obsolete
+        // {
+        //     if (Logger is null)
+        //         return;
+        //     
+        //     var sb = new StringBuilder();
+        //     foreach (var property in GetType().GetProperties())
+        //     {
+        //         var jsonProperty = property.GetCustomAttribute<JsonPropertyNameAttribute>();
+        //         var isRestricted = property.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
+        //         var key = jsonProperty?.Name ?? property.Name;
+        //         var value = isRestricted ? "**********" : property.GetValue(this);
+        //         sb.AppendLine($"  {key}: {getValue(value)}");
+        //     }
+        //     Logger.LogInformation("Auth Configuration:\n{Configuration}", sb.ToString());
+        //
+        //     static string getValue(object value)
+        //     {
+        //         if (value is string s)
+        //             return s;
+        //
+        //         return value.IsCollectionOf<string>(out var items) 
+        //             ? items.ConcatCollection(" ") 
+        //             : value?.ToString();
+        //     }
+        // }
         
         Task<DiscoveryDocument> discoverAsync()
         {
@@ -368,7 +405,7 @@ namespace TetraPak.AspNet.Auth
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
-                        logSettings();
+                        Logger.Debug(this);
                         return done(discoveryDocument);
                     }
                 }
@@ -488,6 +525,10 @@ namespace TetraPak.AspNet.Auth
             if (loadDiscoveryDocument)
             {
                 discoverAsync();
+            }
+            else
+            {
+                logger.Debug(this);
             }
         }
     }

@@ -1,28 +1,12 @@
-﻿using System.Security.Claims;
-using System.Security.Principal;
-using TetraPak;
-using TetraPak.AspNet;
+﻿using System.Security.Principal;
 
 namespace demo.WebApp.Models
 {
-    public class MainModel
+    public class MainModel : AuthorizedModel
     {
-        readonly IIdentity _identity;
-
-        ClaimsIdentity ClaimsIdentity => _identity as ClaimsIdentity;
-        
-        public string UserName => _identity.Name;
-
-        public string FirstName => ClaimsIdentity?.FirstName();
-
-        public string LastName => ClaimsIdentity?.LastName();
-
-        public ActorToken AccessToken { get; }
-
-        public MainModel(IIdentity identity, ActorToken accessToken)
+        public MainModel(IIdentity identity) 
+        : base(identity)
         {
-            _identity = identity;
-            AccessToken = accessToken;
         }
     }
 }

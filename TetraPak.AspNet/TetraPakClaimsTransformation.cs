@@ -17,17 +17,37 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Add this class to the DI configuration to automatically provide a Tetra Pak identity to any request.
+    ///   The class constructor also needs <see cref="AmbientData"/> and 
+    ///   Please note that this is automatically done by calling <see cref="TetraPakAuth.AddTetraPakWebClientAuthentication"/>.
+    /// </summary>
+    /// <example>
+    ///   <code>
+    ///   public void ConfigureServices(IServiceCollection services)
+    ///   {
+    ///       :
+    ///       services.AddTetraPakWebClientClaimsTransformation();
+    ///       :
+    ///   }
+    ///   </code>
+    /// </example>
     public class TetraPakClaimsTransformation : IClaimsTransformation
     {
         static readonly AsyncLocal<OAuthTokenResponse> s_tokenResponse = new();
         static readonly IDictionary<string, string> s_claimsMap = makeClaimsMap();
-        readonly TetraPakAuthConfig _authConfig;
-        readonly AmbientData _ambientData;
         readonly TetraPakUserInformation _userInformation;
+        readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IClientCredentialsProvider _clientCredentialsProvider;
 
-        ILogger Logger => _authConfig.Logger;
+        protected ILogger Logger => AuthConfig.Logger;
 
-        
+        protected AmbientData AmbientData { get; }
+
+        protected TetraPakAuthConfig AuthConfig { get; }
+
+        protected HttpContext HttpContext => _httpContextAccessor.HttpContext;
+
         internal static OAuthTokenResponse TokenResponse
         {
             get => s_tokenResponse.Value;
@@ -38,28 +58,29 @@ namespace TetraPak.AspNet
         {
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))
             {
-                switch (_authConfig.IdentitySource)
+                var _ = new CancellationToken();
+                switch (AuthConfig.IdentitySource)
                 {
                     case TetraPakIdentitySource.IdToken:
                         Logger?.Debug("Source = Id Token");
-                        var idTokenOutcome = await _ambientData.GetIdTokenAsync();
+                        var idTokenOutcome = await OnGetIdTokenAsync(_);
                         if (idTokenOutcome)
                             return mapFromIdToken(idTokenOutcome.Value);
 
-                        _authConfig.Logger.Warning("Could not populate identity from id token. No id token was available");
+                        AuthConfig.Logger.Warning("Could not populate identity from id token. No id token was available");
                         break;
             
                     case TetraPakIdentitySource.Api:
-                        var accessTokenOutcome = await _ambientData.GetAccessTokenAsync();
+                        var accessTokenOutcome = await OnGetAccessTokenAsync(_);
                         if (accessTokenOutcome)
                             return await mapFromApiAsync(accessTokenOutcome.Value);
                         
-                        _authConfig.Logger.Warning($"Could not populate identity from API. No access token was available");
+                        AuthConfig.Logger.Warning("Could not populate identity from API. No access token was available");
                         break;
             
                     default:
                         throw new NotSupportedException(
-                            $"Cannot transform claims principal from unsupported source: '{_authConfig.IdentitySource}'");
+                            $"Cannot transform claims principal from unsupported source: '{AuthConfig.IdentitySource}'");
                 }
             }
         
@@ -91,13 +112,13 @@ namespace TetraPak.AspNet
             
             async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
             {
-                Logger?.Debug("Fetches identity from Tetra Pak User Information Service");
+                Logger.Debug("Fetches identity from Tetra Pak User Information Service");
                 var userInfoOutcome = await _userInformation.GetUserInformationAsync(accessToken);
                 if (!userInfoOutcome)
                 {
-                    _authConfig.Logger?.Error(
+                    Logger.Error(
                         userInfoOutcome.Exception, 
-                        "Could not obtain identity claims from Tetra Pak's User Information services");
+                        $"Could not obtain identity claims from Tetra Pak's User Information services: {userInfoOutcome.Exception.Message}");
                     return principal;
                 }
 
@@ -119,7 +140,24 @@ namespace TetraPak.AspNet
                 return clone;
             }
         }
+
+        protected virtual async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken) 
+            => await AmbientData.GetAccessTokenAsync(AuthConfig);
+
+        protected virtual async Task<Outcome<ActorToken>> OnGetIdTokenAsync(CancellationToken cancellationToken)
+            => await AmbientData.GetIdTokenAsync(AuthConfig);
         
+        protected virtual async Task<Credentials> OnGetClientCredentials()
+        {
+            if (_clientCredentialsProvider is { })
+                return await _clientCredentialsProvider.GetClientCredentialsAsync();
+
+            if (AuthConfig.ClientId is null)
+                throw new InvalidOperationException($"Failed obtaining client id from configuration");
+            
+            return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
+        }
+
         static IDictionary<string,string> makeClaimsMap()
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -137,23 +175,27 @@ namespace TetraPak.AspNet
             AmbientData ambientData, 
             TetraPakAuthConfig authConfig, 
             TetraPakUserInformation userInformation,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IClientCredentialsProvider clientCredentialsProvider = null)
         {
-            _authConfig = authConfig;
-            _ambientData = ambientData;
+            AmbientData = ambientData;
+            AuthConfig = authConfig;
             _userInformation = userInformation;
+            _httpContextAccessor = httpContextAccessor;
+            _clientCredentialsProvider = clientCredentialsProvider;
         }
     }
 
-    public static class TetraPakClaimsTransformationHelper
+    public static class TetraPakWebClientClaimsTransformationHelper
     {
         /// <summary>
         ///   Sets up DI correctly for claims transformation.
         /// </summary>
-        public static void AddTetraPakClaimsTransformation(this IServiceCollection c)
+        public static void AddTetraPakWebClientClaimsTransformation(this IServiceCollection c)
         {
             c.AddHttpContextAccessor();
             c.TryAddTransient<AmbientData>();
+            c.TryAddSingleton<TetraPakAuthConfig>();
             c.AddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
         }
 

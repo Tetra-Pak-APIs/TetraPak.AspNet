@@ -26,14 +26,14 @@ namespace TetraPak.AspNet
         public static void AddTetraPakWebClientAuthentication(this IServiceCollection services)
         {
             services.TryAddSingleton<TetraPakAuthConfig>();
-            services.AddTetraPakClaimsTransformation();
+            services.AddTetraPakWebClientClaimsTransformation();
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakAuthConfig>();
             var logger = authConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
             if (authConfig is null)
             {
-                logger?.Error(new Exception($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
+                logger.Error(new Exception($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
                 return; // todo log this failure!
             }
 
@@ -88,18 +88,18 @@ namespace TetraPak.AspNet
                     {
                         OnRemoteFailure = context =>
                         {
-                            authConfig.Logger?.Error(context.Failure,"OIDC authentication error!");
+                            authConfig.Logger.Error(context.Failure,"OIDC authentication error!");
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnTicketReceived = context =>
                         {
-                            authConfig.Logger?.Debug("OAuth token received");
+                            authConfig.Logger.Debug("OAuth token received");
                             return Task.CompletedTask;
                         },
                         OnAccessDenied = context =>
                         {
-                            authConfig.Logger?.Information($"Access denied: {context.AccessDeniedPath}");
+                            authConfig.Logger.Information($"Access denied: {context.AccessDeniedPath}");
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -109,7 +109,7 @@ namespace TetraPak.AspNet
                             var userInfoEndpoint = authConfig.UserInformationUrl;
                             return Task.CompletedTask;
                         },
-                        // OnRedirectToAuthorizationEndpoint = context => obsolete
+                        // OnRedirectToAuthorizationEndpoint = context => 
                         // {
                         //     return Task.CompletedTask;
                         // }
@@ -121,7 +121,7 @@ namespace TetraPak.AspNet
         public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
         {
             services.AddSingleton<TetraPakAuthConfig>();
-            services.AddTetraPakClaimsTransformation();
+            services.AddTetraPakWebClientClaimsTransformation();
             services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -131,8 +131,8 @@ namespace TetraPak.AspNet
             var logger = authConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
             if (authConfig is null)
             {
-                logger?.Error(new Exception($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
-                return; // todo log this failure!
+                logger.Error(new Exception($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
+                return;
             }
 
             services.AddAuthentication(options =>
@@ -150,7 +150,7 @@ namespace TetraPak.AspNet
                             if (!await context.RefreshTokenIfExpiredAsync(authConfig, logger))
                                 return;
                             
-                            // transfer access and id token to HttpContext ...
+                            // transfer access and id token to HttpContext, making them available as ambient values ...
                             trySetToken(AmbientData.Keys.AccessToken);
                             trySetToken(AmbientData.Keys.IdToken);
 
@@ -178,7 +178,7 @@ namespace TetraPak.AspNet
                     options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.ProtocolValidator.RequireNonce = false; // nonstandard
-                    // options.GetClaimsFromUserInfoEndpoint = true;
+                    //options.GetClaimsFromUserInfoEndpoint = true;
                     options.SaveTokens = true;
                     options.CallbackPath = authConfig.CallbackPath is { } 
                         ? new PathString(authConfig.CallbackPath) 
@@ -211,33 +211,37 @@ namespace TetraPak.AspNet
 
                     options.Events = new OpenIdConnectEvents
                     {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.TryReadAuthorization(options, authConfig, logger, out var token))
+                            {
+                                context.Token = token;
+                            }          
+                            return Task.CompletedTask;
+                        },
                         OnRemoteFailure = context =>
                         {
-                            authConfig.Logger?.Error(context.Failure,"OIDC authentication error!");
+                            authConfig.Logger.Error(context.Failure,"OIDC authentication error!");
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnTicketReceived = context =>
                         {
-                            authConfig.Logger?.Debug("Token received");
+                            authConfig.Logger.Debug("Token received");
                             context.Properties.IsPersistent = true;
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context =>
                         {
-                            authConfig.Logger?.Warning($"OIDC authentication failed! {context.Exception.Message}");
+                            authConfig.Logger.Warning($"OIDC authentication failed! {context.Exception.Message}");
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnAccessDenied = context =>
                         {
-                            authConfig.Logger?.Information($"Access denied: {context.AccessDeniedPath}");
+                            authConfig.Logger.Information($"Access denied: {context.AccessDeniedPath}");
                             context.HandleResponse();
                             return Task.FromResult(0);
-                        },
-                        OnMessageReceived = context =>
-                        {
-                            return Task.CompletedTask;
                         },
                         // OnAuthorizationCodeReceived = context => obsolete
                         // {
@@ -251,30 +255,30 @@ namespace TetraPak.AspNet
                             context.HttpContext.Items.Add(AmbientData.Keys.AccessToken, handler.WriteToken(context.SecurityToken));
                             return Task.CompletedTask;
                         },
-                        OnTokenResponseReceived = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnRedirectToIdentityProvider = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnRemoteSignOut = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnUserInformationReceived = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnSignedOutCallbackRedirect = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnRedirectToIdentityProviderForSignOut = context =>
-                        {
-                            return Task.CompletedTask;
-                        }
+                        // OnTokenResponseReceived = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnRedirectToIdentityProvider = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnRemoteSignOut = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnUserInformationReceived = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnSignedOutCallbackRedirect = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnRedirectToIdentityProviderForSignOut = context =>
+                        // {
+                        //     return Task.CompletedTask;
+                        // }
                     };
             });
         }
@@ -284,7 +288,7 @@ namespace TetraPak.AspNet
     {
         public static async Task<bool> RefreshTokenIfExpiredAsync(
             this CookieValidatePrincipalContext context,
-            TetraPakAuthConfig auth,
+            TetraPakAuthConfig authConfig,
             ILogger logger)
         {
             if (!isExpired())
@@ -294,7 +298,7 @@ namespace TetraPak.AspNet
             if (refreshToken is null)
                 return true;
 
-            var outcome = await auth.RefreshTokenAsync(refreshToken, logger);
+            var outcome = await authConfig.RefreshTokenAsync(refreshToken, logger);
             if (!outcome)
                 return await fail();
             
@@ -325,7 +329,7 @@ namespace TetraPak.AspNet
                 var now = DateTimeOffset.UtcNow;
                 expiresAt = DateTimeOffset.Parse(expiresAtString);
                 var remainingTimeSpan = expiresAt.Subtract(now);
-                var refreshThresholdTimeSpan = TimeSpan.FromSeconds(auth.RefreshThreshold);
+                var refreshThresholdTimeSpan = TimeSpan.FromSeconds(authConfig.RefreshThreshold);
                 var result = remainingTimeSpan < refreshThresholdTimeSpan;
                 
                 logger.Trace(

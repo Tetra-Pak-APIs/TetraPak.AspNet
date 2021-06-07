@@ -39,7 +39,7 @@ namespace TetraPak.AspNet
 
                 using var r = new StreamReader(stream); 
                 var text = await r.ReadToEndAsync();
-                logger.DebugWebResponse(response as HttpWebResponse, text);
+                logger.Debug(response as HttpWebResponse, text);
                 return await buildAuthResultAsync(text);
             }
             catch (Exception ex)

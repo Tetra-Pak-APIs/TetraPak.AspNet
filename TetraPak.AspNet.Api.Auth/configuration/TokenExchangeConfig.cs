@@ -36,7 +36,7 @@ namespace TetraPak.AspNet.Api.Auth
             }
             catch (Exception ex)
             {
-                logger?.Error(ex, $"Invalid configuration section: '{KeySection}'. {ex}");
+                logger.Error(ex, $"Invalid configuration section: '{KeySection}'. {ex}");
                 return Array.Empty<TokenExchangeConfig>();
             }
         }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
@@ -16,8 +17,9 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class UserInformationProvider
     {
-        readonly TetraPakAuthConfig _authConfig;
         static readonly IDictionary<string, object> s_cache = new Dictionary<string, object>();
+        readonly TetraPakAuthConfig _authConfig;
+        readonly UserInformationTokenValidator _tokenValidator;
 
         ILogger Logger => _authConfig.Logger;
 
@@ -90,6 +92,15 @@ namespace TetraPak.AspNet.Identity
             return await completionSource.Task;
         }
 
+        async Task<Outcome<string>> onValidateAccessToken(string accessToken, bool isCached)
+        {
+            if (_tokenValidator is null)
+                return Outcome<string>.Success(accessToken);
+            
+            Logger.Trace($"{this} validates/processes access token (by custom validator: {_tokenValidator})");
+            return await _tokenValidator.ValidateAccessTokenAsync(accessToken, isCached);
+        }
+
         TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
         {
             Logger?.Debug($"Calls user info endpoint: {userInfoUri}");
@@ -98,24 +109,25 @@ namespace TetraPak.AspNet.Identity
             {
                 using (Logger?.BeginScope("[GET USER INFO BEGIN]"))
                 {
+                    
                     var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
                     request.Method = "GET";
                     request.Accept = "*/*";
-                    request.Headers.Add($"Authorization: Bearer {accessToken}");
+                    request.Headers.Add($"{HeaderNames.Authorization}: {accessToken}");
 
-                    Logger?.DebugWebRequest(request, null);
+                    Logger?.Debug(request, null);
 
                     try
                     {
                         var response = await request.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(
-                                                 "Unexpected error: No response when requesting token.");
+                                                 "Unexpected error: No response when requesting user information.");
 
                         using var r = new StreamReader(responseStream);
                         var text = await r.ReadToEndAsync();
 
-                        Logger?.DebugWebResponse(response as HttpWebResponse, text);
+                        Logger?.Debug(response as HttpWebResponse, text);
 
                         var dictionary = JsonSerializer.Deserialize<IDictionary<string, string>>(text);
                         tcs.SetResult(new UserInformation(dictionary));
@@ -147,9 +159,16 @@ namespace TetraPak.AspNet.Identity
         /// <param name="authConfig">
         ///   Provides the required  
         /// </param>
-        public UserInformationProvider(TetraPakAuthConfig authConfig)
+        /// <param name="tokenValidator">
+        ///   (optional)<br/>
+        ///   A custom token validator delegate.
+        /// </param>
+        public UserInformationProvider(TetraPakAuthConfig authConfig, UserInformationTokenValidator tokenValidator = null)
         {
             _authConfig = authConfig;
+            if (tokenValidator is null) return;
+            _tokenValidator = tokenValidator;
+            _tokenValidator.Initialize(authConfig);
         }
     }
 }

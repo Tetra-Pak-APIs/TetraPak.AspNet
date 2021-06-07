@@ -10,4 +10,6 @@ When writing web-based solutions for Tetra Pak you should ensure you are in line
 
 There is a difference, however, depending on whether you are writing a web client application (such as a ASP.NET Core MVC solution based on Razor or Blazor) or whether you are writing a Web API. This package mainly supports you in writing a web API so if you are writing a web client application refer to the **TetraPak.AspNet** ![TODO: Link to TetraPak:AspNet]! package.
 
-TODO
+### The "Sidecar JWT Bearer Assertion" pattern
+
+One very typical security pattern supported by the Tetra Pak Login APIs is the *Sidecar JWT Bearer Assertion* pattern. 
