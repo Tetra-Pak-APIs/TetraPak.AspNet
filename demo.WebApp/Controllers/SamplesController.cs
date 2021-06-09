@@ -2,6 +2,7 @@
 using demo.WebApp.Backends;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 
 namespace demo.WebApp.Controllers
@@ -18,8 +19,8 @@ namespace demo.WebApp.Controllers
         
         public SamplesController(
             SamplesService backend, 
-            ILogger logger) 
-        : base(backend, logger)
+            TetraPakApiAuthConfig authConfig) 
+        : base(backend, authConfig)
         {
         }
     }

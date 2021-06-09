@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,7 +7,6 @@ using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Logging;
-using LoggerExtensions = TetraPak.Logging.LoggerExtensions;
 
 namespace TetraPak.AspNet.Auth
 {
@@ -43,11 +39,12 @@ namespace TetraPak.AspNet.Auth
         string _authDomain;
         string _authorizationHeader;
         string _identityTokenHeader;
+        string _requestReferenceIdHeader;
         bool? _isPkceUsed;
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument> _masterSourceTcs;
-        
+
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
@@ -103,7 +100,6 @@ namespace TetraPak.AspNet.Auth
         public string IdentityTokenHeader
         {
             get => _identityTokenHeader ?? Section[nameof(IdentityTokenHeader)] ?? AmbientData.Keys.IdToken;
-
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -111,6 +107,26 @@ namespace TetraPak.AspNet.Auth
                         $"{nameof(IdentityTokenHeader)} must be a valid identifier");
 
                 _identityTokenHeader = value;
+            }
+        }
+
+        /// <summary>
+        ///   Gets or sets the name of the header used to obtain the request reference id.
+        ///   The default value is <see cref="AmbientData.Keys.RequestReferenceId"/>).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///   An invalid/empty value was assigned.
+        /// </exception>
+        public string RequestReferenceIdHeader
+        {
+            get => _requestReferenceIdHeader ?? Section[nameof(RequestReferenceIdHeader)] ?? AmbientData.Keys.RequestReferenceId;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException(nameof(value),
+                        $"{nameof(RequestReferenceIdHeader)} must be a valid identifier");
+
+                _requestReferenceIdHeader = value;
             }
         }
 

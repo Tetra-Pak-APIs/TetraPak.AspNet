@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +8,7 @@ using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api.Auth
 {
-    public static class TetraPakAuth
+    public static class TetraPakApiAuth
     {
         internal static string Host { get; private set; }
         
@@ -28,7 +29,7 @@ namespace TetraPak.AspNet.Api.Auth
             SidecarJwBearerAssertionOptions options = null)
         {
             c.AddSingleton<HostProvider>();
-            c.AddSingleton<TetraPakAuthConfig>();
+            c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
             
             c.AddTetraPakWebApiClaimsTransformation();
             c.AddTetraPakUserInformation();
@@ -63,11 +64,28 @@ namespace TetraPak.AspNet.Api.Auth
             
             return app;
         }
+
+        public static IApplicationBuilder UseRequestReferenceId(this IApplicationBuilder app)
+        {
+            var authConfig = app.ApplicationServices.GetService<TetraPakApiAuthConfig>();
+            if (authConfig is null)
+                throw new InvalidOperationException(
+                    "Cannot use request id middleware. "+
+                    $"Unable to resolve a {typeof(TetraPakApiAuthConfig)} service");
+                
+            app.Use((context, func) =>
+            {
+                context.Request.GetRequestReferenceId(authConfig, true);
+                return func();
+            });
+            
+            return app;
+        }
     }
 
     public class HostProvider
     {
-        internal string GetHost() => TetraPakAuth.Host;
+        internal string GetHost() => TetraPakApiAuth.Host;
     }
     
     
@@ -76,9 +94,9 @@ namespace TetraPak.AspNet.Api.Auth
     /// </summary>
     public class SidecarJwBearerAssertionOptions
     {
-        public TetraPakAuthConfig AuthConfig { get; }
+        public TetraPakApiAuthConfig AuthConfig { get; }
 
-        public SidecarJwBearerAssertionOptions(TetraPakAuthConfig authConfig)
+        public SidecarJwBearerAssertionOptions(TetraPakApiAuthConfig authConfig)
         {
             AuthConfig = authConfig;
         }

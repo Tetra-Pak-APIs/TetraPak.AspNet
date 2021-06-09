@@ -135,5 +135,72 @@ namespace TetraPak.AspNet
             }
             return EnumOutcome<ActorToken>.Success(list.ToArray());
         }
+
+        /// <summary>
+        ///   Gets (and, optionally, sets) a single header value.
+        /// </summary>
+        /// <param name="dictionary">
+        ///   The header dictionary to get (set) value from.
+        /// </param>
+        /// <param name="key">
+        ///   Identifies the header value.
+        /// </param>
+        /// <param name="useDefault">
+        ///   (optional)<br/>
+        ///   A default value to be used if one cannot be found in the header dictionary.
+        /// </param>
+        /// <param name="setDefault">
+        ///   (optional; default=<c>false</c>); only applies if <paramref name="useDefault"/> is assigned)<br/>
+        ///   When set, the <paramref name="useDefault"/> value will automatically be added to the header dictionary,
+        ///   affecting the request.
+        /// </param>
+        /// <returns>
+        ///   A (single) <see cref="string"/> value.
+        /// </returns>
+        public static string GetSingleValue(
+            this IHeaderDictionary dictionary,
+            string key,
+            string useDefault,
+            bool setDefault = false)
+        {
+            if (dictionary.TryGetValue(key, out var values))
+                return values.First();
+
+            if (string.IsNullOrWhiteSpace(useDefault))
+                return null;
+
+            if (setDefault)
+            {
+                dictionary.Add(key, useDefault);
+            }
+
+            return useDefault;
+        }
+
+        /// <summary>
+        ///   Gets a standardized value used for referencing a unique request. 
+        /// </summary>
+        /// <param name="request">
+        ///   The <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="authConfig">
+        ///   Carries the Tetra Pak authorization configuration.
+        /// </param>
+        /// <param name="enforce">
+        ///   (optional; default=<c>false</c>)<br/>
+        ///   When set, a random unique string will be generated and attached to the request.  
+        /// </param>
+        /// <returns>
+        ///   A unique <see cref="string"/> value. 
+        /// </returns>
+        public static string GetRequestReferenceId(
+            this HttpRequest request,
+            TetraPakAuthConfig authConfig,
+            bool enforce = false)
+        {
+            var key = authConfig.RequestReferenceIdHeader;
+            return request.Headers.GetSingleValue(key, new RandomString(), enforce);
+        }
+
     }
 }

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
 using TetraPak.Serialization;
@@ -27,7 +26,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         bool IsDevelopment => _hostEnvironment.IsDevelopment();
         
-        public TetraPakAuthConfig AuthConfig => _options.AuthConfig;
+        public TetraPakApiAuthConfig AuthConfig => _options.AuthConfig;
 
         public ILogger Logger { get; }
         
@@ -85,19 +84,19 @@ namespace TetraPak.AspNet.Api.Auth
                             context.Token = token;
                         }   
                     },
-                    OnTokenValidated = context =>
+                    OnTokenValidated = _ =>
                     {
-                        Logger.Debug("Token is valid");
+                        Logger.Debug("JWT Bearer is valid");
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
-                        if (!Logger.IsEnabled(LogLevel.Debug))
+                        if (Logger.IsEnabled(LogLevel.Debug))
                         {
                             var message = context.Exception is { }
-                                ? $"JWT Bearer Assertion failed: {context.Exception.Message}"
-                                : "JWT Bearer Assertion failed";
-                            Logger.Debug(message);
+                                ? $"JWT Bearer assertion failed: {context.Exception.Message}"
+                                : "JWT Bearer assertion failed";
+                            Logger.Debug(message, context.HttpContext.Request.GetRequestReferenceId(AuthConfig));
                         }
 
                         // terminates the request (todo: Consider option to allow other authentication schemes)
@@ -105,20 +104,20 @@ namespace TetraPak.AspNet.Api.Auth
                         {
                             context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                             var response = IsDevelopment
-                                ? new ApiErrorResponse(context.Exception.Message)
+                                ? new ApiErrorResponse(context.Exception.Message, context.HttpContext, AuthConfig)
                                 {
                                     Description = context.Exception.StackTrace
                                 }
-                                : new ApiErrorResponse("JWT authentication failed");
+                                : new ApiErrorResponse("JWT authentication failed", context.HttpContext, AuthConfig);
                             await context.Response.WriteAsync(response.ToJson(IsDevelopment, JsonIgnoreCondition.WhenWritingNull));
                         });
                         return Task.CompletedTask;
                     },
-                    OnForbidden = context =>
+                    OnForbidden = _ =>
                     {
                         return Task.CompletedTask;
                     },
-                    OnChallenge = context =>
+                    OnChallenge = _ =>
                     {
                         return Task.CompletedTask;
                     }

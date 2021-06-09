@@ -6,13 +6,16 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using TetraPak.AspNet.Api.Auth;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Controllers
 {
     public class BusinessApiController : ControllerBase
     {
-        protected ILogger Logger { get; }
+        public TetraPakApiAuthConfig AuthConfig { get; }
+
+        protected ILogger Logger => AuthConfig.Logger;
 
         public AuthenticationHeaderValue AuthenticationHeaderValue =>
             AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
@@ -33,7 +36,7 @@ namespace TetraPak.AspNet.Api.Controllers
             var options = new DictionaryTransformationOptions {IgnoreNullValues = true};
             var errorResponse = parseOutcome
                 ? parseOutcome.Value
-                : new ApiErrorResponse(error.Message)
+                : new ApiErrorResponse(error.Message, HttpContext, AuthConfig)
                 {
                     Status = ((int) HttpStatusCode.InternalServerError).ToString()
                 };
@@ -69,9 +72,9 @@ namespace TetraPak.AspNet.Api.Controllers
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
 
-        protected BusinessApiController(ILogger logger)
+        protected BusinessApiController(TetraPakApiAuthConfig authConfig)
         {
-            Logger = logger;
+            this.AuthConfig = authConfig;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(environment))
             {
@@ -84,5 +87,6 @@ namespace TetraPak.AspNet.Api.Controllers
             }
             Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
         }
+
     }
 }

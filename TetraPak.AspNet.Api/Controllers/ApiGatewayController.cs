@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Api.Auth;
 
 namespace TetraPak.AspNet.Api.Controllers
 {
@@ -7,8 +7,8 @@ namespace TetraPak.AspNet.Api.Controllers
     {
         public TBackend Backend { get; }
 
-        public ApiGatewayController(TBackend backend, ILogger logger)
-        : base(logger)
+        public ApiGatewayController(TBackend backend, TetraPakApiAuthConfig authConfig)
+        : base(authConfig)
         {
             Backend = backend;
         }

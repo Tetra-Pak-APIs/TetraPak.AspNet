@@ -39,6 +39,7 @@ namespace WebAPI
 
             app.UseRouting();
 
+            app.UseRequestReferenceId();
             app.UseSidecarJwtAuthentication(); // <-- add this (after UserRouting and before UseAuthorization)
             
             app.UseAuthorization();

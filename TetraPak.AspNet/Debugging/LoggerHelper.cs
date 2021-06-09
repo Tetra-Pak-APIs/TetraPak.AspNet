@@ -11,7 +11,7 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Debugging
 {
-    public  static partial class LogExtensions
+    public  static partial class LoggerHelper
     {
         static bool s_isAssemblyVersionsAlreadyLogged;
         static bool s_isAuthConfigAlreadyLogged;

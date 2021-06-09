@@ -17,6 +17,8 @@ namespace TetraPak.AspNet
             public const string RefreshToken = "refresh_token";
             public const string ExpiresAt = "expires_at";
             public const string ExpiresIn = "expires_in";
+            public const string RequestReferenceId = "api-flow-id";
+
         }
 
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 

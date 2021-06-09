@@ -12,7 +12,7 @@ namespace TetraPak.AspNet.Identity
     {
         readonly TetraPakAuthConfig _authConfig;
 
-        public ILogger Logger { get; set; }
+        public ILogger Logger => _authConfig.Logger;
 
         public async Task<Outcome<UserInformation>> GetUserInformationAsync(string accessToken)
         {
@@ -28,10 +28,9 @@ namespace TetraPak.AspNet.Identity
             }
         }
         
-        public TetraPakUserInformation(TetraPakAuthConfig authConfig, ILogger<TetraPakUserInformation> logger)
+        public TetraPakUserInformation(TetraPakAuthConfig authConfig)
         {
             _authConfig = authConfig;
-            Logger = logger;
         }
     }
 }

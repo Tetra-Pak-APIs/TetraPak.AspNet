@@ -1,49 +1,61 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+using TetraPak.AspNet.Api.Auth;
 using TetraPak.DynamicEntities;
 using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api
 {
-    // [Serializable, JsonConverter(typeof(DynamicEntityJsonConverter<ApiErrorResponse>))]
-    public class ApiErrorResponse  //: DynamicEntity
+    [Serializable, JsonConverter(typeof(DynamicEntityJsonConverter<ApiErrorResponse>))]
+    public class ApiErrorResponse  : DynamicEntity
     {
         [JsonPropertyName("title")]
-        public string Title { get; set; }
-        // {
-        //     get => Get<string>("title");
-        //     set => Set("title", value);
-        // }
+        public string Title //{ get; set; }
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
         [JsonPropertyName("description")]
-        public string Description { get; set; }
-        // {
-        //     get => Get<string>("description");
-        //     set => Set("description", value);
-        // }
+        public string Description // { get; set; }
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
         [JsonPropertyName("messageId")]
-        public string MessageId { get; set; }
-        // {
-        //     get => Get<string>("messageId");
-        //     set => Set("messageId", value);
-        // }
+        public string MessageId // { get; set; }
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
         [JsonPropertyName("type")]
-        public string Type { get; set; }
-        // {
-        //     get => Get<string>("type");
-        //     set => Set("type", value);
-        // }
+        public string Type // { get; set; }
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
         [JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string Status // { get; set; }
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
-        public ApiErrorResponse(string title)
+        public ApiErrorResponse(string title, HttpContext context, TetraPakApiAuthConfig authConfig)
         {
             Title = title;
+            var messageId = context.Request.GetRequestReferenceId(authConfig);
+            if (messageId is { })
+            {
+                MessageId = messageId;
+            }
         }
     }
 
@@ -99,7 +111,7 @@ namespace TetraPak.AspNet.Api
     {
         public KeyTransformationFormat KeyTransformationFormat { get; set; } = KeyTransformationFormat.CamelCase;
 
-        public bool IgnoreNullValues { get; set; } = false;
+        public bool IgnoreNullValues { get; set; }
 
         public bool TransformChildren { get; set; } = false;
 

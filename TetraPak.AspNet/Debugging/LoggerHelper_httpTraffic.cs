@@ -10,7 +10,7 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Debugging
 {
-    partial class LogExtensions 
+    partial class LoggerHelper 
     {
         public static void Debug(this ILogger logger, HttpWebRequest request, string body = null)
         {

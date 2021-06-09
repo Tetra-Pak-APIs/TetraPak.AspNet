@@ -55,7 +55,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         public TetraPakWebApiClaimsTransformation(
             AmbientData ambientData, 
-            TetraPakAuthConfig authConfig, 
+            TetraPakApiAuthConfig authConfig, 
             TetraPakUserInformation userInformation, 
             IHttpContextAccessor httpContextAccessor,
             ITokenExchangeService tokenExchangeService,

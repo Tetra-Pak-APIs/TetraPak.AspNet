@@ -10,7 +10,7 @@ namespace TetraPak.AspNet.Api.Auth
         public static bool TryReadCustomAuthorization(
             this MessageReceivedContext context,
             JwtBearerOptions options,
-            TetraPakAuthConfig authConfig,
+            TetraPakApiAuthConfig authConfig,
             ILogger logger, 
             out string authorization)
         {
@@ -27,7 +27,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
                 var isJwtToken = authorization.TryParseToJwtSecurityToken(out var jwt);
 
-                if (!logger.IsEnabled(LogLevel.Debug))
+                if (!logger?.IsEnabled(LogLevel.Debug) ?? false)
                     return isTokenAvailable;
             
                 logger.Debug($"Received message: {context.Request.Path.Value}");
