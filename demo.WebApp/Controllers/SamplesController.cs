@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using demo.WebApp.Backends;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 
