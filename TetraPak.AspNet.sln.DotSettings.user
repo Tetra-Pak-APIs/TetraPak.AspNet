@@ -2,5 +2,7 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\serembrattj\.nuget\packages\tetrapak.aspnet\0.5.0-beta\lib\netcoreapp3.1\TetraPak.AspNet.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=9baeb705_002D9097_002D4839_002Da125_002D0ad6abaf4131_0023TetraPak_002EAspNet_002EApi_002EAuth/@EntryIndexedValue">True</s:Boolean>
+	
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Pkce/@EntryIndexedValue">True</s:Boolean>
 	</wpf:ResourceDictionary>

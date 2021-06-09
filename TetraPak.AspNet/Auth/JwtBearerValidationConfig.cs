@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Auth
     {
         string _audience;
         string _issuer;
-        bool _validateLifetime;
+        bool? _validateLifetime;
 
         protected override string SectionIdentifier => "ValidateJwtBearer";
 
@@ -26,7 +26,7 @@ namespace TetraPak.AspNet.Auth
 
         public bool ValidateLifetime
         {
-            get => Section.GetNullableBool(nameof(ValidateLifetime)) ?? _validateLifetime;
+            get => _validateLifetime ?? Section.GetBool(nameof(ValidateLifetime), true);
             set => _validateLifetime = value;
         }
 
