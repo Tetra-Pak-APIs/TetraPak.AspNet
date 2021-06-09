@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>TetraPak.Tools</RootNamespace>
+        <Company>Tetra Pak</Company>
+        <Product>nuget-project tool</Product>
     </PropertyGroup>
 
     <ItemGroup>

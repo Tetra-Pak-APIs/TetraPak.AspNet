@@ -25,7 +25,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nugetproj", "aligncsproj\nu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.CLI", "TetraPak.CLI\TetraPak.CLI.csproj", "{C64723DC-C019-4B31-ABB7-6F654BAB6614}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projector", "projector\projector.csproj", "{219D05BC-BE89-4444-ABB0-CD46A56D4721}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuget-projector", "nuget-projector\nuget-projector.csproj", "{219D05BC-BE89-4444-ABB0-CD46A56D4721}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_git", "_git", "{78C8969E-4312-4A4B-8216-F5C9921572BD}"
+ProjectSection(SolutionItems) = preProject
+	.gitignore = .gitignore
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
