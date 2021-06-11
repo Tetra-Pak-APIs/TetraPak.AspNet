@@ -9,11 +9,11 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
-    /// <summary>
-    ///   
-    /// </summary>
+    /// <inheritdoc />
     public class TetraPakWebApiClaimsTransformation : TetraPakClaimsTransformation
     {
+        const string IdentityTokenCache = "IdTokens";
+        
         readonly ITokenExchangeService _tokenExchangeService;
         
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
@@ -23,8 +23,14 @@ namespace TetraPak.AspNet.Api.Auth
                 var accessTokenOutcome = await base.OnGetAccessTokenAsync(cancellationToken);
                 if (!accessTokenOutcome)
                     return accessTokenOutcome;
-
-                // todo Support caching TX tokens
+                
+                // try getting a cached exchanged token ... 
+                var accessToken = accessTokenOutcome.Value;
+                var cachedOutcome = await getCachedIdentityTokenAsync(accessToken);
+                if (cachedOutcome)
+                    return cachedOutcome;
+                
+                // exchange token for 
                 var clientCredentials = await OnGetClientCredentials();
                 var credentials = new BasicAuthCredentials(clientCredentials.Identity, clientCredentials.Secret);
 
@@ -44,12 +50,34 @@ namespace TetraPak.AspNet.Api.Auth
                 var exchangedToken = isBearerToken
                     ? new BearerToken(actorToken.Identity, false)
                     : actorToken;
+                
+                // cache exchanged token and return it ...
+                await cacheTokenExchangeAsync(accessToken, exchangedToken);
                 return Outcome<ActorToken>.Success(exchangedToken);
             }
             catch (Exception ex)
             {
                 Logger.Error(new Exception($"Claims transformation failure: {ex.Message}", ex));
                 throw;
+            }
+        }
+
+        async Task<Outcome<ActorToken>> getCachedIdentityTokenAsync(ActorToken accessToken)
+        {
+            if (AmbientData.Cache is null)
+                return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
+
+            return await AmbientData.Cache.GetAsync<ActorToken>(IdentityTokenCache, accessToken);
+        }
+
+        async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
+        {
+            if (AmbientData.Cache is { })
+            {
+                await AmbientData.Cache.AddOrUpdateAsync(
+                    IdentityTokenCache, 
+                    accessToken,
+                    exchangedToken);
             }
         }
 

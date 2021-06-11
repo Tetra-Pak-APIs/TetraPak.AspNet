@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -7,13 +8,14 @@ using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Logging;
+using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakAuthConfig : TetraPak.Configuration.ConfigurationSection
+    public class TetraPakAuthConfig : ConfigurationSection
     {
         static readonly object s_syncRoot = new();
         static readonly string[] s_defaultScope = { "general", "profile", "email", "openid" };
@@ -30,41 +32,36 @@ namespace TetraPak.AspNet.Auth
         protected override string SectionIdentifier => "Auth-TetraPak"; 
         protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
         
-        string _authorityUrl;
-        string _tokenIssuerUrl;
-        string _userInfoUrl;
+        // ReSharper disable NotAccessedField.Local
+        // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
         string _clientId;
         string _clientSecret;
         string _callbackPath;
-        string _authDomain;
         string _authorizationHeader;
         string _identityTokenHeader;
         string _requestReferenceIdHeader;
         bool? _isPkceUsed;
+        TimeSpan? _cacheIdentityTokenLifetime;
+        // ReSharper restore NotAccessedField.Local
+        string _authorityUrl;
+        string _tokenIssuerUrl;
+        string _userInfoUrl;
+        string _authDomain;
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument> _masterSourceTcs;
 
+        // ReSharper disable UnusedMember.Global
+        
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
         public JwtBearerValidationConfig JwtBearerValidation { get; }
-
-        internal string GetSectionIdentifier() => SectionIdentifier;
         
-        /// <summary>
-        ///   Gets the "well known" OIDC discovery document. The document will be downloaded and cached as needed.  
-        /// </summary>
-        /// <returns>
-        ///   A <see cref="DiscoveryDocument"/>.
-        /// </returns>
-        public async Task<DiscoveryDocument> GetDiscoveryDocumentAsync()
+        protected override FieldInfo OnGetField(string fieldName)
         {
-            if (s_discoveryDocument is { })
-                return s_discoveryDocument; 
-                
-            s_discoveryDocument = await discoverAsync();
-            return s_discoveryDocument;
+            var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            return field ?? base.OnGetField(fieldName);
         }
 
         /// <summary>
@@ -77,8 +74,7 @@ namespace TetraPak.AspNet.Auth
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         public string AuthorizationHeader
         {
-            get => _authorizationHeader ?? Section[nameof(AuthorizationHeader)] ?? HeaderNames.Authorization;
-
+            get => GetFromFieldThenSection(HeaderNames.Authorization); 
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -99,7 +95,7 @@ namespace TetraPak.AspNet.Auth
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         public string IdentityTokenHeader
         {
-            get => _identityTokenHeader ?? Section[nameof(IdentityTokenHeader)] ?? AmbientData.Keys.IdToken;
+            get => GetFromFieldThenSection(AmbientData.Keys.IdToken); // _identityTokenHeader ?? Section[nameof(IdentityTokenHeader)] ?? AmbientData.Keys.IdToken; obsolete
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -119,7 +115,7 @@ namespace TetraPak.AspNet.Auth
         /// </exception>
         public string RequestReferenceIdHeader
         {
-            get => _requestReferenceIdHeader ?? Section[nameof(RequestReferenceIdHeader)] ?? AmbientData.Keys.RequestReferenceId;
+            get => GetFromFieldThenSection(AmbientData.Keys.RequestReferenceId); // _requestReferenceIdHeader ?? Section[nameof(RequestReferenceIdHeader)] ?? AmbientData.Keys.RequestReferenceId; obsolete
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -128,6 +124,38 @@ namespace TetraPak.AspNet.Auth
 
                 _requestReferenceIdHeader = value;
             }
+        }
+
+        /// <summary>
+        ///   Gets or sets a value specifying whether to always cache the token used to build the identity.
+        /// </summary>
+        /// <remarks>
+        ///   In the configuration section this value can be expressed either as seconds (an integer),
+        ///   like so: <c>"CacheIdentityTokenLifetime": "150"</c>, or as a time span value (hh:mm:ss),
+        ///   like this: <c>"CacheIdentityTokenLifetime": "00:02:30"</c>.
+        /// </remarks>
+        /// <see cref="TetraPakClaimsTransformation"/>
+        public TimeSpan CacheIdentityTokenLifetime
+        {
+            get => GetFromFieldThenSection(TimeSpan.FromMinutes(5), (string value, out TimeSpan span) =>
+            {
+                if (int.TryParse(value, out var seconds))
+                {
+                    span = TimeSpan.FromSeconds(seconds);
+                    return true;
+                }
+
+                if (TimeSpan.TryParse(value, out var timeSpan))
+                {
+                    span = timeSpan;
+                    return true;
+                }
+
+                Logger.Warning($"Invalid value for {nameof(CacheIdentityTokenLifetime)}: \"{value}\"");
+                span = TimeSpan.Zero;
+                return false;
+            });
+            set => _cacheIdentityTokenLifetime = value;
         }
 
         /// <summary>
@@ -162,7 +190,6 @@ namespace TetraPak.AspNet.Auth
                     _ => throw new NotSupportedException($"Unsupported runtime environment: {Environment}")
                 };
             }
-            // ReSharper disable once UnusedMember.Global
             set => _authDomain = value;
         }
         
@@ -206,6 +233,68 @@ namespace TetraPak.AspNet.Auth
         ///   Indicates whether the authority domain has been assigned (intended mainly for testing purposes).
         /// </summary>
         internal bool IsAuthDomainAssigned => !string.IsNullOrWhiteSpace(_authDomain);
+
+        /// <summary>
+        ///   Gets a configured client id.
+        /// </summary>
+        public string ClientId
+        {
+            get => GetFromFieldThenSection<string>();
+            set => _clientId = value;
+        }
+
+        /// <summary>
+        ///   Gets a configured client secret.
+        /// </summary>
+        [RestrictedValue]
+        public string ClientSecret
+        {
+            get => GetFromFieldThenSection<string>();
+            set => _clientSecret = value;
+        }
+
+        /// <summary>
+        ///  Gets or sets a value specifying whether PKCE is to be used where applicable.
+        /// </summary>
+        public bool IsPkceUsed
+        {
+            get => GetFromFieldThenSection<bool>(); // _isPkceUsed ?? parseBool(Section[nameof(IsPkceUsed)]);
+            set => _isPkceUsed = value;
+        }
+        
+        /// <summary>
+        ///   Gets a configured callback path, or the default one (<see cref="DefaultCallbackPath"/>).  
+        /// </summary>
+        public string CallbackPath
+        {
+            get => GetFromFieldThenSection(DefaultCallbackPath);
+            set => _callbackPath = value;
+        }
+        
+        /// <summary>
+        ///   Specifies the source for identity claims (see <see cref="TetraPakIdentitySource"/>),
+        ///   such as <see cref="TetraPakIdentitySource.Api"/> or <see cref="TetraPakIdentitySource.IdToken"/>).
+        /// </summary>
+        public TetraPakIdentitySource IdentitySource { get; set; }
+        
+        // ReSharper restore UnusedMember.Global
+        
+        internal string GetSectionIdentifier() => SectionIdentifier;
+        
+        /// <summary>
+        ///   Gets the "well known" OIDC discovery document. The document will be downloaded and cached as needed.  
+        /// </summary>
+        /// <returns>
+        ///   A <see cref="DiscoveryDocument"/>.
+        /// </returns>
+        public async Task<DiscoveryDocument> GetDiscoveryDocumentAsync()
+        {
+            if (s_discoveryDocument is { })
+                return s_discoveryDocument; 
+                
+            s_discoveryDocument = await discoverAsync();
+            return s_discoveryDocument;
+        }
 
         string defaultUrl(string path) => $"{AuthDomain}{path}";
 
@@ -261,34 +350,6 @@ namespace TetraPak.AspNet.Auth
         }
 
         /// <summary>
-        ///   Gets a configured client id.
-        /// </summary>
-        public string ClientId
-        {
-            get => _clientId ?? Section [nameof(ClientId)];
-            set => _clientId = value;
-        }
-
-        /// <summary>
-        ///   Gets a configured client secret.
-        /// </summary>
-        [RestrictedValue]
-        public string ClientSecret
-        {
-            get => _clientSecret ?? Section [nameof(ClientSecret)];
-            set => _clientSecret = value;
-        }
-
-        /// <summary>
-        ///  Gets or sets a value specifying whether PKCE is to be used where applicable.
-        /// </summary>
-        public bool IsPkceUsed
-        {
-            get => _isPkceUsed ?? parseBool(Section[nameof(IsPkceUsed)]);
-            set => _isPkceUsed = value;
-        }
-
-        /// <summary>
         ///   Gets or sets the threshold time (in seconds) used for calculating when it is time
         ///   to refresh the access token when a refresh token was provided.
         /// </summary>
@@ -307,77 +368,35 @@ namespace TetraPak.AspNet.Auth
         /// </remarks>
         public int RefreshThreshold
         {
-            get => _refreshThresholdSeconds ?? parseInt(Section[nameof(RefreshThreshold)]);
+            get => _refreshThresholdSeconds ?? Section.GetValue<int>(nameof(RefreshThreshold)); // parseInt(Section[nameof(RefreshThreshold)]);
             set => _refreshThresholdSeconds = value;
         }
 
-        static bool parseBool(string s, bool useDefault = false)
-        {
-            return string.IsNullOrWhiteSpace(s) 
-                ? useDefault 
-                : bool.TryParse(s, out var b) 
-                    ? b 
-                    : useDefault;
-        }
-        
-        static int parseInt(string s, int useDefault = 0)
-        {
-            useDefault = Math.Abs(useDefault);
-            return string.IsNullOrWhiteSpace(s) 
-                ? useDefault 
-                : int.TryParse(s, out var result) 
-                    ? result 
-                    : useDefault;
-        }
-
-        /// <summary>
-        ///   Gets a configured callback path, or the default one (<see cref="DefaultCallbackPath"/>).  
-        /// </summary>
-        public string CallbackPath
-        {
-            get => _callbackPath ?? Section[nameof(CallbackPath)] ?? DefaultCallbackPath;
-            set => _callbackPath = value;
-        }
-        
-        /// <summary>
-        ///   Specifies the source for identity claims (see <see cref="TetraPakIdentitySource"/>),
-        ///   such as <see cref="TetraPakIdentitySource.Api"/> or <see cref="TetraPakIdentitySource.IdToken"/>).
-        /// </summary>
-        public TetraPakIdentitySource IdentitySource { get; set; }
+        // static bool parseBool(string s, bool useDefault = false)
+        // {
+        //     return string.IsNullOrWhiteSpace(s) 
+        //         ? useDefault 
+        //         : bool.TryParse(s, out var b) 
+        //             ? b 
+        //             : useDefault;
+        // }
+        //
+        // static int parseInt(string s, int useDefault = 0)
+        // {
+        //     useDefault = Math.Abs(useDefault);
+        //     return string.IsNullOrWhiteSpace(s) 
+        //         ? useDefault 
+        //         : int.TryParse(s, out var result) 
+        //             ? result 
+        //             : useDefault;
+        // }
 
         /// <summary>
         ///   Gets or sets a scope of identity claims to be requested while authenticating the identity.
         ///   When omitted a default scope will be used. 
         /// </summary>
-        public string[] Scope { get; } 
+        public string[] Scope { get; }
 
-        // void logSettings() obsolete
-        // {
-        //     if (Logger is null)
-        //         return;
-        //     
-        //     var sb = new StringBuilder();
-        //     foreach (var property in GetType().GetProperties())
-        //     {
-        //         var jsonProperty = property.GetCustomAttribute<JsonPropertyNameAttribute>();
-        //         var isRestricted = property.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
-        //         var key = jsonProperty?.Name ?? property.Name;
-        //         var value = isRestricted ? "**********" : property.GetValue(this);
-        //         sb.AppendLine($"  {key}: {getValue(value)}");
-        //     }
-        //     Logger.LogInformation("Auth Configuration:\n{Configuration}", sb.ToString());
-        //
-        //     static string getValue(object value)
-        //     {
-        //         if (value is string s)
-        //             return s;
-        //
-        //         return value.IsCollectionOf<string>(out var items) 
-        //             ? items.ConcatCollection(" ") 
-        //             : value?.ToString();
-        //     }
-        // }
-        
         Task<DiscoveryDocument> discoverAsync()
         {
             // ensures that the discovery document gets refreshed. If called a second time (from a different thread);
@@ -464,14 +483,6 @@ namespace TetraPak.AspNet.Auth
                 : null;
         }
 
-//         void initDiscoveryDocument(bool refreshDiscoveryDocument) obsolete
-//         {
-// #pragma warning disable 4014
-//             if (s_discoveryDocument is null || refreshDiscoveryDocument)
-//                 discoverAsync();
-// #pragma warning restore 4014
-//         }
-        
         TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.Api)
         {
             var s = Section[KeyIdentitySource];
@@ -504,6 +515,30 @@ namespace TetraPak.AspNet.Auth
 
             return scope.ToArray();
         }
+
+        // void parseIdentityTokenCacheLifetime()
+        // {
+        //     var s = Section[nameof(CacheIdentityTokenLifetime)];
+        //     if (string.IsNullOrWhiteSpace(s))
+        //     {
+        //         _cacheIdentityTokenLifetime = null;
+        //         return;
+        //     }
+        //     
+        //     if (int.TryParse(s, out var seconds))
+        //     {
+        //         _cacheIdentityTokenLifetime = TimeSpan.FromSeconds(seconds);
+        //         return;
+        //     }
+        //
+        //     if (TimeSpan.TryParse(s, out var timeSpan))
+        //     {
+        //         _cacheIdentityTokenLifetime = timeSpan;
+        //         return;
+        //     }
+        //     
+        //     Logger.Warning($"Invalid value for {nameof(CacheIdentityTokenLifetime)}: \"{s}\"");
+        // }
 
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 

@@ -109,7 +109,13 @@ namespace TetraPak.AspNet.Api.Auth
                                     Description = context.Exception.StackTrace
                                 }
                                 : new ApiErrorResponse("JWT authentication failed", context.HttpContext, AuthConfig);
-                            await context.Response.WriteAsync(response.ToJson(IsDevelopment, JsonIgnoreCondition.WhenWritingNull));
+#if NET5_0_OR_GREATER                                
+                            await context.Response.WriteAsync(
+                                response.ToJson(IsDevelopment, JsonIgnoreCondition.WhenWritingNull));
+#else                                
+                            await context.Response.WriteAsync(response.ToJson(IsDevelopment));
+#endif
+                            
                         });
                         return Task.CompletedTask;
                     },

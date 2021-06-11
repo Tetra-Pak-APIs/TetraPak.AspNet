@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
+// NOTE Disabled compiler warning about use of async with no await in body:
+#pragma warning disable 1998
 
 namespace TetraPak.AspNet.OpenIdConnect
 {

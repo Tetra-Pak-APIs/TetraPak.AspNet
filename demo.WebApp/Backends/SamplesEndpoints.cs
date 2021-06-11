@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api;
 
 namespace demo.WebApp.Backends
@@ -10,7 +11,7 @@ namespace demo.WebApp.Backends
         public SamplesEndpoints(
             IConfiguration configuration, 
             string sectionId = "SamplesServices") 
-        : base(configuration, sectionId)
+        : base(configuration, null, sectionId)
         {
         }
     }

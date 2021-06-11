@@ -4,22 +4,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
 {
-    public class Endpoints : ConfigSection, IEnumerable<KeyValuePair<string, EndpointUrl>>
+    /// <summary>
+    ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
+    /// </summary>
+    public class Endpoints : ConfigurationSection, IEnumerable<KeyValuePair<string, EndpointUrl>>
     {
+        protected override string SectionIdentifier { get; }
+
+        /// <summary>
+        ///   The default host address.
+        /// </summary>
         public string Host { get; set; }
 
+        /// <summary>
+        ///   A default base path.
+        /// </summary>
         public string BasePath { get; set; }
-
-        protected override void OnSetProperty(PropertyInfo property, object value)
+        
+        void setProperty(PropertyInfo property, object value)
         {
             if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(EndpointUrl)))
             {
                 value = new EndpointUrl(stringValue);
             }
-            base.OnSetProperty(property, value);
+            if (property.PropertyType == typeof(string))
+            {
+                property.SetValue(this, value);
+                return;
+            }
+            
+            var obj = Convert.ChangeType(value, property.PropertyType);
+            property.SetValue(this, obj);
         }
 
         public IEnumerator<KeyValuePair<string, EndpointUrl>> GetEnumerator()
@@ -35,16 +55,29 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        void assignProperties(IConfiguration configuration)
         {
-            return GetEnumerator();
+            var properties = GetType().GetProperties();
+            foreach (var property in properties.Where(i => i.CanWrite))
+            {
+                var value = configuration[property.Name];
+                if (value is null)
+                    continue;
+        
+                setProperty(property, value);
+            }
         }
 
-        public Endpoints(IConfiguration configuration, string sectionId = "Endpoints")
-        : base(configuration, sectionId)
+        public Endpoints(IConfiguration configuration, ILogger logger, string sectionIdentifier = "Endpoints")
+        : base(configuration, logger, sectionIdentifier)
         {
+            SectionIdentifier = sectionIdentifier;
             if (string.IsNullOrEmpty(Host))
                 throw new InvalidOperationException($"Missing configuration: {this}.{nameof(Host)}");
+            
+            assignProperties(Section);
         }
     }
 

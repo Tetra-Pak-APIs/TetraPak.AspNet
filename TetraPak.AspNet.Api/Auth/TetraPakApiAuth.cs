@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Auth;
+using TetraPak.Caching;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -30,6 +32,8 @@ namespace TetraPak.AspNet.Api.Auth
         {
             c.AddSingleton<HostProvider>();
             c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
+
+            addCachingIfConfigured(c);
             
             c.AddTetraPakWebApiClaimsTransformation();
             c.AddTetraPakUserInformation();
@@ -42,6 +46,20 @@ namespace TetraPak.AspNet.Api.Auth
             c.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null);
             return c;
+        }
+
+        static void addCachingIfConfigured(IServiceCollection c)
+        {
+            var services = c.BuildServiceProvider();
+            var authConfig = services.GetService<TetraPakAuthConfig>();
+            if (authConfig is null || authConfig.CacheIdentityTokenLifetime == TimeSpan.Zero)
+                return;
+
+            c.AddSingleton<ITimeLimitedRepositories>(provider =>
+            {
+                var logger = provider.GetService<ILogger<SimpleCache>>();
+                return new SimpleCache(logger) { DefaultLifeSpan = authConfig.CacheIdentityTokenLifetime };
+            });
         }
 
         /// <summary>

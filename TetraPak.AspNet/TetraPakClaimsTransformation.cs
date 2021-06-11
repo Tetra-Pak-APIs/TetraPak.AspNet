@@ -153,7 +153,7 @@ namespace TetraPak.AspNet
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
             if (AuthConfig.ClientId is null)
-                throw new InvalidOperationException($"Failed obtaining client id from configuration");
+                throw new InvalidOperationException("Failed obtaining client id from configuration");
             
             return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
         }

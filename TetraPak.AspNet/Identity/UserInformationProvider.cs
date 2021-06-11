@@ -114,11 +114,9 @@ namespace TetraPak.AspNet.Identity
                     request.Method = "GET";
                     request.Accept = "*/*";
                     request.Headers.Add($"{HeaderNames.Authorization}: {accessToken}");
-
-                    Logger?.Debug(request, null);
-
                     try
                     {
+                        Logger?.Debug(request, null);
                         var response = await request.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(

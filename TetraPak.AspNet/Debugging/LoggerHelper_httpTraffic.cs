@@ -27,6 +27,9 @@ namespace TetraPak.AspNet.Debugging
             
             void addBody()
             {
+                if (request.Method == HttpMethods.Get)
+                    return;
+                
                 if (body is {})
                 {
                     sb.AppendLine();
@@ -34,11 +37,15 @@ namespace TetraPak.AspNet.Debugging
                     return;
                 }
 
-                using var stream = request.GetRequestStream();
-                using var reader = new StreamReader(stream);
-                body = reader.ReadToEnd();
-                sb.AppendLine();
-                sb.AppendLine(body);
+                try
+                {
+                    using var stream = request.GetRequestStream();
+                    using var reader = new StreamReader(stream);
+                    body = reader.ReadToEnd();
+                    sb.AppendLine();
+                    sb.AppendLine(body);
+                }
+                catch (ProtocolViolationException)  { /* ignore */ }
             }
         }
 

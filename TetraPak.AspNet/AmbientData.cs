@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TetraPak.AspNet.Auth;
+using TetraPak.Caching;
 
 namespace TetraPak.AspNet
 {
@@ -20,6 +21,11 @@ namespace TetraPak.AspNet
             public const string RequestReferenceId = "api-flow-id";
 
         }
+
+        /// <summary>
+        ///   Gets a ambient cache.
+        /// </summary>
+        public ITimeLimitedRepositories Cache { get; }
 
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
@@ -43,11 +49,6 @@ namespace TetraPak.AspNet
         //     //     : Outcome<string>.Fail(new ArgumentOutOfRangeException());
         // }
         
-        public AmbientData(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
         /// <summary>
         ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).
         /// </summary>
@@ -60,7 +61,22 @@ namespace TetraPak.AspNet
 
             return false;
         }
-        
+     
+        /// <summary>
+        ///   Initializes the <see cref="AmbientData"/> instance.
+        /// </summary>
+        /// <param name="httpContextAccessor">
+        ///   A <see cref="IHttpContextAccessor"/> that is required for many of the ambient data operations.
+        /// </param>
+        /// <param name="cache">
+        ///   (optional)<br/>
+        ///   A caching mechanism for public availability through the <see cref="AmbientData"/> instance.
+        /// </param>
+        public AmbientData(IHttpContextAccessor httpContextAccessor, ITimeLimitedRepositories cache = null)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            Cache = cache;
+        }
     }
 
     public static class ClaimsIdentityExtensions

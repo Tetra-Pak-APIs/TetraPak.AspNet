@@ -41,7 +41,9 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
+#if NET5_0_OR_GREATER        
         [JsonConstructor]
+#endif        
         public TokenExchangeConfig()
         {
         }
