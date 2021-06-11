@@ -6,11 +6,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
 
-namespace TetraPak.AspNet
+namespace TetraPak.AspNet.Auth
 {
     partial class TetraPakAuth // refresh token flow
     {

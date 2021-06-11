@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TetraPak.AspNet;
+using TetraPak.AspNet.Auth;
 
 namespace demo.WebApp
 {
@@ -20,7 +20,6 @@ namespace demo.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTetraPakOidcAuthentication(); // <-- add this
-
             services.AddControllersWithViews();
         }
 

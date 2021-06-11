@@ -4,7 +4,7 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
 {
-    public static class ContextHelper
+    public static class ContextAuthHelper
     {
         public static bool TryReadAuthorization(
             this MessageReceivedContext context,

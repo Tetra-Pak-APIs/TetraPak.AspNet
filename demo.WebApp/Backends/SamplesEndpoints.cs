@@ -4,7 +4,7 @@ using TetraPak.AspNet.Api;
 
 namespace demo.WebApp.Backends
 {
-    public class SamplesEndpoints : Endpoints
+    public class SamplesEndpoints : EndpointsConfig
     {
         public EndpointUrl HelloWorld { get; set; }
         

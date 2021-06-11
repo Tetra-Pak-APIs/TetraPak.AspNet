@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using demo.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet;
 using TetraPak.AspNet.Auth;
 

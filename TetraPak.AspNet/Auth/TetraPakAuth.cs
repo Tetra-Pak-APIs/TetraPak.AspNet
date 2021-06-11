@@ -13,10 +13,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
-namespace TetraPak.AspNet
+namespace TetraPak.AspNet.Auth
 {
     // https://mauridb.medium.com/using-oauth2-middleware-with-asp-net-core-2-0-b31ffef58cd0
     public static partial class TetraPakAuth
@@ -204,10 +203,6 @@ namespace TetraPak.AspNet
                         ValidateIssuerSigningKey = false,
                         ValidateTokenReplay = true
                     };
-                
-                    // options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "UserId");
-                    // options.ClaimActions.MapJsonKey(ClaimTypes.Email, "EmailAddress", ClaimValueTypes.Email);
-                    // options.ClaimActions.MapJsonKey(ClaimTypes.Name, "Name");
 
                     options.Events = new OpenIdConnectEvents
                     {
@@ -255,30 +250,30 @@ namespace TetraPak.AspNet
                             context.HttpContext.Items.Add(AmbientData.Keys.AccessToken, handler.WriteToken(context.SecurityToken));
                             return Task.CompletedTask;
                         },
-                        // OnTokenResponseReceived = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // },
-                        // OnRedirectToIdentityProvider = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // },
-                        // OnRemoteSignOut = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // },
-                        // OnUserInformationReceived = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // },
-                        // OnSignedOutCallbackRedirect = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // },
-                        // OnRedirectToIdentityProviderForSignOut = context =>
-                        // {
-                        //     return Task.CompletedTask;
-                        // }
+                        OnTokenResponseReceived = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnRedirectToIdentityProvider = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnRemoteSignOut = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnUserInformationReceived = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnSignedOutCallbackRedirect = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnRedirectToIdentityProviderForSignOut = context =>
+                        {
+                            return Task.CompletedTask;
+                        }
                     };
             });
         }

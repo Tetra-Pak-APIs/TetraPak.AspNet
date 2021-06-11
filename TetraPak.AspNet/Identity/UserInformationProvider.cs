@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Identity
     {
         static readonly IDictionary<string, object> s_cache = new Dictionary<string, object>();
         readonly TetraPakAuthConfig _authConfig;
-        readonly UserInformationTokenValidator _tokenValidator;
+        // readonly UserInformationTokenValidator _tokenValidator; obsolete
 
         ILogger Logger => _authConfig.Logger;
 
@@ -92,14 +92,14 @@ namespace TetraPak.AspNet.Identity
             return await completionSource.Task;
         }
 
-        async Task<Outcome<string>> onValidateAccessToken(string accessToken, bool isCached)
-        {
-            if (_tokenValidator is null)
-                return Outcome<string>.Success(accessToken);
-            
-            Logger.Trace($"{this} validates/processes access token (by custom validator: {_tokenValidator})");
-            return await _tokenValidator.ValidateAccessTokenAsync(accessToken, isCached);
-        }
+        // async Task<Outcome<string>> onValidateAccessToken(string accessToken, bool isCached)
+        // {
+        //     if (_tokenValidator is null)
+        //         return Outcome<string>.Success(accessToken);
+        //     
+        //     Logger.Trace($"{this} validates/processes access token (by custom validator: {_tokenValidator})");
+        //     return await _tokenValidator.ValidateAccessTokenAsync(accessToken, isCached);
+        // }
 
         TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
         {
@@ -109,14 +109,14 @@ namespace TetraPak.AspNet.Identity
             {
                 using (Logger?.BeginScope("[GET USER INFO BEGIN]"))
                 {
-                    
                     var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
+                    var bearerToken = accessToken.ToBearerToken();
                     request.Method = "GET";
                     request.Accept = "*/*";
-                    request.Headers.Add($"{HeaderNames.Authorization}: {accessToken}");
+                    request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
                     try
                     {
-                        Logger?.Debug(request, null);
+                        Logger?.Debug(request);
                         var response = await request.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(
@@ -157,16 +157,16 @@ namespace TetraPak.AspNet.Identity
         /// <param name="authConfig">
         ///   Provides the required  
         /// </param>
-        /// <param name="tokenValidator">
-        ///   (optional)<br/>
-        ///   A custom token validator delegate.
-        /// </param>
-        public UserInformationProvider(TetraPakAuthConfig authConfig, UserInformationTokenValidator tokenValidator = null)
+        // /// <param name="tokenValidator"> obsolete
+        // ///   (optional)<br/>
+        // ///   A custom token validator delegate.
+        // /// </param>
+        public UserInformationProvider(TetraPakAuthConfig authConfig/*, UserInformationTokenValidator tokenValidator = null obsolete */)
         {
             _authConfig = authConfig;
-            if (tokenValidator is null) return;
-            _tokenValidator = tokenValidator;
-            _tokenValidator.Initialize(authConfig);
+            // if (tokenValidator is null) return; obsolete 
+            // _tokenValidator = tokenValidator;
+            // _tokenValidator.Initialize(authConfig);
         }
     }
 }

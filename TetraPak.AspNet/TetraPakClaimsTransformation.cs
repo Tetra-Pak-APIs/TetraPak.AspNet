@@ -20,7 +20,7 @@ namespace TetraPak.AspNet
     /// <summary>
     ///   Add this class to the DI configuration to automatically provide a Tetra Pak identity to any request.
     ///   The class constructor also needs <see cref="AmbientData"/> and 
-    ///   Please note that this is automatically done by calling <see cref="TetraPakAuth.AddTetraPakWebClientAuthentication"/>.
+    ///   Please note that this is automatically done by calling <see cref="Auth.TetraPakAuth.AddTetraPakWebClientAuthentication"/>.
     /// </summary>
     /// <example>
     ///   <code>

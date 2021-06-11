@@ -12,7 +12,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public class Endpoints : ConfigurationSection, IEnumerable<KeyValuePair<string, EndpointUrl>>
+    public class EndpointsConfig : ConfigurationSection, IEnumerable<KeyValuePair<string, EndpointUrl>>
     {
         protected override string SectionIdentifier { get; }
 
@@ -70,7 +70,7 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        public Endpoints(IConfiguration configuration, ILogger logger, string sectionIdentifier = "Endpoints")
+        public EndpointsConfig(IConfiguration configuration, ILogger logger, string sectionIdentifier = "Endpoints")
         : base(configuration, logger, sectionIdentifier)
         {
             SectionIdentifier = sectionIdentifier;
@@ -83,10 +83,10 @@ namespace TetraPak.AspNet.Api
 
     public static class EndpointsConfigExtensions
     {
-        public static Uri GetUri(this Endpoints self, string path) 
+        public static Uri GetUri(this EndpointsConfig self, string path) 
             => new Uri($"{self.Host}{self.BasePath}{path}");
         
-        public static void SetBackendService(this Endpoints self, IBackendService backendService)
+        public static void SetBackendService(this EndpointsConfig self, IBackendService backendService)
         {
             foreach (var (propertyName, endpointUrl)  in self)
             {

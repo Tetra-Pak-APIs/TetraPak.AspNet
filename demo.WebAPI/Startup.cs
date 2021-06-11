@@ -21,6 +21,8 @@ namespace WebAPI
             services.AddControllers();
             services.AddSidecarJwtAuthentication(); // <-- add this
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -28,17 +30,18 @@ namespace WebAPI
         {
             if (env.IsDevelopment())
             {
+                app.Use((context, func) =>
+                {
+                    context.Request.Headers.Add("my-header", "Hello World!");
+                    return func();
+                });
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Demo demo.WebAPI v1"));
             }
 
             app.UseHttpsRedirection();
-
-            //app.UseEmulatedSidecar(options => options.InjectSidecarJwtBearerAssertion()); // todo (this is an experiment with using a simulated local sidecar)
-
             app.UseRouting();
-
             app.UseRequestReferenceId();
             app.UseSidecarJwtAuthentication(); // <-- add this (after UserRouting and before UseAuthorization)
             

@@ -8,11 +8,11 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet.Api
 {
     public class BackendService<TEndpoints> : IBackendService
-    where TEndpoints : Endpoints
+    where TEndpoints : EndpointsConfig
     {
         protected IHttpClientProvider HttpClientProvider { get; }
 
-        public TEndpoints Endpoints { get; }
+        public TEndpoints EndpointsConfig { get; }
 
         protected ILogger Logger { get; }
 
@@ -74,13 +74,13 @@ namespace TetraPak.AspNet.Api
             if (client.BaseAddress is {})
                 return clientOutcome;
 
-            if (string.IsNullOrWhiteSpace(Endpoints.BasePath))
+            if (string.IsNullOrWhiteSpace(EndpointsConfig.BasePath))
             {
-                client.BaseAddress = new Uri(Endpoints.Host.EnsurePostfix("/"));
+                client.BaseAddress = new Uri(EndpointsConfig.Host.EnsurePostfix("/"));
                 return clientOutcome;
             }
             
-            client.BaseAddress = new Uri($"{Endpoints.Host.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/').EnsurePostfix("/")}");
+            client.BaseAddress = new Uri($"{EndpointsConfig.Host.EnsurePostfix("/")}{EndpointsConfig.BasePath.TrimStart('/').EnsurePostfix("/")}");
             return clientOutcome;
         }
 
@@ -90,8 +90,8 @@ namespace TetraPak.AspNet.Api
             ILogger logger)
         {
             HttpClientProvider = httpClientProvider;
-            Endpoints = endpoints;
-            Endpoints.SetBackendService(this);
+            EndpointsConfig = endpoints;
+            EndpointsConfig.SetBackendService(this);
             Logger = logger;
         }
 
