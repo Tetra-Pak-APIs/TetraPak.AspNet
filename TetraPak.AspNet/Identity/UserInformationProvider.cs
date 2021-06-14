@@ -19,7 +19,6 @@ namespace TetraPak.AspNet.Identity
     {
         static readonly IDictionary<string, object> s_cache = new Dictionary<string, object>();
         readonly TetraPakAuthConfig _authConfig;
-        // readonly UserInformationTokenValidator _tokenValidator; obsolete
 
         ILogger Logger => _authConfig.Logger;
 
@@ -92,15 +91,6 @@ namespace TetraPak.AspNet.Identity
             return await completionSource.Task;
         }
 
-        // async Task<Outcome<string>> onValidateAccessToken(string accessToken, bool isCached)
-        // {
-        //     if (_tokenValidator is null)
-        //         return Outcome<string>.Success(accessToken);
-        //     
-        //     Logger.Trace($"{this} validates/processes access token (by custom validator: {_tokenValidator})");
-        //     return await _tokenValidator.ValidateAccessTokenAsync(accessToken, isCached);
-        // }
-
         TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
         {
             Logger?.Debug($"Calls user info endpoint: {userInfoUri}");
@@ -155,18 +145,14 @@ namespace TetraPak.AspNet.Identity
         ///   Initializes the <see cref="UserInformationProvider"/>.
         /// </summary>
         /// <param name="authConfig">
-        ///   Provides the required  
+        ///   Provides Tetra Pak auth configuration.
         /// </param>
-        // /// <param name="tokenValidator"> obsolete
-        // ///   (optional)<br/>
-        // ///   A custom token validator delegate.
-        // /// </param>
-        public UserInformationProvider(TetraPakAuthConfig authConfig/*, UserInformationTokenValidator tokenValidator = null obsolete */)
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="authConfig"/> was unassigned.
+        /// </exception>
+        public UserInformationProvider(TetraPakAuthConfig authConfig)
         {
-            _authConfig = authConfig;
-            // if (tokenValidator is null) return; obsolete 
-            // _tokenValidator = tokenValidator;
-            // _tokenValidator.Initialize(authConfig);
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
         }
     }
 }

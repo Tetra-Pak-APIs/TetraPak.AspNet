@@ -79,6 +79,10 @@ namespace TetraPak.AspNet.Debugging
                 foreach (var propertyInfo in propertyInfos)
                 {
                     var jsonProperty = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>();
+                    var isIgnored = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>() is { };
+                    if (isIgnored)
+                        continue;
+                    
                     var isRestricted = propertyInfo.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
                     var key = jsonProperty?.Name ?? propertyInfo.Name;
 
