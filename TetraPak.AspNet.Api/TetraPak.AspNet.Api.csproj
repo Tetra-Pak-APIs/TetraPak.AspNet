@@ -30,5 +30,9 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.16" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
@@ -115,9 +116,15 @@ namespace TetraPak.AspNet.Auth
                     };
             });
         }
+
+        public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
+        {
+            services.AddTetraPakOidcAuthentication<SimpleCache>();
+        }
         
         // todo Consider adding support for claims-based user info (see URL above class declaration)
-        public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
+        public static void AddTetraPakOidcAuthentication<TCache>(this IServiceCollection services)
+        where TCache : class, ITimeLimitedRepositories
         {
             services.AddSingleton<TetraPakAuthConfig>();
             services.AddTetraPakWebClientClaimsTransformation();
@@ -127,6 +134,9 @@ namespace TetraPak.AspNet.Auth
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakAuthConfig>();
+
+            addCachingIfAllowed();
+            
             var logger = authConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
             if (authConfig is null)
             {
@@ -276,6 +286,30 @@ namespace TetraPak.AspNet.Auth
                         }
                     };
             });
+            
+            void addCachingIfAllowed()
+            {
+                var cProvider = services.BuildServiceProvider();
+                if (authConfig is null || !authConfig.IsCachingAllowed)
+                    return;
+
+                if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
+                {
+                    services.TryAddSingleton<ITimeLimitedRepositories, TCache>();
+                    return;
+                }
+                
+                services.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
+                {
+                    var cacheLogger = p.GetService<ILogger<SimpleCache>>();
+                    var cache = new SimpleCache(cacheLogger)
+                    {
+                        DefaultLifeSpan = authConfig.DefaultCachingLifetime
+                    };
+                    var cacheConfig = authConfig.Caching.WithCache(cache);
+                    return cache.WithConfiguration(cacheConfig);
+                });
+            }
         }
     }
     

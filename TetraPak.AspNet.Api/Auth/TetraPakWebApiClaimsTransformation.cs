@@ -12,7 +12,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// <inheritdoc />
     public class TetraPakWebApiClaimsTransformation : TetraPakClaimsTransformation
     {
-        const string IdentityTokenCache = "IdTokens";
+        const string IdentityTokenCache = "IdentityTokens";
         
         readonly ITokenExchangeService _tokenExchangeService;
         

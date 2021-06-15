@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
+using TetraPak.Caching;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
@@ -40,8 +41,9 @@ namespace TetraPak.AspNet.Auth
         string _authorizationHeader;
         string _identityTokenHeader;
         string _requestReferenceIdHeader;
+        bool? _isCachingAllowed;
+        TimeSpan? _defaultCachingLifetime;
         bool? _isPkceUsed;
-        TimeSpan? _cacheIdentityTokenLifetime;
         // ReSharper restore NotAccessedField.Local
         string _authorityUrl;
         string _tokenIssuerUrl;
@@ -63,6 +65,8 @@ namespace TetraPak.AspNet.Auth
             var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             return field ?? base.OnGetField(fieldName);
         }
+
+        public SimpleCacheConfig Caching { get; }
 
         /// <summary>
         ///   Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.
@@ -115,7 +119,7 @@ namespace TetraPak.AspNet.Auth
         /// </exception>
         public string RequestReferenceIdHeader
         {
-            get => GetFromFieldThenSection(AmbientData.Keys.RequestReferenceId); // _requestReferenceIdHeader ?? Section[nameof(RequestReferenceIdHeader)] ?? AmbientData.Keys.RequestReferenceId; obsolete
+            get => GetFromFieldThenSection(AmbientData.Keys.RequestReferenceId);
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -127,36 +131,37 @@ namespace TetraPak.AspNet.Auth
         }
 
         /// <summary>
-        ///   Gets or sets a value specifying whether to always cache the token used to build the identity.
+        ///   Gets or sets a <see cref="bool"/> value specifying whether auth data (such as tokens or identity)
+        ///   can be automatically cached.
         /// </summary>
-        /// <remarks>
-        ///   In the configuration section this value can be expressed either as seconds (an integer),
-        ///   like so: <c>"CacheIdentityTokenLifetime": "150"</c>, or as a time span value (hh:mm:ss),
-        ///   like this: <c>"CacheIdentityTokenLifetime": "00:02:30"</c>.
-        /// </remarks>
-        /// <see cref="TetraPakClaimsTransformation"/>
-        public TimeSpan CacheIdentityTokenLifetime
+        /// <seealso cref="DefaultCachingLifetime"/>
+        public bool IsCachingAllowed
         {
-            get => GetFromFieldThenSection(TimeSpan.FromMinutes(5), (string value, out TimeSpan span) =>
-            {
-                if (int.TryParse(value, out var seconds))
-                {
-                    span = TimeSpan.FromSeconds(seconds);
-                    return true;
-                }
-
-                if (TimeSpan.TryParse(value, out var timeSpan))
-                {
-                    span = timeSpan;
-                    return true;
-                }
-
-                Logger.Warning($"Invalid value for {nameof(CacheIdentityTokenLifetime)}: \"{value}\"");
-                span = TimeSpan.Zero;
-                return false;
-            });
-            set => _cacheIdentityTokenLifetime = value;
+            get => GetFromFieldThenSection(true);
+            set => _isCachingAllowed = value;
         }
+
+        /// <summary>
+        ///   Gets or sets a <see cref="TimeSpan"/> value specifying the default lifetime of cached auth data.
+        ///   This value is only consumed by the auth framework when <see cref="IsCachingAllowed"/> is set. 
+        /// </summary>
+        /// <seealso cref="IsCachingAllowed"/>
+        public TimeSpan DefaultCachingLifetime
+        {
+            get => GetFromFieldThenSection(TimeSpan.FromMinutes(10));
+            set => _defaultCachingLifetime = value;
+        }
+
+        // /// <summary>
+        // ///   Gets or sets a value specifying whether to always cache the token used to build the identity. obsolete
+        // /// </summary>
+        // /// <remarks>
+        // ///   In the configuration section this value can be expressed either as seconds (an integer),
+        // ///   like so: <c>"CacheIdentityTokenLifetime": "150"</c>, or as a time span value (hh:mm:ss),
+        // ///   like this: <c>"CacheIdentityTokenLifetime": "00:02:30"</c>.
+        // /// </remarks>
+        // /// <see cref="TetraPakClaimsTransformation"/>
+        // public TimeSpan? CacheIdentityTokenLifetime => Caching.GetRepositoryConfig("IdentityTokens")?.LifeSpan;
 
         /// <summary>
         ///   Gets a value indicating whether the configured authorization header is a custom one
@@ -427,8 +432,6 @@ namespace TetraPak.AspNet.Auth
                             , TimeSpan.FromSeconds(5)
 #endif
                             );
-                        // var args = ReadDiscoveryDocumentArgs.FromDefault(this); // nisse (just test with Default for now; I'm in a hurry getting it to work for Pardot -JR)                        
-
                         var outcome = await DiscoveryDocument.ReadAsync(args);
                         if (!outcome)
                         {
@@ -516,30 +519,6 @@ namespace TetraPak.AspNet.Auth
             return scope.ToArray();
         }
 
-        // void parseIdentityTokenCacheLifetime()
-        // {
-        //     var s = Section[nameof(CacheIdentityTokenLifetime)];
-        //     if (string.IsNullOrWhiteSpace(s))
-        //     {
-        //         _cacheIdentityTokenLifetime = null;
-        //         return;
-        //     }
-        //     
-        //     if (int.TryParse(s, out var seconds))
-        //     {
-        //         _cacheIdentityTokenLifetime = TimeSpan.FromSeconds(seconds);
-        //         return;
-        //     }
-        //
-        //     if (TimeSpan.TryParse(s, out var timeSpan))
-        //     {
-        //         _cacheIdentityTokenLifetime = timeSpan;
-        //         return;
-        //     }
-        //     
-        //     Logger.Warning($"Invalid value for {nameof(CacheIdentityTokenLifetime)}: \"{s}\"");
-        // }
-
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
@@ -560,6 +539,7 @@ namespace TetraPak.AspNet.Auth
         /// </param>
         public TetraPakAuthConfig(
             IConfiguration configuration,
+            // ReSharper disable once SuggestBaseTypeForParameter
             ILogger<TetraPakAuthConfig> logger,
             bool loadDiscoveryDocument = false,
             string sectionIdentifier = null) 
@@ -572,14 +552,11 @@ namespace TetraPak.AspNet.Auth
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
+            Caching = new SimpleCacheConfig(null, Section, logger, nameof(Caching));
             _isPkceUsed = true;
             if (loadDiscoveryDocument)
             {
                 discoverAsync();
-            }
-            else
-            {
-                logger.Debug(this);
             }
         }
     }

@@ -37,5 +37,8 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.14" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    </ItemGroup>
 
 </Project>

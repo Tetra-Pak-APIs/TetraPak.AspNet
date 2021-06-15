@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Identity;
 using TetraPak.Logging;
 
@@ -56,6 +57,7 @@ namespace TetraPak.AspNet
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
+            Logger.Debug(AuthConfig);
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))
             {
                 var _ = new CancellationToken();
@@ -94,8 +96,10 @@ namespace TetraPak.AspNet
                     return clone;
                 
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
-                var claimsDictionary = new Dictionary<string, string>(jwt.Claims.Select(claim => new KeyValuePair<string, string>(claim.Type, claim.Value)));
-                var claims = claimsDictionary.MapTo(pair =>
+                var claimsDictionary = new Dictionary<string, string>(jwt.Claims.Select(
+                    claim => new KeyValuePair<string, string>(claim.Type, claim.Value)));
+
+                var mappedClaims = claimsDictionary.MapTo(pair =>
                 {
                     var (key, value) = pair;
                     var claimValue = value ?? string.Empty;
@@ -105,7 +109,8 @@ namespace TetraPak.AspNet
                 });
                 
                 identity.BootstrapContext = idToken;
-                identity.AddClaims(jwt.Claims);
+                // identity.AddClaims(jwt.Claims); obsolete
+                identity.AddClaims(mappedClaims);
                 identity.AddClaim(new Claim(identity.NameClaimType, jwt.Subject));
                 return clone;
             }

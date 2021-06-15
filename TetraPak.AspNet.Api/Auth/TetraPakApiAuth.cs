@@ -13,7 +13,7 @@ namespace TetraPak.AspNet.Api.Auth
     public static class TetraPakApiAuth
     {
         internal static string Host { get; private set; }
-        
+
         /// <summary>
         ///   Configures the app service for Tetra Pak Sidecar Jwt Bearer Authentication.
         /// </summary>
@@ -30,10 +30,34 @@ namespace TetraPak.AspNet.Api.Auth
             this IServiceCollection c,
             SidecarJwBearerAssertionOptions options = null)
         {
+            return c.AddSidecarJwtAuthentication<SimpleCache>(options);
+        }
+
+        /// <summary>
+        ///   Configures the app service for Tetra Pak Sidecar Jwt Bearer Authentication while
+        ///   specifying a cache implementation.
+        /// </summary>
+        /// <param name="c">
+        ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
+        /// </param>
+        /// <param name="options">
+        ///   Options governing how/what to validate in the sidecar issued JWT bearer tokens. 
+        /// </param>
+        /// <typeparam name="TCache">
+        ///   Specifies a class for implementing caching (must implement <see cref="ITimeLimitedRepositories"/>).
+        /// </typeparam>
+        /// <returns>
+        ///   The <see cref="IServiceCollection"/> instance.
+        /// </returns>
+        public static IServiceCollection AddSidecarJwtAuthentication<TCache>(
+            this IServiceCollection c,
+            SidecarJwBearerAssertionOptions options = null)
+        where TCache : class, ITimeLimitedRepositories
+        {
             c.AddSingleton<HostProvider>();
             c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
 
-            addCachingIfConfigured(c);
+            addCachingIfAllowed();
             
             c.AddTetraPakWebApiClaimsTransformation();
             c.AddTetraPakUserInformation();
@@ -46,20 +70,31 @@ namespace TetraPak.AspNet.Api.Auth
             c.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null);
             return c;
-        }
-
-        static void addCachingIfConfigured(IServiceCollection c)
-        {
-            var services = c.BuildServiceProvider();
-            var authConfig = services.GetService<TetraPakAuthConfig>();
-            if (authConfig is null || authConfig.CacheIdentityTokenLifetime == TimeSpan.Zero)
-                return;
-
-            c.AddSingleton<ITimeLimitedRepositories>(provider =>
+            
+            void addCachingIfAllowed()
             {
-                var logger = provider.GetService<ILogger<SimpleCache>>();
-                return new SimpleCache(logger) { DefaultLifeSpan = authConfig.CacheIdentityTokenLifetime };
-            });
+                var provider = c.BuildServiceProvider();
+                var authConfig = provider.GetService<TetraPakAuthConfig>();
+                if (authConfig is null || !authConfig.IsCachingAllowed)
+                    return;
+
+                if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
+                {
+                    c.AddSingleton<ITimeLimitedRepositories, TCache>();
+                    return;
+                }
+                
+                c.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
+                {
+                    var cacheLogger = p.GetService<ILogger<SimpleCache>>();
+                    var cache = new SimpleCache(cacheLogger)
+                    {
+                        DefaultLifeSpan = authConfig.DefaultCachingLifetime
+                    };
+                    var cacheConfig = authConfig.Caching.WithCache(cache);
+                    return cache.WithConfiguration(cacheConfig);
+                });
+            }
         }
 
         /// <summary>
