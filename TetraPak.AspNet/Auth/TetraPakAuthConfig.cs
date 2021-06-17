@@ -30,7 +30,7 @@ namespace TetraPak.AspNet.Auth
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
         
-        protected override string SectionIdentifier => "Auth-TetraPak"; 
+        protected override string SectionIdentifier => "TetraPak"; 
         protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
         
         // ReSharper disable NotAccessedField.Local
@@ -207,7 +207,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets the resource locator for the authority.
         /// </summary>
-        public string AuthorityUrl
+        public  string AuthorityUrl
         {
             get
             {
@@ -242,7 +242,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets a configured client id.
         /// </summary>
-        public string ClientId
+        public virtual string ClientId
         {
             get => GetFromFieldThenSection<string>();
             set => _clientId = value;
@@ -252,7 +252,7 @@ namespace TetraPak.AspNet.Auth
         ///   Gets a configured client secret.
         /// </summary>
         [RestrictedValue]
-        public string ClientSecret
+        public virtual string ClientSecret
         {
             get => GetFromFieldThenSection<string>();
             set => _clientSecret = value;
@@ -401,6 +401,33 @@ namespace TetraPak.AspNet.Auth
         ///   When omitted a default scope will be used. 
         /// </summary>
         public string[] Scope { get; }
+
+        /// <summary>
+        ///   Gets the current runtime environment name.
+        /// </summary>
+        public static string ProcessEnvironment
+        {
+            get
+            {
+                var environment = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+                if (string.IsNullOrEmpty(environment))
+                {
+                    environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
+                }
+
+                if (string.IsNullOrEmpty(environment))
+                {
+                    environment = "Production";
+                }
+
+                return environment;
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether the host is run in a development environment.  
+        /// </summary>
+        public static bool IsDevelopment => ProcessEnvironment == "Development";
 
         Task<DiscoveryDocument> discoverAsync()
         {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace TetraPak.AspNet.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth
 {
     public static class TetraPakTokenExchangeHelper
     {

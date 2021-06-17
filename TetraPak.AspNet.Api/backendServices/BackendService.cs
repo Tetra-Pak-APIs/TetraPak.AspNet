@@ -10,11 +10,23 @@ namespace TetraPak.AspNet.Api
     public class BackendService<TEndpoints> : IBackendService
     where TEndpoints : EndpointsConfig
     {
+        /// <summary>
+        ///   Gets the endpoint configuration.
+        /// </summary>
+        // ReSharper disable MemberCanBePrivate.Global
+        public TEndpoints Endpoints { get; }
+
+        /// <summary>
+        ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
+        ///   used to consumer the backend service.
+        /// </summary>
         protected IHttpClientProvider HttpClientProvider { get; }
 
-        public TEndpoints EndpointsConfig { get; }
-
+        /// <summary>
+        ///   Gets logging provider.  
+        /// </summary>
         protected ILogger Logger { get; }
+        // ReSharper restore MemberCanBePrivate.Global
 
         public async Task<Outcome<HttpResponseMessage>> SendAsync(
             HttpRequestMessage request, 
@@ -27,7 +39,9 @@ namespace TetraPak.AspNet.Api
             };
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, cancellationToken);
             if (clientOutcome)
-                return Outcome<HttpResponseMessage>.Fail(new Exception("Could not initialize a HTTP client (see inner exception)", clientOutcome.Exception));
+                return Outcome<HttpResponseMessage>.Fail(
+                    new Exception("Could not initialize a HTTP client (see inner exception)", 
+                        clientOutcome.Exception));
             
             var client = clientOutcome.Value;
             var response = await client.SendAsync(request, useCancellationToken);
@@ -43,9 +57,11 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null)
         {
             var useCancellationToken = cancellationToken ?? CancellationToken.None;
-            var clientOutcome = await OnGetHttpClientAsync(clientOptions, cancellationToken); // HttpClientProvider.GetHttpClientAsync(clientOptions, cancellationToken, Logger);
+            var clientOutcome = await OnGetHttpClientAsync(clientOptions, cancellationToken); 
             if (!clientOutcome)
-                return Outcome<HttpResponseMessage>.Fail(new Exception("Could not initialize a HTTP client (see inner exception)", clientOutcome.Exception));
+                return Outcome<HttpResponseMessage>.Fail(
+                    new Exception("Could not initialize a HTTP client (see inner exception)", 
+                        clientOutcome.Exception));
             
             var client = clientOutcome.Value;
 #if DEBUG || LOG_DEBUG            
@@ -74,26 +90,22 @@ namespace TetraPak.AspNet.Api
             if (client.BaseAddress is {})
                 return clientOutcome;
 
-            if (string.IsNullOrWhiteSpace(EndpointsConfig.BasePath))
+            if (string.IsNullOrWhiteSpace(Endpoints.BasePath))
             {
-                client.BaseAddress = new Uri(EndpointsConfig.Host.EnsurePostfix("/"));
+                client.BaseAddress = new Uri(Endpoints.Host.EnsurePostfix("/"));
                 return clientOutcome;
             }
             
-            client.BaseAddress = new Uri($"{EndpointsConfig.Host.EnsurePostfix("/")}{EndpointsConfig.BasePath.TrimStart('/').EnsurePostfix("/")}");
+            client.BaseAddress = new Uri($"{Endpoints.Host.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/').EnsurePostfix("/")}");
             return clientOutcome;
         }
 
-        public BackendService(
-            TEndpoints endpoints, 
-            IHttpClientProvider httpClientProvider, 
-            ILogger logger)
+        public BackendService(TEndpoints endpoints, IHttpClientProvider httpClientProvider, ILogger logger)
         {
             HttpClientProvider = httpClientProvider;
-            EndpointsConfig = endpoints;
-            EndpointsConfig.SetBackendService(this);
+            Endpoints = endpoints;
+            Endpoints.SetBackendService(this);
             Logger = logger;
         }
-
     }
 }

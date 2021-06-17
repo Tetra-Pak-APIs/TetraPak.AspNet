@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace TetraPak.AspNet.Api.Auth.TokenExchange
+namespace TetraPak.AspNet.Api.Auth
 {
     public class TetraPakTokenExchangeService : ITokenExchangeService
     {

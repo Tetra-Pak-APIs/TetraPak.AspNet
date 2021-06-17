@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
-using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -109,12 +107,7 @@ namespace TetraPak.AspNet.Api.Auth
                                     Description = context.Exception.StackTrace
                                 }
                                 : new ApiErrorResponse("JWT authentication failed", context.HttpContext, AuthConfig);
-#if NET5_0_OR_GREATER                                
-                            await context.Response.WriteAsync(
-                                response.ToJson(IsDevelopment, JsonIgnoreCondition.WhenWritingNull));
-#else                                
                             await context.Response.WriteAsync(response.ToJson(IsDevelopment));
-#endif
                             
                         });
                         return Task.CompletedTask;

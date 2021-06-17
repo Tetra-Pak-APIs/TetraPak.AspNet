@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using TetraPak.AspNet.Api.Auth.TokenExchange;
 using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api.Auth
