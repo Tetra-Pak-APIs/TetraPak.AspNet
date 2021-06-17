@@ -12,8 +12,12 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public class EndpointsConfig : ConfigurationSection, IEnumerable<KeyValuePair<string, EndpointUrl>>
+    public class EndpointsConfig : ConfigurationSection, IEnumerable<KeyValuePair<string, BackendServiceEndpointUrl>>
     {
+        // ReSharper disable NotAccessedField.Local
+        BackendServiceAuthenticationMechanism? _authenticationMechanism;
+        // ReSharper restore NotAccessedField.Local
+        
         protected override string SectionIdentifier { get; }
 
         /// <summary>
@@ -25,12 +29,22 @@ namespace TetraPak.AspNet.Api
         ///   A default base path.
         /// </summary>
         public string BasePath { get; set; }
+
+        /// <summary>
+        ///   Gets or sets a value specifying how to authenticate this service when consuming the backend service.
+        ///   Default is <see cref="BackendServiceAuthenticationMechanism.TokenExchange"/>.
+        /// </summary>
+        public BackendServiceAuthenticationMechanism AuthenticationMechanism
+        {
+            get => GetFromFieldThenSection(BackendServiceAuthenticationMechanism.TokenExchange);
+            set => _authenticationMechanism = value;
+        }
         
         void setProperty(PropertyInfo property, object value)
         {
-            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(EndpointUrl)))
+            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(BackendServiceEndpointUrl)))
             {
-                value = new EndpointUrl(stringValue);
+                value = new BackendServiceEndpointUrl(stringValue);
             }
             if (property.PropertyType == typeof(string))
             {
@@ -42,16 +56,16 @@ namespace TetraPak.AspNet.Api
             property.SetValue(this, obj);
         }
 
-        public IEnumerator<KeyValuePair<string, EndpointUrl>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, BackendServiceEndpointUrl>> GetEnumerator()
         {
             var propertyArray = GetType().GetProperties().Where(i => 
-                i.PropertyType == typeof(EndpointUrl)).ToArray();
+                i.PropertyType == typeof(BackendServiceEndpointUrl)).ToArray();
 
             for (var i = 0; i < propertyArray.Length; i++)
             {
                 var property = propertyArray[i];
-                var value = (EndpointUrl) property.GetValue(this);
-                yield return new KeyValuePair<string, EndpointUrl>(property.Name, value);
+                var value = (BackendServiceEndpointUrl) property.GetValue(this);
+                yield return new KeyValuePair<string, BackendServiceEndpointUrl>(property.Name, value);
             }
         }
 
@@ -80,19 +94,4 @@ namespace TetraPak.AspNet.Api
             assignProperties(Section);
         }
     }
-
-    public static class EndpointsConfigExtensions
-    {
-        public static Uri GetUri(this EndpointsConfig self, string path) 
-            => new Uri($"{self.Host}{self.BasePath}{path}");
-        
-        public static void SetBackendService(this EndpointsConfig self, IBackendService backendService)
-        {
-            foreach (var (propertyName, endpointUrl)  in self)
-            {
-                endpointUrl.SetBackendService(backendService);
-            }
-        }
-    }
-    
 }

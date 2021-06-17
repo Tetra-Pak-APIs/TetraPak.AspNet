@@ -8,9 +8,9 @@ namespace TetraPak.AspNet.Api
 {
     public static class EndpointUrlExtensions
     {
-        static readonly Dictionary<EndpointUrl,IBackendService> s_endpoints = new();
+        static readonly Dictionary<BackendServiceEndpointUrl,IBackendService> s_endpoints = new();
         
-        public static void SetBackendService(this EndpointUrl self, IBackendService backendService)
+        internal static void SetBackendService(this BackendServiceEndpointUrl self, IBackendService backendService)
         {
             lock (s_endpoints)
             {
@@ -21,18 +21,41 @@ namespace TetraPak.AspNet.Api
             }
         }
 
+        /// <summary>
+        ///   Sends an HTTP POST message to the specified <see cref="BackendServiceEndpointUrl"/>
+        /// </summary>
+        /// <param name="serviceUrl">
+        ///   The <see cref="BackendServiceEndpointUrl"/>.
+        /// </param>
+        /// <param name="content">
+        ///   The content (body) to be posted.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional)
+        ///   Options for the operation.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <paramref name="serviceUrl"/> was not assigned to a registered service.
+        /// </exception>
         public static Task<Outcome<HttpResponseMessage>> PostAsync(
-            this EndpointUrl url,
+            this BackendServiceEndpointUrl serviceUrl,
             HttpContent content,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
             lock (s_endpoints)
             {
-                if (!s_endpoints.TryGetValue(url, out var service))
-                    throw new InvalidOperationException($"Endpoint Url {url} was not assigned to a service");
+                if (!s_endpoints.TryGetValue(serviceUrl, out var service))
+                    throw new InvalidOperationException($"Endpoint Url {serviceUrl} was not assigned to a service");
 
-                return service.PostAsync(url, content, clientOptions, cancellationToken);
+                return service.PostAsync(serviceUrl, content, clientOptions, cancellationToken);
             }
         }
     }

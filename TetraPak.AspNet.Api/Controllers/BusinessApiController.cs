@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.Logging;
+using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api.Controllers
 {
@@ -24,25 +25,39 @@ namespace TetraPak.AspNet.Api.Controllers
 
         protected ActionResult ErrorExpectedQueryParameter(string queryParameterName, string example = null)
         {
-            return BadRequest(!string.IsNullOrWhiteSpace(example) 
+            var body = !string.IsNullOrWhiteSpace(example) 
                 ? new {messages = new [] { $"Expected query parameter: '{queryParameterName}' (example: {example})" }} 
-                : new {messages = new [] { $"Expected query parameter: '{queryParameterName}'" }});
+                : new {messages = new [] { $"Expected query parameter: '{queryParameterName}'" }};
+            return OnError(HttpStatusCode.BadRequest, new Exception(body.ToJson()));
+            // return BadRequest(!string.IsNullOrWhiteSpace(example) obsolete
+            //     ? new {messages = new [] { $"Expected query parameter: '{queryParameterName}' (example: {example})" }} 
+            //     : new {messages = new [] { $"Expected query parameter: '{queryParameterName}'" }});
+        }
+
+        protected ActionResult UnauthorizedError(Exception error)
+        {
+            return OnError(HttpStatusCode.Unauthorized, error);
         }
 
         protected ActionResult InternalServerError(Exception error)
         {
+            return OnError(HttpStatusCode.InternalServerError, error);
+        }
+
+        protected virtual ActionResult OnError(HttpStatusCode status, Exception error)
+        {
             // error message might already be a standard error response json object
             var parseOutcome = tryParseTetraPakErrorResponse(error.Message);
-            var options = new DictionaryTransformationOptions {IgnoreNullValues = true};
+            var options = new DictionaryTransformationOptions { IgnoreNullValues = true };
             var errorResponse = parseOutcome
                 ? parseOutcome.Value
                 : new ApiErrorResponse(error.Message, HttpContext, AuthConfig)
                 {
-                    Status = ((int) HttpStatusCode.InternalServerError).ToString()
+                    Status = ((int) status).ToString()
                 };
             
             return StatusCode(
-                (int) HttpStatusCode.InternalServerError,
+                (int) status,
                 errorResponse.ToDictionary(options));
         }
         
@@ -74,7 +89,7 @@ namespace TetraPak.AspNet.Api.Controllers
 
         protected BusinessApiController(TetraPakApiAuthConfig authConfig)
         {
-            this.AuthConfig = authConfig;
+            AuthConfig = authConfig;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(environment))
             {

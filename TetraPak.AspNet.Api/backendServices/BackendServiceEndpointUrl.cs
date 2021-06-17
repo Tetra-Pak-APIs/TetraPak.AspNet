@@ -8,9 +8,9 @@ using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api
 {
-    [JsonConverter(typeof(JsonStringValueSerializer<EndpointUrl>))]
+    [JsonConverter(typeof(JsonStringValueSerializer<BackendServiceEndpointUrl>))]
     [DebuggerDisplay("{" + nameof(StringValue) + "}")]
-    public sealed class EndpointUrl : IStringValue
+    public sealed class BackendServiceEndpointUrl : IStringValue
     {
         /// <inheritdoc />
         public string StringValue { get; }
@@ -25,7 +25,7 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="stringValue"/> string representation was incorrectly formed.
         /// </exception>
         [DebuggerStepThrough]
-        public EndpointUrl(string stringValue)
+        public BackendServiceEndpointUrl(string stringValue)
         {
             StringValue = stringValue ?? throw new ArgumentNullException(nameof(stringValue));
         }
@@ -42,7 +42,7 @@ namespace TetraPak.AspNet.Api
         /// <exception cref="FormatException">
         ///   The <paramref name="stringValue"/> string representation was incorrectly formed.
         /// </exception>
-        public static implicit operator EndpointUrl(string stringValue) => new EndpointUrl(stringValue);
+        public static implicit operator BackendServiceEndpointUrl(string stringValue) => new BackendServiceEndpointUrl(stringValue);
 
         /// <summary>
         ///   Implicitly converts a <see cref="type"/> value into its <see cref="string"/> representation.
@@ -53,7 +53,7 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   The <see cref="string"/> representation of <paramref name="value"/>.
         /// </returns>
-        public static implicit operator string(EndpointUrl value) => value?.StringValue;
+        public static implicit operator string(BackendServiceEndpointUrl value) => value?.StringValue;
 
         /// <inheritdoc />
         public override string ToString() => StringValue;
@@ -69,7 +69,7 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   <c>true</c> if <paramref name="other"/> is equal to the current value; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(EndpointUrl other)
+        public bool Equals(BackendServiceEndpointUrl other)
         {
             return !(other is null) && string.Equals(StringValue, other.StringValue);
         }
@@ -85,7 +85,7 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public override bool Equals(object obj)
         {
-            return !(obj is null) && (obj is EndpointUrl other && Equals(other));
+            return !(obj is null) && (obj is BackendServiceEndpointUrl other && Equals(other));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator ==(EndpointUrl left, EndpointUrl right)
+        public static bool operator ==(BackendServiceEndpointUrl left, BackendServiceEndpointUrl right)
         {
             return left?.Equals(right) ?? right is null;
         }
@@ -110,7 +110,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator !=(EndpointUrl left, EndpointUrl right)
+        public static bool operator !=(BackendServiceEndpointUrl left, BackendServiceEndpointUrl right)
         {
             return !left?.Equals(right) ?? !(right is null);
         }
