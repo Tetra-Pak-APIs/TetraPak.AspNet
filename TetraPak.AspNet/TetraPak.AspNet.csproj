@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>0.12.1-beta</PackageVersion>
+        <PackageVersion>0.12.3-alpha</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Common</PackageProjectUrl>
@@ -16,8 +16,8 @@
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <AssemblyVersion>0.12.1</AssemblyVersion>
-        <FileVersion>0.12.1</FileVersion>
+        <AssemblyVersion>0.12.3</AssemblyVersion>
+        <FileVersion>0.12.3</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -38,7 +38,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.14" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+      <PackageReference Include="TetraPak.Common" Version="0.12.2-beta" />
     </ItemGroup>
 
 </Project>

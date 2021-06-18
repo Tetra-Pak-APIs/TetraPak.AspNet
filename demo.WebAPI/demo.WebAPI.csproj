@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
       <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
     </ItemGroup>
 
