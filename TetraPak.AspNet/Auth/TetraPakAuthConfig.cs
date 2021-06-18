@@ -30,7 +30,7 @@ namespace TetraPak.AspNet.Auth
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
         
-        protected override string SectionIdentifier => "TetraPak"; 
+        protected override string SectionIdentifier => "Auth-TetraPak"; 
         protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
         
         // ReSharper disable NotAccessedField.Local
@@ -152,17 +152,6 @@ namespace TetraPak.AspNet.Auth
             set => _defaultCachingLifetime = value;
         }
 
-        // /// <summary>
-        // ///   Gets or sets a value specifying whether to always cache the token used to build the identity. obsolete
-        // /// </summary>
-        // /// <remarks>
-        // ///   In the configuration section this value can be expressed either as seconds (an integer),
-        // ///   like so: <c>"CacheIdentityTokenLifetime": "150"</c>, or as a time span value (hh:mm:ss),
-        // ///   like this: <c>"CacheIdentityTokenLifetime": "00:02:30"</c>.
-        // /// </remarks>
-        // /// <see cref="TetraPakClaimsTransformation"/>
-        // public TimeSpan? CacheIdentityTokenLifetime => Caching.GetRepositoryConfig("IdentityTokens")?.LifeSpan;
-
         /// <summary>
         ///   Gets a value indicating whether the configured authorization header is a custom one
         ///   (default is <see cref="HeaderNames.Authorization"/>).
@@ -172,7 +161,7 @@ namespace TetraPak.AspNet.Auth
     
         /// <summary>
         ///   Gets the current runtime environment (DEV, TEST, PROD ...).
-        ///   The value is a <see cref="runtimeEnvironment"/> enum value. 
+        ///   The value is a <see cref="resolveRuntimeEnvironment"/> enum value. 
         /// </summary>
         public RuntimeEnvironment Environment { get; }
 
@@ -494,23 +483,45 @@ namespace TetraPak.AspNet.Auth
             }
         }
 
-        static RuntimeEnvironment? runtimeEnvironment()
+        /// <summary>
+        ///   Invoked from ctor to resolve the runtime environment.
+        /// </summary>
+        /// <param name="configuredStringValue">
+        ///   The configured <see cref="string"/> value to be resolved.
+        /// </param>
+        /// <param name="configDelegate">
+        ///   (optional)<br/>
+        ///   A custom delegate to be allowed to affect the result.
+        /// </param>
+        /// <returns>
+        ///   A resolved <see cref="RuntimeEnvironment"/> value.
+        /// </returns>
+        protected virtual RuntimeEnvironment OnResolveRuntimeEnvironment(
+            string configuredStringValue,
+            ITetraPakAuthConfigDelegate configDelegate)
         {
-            var environment = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (!string.IsNullOrEmpty(environment))
-                return mapEnvironment(environment);
+            var environment = configDelegate?.ResolveConfiguredEnvironment(configuredStringValue);
+            if (environment is {} && environment != RuntimeEnvironment.Unknown)
+                return environment.Value;
             
-            environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-            return !string.IsNullOrEmpty(environment) 
-                ? mapEnvironment(environment)
-                : null;
+            return configuredStringValue is { } 
+                ? Enum.Parse<RuntimeEnvironment>(configuredStringValue) 
+                : resolve() ?? RuntimeEnvironment.Production;
+            
+            static RuntimeEnvironment? resolve()
+            {
+                var stringValue = ProcessEnvironment;
+                return string.IsNullOrWhiteSpace(stringValue)
+                    ? null
+                    : Enum.TryParse<RuntimeEnvironment>(stringValue, true, out var result)
+                        ? result
+                        : null;
+            }
         }
         
-        static RuntimeEnvironment? mapEnvironment(string environment)
+        RuntimeEnvironment resolveRuntimeEnvironment(ITetraPakAuthConfigDelegate configDelegate)
         {
-            return Enum.TryParse<RuntimeEnvironment>(environment, true, out var result)
-                ? result
-                : null;
+            return OnResolveRuntimeEnvironment(Section["Environment"], configDelegate);
         }
 
         TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.Api)
@@ -564,18 +575,20 @@ namespace TetraPak.AspNet.Auth
         ///     (optional; default=<see cref="SectionIdentifier"/>)<br/>
         ///     A custom configuration section identifier. 
         /// </param>
+        /// <param name="configDelegate">
+        ///   (optional)<br/>
+        ///   A delegate instance for custom configuration behavior.
+        /// </param>
         public TetraPakAuthConfig(
             IConfiguration configuration,
             // ReSharper disable once SuggestBaseTypeForParameter
             ILogger<TetraPakAuthConfig> logger,
             bool loadDiscoveryDocument = false,
-            string sectionIdentifier = null) 
+            string sectionIdentifier = null,
+            ITetraPakAuthConfigDelegate configDelegate = null) 
         : base(configuration, logger, sectionIdentifier)
         {
-            var s = Section["Environment"];
-            Environment = s is { } 
-                ? Enum.Parse<RuntimeEnvironment>(s) 
-                : runtimeEnvironment() ?? RuntimeEnvironment.Production;
+            Environment = resolveRuntimeEnvironment(configDelegate);
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
@@ -586,5 +599,17 @@ namespace TetraPak.AspNet.Auth
                 discoverAsync();
             }
         }
+    }
+
+    public interface ITetraPakAuthConfigDelegate
+    {
+        /// <summary>
+        ///   Called to resolve the configured (or null, when un-configured) runtime environment.
+        /// </summary>
+        /// <param name="stringValue">The <see cref="string"/> representation of the configured value.</param>
+        /// <returns>
+        ///   A resolved <see cref="RuntimeEnvironment"/> value.
+        /// </returns>
+        RuntimeEnvironment ResolveConfiguredEnvironment(string stringValue);
     }
 }

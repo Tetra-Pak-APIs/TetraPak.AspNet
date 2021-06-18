@@ -4,29 +4,32 @@ using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Auth
 {
+    // ReSharper disable UnusedMember.Global
     public class JwtBearerValidationConfig : ConfigurationSection
     {
+        // ReSharper disable NotAccessedField.Local
         string _audience;
         string _issuer;
         bool? _validateLifetime;
+        // ReSharper restore NotAccessedField.Local
 
         protected override string SectionIdentifier => "ValidateJwtBearer";
 
         public string Audience
         {
-            get => _audience ?? Section[nameof(Audience)];
+            get => GetFromFieldThenSection<string>(null);
             set => _audience = value;
         }
         
         public string Issuer 
         {
-            get => _issuer ?? Section[nameof(Issuer)];
+            get => GetFromFieldThenSection<string>(null);
             set => _issuer = value;
         }
 
         public bool ValidateLifetime
         {
-            get => _validateLifetime ?? Section.GetBool(nameof(ValidateLifetime), true);
+            get => GetFromFieldThenSection(true);
             set => _validateLifetime = value;
         }
 
@@ -38,4 +41,5 @@ namespace TetraPak.AspNet.Auth
         {
         }
     }
+    // ReSharper restore UnusedMember.Global
 }

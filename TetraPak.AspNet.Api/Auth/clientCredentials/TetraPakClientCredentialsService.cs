@@ -60,9 +60,10 @@ namespace TetraPak.AspNet.Api.Auth
                 var stream = await response.Content.ReadAsStreamAsync();
 #endif
                 var responseBody =
-                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponse>(stream,
+                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponseBody>(stream,
                         cancellationToken: cancellationToken);
-                return Outcome<ClientCredentialsResponse>.Success(responseBody);
+
+                return ClientCredentialsResponse.TryParse(responseBody);
             }
             catch (Exception ex)
             {

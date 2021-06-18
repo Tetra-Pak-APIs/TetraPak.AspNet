@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -33,11 +34,11 @@ namespace WebAPI.Controllers
             if (!proxy)
                 return Ok(new { message = "Hello World!", userId = userIdentity.Name ?? "(unresolved)" } );
 
-            var allowCachedToken = true;
+            var cache = _cache;
             
             fetch:
             
-            var clientOutcome = await GetAuthorizedClientAsync(allowCachedToken);
+            var clientOutcome = await _credentialsService.GetAuthorizedClientAsync(cache);
             if (!clientOutcome)
                 return isUnauthorized(clientOutcome)
                     ? UnauthorizedError(clientOutcome.Exception)
@@ -53,7 +54,7 @@ namespace WebAPI.Controllers
                     if (!isTokenCached) 
                         return Unauthorized();
                     
-                    allowCachedToken = false;
+                    cache = null;
                     goto fetch;
                 }                    
                     
@@ -68,34 +69,11 @@ namespace WebAPI.Controllers
 
         class MessageResponse
         {
+            [JsonPropertyName("message")]
             public string Message { get; set; }
-        }
 
-        async Task<Outcome<AuthorizedClient>> GetAuthorizedClientAsync(
-            bool allowCached = true,
-            CancellationToken? cancellationToken = null)
-        {
-            ActorToken token = null;
-            var isTokenCached = false;
-            if (allowCached)
-            {
-                var cachedOutcome = await _cache.GetHelloWorldToken();
-                token = cachedOutcome ? cachedOutcome.Value : null;
-                isTokenCached = token is {};
-            }
-
-            if (token is null)
-            {
-                var tokenOutcome = await _credentialsService.AcquireTokenAsync(cancellationToken ?? new CancellationToken());
-                if (!tokenOutcome)
-                    return Outcome<AuthorizedClient>.Fail(tokenOutcome.Exception);
-
-                token = tokenOutcome.Value.Token;
-            }
-
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(HeaderNames.Authorization, token);
-            return Outcome<AuthorizedClient>.Success(new AuthorizedClient(client, isTokenCached));
+            [JsonPropertyName("userId")]
+            public string UserId { get; set; }
         }
 
         bool isUnauthorized(Outcome<AuthorizedClient> outcome)
@@ -114,17 +92,62 @@ namespace WebAPI.Controllers
         }
     }
 
-    public static class CacheHelper 
+    public static class HelloWorldHelper 
     {
         const string TokensCache = "ServiceTokens";
         const string HelloWorldToken = "hello_world_access_token";
         
-        public static async Task<Outcome<ActorToken>> GetHelloWorldToken(this ITimeLimitedRepositories cache)
+        internal static async Task<Outcome<AuthorizedClient>> GetAuthorizedClientAsync(
+            this IClientCredentialsService credentialsService,
+            ITimeLimitedRepositories cache,
+            CancellationToken? cancellationToken = null)
+        {
+            ActorToken token = null;
+            var isTokenCached = false;
+            if (cache is { })
+            {
+                var cachedOutcome = await cache.getHelloWorldToken();
+                token = cachedOutcome ? cachedOutcome.Value : null;
+                isTokenCached = token is {};
+            }
+
+            if (token is null)
+            {
+                var tokenOutcome = await credentialsService.AcquireTokenAsync(cancellationToken ?? new CancellationToken());
+                if (!tokenOutcome)
+                    return Outcome<AuthorizedClient>.Fail(tokenOutcome.Exception);
+
+                token = tokenOutcome.Value.AccessToken;
+                await cache.setHelloWorldToken(tokenOutcome.Value);
+            }
+
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add(HeaderNames.Authorization, token);
+            return Outcome<AuthorizedClient>.Success(new AuthorizedClient(client, isTokenCached));
+        }
+
+        static async Task<Outcome<ActorToken>> getHelloWorldToken(this ITimeLimitedRepositories cache)
         {
             return cache is { }
                 ? await cache.GetAsync<ActorToken>(TokensCache, HelloWorldToken)
                 : Outcome<ActorToken>.Fail(new ArgumentNullException(nameof(cache)));
         }
+
+        static async Task setHelloWorldToken(this ITimeLimitedRepositories cache, ClientCredentialsResponse response)
+        {
+            if (cache is null)
+                return;
+                
+            if (response.ExpiresIn == TimeSpan.Zero)
+            {
+                await cache.AddAsync(TokensCache, HelloWorldToken, response.AccessToken);
+                return;
+            }
+
+            var expiresIn = response.ExpiresIn.Subtract(TimeSpan.FromSeconds(2));
+            await cache.AddAsync(TokensCache, HelloWorldToken, response.AccessToken, expiresIn);
+        }
+        
     }
 
     public class AuthorizedClient 

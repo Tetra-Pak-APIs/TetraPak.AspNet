@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,12 +35,69 @@ namespace TetraPak.AspNet.Api.Auth
             MultiStringValue scope = null);
     }
 
+    public class ClientCredentialsResponse
+    {
+        public ActorToken AccessToken { get; }
+
+        public TimeSpan ExpiresIn { get; }
+
+        public MultiStringValue Scope { get; }
+
+        internal static Outcome<ClientCredentialsResponse> TryParse(ClientCredentialsResponseBody body)
+        {
+            var accessToken = string.IsNullOrWhiteSpace(body.TokenType)
+                ? body.AccessToken
+                : $"{body.TokenType} {body.AccessToken}";
+            if (!ActorToken.TryParse(accessToken, out var actorToken))
+                return Outcome<ClientCredentialsResponse>.Fail(
+                    new FormatException($"Failed while parsing access_token: {accessToken}"));
+
+            var expiresIn = TimeSpan.Zero;
+            if (!string.IsNullOrWhiteSpace(body.ExpiresIn))
+            {
+                if (!int.TryParse(body.ExpiresIn, out var seconds))
+                    return Outcome<ClientCredentialsResponse>.Fail(
+                        new FormatException($"Failed while parsing expires_in: {body.ExpiresIn}"));
+                expiresIn = TimeSpan.FromSeconds(seconds);
+            }
+
+            if (string.IsNullOrWhiteSpace(body.Scope))
+                return Outcome<ClientCredentialsResponse>.Success(new ClientCredentialsResponse(
+                    accessToken, expiresIn, null));
+
+            if (!MultiStringValue.TryParse(body.Scope, out var scope))
+                return Outcome<ClientCredentialsResponse>.Fail(
+                    new FormatException($"Failed while parsing expires_in: {body.ExpiresIn}"));
+
+            return Outcome<ClientCredentialsResponse>.Success(new ClientCredentialsResponse(
+                accessToken, expiresIn, scope));
+        }
+        
+        ClientCredentialsResponse(ActorToken accessToken, TimeSpan expiresIn, MultiStringValue scope)
+        {
+            AccessToken = accessToken;
+            ExpiresIn = expiresIn;
+            Scope = scope;
+        }
+    }
+    
     /// <summary>
     ///   Represents the response from a successful client credentials request
     ///   (see <see cref="IClientCredentialsService.AcquireTokenAsync"/>).
     /// </summary>
-    public class ClientCredentialsResponse
+    // ReSharper disable once ClassNeverInstantiated.Global
+    class ClientCredentialsResponseBody
     {
-        public ActorToken Token { get; }
+        [JsonPropertyName("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonPropertyName("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonPropertyName("expires_in")]
+        public string ExpiresIn { get; set; }
+
+        [JsonPropertyName("scope")]
+        public string Scope { get; set; }
     }
 }
