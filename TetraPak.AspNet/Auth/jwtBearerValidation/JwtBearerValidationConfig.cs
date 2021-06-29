@@ -11,19 +11,20 @@ namespace TetraPak.AspNet.Auth
         string _audience;
         string _issuer;
         bool? _validateLifetime;
+        string _devSidecar;
         // ReSharper restore NotAccessedField.Local
 
         protected override string SectionIdentifier => "ValidateJwtBearer";
 
         public string Audience
         {
-            get => GetFromFieldThenSection<string>(null);
+            get => GetFromFieldThenSection<string>();
             set => _audience = value;
         }
         
         public string Issuer 
         {
-            get => GetFromFieldThenSection<string>(null);
+            get => GetFromFieldThenSection<string>();
             set => _issuer = value;
         }
 
@@ -31,6 +32,24 @@ namespace TetraPak.AspNet.Auth
         {
             get => GetFromFieldThenSection(true);
             set => _validateLifetime = value;
+        }
+
+        public string DevSidecar
+        {
+            get => GetFromFieldThenSection(parser: (string value, out string result) =>
+            {
+                // support specifying just the proxy name ...
+                result = value;
+                if (string.IsNullOrWhiteSpace(value))
+                    return false;
+
+                if (!value.Contains('/'))
+                {
+                    result = $"https://api-dev.tetrapak.com/edge/developers/{value}/token";
+                }
+                return true;
+            });
+            set => _devSidecar = value;
         }
 
         public JwtBearerValidationConfig(

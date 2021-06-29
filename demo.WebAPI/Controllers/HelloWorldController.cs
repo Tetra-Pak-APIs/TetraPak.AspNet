@@ -11,15 +11,15 @@ using Microsoft.Net.Http.Headers;
 using TetraPak;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
+using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
-using TetraPak.Logging;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class HelloWorldController : BusinessApiController // <-- inherit
+    public class HelloWorldController : ControllerBase 
     {
         readonly IClientCredentialsService _credentialsService;
         readonly ITimeLimitedRepositories _cache;
@@ -30,23 +30,23 @@ namespace WebAPI.Controllers
         public async Task<ActionResult> Get(bool proxy = false)
         {
             var userIdentity = User.Identity;
-            Logger.Debug($"GET /helloworld{(proxy ? "proxy=true" : "")}");
+            this.LogDebug($"GET /helloworld{(proxy ? "proxy=true" : "")}");
             if (!proxy)
                 return Ok(new { message = "Hello World!", userId = userIdentity.Name ?? "(unresolved)" } );
 
             var cache = _cache;
             
             fetch:
-            
+
             var clientOutcome = await _credentialsService.GetAuthorizedClientAsync(cache);
             if (!clientOutcome)
-                return isUnauthorized(clientOutcome)
-                    ? UnauthorizedError(clientOutcome.Exception)
-                    : InternalServerError(clientOutcome.Exception);
+                return clientOutcome.IsUnauthorized()
+                    ? this.UnauthorizedError(clientOutcome.Exception)                              
+                    : this.InternalServerError(clientOutcome.Exception);
 
             var client = clientOutcome.Value.HttpClient;
             var isTokenCached = clientOutcome.Value.IsTokenCached;
-            var response = await client.GetAsync($"{HelloWorldHost}/helloworld");
+            var response = await client.GetAsync($"{HelloWorldHost}/helloworld"); // <-- ersätt med ett riktigt anrop
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -59,7 +59,7 @@ namespace WebAPI.Controllers
                 }                    
                     
                 var content = await response.Content.ReadAsStringAsync();
-                return InternalServerError(new Exception(content));
+                return this.InternalServerError(new Exception(content));
             }
 
             var stream = await response.Content.ReadAsStreamAsync();
@@ -76,17 +76,12 @@ namespace WebAPI.Controllers
             public string UserId { get; set; }
         }
 
-        bool isUnauthorized(Outcome<AuthorizedClient> outcome)
-        {
-            throw new NotImplementedException();
-        }
-
         public HelloWorldController(
-            TetraPakApiAuthConfig authConfig,
+            TetraPakApiAuthConfig config,
             IClientCredentialsService credentialsService,
             ITimeLimitedRepositories cache)
-        : base(authConfig)
         {
+            this.Configure(config);
             _credentialsService = credentialsService;
             _cache = cache;
         }
@@ -100,8 +95,14 @@ namespace WebAPI.Controllers
         internal static async Task<Outcome<AuthorizedClient>> GetAuthorizedClientAsync(
             this IClientCredentialsService credentialsService,
             ITimeLimitedRepositories cache,
+            HttpClient client = null,
             CancellationToken? cancellationToken = null)
         {
+            // ensure a passed in client isn't already authorizing ...
+            if (client is {} && client.DefaultRequestHeaders.TryGetValues(HeaderNames.Authorization, out _))
+                return Outcome<AuthorizedClient>.Fail(new InvalidOperationException(
+                    $"The '{HeaderNames.Authorization}' header cannot be assigned"));
+            
             ActorToken token = null;
             var isTokenCached = false;
             if (cache is { })
@@ -121,7 +122,7 @@ namespace WebAPI.Controllers
                 await cache.setHelloWorldToken(tokenOutcome.Value);
             }
 
-            var client = new HttpClient();
+            client ??= new HttpClient();
             client.DefaultRequestHeaders.Add(HeaderNames.Authorization, token);
             return Outcome<AuthorizedClient>.Success(new AuthorizedClient(client, isTokenCached));
         }

@@ -84,13 +84,16 @@ namespace TetraPak.AspNet.Api
             for (var i = 0; i < properties.Length; i++)
             {
                 var property = properties[i];
+                if (property.IsIndexer())
+                    continue;
+                
                 var value = property.CanRead
                     ? property.GetValue(self)
                     : null;
-                
+            
                 if (options.IgnoreNullValues && value is null)
                     continue;
-                
+            
                 var jsonPropertyName = property.GetCustomAttribute<JsonPropertyNameAttribute>();
                 var key = jsonPropertyName is { } 
                     ? jsonPropertyName.Name 

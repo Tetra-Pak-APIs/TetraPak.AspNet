@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
@@ -109,7 +107,6 @@ namespace TetraPak.AspNet
                 });
                 
                 identity.BootstrapContext = idToken;
-                // identity.AddClaims(jwt.Claims); obsolete
                 identity.AddClaims(mappedClaims);
                 identity.AddClaim(new Claim(identity.NameClaimType, jwt.Subject));
                 return clone;
@@ -160,6 +157,9 @@ namespace TetraPak.AspNet
             if (AuthConfig.ClientId is null)
                 throw new InvalidOperationException("Failed obtaining client id from configuration");
             
+            if (AuthConfig.ClientSecret is null)
+                throw new InvalidOperationException("Failed obtaining client secret from configuration");
+            
             return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
         }
 
@@ -188,28 +188,6 @@ namespace TetraPak.AspNet
             _userInformation = userInformation;
             _httpContextAccessor = httpContextAccessor;
             _clientCredentialsProvider = clientCredentialsProvider;
-        }
-    }
-
-    public static class TetraPakWebClientClaimsTransformationHelper
-    {
-        /// <summary>
-        ///   Sets up DI correctly for claims transformation.
-        /// </summary>
-        public static void AddTetraPakWebClientClaimsTransformation(this IServiceCollection c)
-        {
-            c.AddHttpContextAccessor();
-            c.TryAddTransient<AmbientData>();
-            c.TryAddSingleton<TetraPakAuthConfig>();
-            c.AddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
-        }
-
-        /// <summary>
-        ///   Sets up DI for access to Tetra Pak's User Information services.
-        /// </summary>
-        public static void AddTetraPakUserInformation(this IServiceCollection c)
-        {
-            c.TryAddSingleton<TetraPakUserInformation>();
         }
     }
 }

@@ -58,7 +58,6 @@ namespace TetraPak.AspNet.Api.Auth
 #endif
                 };
 
-
                 if (options.TokenValidationParameters.ValidateAudience)
                 {
                     options.TokenValidationParameters.ValidAudience = resolveAudience(AuthConfig.JwtBearerValidation.Audience);

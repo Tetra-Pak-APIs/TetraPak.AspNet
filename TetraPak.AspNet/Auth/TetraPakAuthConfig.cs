@@ -30,7 +30,7 @@ namespace TetraPak.AspNet.Auth
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
         
-        protected override string SectionIdentifier => "Auth-TetraPak"; 
+        protected override string SectionIdentifier => "TetraPak"; 
         protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
         
         // ReSharper disable NotAccessedField.Local
@@ -582,7 +582,7 @@ namespace TetraPak.AspNet.Auth
         public TetraPakAuthConfig(
             IConfiguration configuration,
             // ReSharper disable once SuggestBaseTypeForParameter
-            ILogger<TetraPakAuthConfig> logger,
+            ILogger<TetraPakAuthConfig> logger, 
             bool loadDiscoveryDocument = false,
             string sectionIdentifier = null,
             ITetraPakAuthConfigDelegate configDelegate = null) 

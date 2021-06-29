@@ -21,6 +21,7 @@ namespace WebAPI
             services.AddControllers();
             services.AddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>(); // <-- add this
             services.AddSidecarJwtAuthentication(); // <-- add this
+
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
         }
 
@@ -42,7 +43,8 @@ namespace WebAPI
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseRequestReferenceId();
-            app.UseSidecarJwtAuthentication(); // <-- add this (after UserRouting and before UseAuthorization)
+
+            app.UseSidecarJwtAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)
             
             app.UseAuthorization();
 

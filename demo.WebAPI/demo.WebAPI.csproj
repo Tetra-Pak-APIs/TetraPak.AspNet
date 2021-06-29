@@ -22,15 +22,11 @@
 
     <ItemGroup>
       <Content Remove="appsettings - Copy.json" />
-      <None Include="appsettings - Copy.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </None>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
       <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
+      <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,20 +1,28 @@
 ﻿using System;
+using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Identity;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
-    /// <inheritdoc />
-    public class TetraPakWebApiClaimsTransformation : TetraPakClaimsTransformation
+    /// <summary>
+    ///   Performs basic Tetra Pak issued access token validation while also supporting
+    ///   token exchange before the call to the user information service.
+    /// </summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class TetraPakWebApiAccessTokenAuthenticationHandler : TetraPakAccessTokenAuthenticationHandler
     {
-        const string IdentityTokenCache = "IdentityTokens";
-        
+        const string CacheRepository = "ExchangedAccessTokens";
+
+        readonly IClientCredentialsProvider _clientCredentialsProvider;
         readonly ITokenExchangeService _tokenExchangeService;
-        
+
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
         {
             try
@@ -25,7 +33,7 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 // try getting a cached exchanged token ... 
                 var accessToken = accessTokenOutcome.Value;
-                var cachedOutcome = await getCachedIdentityTokenAsync(accessToken);
+                var cachedOutcome = await getCachedExchangedTokenAsync(accessToken);
                 if (cachedOutcome)
                     return cachedOutcome;
                 
@@ -60,13 +68,24 @@ namespace TetraPak.AspNet.Api.Auth
                 throw;
             }
         }
+        
+        protected virtual async Task<Credentials> OnGetClientCredentials()
+        {
+            if (_clientCredentialsProvider is { })
+                return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
-        async Task<Outcome<ActorToken>> getCachedIdentityTokenAsync(ActorToken accessToken)
+            if (AuthConfig.ClientId is null)
+                throw new InvalidOperationException("Failed obtaining client id from configuration");
+            
+            return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
+        }
+        
+        async Task<Outcome<ActorToken>> getCachedExchangedTokenAsync(ActorToken accessToken)
         {
             if (AmbientData.Cache is null)
                 return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
 
-            return await AmbientData.Cache.GetAsync<ActorToken>(IdentityTokenCache, accessToken);
+            return await AmbientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
         }
 
         async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
@@ -74,21 +93,25 @@ namespace TetraPak.AspNet.Api.Auth
             if (AmbientData.Cache is { })
             {
                 await AmbientData.Cache.AddOrUpdateAsync(
-                    IdentityTokenCache, 
+                    CacheRepository, 
                     accessToken,
                     exchangedToken);
             }
         }
 
-        public TetraPakWebApiClaimsTransformation(
+        public TetraPakWebApiAccessTokenAuthenticationHandler(
+            IOptionsMonitor<ValidateTetraPakAccessTokenSchemeOptions> options, 
+            ILoggerFactory logger, 
+            UrlEncoder encoder, 
+            ISystemClock clock, 
+            TetraPakAuthConfig authConfig, 
             AmbientData ambientData, 
-            TetraPakApiAuthConfig authConfig, 
-            TetraPakUserInformation userInformation, 
-            IHttpContextAccessor httpContextAccessor,
+            UserInformationProvider userInformationProvider,
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(ambientData, authConfig, userInformation, httpContextAccessor, clientCredentialsProvider)
+        : base(options, logger, encoder, clock, authConfig, ambientData, userInformationProvider)
         {
+            _clientCredentialsProvider = clientCredentialsProvider;
             _tokenExchangeService = tokenExchangeService;
         }
     }
