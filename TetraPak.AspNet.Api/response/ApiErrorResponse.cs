@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using TetraPak.AspNet.Api.Auth;
+using TetraPak.AspNet.Auth;
 using TetraPak.DynamicEntities;
 using TetraPak.Serialization;
 
@@ -48,7 +49,7 @@ namespace TetraPak.AspNet.Api
             set => Set(value);
         }
 
-        public ApiErrorResponse(string title, HttpContext context, TetraPakApiAuthConfig authConfig)
+        public ApiErrorResponse(string title, HttpContext context, TetraPakAuthConfig authConfig)
         {
             Title = title;
             var messageId = context.Request.GetRequestReferenceId(authConfig);

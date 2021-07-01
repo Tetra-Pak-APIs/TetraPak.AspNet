@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Auth;
+using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
@@ -12,49 +12,84 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public class EndpointsConfig : ConfigurationSection, IEnumerable<KeyValuePair<string, BackendServiceEndpointUrl>>
+    public class EndpointsConfig : ConfigurationSection, IServiceAuthConfig, IEnumerable<KeyValuePair<string, BackendServiceEndpointUrl>>
     {
         // ReSharper disable NotAccessedField.Local
-        BackendServiceAuthenticationMechanism? _authenticationMechanism;
+        GrantType? _grantType; 
+        string _host;
+        string _basePath;
+        string _clientId;
+        string _clientSecret;
+        MultiStringValue _scope;
         // ReSharper restore NotAccessedField.Local
         
         protected override string SectionIdentifier { get; }
+        
+        public ServicesConfig ServicesConfig { get; }
+        
+        public string Path { get; }
+
+        public virtual GrantType GrantType
+        {
+            get => GetFromFieldThenSection(GrantType.Inherited, 
+                (string value, out GrantType grantType) =>
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                        value = GrantType.Inherited.ToString();
+                    
+                    if (!TetraPakAuthConfig.TryParseEnum(value, out grantType))
+                        throw new ConfigurationException($"Invalid auth mechanism: '{value}' ({Path}.{nameof(GrantType)})");
+
+                    if (grantType == GrantType.Inherited)
+                    {
+                        grantType = ServicesConfig.GrantType;
+                    }
+
+                    return true;
+                });
+            set => _grantType = value;
+        }
+
+        public virtual string ClientId
+        {
+            get => GetFromFieldThenSection<string>() ?? ServicesConfig.ClientId;
+            set => _clientId = value;
+        }
+
+        public virtual string ClientSecret
+        {
+            get => GetFromFieldThenSection<string>() ?? ServicesConfig.ClientSecret;
+            set => _clientSecret = value;
+        }
+
+        public virtual MultiStringValue Scope
+        {
+            get => GetFromFieldThenSection<MultiStringValue>() ?? ServicesConfig.Scope;
+            set => _scope = value;
+        }
 
         /// <summary>
         ///   The default host address.
         /// </summary>
-        public string Host { get; set; }
+        public string Host
+        {
+            get => GetFromFieldThenSection<string>(); 
+            set => _host = value;
+        }
 
         /// <summary>
         ///   A default base path.
         /// </summary>
-        public string BasePath { get; set; }
+        public string BasePath
+        {
+            get => GetFromFieldThenSection<string>(); 
+            set => _basePath = value;
+        }
 
         /// <summary>
-        ///   Gets or sets a value specifying how to authenticate this service when consuming the backend service.
-        ///   Default is <see cref="BackendServiceAuthenticationMechanism.TokenExchange"/>.
+        ///   Gets pre-configured client options. 
         /// </summary>
-        public BackendServiceAuthenticationMechanism AuthenticationMechanism
-        {
-            get => GetFromFieldThenSection(BackendServiceAuthenticationMechanism.TokenExchange);
-            set => _authenticationMechanism = value;
-        }
-        
-        void setProperty(PropertyInfo property, object value)
-        {
-            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(BackendServiceEndpointUrl)))
-            {
-                value = new BackendServiceEndpointUrl(stringValue);
-            }
-            if (property.PropertyType == typeof(string))
-            {
-                property.SetValue(this, value);
-                return;
-            }
-            
-            var obj = Convert.ChangeType(value, property.PropertyType);
-            property.SetValue(this, obj);
-        }
+        public virtual HttpClientOptions ClientOptions => new HttpClientOptions { AuthConfig = this };
 
         public IEnumerator<KeyValuePair<string, BackendServiceEndpointUrl>> GetEnumerator()
         {
@@ -65,33 +100,30 @@ namespace TetraPak.AspNet.Api
             {
                 var property = propertyArray[i];
                 var value = (BackendServiceEndpointUrl) property.GetValue(this);
+                if (value is null)
+                {
+                    Logger.Warning($"Unassigned endpoint: {Path}:{property.Name}");
+                    continue;
+                }
+                
                 yield return new KeyValuePair<string, BackendServiceEndpointUrl>(property.Name, value);
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        void assignProperties(IConfiguration configuration)
+        public EndpointsConfig(
+            ServicesConfig servicesConfig, 
+            ILogger<EndpointsConfig> logger, 
+            string sectionIdentifier = "Endpoints")
+        : base(servicesConfig.Configuration, logger, $"{servicesConfig.Path}:{sectionIdentifier}")
         {
-            var properties = GetType().GetProperties();
-            foreach (var property in properties.Where(i => i.CanWrite))
-            {
-                var value = configuration[property.Name];
-                if (value is null)
-                    continue;
-        
-                setProperty(property, value);
-            }
-        }
-
-        public EndpointsConfig(IConfiguration configuration, ILogger logger, string sectionIdentifier = "Endpoints")
-        : base(configuration, logger, sectionIdentifier)
-        {
+            ServicesConfig = servicesConfig;
             SectionIdentifier = sectionIdentifier;
             if (string.IsNullOrEmpty(Host))
                 throw new InvalidOperationException($"Missing configuration: {this}.{nameof(Host)}");
             
-            assignProperties(Section);
+            Path = $"{servicesConfig.Path}:{sectionIdentifier}";
         }
     }
 }

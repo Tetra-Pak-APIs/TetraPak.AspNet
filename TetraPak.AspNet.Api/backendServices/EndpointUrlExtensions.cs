@@ -21,6 +21,56 @@ namespace TetraPak.AspNet.Api
             }
         }
 
+        internal static IBackendService GetBackendService(this BackendServiceEndpointUrl self)
+        {
+            lock (s_endpoints)
+            {
+                return s_endpoints.TryGetValue(self, out var service)
+                    ? service
+                    : throw new ArgumentOutOfRangeException($"Cannot acquire service for backend URL: {self}");
+            }
+        }
+
+        /// <summary>
+        ///   Sends an HTTP GET message to the specified <see cref="BackendServiceEndpointUrl"/>
+        /// </summary>
+        /// <param name="serviceUrl">
+        ///   The <see cref="BackendServiceEndpointUrl"/>.
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)
+        ///   Query parameters.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional)
+        ///   Options for the operation.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <paramref name="serviceUrl"/> was not assigned to a registered service.
+        /// </exception>
+        public static Task<Outcome<HttpResponseMessage>> GetAsync(
+            this BackendServiceEndpointUrl serviceUrl,
+            IDictionary<string,string> queryParameters = null,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            lock (s_endpoints)
+            {
+                if (!s_endpoints.TryGetValue(serviceUrl, out var service))
+                    throw new InvalidOperationException($"Endpoint Url {serviceUrl} was not assigned to a service");
+
+                clientOptions ??= serviceUrl.GetBackendService().DefaultClientOptions;
+                return service.GetAsync(serviceUrl, queryParameters, clientOptions, cancellationToken);
+            }
+        }
+
         /// <summary>
         ///   Sends an HTTP POST message to the specified <see cref="BackendServiceEndpointUrl"/>
         /// </summary>
@@ -55,6 +105,7 @@ namespace TetraPak.AspNet.Api
                 if (!s_endpoints.TryGetValue(serviceUrl, out var service))
                     throw new InvalidOperationException($"Endpoint Url {serviceUrl} was not assigned to a service");
 
+                clientOptions ??= serviceUrl.GetBackendService().DefaultClientOptions;
                 return service.PostAsync(serviceUrl, content, clientOptions, cancellationToken);
             }
         }

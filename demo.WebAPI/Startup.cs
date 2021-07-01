@@ -19,8 +19,10 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>(); // <-- add this
+            
+            // services.AddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>(); // <-- add this
             services.AddSidecarJwtAuthentication(); // <-- add this
+            services.AddBackendServices();          // <-- add this
 
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
         }

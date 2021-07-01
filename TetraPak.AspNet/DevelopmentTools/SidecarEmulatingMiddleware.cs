@@ -75,7 +75,7 @@ namespace TetraPak.AspNet.DevelopmentTools
                     var responseBody = await JsonSerializer.DeserializeAsync<SidecarResponseBody>(stream);
                     if (responseBody is null)
                         throw new Exception("JSON serialization returned an empty response body");
-                        
+
                     return Outcome<ActorToken>.Success(responseBody.Token);
                 }
                 catch (Exception ex)

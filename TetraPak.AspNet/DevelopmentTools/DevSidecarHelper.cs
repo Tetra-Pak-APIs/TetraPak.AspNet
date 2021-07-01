@@ -52,8 +52,9 @@ namespace TetraPak.AspNet.DevelopmentTools
             {
                 var isSuccessful = await sidecar.InvokeAsync(context);
                 if (!isSuccessful)
-                    return;
-                
+                {
+                    logger.Warning($"Dev Sidecar failed to produce a Sidecar JWT Bearer");
+                }
                 await next();
             });
             logger.Warning("Local development sidecar middleware was injected");            

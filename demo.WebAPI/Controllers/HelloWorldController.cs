@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,22 +7,23 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using TetraPak;
+using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
-using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
+using WebAPI.services;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class HelloWorldController : ControllerBase 
+    public class HelloWorldController : ApiGatewayController<BackendService<HelloWorldEndpoints>>
     {
-        readonly IClientCredentialsService _credentialsService;
-        readonly ITimeLimitedRepositories _cache;
+        // readonly IClientCredentialsService _credentialsService;
+        // readonly ITimeLimitedRepositories _cache;
 
-        const string HelloWorldHost = "https://localhost:5003";
+        // const string HelloWorldHost = "https://localhost:5003"; obsolete
 
         [HttpGet]
         public async Task<ActionResult> Get(bool proxy = false)
@@ -34,37 +33,41 @@ namespace WebAPI.Controllers
             if (!proxy)
                 return Ok(new { message = "Hello World!", userId = userIdentity.Name ?? "(unresolved)" } );
 
-            var cache = _cache;
+            // var cache = _cache;
+
+            var outcome = await Service.Endpoints.HelloWorld.GetAsync();
+            return Outcome(outcome);
             
-            fetch:
-
-            var clientOutcome = await _credentialsService.GetAuthorizedClientAsync(cache);
-            if (!clientOutcome)
-                return clientOutcome.IsUnauthorized()
-                    ? this.UnauthorizedError(clientOutcome.Exception)                              
-                    : this.InternalServerError(clientOutcome.Exception);
-
-            var client = clientOutcome.Value.HttpClient;
-            var isTokenCached = clientOutcome.Value.IsTokenCached;
-            var response = await client.GetAsync($"{HelloWorldHost}/helloworld"); // <-- ersätt med ett riktigt anrop
-            if (!response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    if (!isTokenCached) 
-                        return Unauthorized();
-                    
-                    cache = null;
-                    goto fetch;
-                }                    
-                    
-                var content = await response.Content.ReadAsStringAsync();
-                return this.InternalServerError(new Exception(content));
-            }
-
-            var stream = await response.Content.ReadAsStreamAsync();
-            var messageResponse = await JsonSerializer.DeserializeAsync<MessageResponse>(stream);
-            return Ok(messageResponse);
+            //
+            // fetch:
+            //
+            // var clientOutcome = await _credentialsService.GetAuthorizedClientAsync(cache);
+            // if (!clientOutcome)
+            //     return clientOutcome.IsUnauthorized()
+            //         ? this.UnauthorizedError(clientOutcome.Exception)                              
+            //         : this.InternalServerError(clientOutcome.Exception);
+            //
+            // var client = clientOutcome.Value.HttpClient;
+            // var isTokenCached = clientOutcome.Value.IsTokenCached;
+            // var response = await client.GetAsync($"{HelloWorldHost}/helloworld"); // <-- ersätt med ett riktigt anrop
+            // if (!response.IsSuccessStatusCode)
+            // {
+            //     if (response.StatusCode == HttpStatusCode.Unauthorized)
+            //     {
+            //         if (!isTokenCached) 
+            //             return Unauthorized();
+            //         
+            //         cache = null;
+            //         goto fetch;
+            //     }                    
+            //         
+            //     var content = await response.Content.ReadAsStringAsync();
+            //     return this.InternalServerError(new Exception(content));
+            // }
+            //
+            // var stream = await response.Content.ReadAsStreamAsync();
+            // var messageResponse = await JsonSerializer.DeserializeAsync<MessageResponse>(stream);
+            // return Ok(messageResponse);
         }
 
         class MessageResponse
@@ -77,13 +80,16 @@ namespace WebAPI.Controllers
         }
 
         public HelloWorldController(
-            TetraPakApiAuthConfig config,
-            IClientCredentialsService credentialsService,
-            ITimeLimitedRepositories cache)
+            BackendService<HelloWorldEndpoints> service,
+            TetraPakApiAuthConfig config
+            // IClientCredentialsService credentialsService,
+            // ITimeLimitedRepositories cache
+            )
+        : base(service, config)
         {
-            this.Configure(config);
-            _credentialsService = credentialsService;
-            _cache = cache;
+            // this.Configure(config);
+            // _credentialsService = credentialsService;
+            // _cache = cache;
         }
     }
 

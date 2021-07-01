@@ -40,12 +40,18 @@ namespace TetraPak.AspNet.Debugging
             var sb = new StringBuilder();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             sb.AppendLine(">===== ASSEMBLIES =====<");
+            sb.AppendAssembliesInUse();
+            sb.AppendLine(">======================<");
+            logger.Debug(sb.ToString());
+        }
+
+        public static void AppendAssembliesInUse(this StringBuilder sb)
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
             {
                 sb.AppendLine(assembly.FullName);
             }
-            sb.AppendLine(">======================<");
-            logger.Debug(sb.ToString());
         }
 
         public static void Debug(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)

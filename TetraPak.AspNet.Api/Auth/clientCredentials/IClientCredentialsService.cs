@@ -70,7 +70,7 @@ namespace TetraPak.AspNet.Api.Auth
                     new FormatException($"Failed while parsing expires_in: {body.ExpiresIn}"));
 
             return Outcome<ClientCredentialsResponse>.Success(new ClientCredentialsResponse(
-                accessToken, expiresIn, scope));
+                actorToken, expiresIn, scope));
         }
         
         ClientCredentialsResponse(ActorToken accessToken, TimeSpan expiresIn, MultiStringValue scope)

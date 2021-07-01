@@ -36,14 +36,44 @@ namespace TetraPak.AspNet.Api.Controllers
             return OnError(HttpStatusCode.InternalServerError, error);
         }
 
+        protected ActionResult Error(Exception error)
+        {
+            if (error is HttpException httpException)
+                return StatusCode(
+                    (int) httpException.StatusCode, 
+                    new ApiErrorResponse(error.Message, HttpContext, AuthConfig));
+
+            return InternalServerError(error);
+        }
+
         protected virtual ActionResult OnError(HttpStatusCode status, Exception error) => this.Error(status, error);
+
+        protected ActionResult Outcome<T>(Outcome<T> outcome)
+        {
+            return outcome ? Ok(outcome) : Error(outcome.Exception);
+        }
+
+        protected OkObjectResult Ok<T>(EnumOutcome<T> outcome, int totalCount = -1)
+        {
+            return ControllerBaseExtensions.Ok(this, outcome, totalCount);
+        }
+
+        public override OkObjectResult Ok(object value)
+        {
+            if (value is null)
+                return base.Ok(ApiDataResponse<object>.Empty());
+
+            return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) 
+                ? base.Ok(value) 
+                : ControllerBaseExtensions.Ok(this, value);
+        }
 
         protected static string DictionaryLogString(IDictionary<string, string> formDictionary, string indent = "  ")
         {
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
         
-        protected BusinessApiController(TetraPakApiAuthConfig authConfig)
+        public BusinessApiController(TetraPakApiAuthConfig authConfig)
         {
             AuthConfig = authConfig;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
@@ -58,6 +88,5 @@ namespace TetraPak.AspNet.Api.Controllers
             }
             Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
         }
-
     }
 }
