@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
@@ -48,9 +51,25 @@ namespace TetraPak.AspNet.Api.Controllers
 
         protected virtual ActionResult OnError(HttpStatusCode status, Exception error) => this.Error(status, error);
 
-        protected ActionResult Outcome<T>(Outcome<T> outcome)
+        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome)
         {
-            return outcome ? Ok(outcome) : Error(outcome.Exception);
+            if (!outcome)
+                return Error(outcome.Exception);
+
+            var value = outcome.Value;
+            if (value is not HttpResponseMessage responseMessage) 
+                return Ok(outcome.Value);
+            
+            var content = await responseMessage.Content.ReadAsStringAsync();
+            try
+            {
+                var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
+                return Ok(dictionary);
+            }
+            catch (Exception ex)
+            {
+                return Ok(content);
+            }
         }
 
         protected OkObjectResult Ok<T>(EnumOutcome<T> outcome, int totalCount = -1)

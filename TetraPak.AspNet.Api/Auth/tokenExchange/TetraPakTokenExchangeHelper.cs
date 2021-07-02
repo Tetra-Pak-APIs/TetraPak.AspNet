@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,32 +50,27 @@ namespace TetraPak.AspNet.Api.Auth
             
             void addControllerBackendServices(Assembly assembly)
             {
-                var types = assembly.GetTypes(); // nisse
-                foreach (var type in types)
+                var types = assembly.GetTypes().Where(i => i.GetCustomAttribute<ApiControllerAttribute>() is {}).ToArray();
+                HashSet<Type> registered = new();
+                for (var i = 0; i < types.Length; i++)
                 {
-                    if (type.GetCustomAttribute<ApiControllerAttribute>() is null)
-                        continue;
-                
+                    var type = types[i];
                     if (!type.TryGetGenericBase(typeof(ApiGatewayController<>), out var controllerType))
                         continue;
                     
-                    var backendServiceType = controllerType.GetGenericArguments().First();
-                    c.TryAddSingleton(backendServiceType);
+                    var serviceType = controllerType.GetGenericArguments().First();
+                    if (registered.Contains(serviceType))
+                        continue;
+                    
+                    if (!serviceType.TryGetGenericBase(typeof(BackendService<>), out var backendServiceType))
+                        throw new Exception(
+                            $"Unexpected error: Generic service type {serviceType} does not inherit from {typeof(BackendService<>)}");
+
                     var endpointsType = backendServiceType.GetGenericArguments().First();
+                    c.TryAddSingleton(serviceType);
                     c.TryAddSingleton(endpointsType);
+                    registered.Add(serviceType);
                 }
-                
-                
-                // var controllerTypes = assembly.GetTypes()
-                //     .Where(i => 
-                //         i.GetCustomAttribute<ApiControllerAttribute>() is {} 
-                //         && i.IsGenericBase(typeof(ApiGatewayController<>), true))
-                //     .ToArray();
-                // foreach (var controllerType in controllerTypes)
-                // {
-                //     var backendServiceType = controllerType.GetGenericArguments().First();
-                //     c.TryAddSingleton(backendServiceType);
-                // }
             }
         }
 

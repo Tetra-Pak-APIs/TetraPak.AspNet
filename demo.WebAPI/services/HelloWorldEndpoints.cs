@@ -5,7 +5,9 @@ namespace WebAPI.services
 {
     public class HelloWorldEndpoints : EndpointsConfig
     {
+        // ReSharper disable NotAccessedField.Local
         BackendServiceEndpointUrl _helloWorld;
+        // ReSharper restore NotAccessedField.Local
 
         public BackendServiceEndpointUrl HelloWorld
         {

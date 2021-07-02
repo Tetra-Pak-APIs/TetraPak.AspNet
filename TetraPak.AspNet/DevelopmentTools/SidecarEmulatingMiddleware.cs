@@ -33,6 +33,14 @@ namespace TetraPak.AspNet.DevelopmentTools
                 return false;
             }
 
+            // ignore if token is already a JWT ...
+            var actorToken = tokenOutcome.Value;
+            if (actorToken.IsJwt)
+            {
+                Logger.Debug("Local development sidecar bails out. Token was already JWT token");
+                return true;
+            }
+
             var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity);
             if (!jwtBearerOutcome)
             {
@@ -46,7 +54,7 @@ namespace TetraPak.AspNet.DevelopmentTools
                 {
                     var content = new
                     {
-                        message = $"Local sidecar failed to authenticate access token: {tokenOutcome.Value}",
+                        message = $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
                         targetError = targetError ?? "(none)"
                     };
                     await context.RespondAsync(HttpStatusCode.Unauthorized, content);

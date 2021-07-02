@@ -56,8 +56,24 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="serviceUrl"/> was not assigned to a registered service.
         /// </exception>
         public static Task<Outcome<HttpResponseMessage>> GetAsync(
-            this BackendServiceEndpointUrl serviceUrl,
-            IDictionary<string,string> queryParameters = null,
+            this BackendServiceEndpointUrl serviceUrl,  
+            IDictionary<string,string> queryParameters,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            lock (s_endpoints)
+            {
+                if (!s_endpoints.TryGetValue(serviceUrl, out var service))
+                    throw new InvalidOperationException($"Endpoint Url {serviceUrl} was not assigned to a service");
+
+                clientOptions ??= serviceUrl.GetBackendService().DefaultClientOptions;
+                return service.GetAsync(serviceUrl, queryParameters, clientOptions, cancellationToken);
+            }
+        }
+
+        public static Task<Outcome<HttpResponseMessage>> GetAsync(
+            this BackendServiceEndpointUrl serviceUrl,  
+            string queryParameters = null,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {

@@ -68,9 +68,36 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         Task<Outcome<HttpResponseMessage>> GetAsync(
             string path,
-            IDictionary<string,string> queryParameters = null,
+            IDictionary<string,string> queryParameters,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null);
 
+        /// <summary>
+        ///   Sends a POST request to the backend service.
+        /// </summary>
+        /// <param name="path">
+        ///   The path to the requested resource. 
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)
+        ///   Query parameters.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        Task<Outcome<HttpResponseMessage>> GetAsync(
+            string path,
+            string queryParameters = null,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null);
     }
 }

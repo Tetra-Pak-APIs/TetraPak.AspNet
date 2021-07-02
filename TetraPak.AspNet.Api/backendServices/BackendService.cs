@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -96,7 +94,7 @@ namespace TetraPak.AspNet.Api
 
         public async Task<Outcome<HttpResponseMessage>> GetAsync(
             string path, 
-            IDictionary<string, string> queryParameters = null,
+            string queryParameters = null, 
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
@@ -119,36 +117,29 @@ namespace TetraPak.AspNet.Api
                 var response = await client.GetAsync(path.TrimStart('/'), ct);
                 return response.IsSuccessStatusCode
                     ? Outcome<HttpResponseMessage>.Success(response)
-                    : Outcome<HttpResponseMessage>.Fail(response);
+                    : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
             }
             catch (Exception ex)
             {
                 return requestErrorOutcome(ex, HttpMethod.Get, url);
             }
 
+
             string pathWithQueryParameters()
             {
-                if (!(queryParameters?.Any() ?? false))
-                    return path;
-
-                var sb = new StringBuilder(path);
-                sb.Append('?');
-                var pairs = queryParameters.ToArray();
-                var pair = pairs[0];
-                sb.Append(pair.Key);
-                sb.Append('=');
-                sb.Append(pair.Value);
-                for (var i = 1; i < pairs.Length; i++)
-                {
-                    sb.Append('&');
-                    pair = pairs[i];
-                    sb.Append(pair.Key);
-                    sb.Append('=');
-                    sb.Append(pair.Value);
-                }
-
-                return sb.ToString();
+                return string.IsNullOrWhiteSpace(queryParameters) 
+                    ? path
+                    : $"{path}{queryParameters.Trim().EnsurePrefix("?")}";
             }
+        }
+
+        public Task<Outcome<HttpResponseMessage>> GetAsync(
+            string path, 
+            IDictionary<string, string> queryParameters,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            return GetAsync(path, queryParameters.ToUrlQueryParameters(true), clientOptions, cancellationToken);
         }
 
         Outcome<HttpResponseMessage> requestErrorOutcome(Exception exception, HttpMethod method, string url)

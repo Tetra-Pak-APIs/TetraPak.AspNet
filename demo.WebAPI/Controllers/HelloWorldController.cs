@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+   // [Authorize]
     public class HelloWorldController : ApiGatewayController<BackendService<HelloWorldEndpoints>>
     {
         // readonly IClientCredentialsService _credentialsService;
@@ -36,7 +36,7 @@ namespace WebAPI.Controllers
             // var cache = _cache;
 
             var outcome = await Service.Endpoints.HelloWorld.GetAsync();
-            return Outcome(outcome);
+             return await OutcomeResultAsync(outcome);
             
             //
             // fetch:
@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
             // var clientOutcome = await _credentialsService.GetAuthorizedClientAsync(cache);
             // if (!clientOutcome)
             //     return clientOutcome.IsUnauthorized()
-            //         ? this.UnauthorizedError(clientOutcome.Exception)                              
+            //         ? this.UnauthorizedError(clientOutcome.Exception)
             //         : this.InternalServerError(clientOutcome.Exception);
             //
             // var client = clientOutcome.Value.HttpClient;
@@ -79,17 +79,9 @@ namespace WebAPI.Controllers
             public string UserId { get; set; }
         }
 
-        public HelloWorldController(
-            BackendService<HelloWorldEndpoints> service,
-            TetraPakApiAuthConfig config
-            // IClientCredentialsService credentialsService,
-            // ITimeLimitedRepositories cache
-            )
+        public HelloWorldController(BackendService<HelloWorldEndpoints> service, TetraPakApiAuthConfig config)
         : base(service, config)
         {
-            // this.Configure(config);
-            // _credentialsService = credentialsService;
-            // _cache = cache;
         }
     }
 
