@@ -16,10 +16,12 @@ namespace TetraPak.AspNet.Auth
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakAuthConfig : ConfigurationSection
+    public class TetraPakAuthConfig : ConfigurationSection, IServiceAuthConfig
     {
+        public const string Identifier = "TetraPak";
+        
         static readonly object s_syncRoot = new();
-        static readonly string[] s_defaultScope = { "general", "profile", "email", "openid" };
+        static readonly MultiStringValue s_defaultScope = new(new []{ "general", "profile", "email", "openid" });
 
         const string KeyAuthorityUrl = "KeyAuthorityUrl";
         const string KeyTokenIssuerUrl = "TokenIssuerUrl";
@@ -30,8 +32,8 @@ namespace TetraPak.AspNet.Auth
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
         
-        protected override string SectionIdentifier => "TetraPak"; 
-        protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer"; 
+        protected override string SectionIdentifier => Identifier;
+        protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer";
         
         // ReSharper disable NotAccessedField.Local
         // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
@@ -44,6 +46,8 @@ namespace TetraPak.AspNet.Auth
         bool? _isCachingAllowed;
         TimeSpan? _defaultCachingLifetime;
         bool? _isPkceUsed;
+        MultiStringValue _scope;
+        GrantType _method;
         // ReSharper restore NotAccessedField.Local
         string _authorityUrl;
         string _tokenIssuerUrl;
@@ -59,6 +63,8 @@ namespace TetraPak.AspNet.Auth
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
         public JwtBearerValidationConfig JwtBearerValidation { get; }
+        
+        public IConfiguration Configuration { get; }
         
         protected override FieldInfo OnGetField(string fieldName)
         {
@@ -152,17 +158,6 @@ namespace TetraPak.AspNet.Auth
             set => _defaultCachingLifetime = value;
         }
 
-        // /// <summary>
-        // ///   Gets or sets a value specifying whether to always cache the token used to build the identity. obsolete
-        // /// </summary>
-        // /// <remarks>
-        // ///   In the configuration section this value can be expressed either as seconds (an integer),
-        // ///   like so: <c>"CacheIdentityTokenLifetime": "150"</c>, or as a time span value (hh:mm:ss),
-        // ///   like this: <c>"CacheIdentityTokenLifetime": "00:02:30"</c>.
-        // /// </remarks>
-        // /// <see cref="TetraPakClaimsTransformation"/>
-        // public TimeSpan? CacheIdentityTokenLifetime => Caching.GetRepositoryConfig("IdentityTokens")?.LifeSpan;
-
         /// <summary>
         ///   Gets a value indicating whether the configured authorization header is a custom one
         ///   (default is <see cref="HeaderNames.Authorization"/>).
@@ -172,7 +167,7 @@ namespace TetraPak.AspNet.Auth
     
         /// <summary>
         ///   Gets the current runtime environment (DEV, TEST, PROD ...).
-        ///   The value is a <see cref="runtimeEnvironment"/> enum value. 
+        ///   The value is a <see cref="resolveRuntimeEnvironment"/> enum value. 
         /// </summary>
         public RuntimeEnvironment Environment { get; }
 
@@ -238,6 +233,25 @@ namespace TetraPak.AspNet.Auth
         ///   Indicates whether the authority domain has been assigned (intended mainly for testing purposes).
         /// </summary>
         internal bool IsAuthDomainAssigned => !string.IsNullOrWhiteSpace(_authDomain);
+
+        public virtual GrantType GrantType
+        {
+            get => GetFromFieldThenSection(GrantType.None, 
+                (string value, out GrantType grantType) =>
+                {
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        grantType = GrantType.None;
+                        return true;
+                    }
+                    
+                    if (!TryParseEnum(value, out grantType) || grantType == GrantType.Inherited)
+                        throw new ConfigurationException($"Invalid auth method: '{value}' ({Identifier}.{nameof(GrantType)})");
+
+                    return true;
+                });
+            set => _method = value;
+        }
 
         /// <summary>
         ///   Gets a configured client id.
@@ -377,30 +391,53 @@ namespace TetraPak.AspNet.Auth
             set => _refreshThresholdSeconds = value;
         }
 
-        // static bool parseBool(string s, bool useDefault = false)
-        // {
-        //     return string.IsNullOrWhiteSpace(s) 
-        //         ? useDefault 
-        //         : bool.TryParse(s, out var b) 
-        //             ? b 
-        //             : useDefault;
-        // }
-        //
-        // static int parseInt(string s, int useDefault = 0)
-        // {
-        //     useDefault = Math.Abs(useDefault);
-        //     return string.IsNullOrWhiteSpace(s) 
-        //         ? useDefault 
-        //         : int.TryParse(s, out var result) 
-        //             ? result 
-        //             : useDefault;
-        // }
+        public static TEnum ParseEnum<TEnum>(string stringValue, TEnum useDefault = default) 
+        where TEnum : struct
+        {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return useDefault;
+
+            return Enum.TryParse<TEnum>(stringValue.TrimWhitespace(), out var value)
+                ? value
+                : useDefault;
+        }
+
+        /// <summary>
+        ///   Converts the string representation of the name or numeric value of one or more enumerated constants
+        ///   to an equivalent enumerated object. The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="stringValue">
+        ///   The case-insensitive string representation of the enumeration name or underlying value to convert.
+        /// </param>
+        /// <param name="value">
+        ///   When this method returns, result contains an object of type <typeparamref name="TEnum"/> whose
+        ///   value is represented by value if the parse operation succeeds.
+        ///   If the parse operation fails, result contains the default value of the underlying type of TEnum.
+        ///   Note that this value need not be a member of the TEnum enumeration.
+        ///   This parameter is passed uninitialized.
+        /// </param>
+        /// <typeparam name="TEnum">
+        ///   The enumeration type to which to convert value.
+        /// </typeparam>
+        /// <returns>
+        ///   <c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool TryParseEnum<TEnum>(string stringValue, out TEnum value) 
+        where TEnum : struct
+        {
+            value = default;
+            return !string.IsNullOrWhiteSpace(stringValue) && Enum.TryParse(stringValue.TrimWhitespace(), true, out value);
+        }
 
         /// <summary>
         ///   Gets or sets a scope of identity claims to be requested while authenticating the identity.
         ///   When omitted a default scope will be used. 
         /// </summary>
-        public string[] Scope { get; }
+        public MultiStringValue Scope
+        {
+            get => GetFromFieldThenSection<MultiStringValue>();
+            set => _scope = value;
+        }
 
         /// <summary>
         ///   Gets the current runtime environment name.
@@ -494,23 +531,45 @@ namespace TetraPak.AspNet.Auth
             }
         }
 
-        static RuntimeEnvironment? runtimeEnvironment()
+        /// <summary>
+        ///   Invoked from ctor to resolve the runtime environment.
+        /// </summary>
+        /// <param name="configuredStringValue">
+        ///   The configured <see cref="string"/> value to be resolved.
+        /// </param>
+        /// <param name="configDelegate">
+        ///   (optional)<br/>
+        ///   A custom delegate to be allowed to affect the result.
+        /// </param>
+        /// <returns>
+        ///   A resolved <see cref="RuntimeEnvironment"/> value.
+        /// </returns>
+        protected virtual RuntimeEnvironment OnResolveRuntimeEnvironment(
+            string configuredStringValue,
+            ITetraPakAuthConfigDelegate configDelegate)
         {
-            var environment = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (!string.IsNullOrEmpty(environment))
-                return mapEnvironment(environment);
+            var environment = configDelegate?.ResolveConfiguredEnvironment(configuredStringValue);
+            if (environment is {} && environment != RuntimeEnvironment.Unknown)
+                return environment.Value;
             
-            environment = System.Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-            return !string.IsNullOrEmpty(environment) 
-                ? mapEnvironment(environment)
-                : null;
+            return configuredStringValue is { } 
+                ? Enum.Parse<RuntimeEnvironment>(configuredStringValue) 
+                : resolve() ?? RuntimeEnvironment.Production;
+            
+            static RuntimeEnvironment? resolve()
+            {
+                var stringValue = ProcessEnvironment;
+                return string.IsNullOrWhiteSpace(stringValue)
+                    ? null
+                    : Enum.TryParse<RuntimeEnvironment>(stringValue, true, out var result)
+                        ? result
+                        : null;
+            }
         }
         
-        static RuntimeEnvironment? mapEnvironment(string environment)
+        RuntimeEnvironment resolveRuntimeEnvironment(ITetraPakAuthConfigDelegate configDelegate)
         {
-            return Enum.TryParse<RuntimeEnvironment>(environment, true, out var result)
-                ? result
-                : null;
+            return OnResolveRuntimeEnvironment(Section["Environment"], configDelegate);
         }
 
         TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.Api)
@@ -532,7 +591,7 @@ namespace TetraPak.AspNet.Auth
                 : useDefault;
         }
         
-        string[] parseScope()
+        MultiStringValue parseScope()
         {
             var scope = Section.GetList<string>(KeyScope, Logger);
             if (scope is null || scope.Count == 0)
@@ -543,7 +602,35 @@ namespace TetraPak.AspNet.Auth
                 scope.Add("openid");
             }
 
-            return scope.ToArray();
+            return new MultiStringValue(scope.ToArray());
+        }
+        
+        protected void InitializeProperties(IConfiguration configuration) 
+        {
+            var properties = GetType().GetProperties();
+
+            var nisse = configuration.GetChildren(); // nisse
+            
+            foreach (var property in properties.Where(i => i.CanWrite))
+            {
+                var value = configuration[property.Name];
+                if (value is null)
+                    continue;
+        
+                OnSetProperty(property, value);
+            }
+        }
+        
+        protected virtual void OnSetProperty(PropertyInfo property, object value) 
+        {
+            if (property.PropertyType == typeof(string))
+            {
+                property.SetValue(this, value);
+                return;
+            }
+            
+            var obj = Convert.ChangeType(value, property.PropertyType);
+            property.SetValue(this, obj);
         }
 
         /// <summary>
@@ -564,18 +651,21 @@ namespace TetraPak.AspNet.Auth
         ///     (optional; default=<see cref="SectionIdentifier"/>)<br/>
         ///     A custom configuration section identifier. 
         /// </param>
+        /// <param name="configDelegate">
+        ///   (optional)<br/>
+        ///   A delegate instance for custom configuration behavior.
+        /// </param>
         public TetraPakAuthConfig(
             IConfiguration configuration,
             // ReSharper disable once SuggestBaseTypeForParameter
-            ILogger<TetraPakAuthConfig> logger,
+            ILogger<TetraPakAuthConfig> logger, 
             bool loadDiscoveryDocument = false,
-            string sectionIdentifier = null) 
+            string sectionIdentifier = null,
+            ITetraPakAuthConfigDelegate configDelegate = null) 
         : base(configuration, logger, sectionIdentifier)
         {
-            var s = Section["Environment"];
-            Environment = s is { } 
-                ? Enum.Parse<RuntimeEnvironment>(s) 
-                : runtimeEnvironment() ?? RuntimeEnvironment.Production;
+            Configuration = configuration;
+            Environment = resolveRuntimeEnvironment(configDelegate);
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
@@ -586,5 +676,17 @@ namespace TetraPak.AspNet.Auth
                 discoverAsync();
             }
         }
+    }
+
+    public interface ITetraPakAuthConfigDelegate
+    {
+        /// <summary>
+        ///   Called to resolve the configured (or null, when un-configured) runtime environment.
+        /// </summary>
+        /// <param name="stringValue">The <see cref="string"/> representation of the configured value.</param>
+        /// <returns>
+        ///   A resolved <see cref="RuntimeEnvironment"/> value.
+        /// </returns>
+        RuntimeEnvironment ResolveConfiguredEnvironment(string stringValue);
     }
 }

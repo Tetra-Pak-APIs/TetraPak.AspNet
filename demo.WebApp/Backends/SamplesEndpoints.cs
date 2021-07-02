@@ -7,10 +7,8 @@ namespace demo.WebApp.Backends
     {
         public BackendServiceEndpointUrl HelloWorld { get; set; }
         
-        public SamplesEndpoints(
-            IConfiguration configuration, 
-            string sectionId = "SamplesServices") 
-        : base(configuration, null, sectionId)
+        public SamplesEndpoints(ServicesConfig servicesConfig, string sectionId = "SamplesServices") 
+        : base(servicesConfig, null, sectionId)
         {
         }
     }

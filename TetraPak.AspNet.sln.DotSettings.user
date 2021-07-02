@@ -2,6 +2,12 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\serembrattj\.nuget\packages\tetrapak.aspnet\0.5.0-beta\lib\netcoreapp3.1\TetraPak.AspNet.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6f389808_002D2636_002D4b62_002Da7a9_002D455e194c5e10/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="IsCollectionOfKeyValuePairs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::A9A70062-A5B2-49F9-B2DB-436138FA67AB::net5.0::TestProject1.TypeHelperTests.IsCollectionOfKeyValuePairs&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
 	
 	
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Pkce/@EntryIndexedValue">True</s:Boolean>

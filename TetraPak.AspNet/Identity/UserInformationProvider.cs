@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
+using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Identity
@@ -17,9 +18,12 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class UserInformationProvider
     {
-        static readonly IDictionary<string, object> s_cache = new Dictionary<string, object>();
+        readonly string _instanceId = new RandomString(8);
+        readonly ITimeLimitedRepositories _cache;
         readonly TetraPakAuthConfig _authConfig;
-
+        
+        string CacheRepository => $"{nameof(UserInformationProvider)}-{_instanceId}"; 
+        
         ILogger Logger => _authConfig.Logger;
 
         /// <summary>
@@ -38,25 +42,18 @@ namespace TetraPak.AspNet.Identity
         public async Task<UserInformation> GetUserInformationAsync(string accessToken, bool cached = true)
         {
             object value = null;
-            lock (s_cache)
+            if (cached)
             {
-                if (cached)
-                {
-                    value = getCached(accessToken);
-                }
+                value = await getCachedAsync(accessToken);
             }
-            if (value is {})
+            if (value is { })
             {
                 switch (value)
                 {
                     case TaskCompletionSource<UserInformation> cachedTcs:
                     {
                         var result = await cachedTcs.Task;
-                        lock (s_cache)
-                        {
-                            setCached(accessToken, result);
-                        }
-
+                        await setCachedAsync(accessToken, result);
                         return result;
                     }
 
@@ -81,12 +78,9 @@ namespace TetraPak.AspNet.Identity
             }
             var userInfoEndpoint = discoveryDocument.UserInformationEndpoint;
             var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint));
-            lock (s_cache)
+            if (cached)
             {
-                if (cached)
-                {
-                    setCached(accessToken, completionSource);
-                }
+                await setCachedAsync(accessToken, completionSource);
             }
             return await completionSource.Task;
         }
@@ -99,13 +93,13 @@ namespace TetraPak.AspNet.Identity
             {
                 using (Logger?.BeginScope("[GET USER INFO BEGIN]"))
                 {
-                    var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
-                    var bearerToken = accessToken.ToBearerToken();
-                    request.Method = "GET";
-                    request.Accept = "*/*";
-                    request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
                     try
                     {
+                        var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
+                        var bearerToken = accessToken.ToBearerToken();
+                        request.Method = "GET";
+                        request.Accept = "*/*";
+                        request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
                         Logger?.Debug(request);
                         var response = await request.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
@@ -117,12 +111,28 @@ namespace TetraPak.AspNet.Identity
 
                         Logger?.Debug(response as HttpWebResponse, text);
 
-                        var dictionary = JsonSerializer.Deserialize<IDictionary<string, string>>(text);
-                        tcs.SetResult(new UserInformation(dictionary));
+                        var objDictionary = JsonSerializer.Deserialize<IDictionary<string, object>>(text);
+                        if (objDictionary is null)
+                        {
+                            tcs.SetResult(new UserInformation(new Dictionary<string, string>()));
+                            return;
+                        }
+
+                        var dictionary = new Dictionary<string, string>();
+                        foreach (var (key, value) in objDictionary)
+                        {
+                            if (value is not JsonElement jsonElement)
+                                throw new Exception();
+
+                            dictionary[key] = jsonElement.GetRawText(); // parseJsonElement(jsonElement); obsolete
+                        }
+
+                        var userInformation = new UserInformation(dictionary);
+                        tcs.SetResult(userInformation);
                     }
                     catch (Exception ex)
                     {
-                        Logger?.Error(ex);
+                        Logger.Error(ex);
                         tcs.SetException(ex);
                     }
                     finally
@@ -132,14 +142,71 @@ namespace TetraPak.AspNet.Identity
                 }
             });
             return tcs;
+
+        //     static string parseJsonElement(JsonElement jsonElement) obsolete
+        //     {
+        //         switch (jsonElement.ValueKind)
+        //         {
+        //             case JsonValueKind.Undefined:
+        //                 return "(undefined)";
+        //                 
+        //             case JsonValueKind.Object:
+        //                 return jsonElement.GetRawText();
+        //                 // var objectEnumerator = jsonElement.EnumerateObject();
+        //                 // var dictionary = new Dictionary<string, string>();
+        //                 // foreach (var jsonProperty in objectEnumerator)
+        //                 // {
+        //                 //     dictionary[jsonProperty.Name] = parseJsonElement(jsonProperty.Value);
+        //                 // }
+        //                 //
+        //                 // var objectStringValue = new ObjectStringValue(dictionary);
+        //                 // return objectStringValue;
+        //             
+        //             case JsonValueKind.Array:
+        //                 return jsonElement.GetRawText();
+        //                 // var stringsArray = new string[jsonElement.GetArrayLength()];
+        //                 // var arrayEnumerator = jsonElement.EnumerateArray();
+        //                 // var i = 0;
+        //                 // foreach (var arrayElement in arrayEnumerator)
+        //                 // {
+        //                 //     stringsArray[i++] = parseJsonElement(arrayElement);
+        //                 // }
+        //                 //
+        //                 // return new MultiStringValue(stringsArray);
+        //
+        //             case JsonValueKind.String:
+        //             case JsonValueKind.Number:
+        //             case JsonValueKind.True:
+        //             case JsonValueKind.False:
+        //             case JsonValueKind.Null:
+        //                 return jsonElement.GetRawText();
+        //
+        //             default:
+        //                 throw new ArgumentOutOfRangeException();
+        //         }
+        //
+        //     }
+        //
         }
 
-        static object getCached(string accessToken) =>
-            s_cache.TryGetValue(accessToken, out var value)
-                ? value
-                : null;
+        async Task<object> getCachedAsync(string accessToken)
+        {
+            if (_cache is null)
+                return null;
 
-        static void setCached(string accessToken, object value) => s_cache[accessToken] = value;
+            var outcome = await _cache.GetAsync<object>(CacheRepository, accessToken);
+            return outcome
+                ? outcome.Value
+                : null;
+        }
+        
+        async Task setCachedAsync(string accessToken, object value)
+        {
+            if (_cache is null)
+                return;
+
+            await _cache.AddAsync(CacheRepository, accessToken, value);
+        }
 
         /// <summary>
         ///   Initializes the <see cref="UserInformationProvider"/>.
@@ -147,12 +214,17 @@ namespace TetraPak.AspNet.Identity
         /// <param name="authConfig">
         ///   Provides Tetra Pak auth configuration.
         /// </param>
+        /// <param name="cache">
+        ///   (optional)<br/>
+        ///   A caching service to be used for caching user information.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="authConfig"/> was unassigned.
         /// </exception>
-        public UserInformationProvider(TetraPakAuthConfig authConfig)
+        public UserInformationProvider(TetraPakAuthConfig authConfig, ITimeLimitedRepositories cache = null)
         {
             _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _cache = cache;
         }
     }
 }

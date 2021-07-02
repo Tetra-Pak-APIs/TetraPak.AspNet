@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -15,7 +16,10 @@ namespace TetraPak.AspNet.Api.Auth
         protected ILogger<TetraPakTokenExchangeService> Logger { get; }
 
         /// <inheritdoc />
-        public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(Credentials credentials, string accessToken, CancellationToken cancellationToken)
+        public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
+            Credentials credentials, 
+            string accessToken,
+            CancellationToken cancellationToken)
         {
             var args = new TokenExchangeArgs(credentials, accessToken, "urn:ietf:params:oauth:token-type:id_token");
             return await ExchangeAsync(args, cancellationToken);
@@ -44,14 +48,15 @@ namespace TetraPak.AspNet.Api.Auth
 
                 if (!response.IsSuccessStatusCode)
                 {
-#if NET5_0_OR_GREATER
-                    var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-#else                    
-                    var errorContent = await response.Content.ReadAsStringAsync();
-#endif
-                    var statusCode = ((int) response.StatusCode).ToString();
-                    var ex = new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}");
-                    Logger?.LogError(ex, "Token exchange failure");
+// #if NET5_0_OR_GREATER obsolete
+//                     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+// #else                    
+//                     var errorContent = await response.Content.ReadAsStringAsync();
+// #endif
+//                     var statusCode = ((int) response.StatusCode).ToString();
+                    // var ex = new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}");
+                    var ex = new HttpException(response);
+                    Logger.Error(ex, "Token exchange failure");
                     return Outcome<TokenExchangeResponse>.Fail(ex);
                 }
 

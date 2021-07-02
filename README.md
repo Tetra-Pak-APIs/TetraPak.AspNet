@@ -2,7 +2,7 @@
 
 ---
 
-*If you're a seasoned ASP.NET Core developer and all you want to achieve is to quickly integrate your web app (or API) with Tetra Pak's auth services then you can [just skip ahead to the Summary section](#summary). If you want some more background and  need a better understanding, however, please continue.*
+*If you're a seasoned ASP.NET Core developer and all you want to achieve is to quickly integrate your web app (or API) with Tetra Pak's auth services then you can [just skip ahead to the Summary section](#summary). If you want some more background and  need a better understanding; please continue.*
 
 ---
 
@@ -20,7 +20,7 @@ There is a difference, however, depending on whether you are writing a web clien
 
 We in the Tetra Pak API innovation team tries to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that our "customers" (usually developers) should never have to spend more than 20 minutes on solving a problem that is typical to most projects.
 
-We have seen over the years that many development projects spend considerable amounts of time just establishing correct and safe *auth* (authentication and authorization) just to enable safe and secure Tetra Pak data consumption, and commende in creating new business value. This is something we want to address with this package. 
+We have seen over the years that many development projects spend considerable amounts of time just establishing correct and safe *auth* (authentication and authorization) to enable Tetra Pak data consumption create new business value. This is something we want to address with this package. 
 
 Hopefully, by the time you have read this documentation and tested the code APIs offered by the `TetraPak.AspNet` packages you will be able to just add a few lines of code and configuration, and you should be good to go. When you start your next project you should be able to start building business value in 20 minutes or less!
 
@@ -205,9 +205,9 @@ This SDK will make it possible for you to get started with a new web application
 
 ### Register your App in Developer portal
 
-For any app to integrate with the Tetra Pak auth services it needs to be registered and recognized. This is done by simply registering the app, with a name and unique "client id" (a.k.a. "consumer key"), in the Tetra Pak Developer Portal. This is very easily done by just following these steps:
+For any app to integrate with the Tetra Pak auth services it needs to be registered and recognized. This is done by simply registering the app, with a name and unique "client id" (a.k.a. "consumer key"), in the Tetra Pak Developer Portal. Just follow these steps:
 
-1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-dev-portal] (see next NOTE! below)
+1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-dev-portal]
 
 ---
 
@@ -216,11 +216,18 @@ For any app to integrate with the Tetra Pak auth services it needs to be registe
 ---
 
 
-2. Log in (please note that Tetra Pak users should use the link to single sign-on, in the login form, not the form itself)
+2. Log in
 3. Click the "Apps" menu item in the top of the page
-4. Click the "Add app" command
+4. Click the "Add app" command (upper left part of page)
 5. Give your app a name and supply a short description of it (generally you can leave the Callback URL as is)
-6. Select one or more API products to be consumed by your app. Please note that "Enterprise Application Security" is already selected; this service is what you're integrating with using this SDK.
+6. Select one or more API products to be consumed by your app. 
+
+---
+
+NOTE! *Please note that "Enterprise Application Security" is already selected; this service is what you're integrating with using this SDK.*
+
+---
+
 7. Click "ADD APP" (you might have to scroll down)
 8. You are now taken to your app overview page, where all your app registrations are listed. Please select the one you just created by clicking it. This should present the App details.
 9. From the App details click the "copy" icon next to the "Consumer Key" (you will need this value in the next phase; [Integrating your Web App](#integrating-your-web-app-aspnet-core--aspnet-5)).
@@ -235,7 +242,7 @@ For any app to integrate with the Tetra Pak auth services it needs to be registe
 3. Add a new section and name it "TetraPak" and paste the consumer key you copied in the previous phase as a named "ClientId":
 
 ```json
-"TetraPak": {
+"TetraPak":  {
     "ClientId": "(paste the consumer key value here)"
 }
 ```
@@ -255,7 +262,7 @@ services.AddTetraPakOidcAuthentication(); // <-- add this
 app.UseAuthentication(); // <-- add this after routing / before authorization
 ```
 
-Just to perform a quick sanity check; this is more or less what those two method should look like if you made no other changes (disclamer: there might be more or less code added by the project template):
+Just to perform a quick sanity check; this is more or less what those two method should look like if you made no other changes (*disclamer: there might be more or less code added by the project template*):
 
 ```c#
 public void ConfigureServices(IServiceCollection services)

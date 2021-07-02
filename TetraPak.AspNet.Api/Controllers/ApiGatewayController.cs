@@ -5,12 +5,13 @@ namespace TetraPak.AspNet.Api.Controllers
     public abstract class ApiGatewayController<TBackendService> : BusinessApiController
     where TBackendService : IBackendService
     {
-        public TBackendService BackendService { get; }
+        public TBackendService Service { get; }
 
-        public ApiGatewayController(TBackendService backendService, TetraPakApiAuthConfig authConfig)
+        public ApiGatewayController(TBackendService service, TetraPakApiAuthConfig authConfig)
         : base(authConfig)
         {
-            BackendService = backendService;
+            Service = service;
+           // this.Configure(authConfig);
         }
     }
 }

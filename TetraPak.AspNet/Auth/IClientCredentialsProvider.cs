@@ -9,7 +9,7 @@ namespace TetraPak.AspNet.Auth
     }
 
     /// <summary>
-    ///   Provides client credentials from the configuration framework ('appsettings.json' files).
+    ///   Provides client credentials from the configuration framework.
     /// </summary>
     public class ConfiguredClientCredentialsProvider : IClientCredentialsProvider
     {

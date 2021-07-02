@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -32,24 +33,28 @@ namespace TetraPak.AspNet.Api.Auth
                 var basicAuthCredentials = validateBasicAuthCredentials(clientCredentials ?? OnGetCredentials());
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
-                var content = new FormUrlEncodedContent(new Dictionary<string, string>
+                var formsValues = new Dictionary<string, string>
                 {
                     ["grant_type"] = "client_credentials"
-                });
+                };
+                if (scope is { })
+                {
+                    formsValues.Add("scope", scope.Items.ConcatCollection(" "));
+                }
                 var response = await client.PostAsync(
                     _authConfig.TokenIssuerUrl,
-                    content,
+                    new FormUrlEncodedContent(formsValues),
                     cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
-#if NET5_0_OR_GREATER
-                    var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-#else                    
-                    var errorContent = await response.Content.ReadAsStringAsync();
-#endif
-                    var statusCode = ((int) response.StatusCode).ToString();
-                    var ex = new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}");
+// #if NET5_0_OR_GREATER
+//                     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken); obsolete
+// #else                    
+//                     var errorContent = await response.Content.ReadAsStringAsync();
+// #endif
+//                     var statusCode = ((int) response.StatusCode).ToString();
+                    var ex = new HttpException(response); //  new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}"); obsolete
                     Logger?.LogError(ex, "Client credentials failure");
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
                 }
@@ -60,9 +65,10 @@ namespace TetraPak.AspNet.Api.Auth
                 var stream = await response.Content.ReadAsStreamAsync();
 #endif
                 var responseBody =
-                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponse>(stream,
+                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponseBody>(stream,
                         cancellationToken: cancellationToken);
-                return Outcome<ClientCredentialsResponse>.Success(responseBody);
+
+                return ClientCredentialsResponse.TryParse(responseBody);
             }
             catch (Exception ex)
             {
@@ -82,6 +88,10 @@ namespace TetraPak.AspNet.Api.Auth
 
         protected virtual Credentials OnGetCredentials()
         {
+            if (string.IsNullOrWhiteSpace(_authConfig.ClientId))
+                throw new InvalidOperationException(
+                    $"Cannot create client credentials. Please specify '{nameof(TetraPakAuthConfig.ClientId)}' in configuration");
+                
             return new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret);
         }
 

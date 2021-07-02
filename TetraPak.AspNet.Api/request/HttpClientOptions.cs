@@ -1,10 +1,11 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
+using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
-    ///   Used to configure a <see cref="HttpClient"/> through a <see cref="IHttpClientProvider"/>.
+    ///   Used to configure a <see cref="HttpClient"/> through a <see cref="IHttpServiceProvider"/>.
     /// </summary>
     public class HttpClientOptions
     {
@@ -23,6 +24,20 @@ namespace TetraPak.AspNet.Api
         ///   A custom <see cref="HttpMessageHandler"/> to be used by the requested <see cref="HttpClient"/>.
         /// </summary>
         public HttpMessageHandler MessageHandler { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the configuration required for authenticating the client. 
+        /// </summary>
+        public IServiceAuthConfig AuthConfig { get; set; }
+
+        /// <summary>
+        ///   Fluid API for assigning the <see cref="Authentication"/> property value.
+        /// </summary>
+        public HttpClientOptions WithAuthentication(AuthenticationHeaderValue authentication)
+        {
+            Authentication = authentication;
+            return this;
+        }
 
         public HttpClientOptions(bool isClientTransient = true)
         {

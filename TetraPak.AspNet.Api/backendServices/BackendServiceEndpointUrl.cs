@@ -1,7 +1,4 @@
-﻿
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using TetraPak.Serialization;

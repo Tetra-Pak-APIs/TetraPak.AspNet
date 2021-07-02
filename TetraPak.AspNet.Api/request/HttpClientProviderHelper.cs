@@ -4,7 +4,7 @@
 // using Microsoft.Extensions.DependencyInjection;
 // using Microsoft.Extensions.Logging;
 //
-// namespace tetrapak.api.common.request failed_experiment
+// namespace tetrapak.api.common.request failed_experiment obsolete
 // {
 //     public static class HttpClientProviderHelper
 //     {

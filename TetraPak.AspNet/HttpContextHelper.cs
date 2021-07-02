@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
+using TetraPak.Logging;
+using TetraPak.Serialization;
 
 namespace TetraPak.AspNet
 {
@@ -62,15 +67,17 @@ namespace TetraPak.AspNet
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpContext self, TetraPakAuthConfig authConfig)
         {
-            if (self.Items.TryGetValue(AmbientData.Keys.AccessToken, out var o) && o is string s 
-                && ActorToken.TryParse(s, out var actorToken))
+            var headerKey = AmbientData.Keys.AccessToken;
+            if (self.Items.TryGetValue(headerKey, out var o) && o is string s && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            var headerIdent = authConfig?.AuthorizationHeader ?? HeaderNames.Authorization;
-            s = self.Request.Headers[headerIdent].FirstOrDefault();
+            headerKey = authConfig?.AuthorizationHeader ?? HeaderNames.Authorization;
+            s = self.Request.Headers[headerKey].FirstOrDefault();
             if (s is {} && ActorToken.TryParse(s, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
-        
+
+            authConfig?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'");
+            
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found")));
         }
 
@@ -202,5 +209,94 @@ namespace TetraPak.AspNet
             return request.Headers.GetSingleValue(key, new RandomString(), enforce);
         }
 
+        /// <summary>
+        ///   Writes a HTTP response.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="statusCode">
+        ///   The status code to be returned.
+        /// </param>
+        /// <param name="content">
+        ///   (optional)<br/>
+        ///   Content to be returned (objects will be JSON serialized).
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   A cancellation token.
+        /// </param>
+        public static Task RespondAsync(this HttpContext context, 
+            HttpStatusCode statusCode, 
+            object content = null,
+            CancellationToken cancellationToken = default)
+        {
+            string contentType = null;
+            string stringContent;
+            if (content is string stringValue)
+            {
+                stringContent = stringValue;
+            }
+            else
+            {
+                stringContent = content?.ToJson();
+                contentType = stringContent is { } ? "application/json" : null;
+            }
+
+            return context.RespondAsync(statusCode, stringContent, contentType, cancellationToken);
+        }
+
+        /// <summary>
+        ///   Writes a HTTP response.
+        /// </summary>
+        /// <param name="context">
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="statusCode">
+        ///   The status code to be returned.
+        /// </param>
+        /// <param name="content">
+        ///   (optional)<br/>
+        ///   Content to be returned.
+        /// </param>
+        /// <param name="contentType">
+        ///   (optional)<br/>
+        ///   A content MIME type tp be returned.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   A cancellation token.
+        /// </param>
+        public static async Task RespondAsync(this HttpContext context,
+            HttpStatusCode statusCode, 
+            string content = null,
+            string contentType = null, 
+            CancellationToken cancellationToken = default)
+        {
+            context.Response.StatusCode = (int) statusCode;
+            if (content is null)
+                return;
+
+            if (contentType is null)
+            {
+                if (isProbablyJson())
+                {
+                    contentType = "application/json";
+                }
+            }
+            context.Response.ContentType = contentType ?? "";
+            await context.Response.WriteAsync(content, cancellationToken);
+
+            bool isProbablyJson()
+            {
+                if (content.Length < 2)
+                    return false;
+
+                if (content.StartsWith('{') && content.EndsWith('}'))
+                    return true;
+
+                return content.StartsWith('[') && content.EndsWith(']');
+            }
+        }
     }
 }
