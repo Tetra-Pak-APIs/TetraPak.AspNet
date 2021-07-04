@@ -15,10 +15,10 @@ namespace TetraPak.AspNet.DevelopmentTools
 {
     class SidecarEmulatingMiddleware
     {
-        readonly TetraPakAuthConfig _config;
+        readonly TetraPakAuthConfig _authConfig;
         readonly string _url;
 
-        ILogger Logger => _config.Logger;
+        ILogger Logger => _authConfig.Logger;
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
@@ -26,7 +26,7 @@ namespace TetraPak.AspNet.DevelopmentTools
             if (ambientData is null)
                 return false;
 
-            var tokenOutcome = await ambientData.GetAccessTokenAsync(_config);
+            var tokenOutcome = await ambientData.GetAccessTokenAsync(_authConfig);
             if (!tokenOutcome)
             {
                 Logger.Warning("Failed to resolve an access token");
@@ -63,7 +63,7 @@ namespace TetraPak.AspNet.DevelopmentTools
             }
 
             var bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
-            context.Request.Headers[_config.AuthorizationHeader] = bearer.ToString();
+            context.Request.Headers[_authConfig.AuthorizationHeader] = bearer.ToString();
             return true;
         }
 
@@ -98,9 +98,9 @@ namespace TetraPak.AspNet.DevelopmentTools
             }
         }
 
-        public SidecarEmulatingMiddleware(TetraPakAuthConfig config, string url)
+        public SidecarEmulatingMiddleware(TetraPakAuthConfig authConfig, string url)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;

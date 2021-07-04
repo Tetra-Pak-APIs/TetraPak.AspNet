@@ -11,7 +11,7 @@ namespace TetraPak.AspNet.Api.Auth
 {
     public class TetraPakTokenExchangeService : ITokenExchangeService
     {
-        readonly TetraPakApiAuthConfig _authConfig;
+        readonly TetraPakAuthApiConfig _config;
 
         protected ILogger<TetraPakTokenExchangeService> Logger { get; }
 
@@ -38,7 +38,7 @@ namespace TetraPak.AspNet.Api.Auth
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
-                var discovery = await _authConfig.GetDiscoveryDocumentAsync();
+                var discovery = await _config.GetDiscoveryDocumentAsync();
                 var dictionary = args.ToDictionary();
                 var content = new FormUrlEncodedContent(dictionary);
                 var response = await client.PostAsync(
@@ -83,9 +83,9 @@ namespace TetraPak.AspNet.Api.Auth
             return new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public TetraPakTokenExchangeService(TetraPakApiAuthConfig authConfig, ILogger<TetraPakTokenExchangeService> logger)
+        public TetraPakTokenExchangeService(TetraPakAuthApiConfig config, ILogger<TetraPakTokenExchangeService> logger)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             Logger = logger;
         }
 

@@ -10,20 +10,20 @@ namespace TetraPak.AspNet.Api.Auth
         public static bool TryReadCustomAuthorization(
             this MessageReceivedContext context,
             JwtBearerOptions options,
-            TetraPakApiAuthConfig authConfig,
+            TetraPakAuthApiConfig config,
             ILogger logger, 
             out string authorization)
         {
-            using (logger?.BeginScope($"Looking for authorization in header: {authConfig.AuthorizationHeader}"))
+            using (logger?.BeginScope($"Looking for authorization in header: {config.AuthorizationHeader}"))
             {
-                if (!authConfig.IsCustomAuthorizationHeader)
+                if (!config.IsCustomAuthorizationHeader)
                 {
                     logger.Debug("Default authorization header is in use");
                     authorization = null;
                     return false;
                 }
             
-                authorization = context.Request.Headers[authConfig.AuthorizationHeader];
+                authorization = context.Request.Headers[config.AuthorizationHeader];
                 var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
                 var isJwtToken = authorization.TryParseToJwtSecurityToken(out var jwt);
 
@@ -40,7 +40,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (isJwtToken)
                 {
                     logger.Debug($"Received JWT: \n{jwt.ToDebugString()}");
-                    logger.Debug($"Environment: {authConfig.Environment}");
+                    logger.Debug($"Environment: {config.Environment}");
                     logger.Debug($"Discovery document URL: {options.MetadataAddress}");
                     return true;
                 }

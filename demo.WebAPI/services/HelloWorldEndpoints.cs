@@ -17,9 +17,8 @@ namespace WebAPI.services
         
         public HelloWorldEndpoints(
             ServicesConfig servicesConfig,
-            ILogger<HelloWorldEndpoints> logger,
             string sectionIdentifier = "HelloWorld") 
-        : base(servicesConfig, logger, sectionIdentifier)
+        : base(servicesConfig, sectionIdentifier)
         {
         }
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using TetraPak.AspNet.Api;
+﻿using TetraPak.AspNet.Api;
 
 namespace demo.WebApp.Backends
 {
@@ -8,7 +7,7 @@ namespace demo.WebApp.Backends
         public BackendServiceEndpointUrl HelloWorld { get; set; }
         
         public SamplesEndpoints(ServicesConfig servicesConfig, string sectionId = "SamplesServices") 
-        : base(servicesConfig, null, sectionId)
+        : base(servicesConfig, sectionId)
         {
         }
     }

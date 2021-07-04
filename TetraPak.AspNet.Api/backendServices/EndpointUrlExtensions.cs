@@ -8,9 +8,9 @@ namespace TetraPak.AspNet.Api
 {
     public static class EndpointUrlExtensions
     {
-        static readonly Dictionary<BackendServiceEndpointUrl,IBackendService> s_endpoints = new();
+        static readonly Dictionary<ServiceEndpointUrl,IBackendService> s_endpoints = new();
         
-        internal static void SetBackendService(this BackendServiceEndpointUrl self, IBackendService backendService)
+        internal static void SetBackendService(this ServiceEndpointUrl self, IBackendService backendService)
         {
             lock (s_endpoints)
             {
@@ -21,7 +21,7 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        internal static IBackendService GetBackendService(this BackendServiceEndpointUrl self)
+        internal static IBackendService GetBackendService(this ServiceEndpointUrl self)
         {
             lock (s_endpoints)
             {
@@ -31,11 +31,28 @@ namespace TetraPak.AspNet.Api
             }
         }
 
+        public static Task<Outcome<ActorToken>> AuthenticateAsync(
+            this ServiceEndpointUrl serviceUrl,
+            CancellationToken? cancellationToken = null)
+        {
+            if (serviceUrl is ServiceInvalidEndpointUrl invalidUrl)
+                return Task.FromResult(invalidUrl.GetInvalidEndpointUrlAuthorization());
+            
+            lock (s_endpoints)
+            {
+                if (!s_endpoints.TryGetValue(serviceUrl, out var service))
+                    throw new InvalidOperationException($"Endpoint Url {serviceUrl} was not assigned to a service");
+
+                var clientOptions = serviceUrl.GetBackendService().DefaultClientOptions;
+                return service.AuthenticateAsync(clientOptions, cancellationToken);
+            }
+        }
+
         /// <summary>
-        ///   Sends an HTTP GET message to the specified <see cref="BackendServiceEndpointUrl"/>
+        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpointUrl"/>
         /// </summary>
         /// <param name="serviceUrl">
-        ///   The <see cref="BackendServiceEndpointUrl"/>.
+        ///   The <see cref="ServiceEndpointUrl"/>.
         /// </param>
         /// <param name="queryParameters">
         ///   (optional)
@@ -56,11 +73,15 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="serviceUrl"/> was not assigned to a registered service.
         /// </exception>
         public static Task<Outcome<HttpResponseMessage>> GetAsync(
-            this BackendServiceEndpointUrl serviceUrl,  
+            this ServiceEndpointUrl serviceUrl,  
             IDictionary<string,string> queryParameters,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
+            if (serviceUrl is ServiceInvalidEndpointUrl invalidUrl)
+                return Task.FromResult(
+                    invalidUrl.GetInvalidEndpointUrlResponse(HttpMethod.Get, invalidUrl, null));
+            
             lock (s_endpoints)
             {
                 if (!s_endpoints.TryGetValue(serviceUrl, out var service))
@@ -72,11 +93,15 @@ namespace TetraPak.AspNet.Api
         }
 
         public static Task<Outcome<HttpResponseMessage>> GetAsync(
-            this BackendServiceEndpointUrl serviceUrl,  
+            this ServiceEndpointUrl serviceUrl,  
             string queryParameters = null,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
+            if (serviceUrl is ServiceInvalidEndpointUrl invalidUrl)
+                return Task.FromResult(
+                    invalidUrl.GetInvalidEndpointUrlResponse(HttpMethod.Get, invalidUrl, null));
+
             lock (s_endpoints)
             {
                 if (!s_endpoints.TryGetValue(serviceUrl, out var service))
@@ -88,10 +113,10 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Sends an HTTP POST message to the specified <see cref="BackendServiceEndpointUrl"/>
+        ///   Sends an HTTP POST message to the specified <see cref="ServiceEndpointUrl"/>
         /// </summary>
         /// <param name="serviceUrl">
-        ///   The <see cref="BackendServiceEndpointUrl"/>.
+        ///   The <see cref="ServiceEndpointUrl"/>.
         /// </param>
         /// <param name="content">
         ///   The content (body) to be posted.
@@ -111,11 +136,15 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="serviceUrl"/> was not assigned to a registered service.
         /// </exception>
         public static Task<Outcome<HttpResponseMessage>> PostAsync(
-            this BackendServiceEndpointUrl serviceUrl,
+            this ServiceEndpointUrl serviceUrl,
             HttpContent content,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
+            if (serviceUrl is ServiceInvalidEndpointUrl invalidUrl)
+                return Task.FromResult(
+                    invalidUrl.GetInvalidEndpointUrlResponse(HttpMethod.Post, invalidUrl, null));
+
             lock (s_endpoints)
             {
                 if (!s_endpoints.TryGetValue(serviceUrl, out var service))

@@ -117,20 +117,20 @@ namespace TetraPak.AspNet.Auth
         }
 
         /// <summary>
-        ///   Gets or sets the name of the header used to obtain the request reference id.
-        ///   The default value is <see cref="AmbientData.Keys.RequestReferenceId"/>).
+        ///   Gets or sets the name of the header used to obtain the request message id.
+        ///   The default value is <see cref="AmbientData.Keys.RequestMessageId"/>).
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///   An invalid/empty value was assigned.
         /// </exception>
-        public string RequestReferenceIdHeader
+        public string RequestMessageIdHeader
         {
-            get => GetFromFieldThenSection(AmbientData.Keys.RequestReferenceId);
+            get => GetFromFieldThenSection(AmbientData.Keys.RequestMessageId);
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentNullException(nameof(value),
-                        $"{nameof(RequestReferenceIdHeader)} must be a valid identifier");
+                        $"{nameof(RequestMessageIdHeader)} must be a valid identifier");
 
                 _requestReferenceIdHeader = value;
             }
@@ -608,9 +608,6 @@ namespace TetraPak.AspNet.Auth
         protected void InitializeProperties(IConfiguration configuration) 
         {
             var properties = GetType().GetProperties();
-
-            var nisse = configuration.GetChildren(); // nisse
-            
             foreach (var property in properties.Where(i => i.CanWrite))
             {
                 var value = configuration[property.Name];
@@ -665,6 +662,9 @@ namespace TetraPak.AspNet.Auth
         : base(configuration, logger, sectionIdentifier)
         {
             Configuration = configuration;
+
+            var nisse = Section.GetChildren();
+            
             Environment = resolveRuntimeEnvironment(configDelegate);
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();

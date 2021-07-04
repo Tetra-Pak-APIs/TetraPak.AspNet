@@ -5,11 +5,11 @@
     /// </summary>
     public class SidecarJwBearerAssertionOptions
     {
-        public TetraPakApiAuthConfig AuthConfig { get; }
+        public TetraPakAuthApiConfig Config { get; }
 
-        public SidecarJwBearerAssertionOptions(TetraPakApiAuthConfig authConfig)
+        public SidecarJwBearerAssertionOptions(TetraPakAuthApiConfig config)
         {
-            AuthConfig = authConfig;
+            Config = config;
         }
     }
 }

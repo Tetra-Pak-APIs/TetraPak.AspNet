@@ -15,9 +15,9 @@ namespace TetraPak.AspNet.Api.Controllers
 {
     public class BusinessApiController : ControllerBase
     {
-        public TetraPakApiAuthConfig AuthConfig { get; }
+        public TetraPakAuthApiConfig Config { get; }
 
-        protected ILogger Logger => AuthConfig.Logger;
+        protected ILogger Logger => Config.Logger;
 
         public AuthenticationHeaderValue AuthenticationHeaderValue =>
             AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
@@ -42,9 +42,11 @@ namespace TetraPak.AspNet.Api.Controllers
         protected ActionResult Error(Exception error)
         {
             if (error is HttpException httpException)
+            {
                 return StatusCode(
                     (int) httpException.StatusCode, 
-                    new ApiErrorResponse(error.Message, HttpContext, AuthConfig));
+                    new ApiErrorResponse(error.Message, HttpContext.Request.GetMessageId(Config)));
+            }
 
             return InternalServerError(error);
         }
@@ -66,7 +68,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
                 return Ok(dictionary);
             }
-            catch (Exception ex)
+            catch
             {
                 return Ok(content);
             }
@@ -92,9 +94,9 @@ namespace TetraPak.AspNet.Api.Controllers
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
         
-        public BusinessApiController(TetraPakApiAuthConfig authConfig)
+        public BusinessApiController(TetraPakAuthApiConfig config)
         {
-            AuthConfig = authConfig;
+            Config = config;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(environment))
             {

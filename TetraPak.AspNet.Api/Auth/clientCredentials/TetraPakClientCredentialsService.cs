@@ -15,12 +15,12 @@ namespace TetraPak.AspNet.Api.Auth
     /// </summary>
     public class TetraPakClientCredentialsService : IClientCredentialsService
     {
-        readonly TetraPakApiAuthConfig _authConfig;
+        readonly TetraPakAuthApiConfig _config;
 
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger Logger => _authConfig.Logger;
+        protected ILogger Logger => _config.Logger;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
@@ -42,7 +42,7 @@ namespace TetraPak.AspNet.Api.Auth
                     formsValues.Add("scope", scope.Items.ConcatCollection(" "));
                 }
                 var response = await client.PostAsync(
-                    _authConfig.TokenIssuerUrl,
+                    _config.TokenIssuerUrl,
                     new FormUrlEncodedContent(formsValues),
                     cancellationToken);
 
@@ -88,16 +88,16 @@ namespace TetraPak.AspNet.Api.Auth
 
         protected virtual Credentials OnGetCredentials()
         {
-            if (string.IsNullOrWhiteSpace(_authConfig.ClientId))
+            if (string.IsNullOrWhiteSpace(_config.ClientId))
                 throw new InvalidOperationException(
                     $"Cannot create client credentials. Please specify '{nameof(TetraPakAuthConfig.ClientId)}' in configuration");
                 
-            return new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret);
+            return new BasicAuthCredentials(_config.ClientId, _config.ClientSecret);
         }
 
-        public TetraPakClientCredentialsService(TetraPakApiAuthConfig authConfig)
+        public TetraPakClientCredentialsService(TetraPakAuthApiConfig config)
         {
-            _authConfig = authConfig;
+            _config = config;
         }
     }
 }

@@ -54,8 +54,8 @@ namespace TetraPak.AspNet.Api.Auth
         where TCache : class, ITimeLimitedRepositories
         {
             c.AddSingleton<HostProvider>();
-            c.AddSingleton<TetraPakApiAuthConfig>();            
-            c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
+            c.AddSingleton<TetraPakAuthApiConfig>();            
+            c.AddSingleton<TetraPakAuthConfig, TetraPakAuthApiConfig>();
 
             addCachingIfAllowed();
             

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -200,13 +199,13 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   A unique <see cref="string"/> value. 
         /// </returns>
-        public static string GetRequestReferenceId(
+        public static string GetMessageId(
             this HttpRequest request,
             TetraPakAuthConfig authConfig,
             bool enforce = false)
         {
-            var key = authConfig.RequestReferenceIdHeader;
-            return request.Headers.GetSingleValue(key, new RandomString(), enforce);
+            var key = authConfig.RequestMessageIdHeader;
+            return request.Headers.GetSingleValue(key, enforce ? new RandomString() : null, enforce);
         }
 
         /// <summary>

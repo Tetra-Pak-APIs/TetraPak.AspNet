@@ -1,27 +1,25 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using TetraPak.AspNet.Auth;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
 {
-    public class ServicesConfig : ConfigurationSection, IServiceAuthConfig
+    public class ServicesAuthConfig : ConfigurationSection, IServiceAuthConfig
     {
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType;
         string _clientId;
         string _clientSecret;
         MultiStringValue _scope;
-
-        readonly TetraPakAuthConfig _authConfig;
         // ReSharper restore NotAccessedField.Local
 
-        protected override string SectionIdentifier { get; }
+        IServiceProvider ServiceProvider { get; }
+
+        internal TetraPakAuthConfig AuthConfig { get; }
         
         internal string Path { get; }
-
-        public IConfiguration Configuration => _authConfig.Configuration;
 
         public virtual GrantType GrantType
         {
@@ -36,7 +34,7 @@ namespace TetraPak.AspNet.Api
 
                     if (grantType == GrantType.Inherited)
                     {
-                        grantType = _authConfig.GrantType;
+                        grantType = AuthConfig.GrantType;
                     }
 
                     return true;
@@ -46,19 +44,19 @@ namespace TetraPak.AspNet.Api
         
         public virtual string ClientId
         {
-            get => GetFromFieldThenSection<string>() ?? _authConfig.ClientId;
+            get => GetFromFieldThenSection<string>() ?? AuthConfig.ClientId;
             set => _clientId = value;
         }
 
         public virtual string ClientSecret
         {
-            get => GetFromFieldThenSection<string>() ?? _authConfig.ClientSecret;
+            get => GetFromFieldThenSection<string>() ?? AuthConfig.ClientSecret;
             set => _clientSecret = value;
         }
         
         public virtual MultiStringValue Scope
         {
-            get => GetFromFieldThenSection<MultiStringValue>() ?? _authConfig.Scope;
+            get => GetFromFieldThenSection<MultiStringValue>() ?? AuthConfig.Scope;
             set => _scope = value;
         }
 
@@ -66,15 +64,20 @@ namespace TetraPak.AspNet.Api
             sectionIdentifier.Contains(':')
                 ? sectionIdentifier
                 : $"{TetraPakAuthConfig.Identifier}:{sectionIdentifier}";
-
-        public ServicesConfig(
-            TetraPakAuthConfig authConfig, 
-            ILogger<ServicesConfig> logger, 
-            string sectionIdentifier = "Services") 
-        : base(authConfig.Configuration, logger, getSectionPath(sectionIdentifier))
+        
+        public ServiceInvalidEndpointUrl GetInvalidEndpointUrl(string endpointName, IEnumerable<Exception> issues)
         {
-            _authConfig = authConfig;
-            SectionIdentifier = sectionIdentifier;
+            return ServiceProvider.GetService<ServiceInvalidEndpointUrl>()?.WithInformation(endpointName, issues);
+        }
+
+        public ServicesAuthConfig(
+            TetraPakAuthConfig authConfig, 
+            IServiceProvider serviceProvider,
+            string sectionIdentifier = "Services") 
+        : base(authConfig.Configuration, authConfig.Logger, getSectionPath(sectionIdentifier))
+        {
+            AuthConfig = authConfig;
+            ServiceProvider = serviceProvider;
             Path = getSectionPath(sectionIdentifier);
         }
     }

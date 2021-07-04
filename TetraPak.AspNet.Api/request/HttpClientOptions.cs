@@ -9,6 +9,8 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public class HttpClientOptions
     {
+        internal string MessageId { get; private set; }
+        
         /// <summary>
         ///   Gets or sets a value specifying whether the requested <see cref="HttpClient"/> should be
         ///   transient (otherwise a singleton instance till be returned). 
@@ -29,6 +31,12 @@ namespace TetraPak.AspNet.Api
         ///   Gets or sets the configuration required for authenticating the client. 
         /// </summary>
         public IServiceAuthConfig AuthConfig { get; set; }
+
+        internal HttpClientOptions WithMessageId(string messageId)
+        {
+            MessageId = messageId;
+            return this;
+        }
 
         /// <summary>
         ///   Fluid API for assigning the <see cref="Authentication"/> property value.

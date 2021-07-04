@@ -49,10 +49,9 @@ namespace TetraPak.AspNet.Api
             set => Set(value);
         }
 
-        public ApiErrorResponse(string title, HttpContext context, TetraPakAuthConfig authConfig)
+        public ApiErrorResponse(string title, string messageId)
         {
             Title = title;
-            var messageId = context.Request.GetRequestReferenceId(authConfig);
             if (messageId is { })
             {
                 MessageId = messageId;

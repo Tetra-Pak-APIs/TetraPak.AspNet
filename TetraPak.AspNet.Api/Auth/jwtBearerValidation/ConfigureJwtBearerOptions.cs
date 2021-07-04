@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         bool IsDevelopment => _hostEnvironment.IsDevelopment();
         
-        public TetraPakApiAuthConfig AuthConfig => _options.AuthConfig;
+        public TetraPakAuthApiConfig Config => _options.Config;
 
         public ILogger Logger { get; }
         
@@ -32,8 +32,8 @@ namespace TetraPak.AspNet.Api.Auth
         {
             using (Logger?.BeginScope("Configures JWT Bearer Assertion"))
             {
-                options.MetadataAddress = AuthConfig.DiscoveryDocumentUrl;
-                options.Authority = AuthConfig.AuthorityUrl;
+                options.MetadataAddress = Config.DiscoveryDocumentUrl;
+                options.Authority = Config.AuthorityUrl;
                 if (options.Authority is null)
                 {
                     const string DiagnosticsMessage =
@@ -53,20 +53,20 @@ namespace TetraPak.AspNet.Api.Auth
                     ValidateLifetime = false,
 #else
                     ValidateAudience = true,
-                    ValidateIssuer = !string.IsNullOrWhiteSpace(AuthConfig.JwtBearerValidation.Issuer),
-                    ValidateLifetime = AuthConfig.JwtBearerValidation.ValidateLifetime
+                    ValidateIssuer = !string.IsNullOrWhiteSpace(Config.JwtBearerValidation.Issuer),
+                    ValidateLifetime = Config.JwtBearerValidation.ValidateLifetime
 #endif
                 };
 
                 if (options.TokenValidationParameters.ValidateAudience)
                 {
-                    options.TokenValidationParameters.ValidAudience = resolveAudience(AuthConfig.JwtBearerValidation.Audience);
+                    options.TokenValidationParameters.ValidAudience = resolveAudience(Config.JwtBearerValidation.Audience);
                     Logger?.Information($"Audience={options.TokenValidationParameters.ValidAudience}");
                 }
 
                 if (options.TokenValidationParameters.ValidateIssuer)
                 {
-                    options.TokenValidationParameters.ValidIssuer = AuthConfig.JwtBearerValidation.Issuer;
+                    options.TokenValidationParameters.ValidIssuer = Config.JwtBearerValidation.Issuer;
                     Logger?.Information($"Issuer={options.TokenValidationParameters.ValidIssuer}");
                 }
                 
@@ -76,7 +76,7 @@ namespace TetraPak.AspNet.Api.Auth
                     {
                         Logger.DebugAssembliesInUse();
                         await Logger.Debug(context.Request);
-                        if (context.TryReadCustomAuthorization(options, AuthConfig, Logger, out var token))
+                        if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
                         {
                             context.Token = token;
                         }   
@@ -93,19 +93,20 @@ namespace TetraPak.AspNet.Api.Auth
                             var message = context.Exception is { }
                                 ? $"JWT Bearer assertion failed: {context.Exception.Message}"
                                 : "JWT Bearer assertion failed";
-                            Logger.Debug(message, context.HttpContext.Request.GetRequestReferenceId(AuthConfig));
+                            Logger.Debug(message, context.HttpContext.Request.GetMessageId(Config));
                         }
 
                         // terminates the request (todo: Consider option to allow other authentication schemes)
                         context.Response.OnStarting(async () =>
                         {
                             context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                            var messageId = context.Request.GetMessageId(Config);
                             var response = IsDevelopment
-                                ? new ApiErrorResponse(context.Exception.Message, context.HttpContext, AuthConfig)
+                                ? new ApiErrorResponse(context.Exception.Message, messageId)
                                 {
                                     Description = context.Exception.StackTrace
                                 }
-                                : new ApiErrorResponse("JWT authentication failed", context.HttpContext, AuthConfig);
+                                : new ApiErrorResponse("JWT authentication failed", messageId);
                             await context.Response.WriteAsync(response.ToJson(IsDevelopment));
                             
                         });

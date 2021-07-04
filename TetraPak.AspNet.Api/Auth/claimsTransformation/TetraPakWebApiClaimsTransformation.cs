@@ -97,12 +97,12 @@ namespace TetraPak.AspNet.Api.Auth
 
         public TetraPakWebApiClaimsTransformation(
             AmbientData ambientData, 
-            TetraPakApiAuthConfig authConfig, 
+            TetraPakAuthApiConfig config, 
             TetraPakUserInformation userInformation, 
             IHttpContextAccessor httpContextAccessor,
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(ambientData, authConfig, userInformation, httpContextAccessor, clientCredentialsProvider)
+        : base(ambientData, config, userInformation, httpContextAccessor, clientCredentialsProvider)
         {
             _tokenExchangeService = tokenExchangeService;
         }

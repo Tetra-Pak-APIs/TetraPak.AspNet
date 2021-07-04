@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
+using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api
 {
@@ -12,6 +13,8 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public interface IHttpServiceProvider
     {
+        Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig);
+        
         /// <summary>
         ///   Creates and returns a (configured) <see cref="HttpClient"/> for use with a specific service. 
         /// </summary>
@@ -43,14 +46,11 @@ namespace TetraPak.AspNet.Api
         
         
         /// <summary>
-        ///   Configures a <see cref="HttpClient"/> for use with a specific service. 
+        ///   Authenticates a specific service. 
         /// </summary>
-        /// <param name="client">
-        ///   A pre-initialized <see cref="HttpClient"/> to be configured by the provider.
-        /// </param>
-        /// <param name="options">
+        /// <param name="serviceAuthConfig">
         ///   (optional)<br/>
-        ///   A (customizable) set of options to describe the requested <see cref="HttpClient"/>.
+        ///   The auth configuration used for authenticating the service.
         /// </param>
         /// <param name="cancellationToken">
         ///   (optional)<br/>
@@ -62,11 +62,11 @@ namespace TetraPak.AspNet.Api
         /// </param>
         /// <returns>
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and, on success, carrying
-        ///   the requested client as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
+        ///   the requested token as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<HttpClient>> AuthenticateAsync(
-            HttpClient client,
-            HttpClientOptions options = null, 
+        Task<Outcome<ActorToken>> AuthenticateAsync(
+            // HttpClient client, obsolete
+            HttpClientOptions clientOptions,
             CancellationToken? cancellationToken = null, 
             ILogger logger = null);
 

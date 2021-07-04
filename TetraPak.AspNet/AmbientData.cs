@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
 
@@ -9,6 +10,7 @@ namespace TetraPak.AspNet
 {
     public class AmbientData
     {
+        readonly TetraPakAuthConfig _authConfig;
         readonly IHttpContextAccessor _httpContextAccessor;
 
         public static class Keys
@@ -18,14 +20,32 @@ namespace TetraPak.AspNet
             public const string RefreshToken = "refresh_token";
             public const string ExpiresAt = "expires_at";
             public const string ExpiresIn = "expires_in";
-            public const string RequestReferenceId = "api-flow-id";
+            public const string RequestMessageId = "api-flow-id";
 
         }
+
+        /// <summary>
+        ///   Gets a logging provider.
+        /// </summary>
+        public ILogger Logger => _authConfig.Logger;
 
         /// <summary>
         ///   Gets a ambient cache.
         /// </summary>
         public ITimeLimitedRepositories Cache { get; }
+
+        /// <summary>
+        ///   Gets a standardized value used for referencing a unique request. 
+        /// </summary>
+        /// <param name="enforce">
+        ///   (optional; default=<c>false</c>)<br/>
+        ///   When set, a random unique string will be generated and attached to the request.  
+        /// </param>
+        /// <returns>
+        ///   A unique <see cref="string"/> value. 
+        /// </returns>
+        public string GetMessageId(bool enforce = false) 
+            => _httpContextAccessor.HttpContext?.Request.GetMessageId(_authConfig, enforce);
 
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
@@ -61,10 +81,13 @@ namespace TetraPak.AspNet
 
             return false;
         }
-     
+
         /// <summary>
         ///   Initializes the <see cref="AmbientData"/> instance.
         /// </summary>
+        /// <param name="authConfig">
+        ///   The Tetra Pak auth configuration.
+        /// </param>
         /// <param name="httpContextAccessor">
         ///   A <see cref="IHttpContextAccessor"/> that is required for many of the ambient data operations.
         /// </param>
@@ -72,8 +95,12 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   A caching mechanism for public availability through the <see cref="AmbientData"/> instance.
         /// </param>
-        public AmbientData(IHttpContextAccessor httpContextAccessor, ITimeLimitedRepositories cache = null)
+        public AmbientData(
+            TetraPakAuthConfig authConfig,
+            IHttpContextAccessor httpContextAccessor,
+            ITimeLimitedRepositories cache = null)
         {
+            _authConfig = authConfig;
             _httpContextAccessor = httpContextAccessor;
             Cache = cache;
         }
