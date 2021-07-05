@@ -10,7 +10,7 @@ namespace TetraPak.AspNet.Api
         // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
         // ReSharper disable MemberCanBePrivate.Global
         [JsonPropertyName("meta")]
-        public ApiMetadata Metadata { get; set; }
+        public ApiMetadata Meta { get; set; }
 
         [JsonPropertyName("data")]
         public IEnumerable<T> Data { get; set; }
@@ -20,38 +20,38 @@ namespace TetraPak.AspNet.Api
 #if NET5_0_OR_GREATER
         [JsonConstructor]
 #endif
-        public ApiDataResponse(IEnumerable<T> data, int skip = -1, int total = -1)
+        public ApiDataResponse(IEnumerable<T> data, int skip = -1, int total = -1, string messageId = null)
         {
             var dataArray = data?.ToArray() ?? Array.Empty<T>();
             var count = dataArray.Length;
             total = total < 0 ? count : total;
-            Metadata = skip == -1
-                ? new ApiMetadata(total) 
-                : new ApiChunkedMetadata(new ReadChunk(skip, count), total);
+            Meta = skip == -1
+                ? new ApiMetadata(total).WithMessageId(messageId)
+                : new ApiChunkedMetadata(new ReadChunk(skip, count), total).WithMessageId(messageId);
             Data = dataArray;
         }
 
         public static ApiDataResponse<T> Empty(string messageId = null) => new(messageId);
 
-        public ApiDataResponse(EnumOutcome<T> outcome, int totalCount = -1)
+        public ApiDataResponse(EnumOutcome<T> outcome, int totalCount = -1, string messageId = null)
         {
             var dataArray = outcome.Value;
             var count = outcome.Count;
             totalCount = totalCount < 0 ? count : totalCount;
             if (outcome is ChunkOutcome<T> chunkOutcome)
             {
-                Metadata = new ApiChunkedMetadata(chunkOutcome.Chunk, totalCount);
+                Meta = new ApiChunkedMetadata(chunkOutcome.Chunk, totalCount).WithMessageId(messageId);
             }
             else
             {
-                Metadata = new ApiMetadata(totalCount);
+                Meta = new ApiMetadata(totalCount).WithMessageId(messageId);
             }
             Data = dataArray;
         }
 
         ApiDataResponse(string messageId)
         {
-            Metadata = new ApiMetadata { Total = 0, MessageId = messageId };
+            Meta = new ApiMetadata { Total = 0, MessageId = messageId };
             Data = new T[0];
         }
     }
@@ -64,6 +64,12 @@ namespace TetraPak.AspNet.Api
         [JsonPropertyName("messageId")]
         public string MessageId { get; set; }
 
+        public ApiMetadata WithMessageId(string messageId)
+        {
+            MessageId = messageId;
+            return this;
+        }
+        
         public ApiMetadata()
         {
         }

@@ -2,11 +2,11 @@
 
 namespace demo.WebApp.Backends
 {
-    public class SamplesEndpoints : EndpointsConfig
+    public class SamplesEndpoints : ServiceEndpoints
     {
-        public BackendServiceEndpointUrl HelloWorld { get; set; }
+        public ServiceEndpointUrl HelloWorld { get; set; }
         
-        public SamplesEndpoints(ServicesConfig servicesConfig, string sectionId = "SamplesServices") 
+        public SamplesEndpoints(ServicesAuthConfig servicesConfig, string sectionId = "SamplesServices") 
         : base(servicesConfig, sectionId)
         {
         }

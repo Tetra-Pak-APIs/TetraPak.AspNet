@@ -3,20 +3,20 @@ using TetraPak.AspNet.Api;
 
 namespace WebAPI.services
 {
-    public class HelloWorldEndpoints : EndpointsConfig
+    public class HelloWorldEndpoints : ServiceEndpoints
     {
         // ReSharper disable NotAccessedField.Local
-        BackendServiceEndpointUrl _helloWorld;
+        ServiceEndpointUrl _helloWorld;
         // ReSharper restore NotAccessedField.Local
 
-        public BackendServiceEndpointUrl HelloWorld
+        public ServiceEndpointUrl HelloWorld
         {
-            get => GetFromFieldThenSection<BackendServiceEndpointUrl>();
+            get => GetFromFieldThenSection<ServiceEndpointUrl>();
             set => _helloWorld = value;
         }
         
         public HelloWorldEndpoints(
-            ServicesConfig servicesConfig,
+            ServicesAuthConfig servicesConfig,
             string sectionIdentifier = "HelloWorld") 
         : base(servicesConfig, sectionIdentifier)
         {

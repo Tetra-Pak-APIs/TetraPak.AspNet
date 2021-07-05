@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
             public string UserId { get; set; }
         }
 
-        public HelloWorldController(BackendService<HelloWorldEndpoints> service, TetraPakApiAuthConfig config)
+        public HelloWorldController(BackendService<HelloWorldEndpoints> service, TetraPakAuthApiConfig config)
         : base(service, config)
         {
         }

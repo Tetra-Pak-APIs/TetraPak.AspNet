@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Api.Auth;
+using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Controllers
@@ -23,6 +26,11 @@ namespace TetraPak.AspNet.Api.Controllers
             AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
                 ? authHeader
                 : null;
+
+        /// <summary>
+        ///   Gets a message id for the request. 
+        /// </summary>
+        public string MessageId => HttpContext.Request.GetMessageId(Config);
 
         protected ActionResult ErrorExpectedQueryParameter(string queryParameterName, string example = null)
         {
@@ -53,7 +61,41 @@ namespace TetraPak.AspNet.Api.Controllers
 
         protected virtual ActionResult OnError(HttpStatusCode status, Exception error) => this.Error(status, error);
 
-        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome)
+        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome, StringResponseDelegate responseDelegate = null)
+        {
+            if (!outcome)
+                return Error(outcome.Exception);
+
+            var value = outcome.Value;
+            if (value is not HttpResponseMessage responseMessage) 
+                return Ok(outcome.Value);
+
+            var content = await responseMessage.Content.ReadAsStringAsync();
+            try
+            {
+                if (responseDelegate is { })
+                {
+                    var delegateOutcome = await responseDelegate(content);
+                    if (!delegateOutcome)
+                        return Error(delegateOutcome.Exception);
+
+                    content = delegateOutcome.Value;
+                }
+
+                object objects = content.Trim().StartsWith('[')
+                    ? JsonSerializer.Deserialize<DynamicEntity[]>(content)
+                    : JsonSerializer.Deserialize<DynamicEntity>(content);
+                
+                return Ok(objects);
+            }
+            catch
+            {
+                return Error(new SerializationException($"Failed when deserializing JSON data"));
+
+            }
+        }
+
+        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome, StreamResponseDelegate responseDelegate)
         {
             if (!outcome)
                 return Error(outcome.Exception);
@@ -62,27 +104,44 @@ namespace TetraPak.AspNet.Api.Controllers
             if (value is not HttpResponseMessage responseMessage) 
                 return Ok(outcome.Value);
             
-            var content = await responseMessage.Content.ReadAsStringAsync();
+            var streamOutcome = await responseDelegate(responseMessage);
+            if (!streamOutcome)
+                return Error(streamOutcome.Exception);
+
+            var stream = streamOutcome.Value;
             try
             {
-                var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
-                return Ok(dictionary);
+                var objects = await JsonSerializer.DeserializeAsync<JsonDocument>(stream);
+                return Ok(objects);
             }
             catch
             {
-                return Ok(content);
+                return Error(new SerializationException($"Failed when deserializing JSON data"));
             }
         }
 
+        protected virtual async Task<Outcome<Stream>> OnGetResponseStreamAsync(HttpResponseMessage responseMessage)
+        {
+            try
+            {
+                var stream = await responseMessage.Content.ReadAsStreamAsync();
+                return Outcome<Stream>.Success(stream);
+            }
+            catch (Exception ex)
+            {
+                return Outcome<Stream>.Fail(ex);
+            }
+        }
+        
         protected OkObjectResult Ok<T>(EnumOutcome<T> outcome, int totalCount = -1)
         {
-            return ControllerBaseExtensions.Ok(this, outcome, totalCount);
+            return this.Ok(outcome, totalCount, HttpContext.Request.GetMessageId(Config));
         }
 
         public override OkObjectResult Ok(object value)
         {
             if (value is null)
-                return base.Ok(ApiDataResponse<object>.Empty());
+                return base.Ok(ApiDataResponse<object>.Empty(MessageId));
 
             return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) 
                 ? base.Ok(value) 
@@ -110,4 +169,7 @@ namespace TetraPak.AspNet.Api.Controllers
             Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
         }
     }
+
+    public delegate Task<Outcome<string>> StringResponseDelegate(string data);
+    public delegate Task<Outcome<Stream>> StreamResponseDelegate(HttpResponseMessage responseMessage);
 }

@@ -21,12 +21,36 @@ namespace TetraPak.AspNet.Api.Controllers
             s_configs[self] = config;
         }
 
-        /// <inheritdoc cref="ControllerBase.Ok()"/>
-        public static OkObjectResult Ok(this ControllerBase self, object value, string messageId = null)
+        /// <inheritdoc cref="BusinessApiController.MessageId"/>
+        public static string GetMessageId(this ControllerBase self)
         {
-            return self.Ok(value is null 
-                ? ApiDataResponse<object>.Empty(messageId) 
-                : new ApiDataResponse<object>(new[] { value } ));
+            if (self is BusinessApiController apiController)
+                return apiController.MessageId;
+
+            return self.HttpContext.Request.GetMessageId(null);
+        }
+
+        /// <inheritdoc cref="ControllerBase.Ok()"/>
+        public static OkObjectResult Ok(
+            this ControllerBase self, 
+            object value, 
+            int totalCount = -1, 
+            ReadChunk chunk = null)
+        {
+            var messageId = self.GetMessageId();
+            if (!value.IsCollection(out _, out var items, out var count))
+                return self.Ok(value is null
+                    ? ApiDataResponse<object>.Empty(messageId)
+                    : new ApiDataResponse<object>(new[] {value}));
+            
+            totalCount = totalCount < 0 ? count : totalCount;
+            var array = items.EnumerableToArray();
+            return self.Ok(new ApiDataResponse<object>(
+                array,
+                chunk?.Skip ?? -1, 
+                totalCount,
+                messageId));
+
         }
         
         public static OkObjectResult Ok<T>(this ControllerBase self, EnumOutcome<T> outcome, int totalCount = -1)

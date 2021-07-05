@@ -204,7 +204,7 @@ namespace TetraPak.AspNet
             TetraPakAuthConfig authConfig,
             bool enforce = false)
         {
-            var key = authConfig.RequestMessageIdHeader;
+            var key = authConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;
             return request.Headers.GetSingleValue(key, enforce ? new RandomString() : null, enforce);
         }
 

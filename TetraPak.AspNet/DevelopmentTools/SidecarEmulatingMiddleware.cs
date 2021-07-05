@@ -26,7 +26,7 @@ namespace TetraPak.AspNet.DevelopmentTools
             if (ambientData is null)
                 return false;
 
-            var tokenOutcome = await ambientData.GetAccessTokenAsync(_authConfig);
+            var tokenOutcome = await ambientData.GetAccessTokenAsync(null);
             if (!tokenOutcome)
             {
                 Logger.Warning("Failed to resolve an access token");

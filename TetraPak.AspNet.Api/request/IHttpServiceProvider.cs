@@ -39,18 +39,18 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and, on success, carrying
         ///   the requested client as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<HttpClient>> GetClientAsync(HttpClientOptions options = null,
+        Task<Outcome<HttpClient>> GetClientAsync(
+            HttpClientOptions options = null,
             CancellationToken? cancellationToken = null,
             ILogger logger = null,
             bool authenticate = true);
-        
-        
+
+
         /// <summary>
         ///   Authenticates a specific service. 
         /// </summary>
-        /// <param name="serviceAuthConfig">
-        ///   (optional)<br/>
-        ///   The auth configuration used for authenticating the service.
+        /// <param name="options">
+        ///   
         /// </param>
         /// <param name="cancellationToken">
         ///   (optional)<br/>
@@ -65,8 +65,7 @@ namespace TetraPak.AspNet.Api
         ///   the requested token as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
         Task<Outcome<ActorToken>> AuthenticateAsync(
-            // HttpClient client, obsolete
-            HttpClientOptions clientOptions,
+            HttpClientOptions options,
             CancellationToken? cancellationToken = null, 
             ILogger logger = null);
 

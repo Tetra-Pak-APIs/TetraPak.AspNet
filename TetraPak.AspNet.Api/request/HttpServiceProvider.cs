@@ -79,13 +79,11 @@ namespace TetraPak.AspNet.Api
             return options?.AuthConfig.GrantType switch
             {
                 GrantType.TokenExchange => await OnTokenExchangeAuthenticationAsync(
-                    // client,  obsolete
                     options.AuthConfig,
                     options.Authentication.Parameter,
                     cancellationToken, logger),
 
                 GrantType.ClientCredentials => await OnClientCredentialsAuthenticationAsync(
-                    // client, obsolete
                     options.AuthConfig,
                     cancellationToken, 
                     logger),
@@ -111,9 +109,6 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   This method is called to acquire a token using the Token Exchange grant type. 
         /// </summary>
-        /// <param name="client">
-        ///   A <see cref="HttpClient"/> to be authenticated.
-        /// </param>
         /// <param name="authConfig">
         ///   Specifies the authentication credentials and options.
         /// </param>
@@ -134,7 +129,6 @@ namespace TetraPak.AspNet.Api
         ///   There where issues with the configured options, such as client id/secret.
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnTokenExchangeAuthenticationAsync(
-            //HttpClient client, 
             IServiceAuthConfig authConfig,
             string accessToken,
             CancellationToken? cancellationToken,
@@ -161,9 +155,6 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   This method is called to acquire a token using the Client Credentials grant type. 
         /// </summary>
-        /// <param name="client">
-        ///   A <see cref="HttpClient"/> to be authenticated.
-        /// </param>
         /// <param name="authConfig">
         ///   Specifies the authentication credentials and options.
         /// </param>
@@ -181,7 +172,6 @@ namespace TetraPak.AspNet.Api
         ///   There where issues with the configured options, such as client id/secret.
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnClientCredentialsAuthenticationAsync(
-            //HttpClient client,
             IServiceAuthConfig authConfig, 
             CancellationToken? cancellationToken, 
             ILogger logger)
@@ -202,10 +192,6 @@ namespace TetraPak.AspNet.Api
                 return Outcome<ActorToken>.Fail(ccOutcome.Exception);
 
             var token = ccOutcome.Value.AccessToken;
-            // if (token is { }) obsolete
-            // {
-            //     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Identity);
-            // }
             return Outcome<ActorToken>.Success(token);
         }
         
