@@ -105,7 +105,7 @@ namespace TetraPak.AspNet.Auth
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         public string IdentityTokenHeader
         {
-            get => GetFromFieldThenSection(AmbientData.Keys.IdToken); // _identityTokenHeader ?? Section[nameof(IdentityTokenHeader)] ?? AmbientData.Keys.IdToken; obsolete
+            get => GetFromFieldThenSection(AmbientData.Keys.IdToken);
             set
             {
                 if (string.IsNullOrWhiteSpace(value))

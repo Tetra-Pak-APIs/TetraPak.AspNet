@@ -48,13 +48,7 @@ namespace TetraPak.AspNet.Api.Auth
 
                 if (!response.IsSuccessStatusCode)
                 {
-// #if NET5_0_OR_GREATER
-//                     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken); obsolete
-// #else                    
-//                     var errorContent = await response.Content.ReadAsStringAsync();
-// #endif
-//                     var statusCode = ((int) response.StatusCode).ToString();
-                    var ex = new HttpException(response); //  new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}"); obsolete
+                    var ex = new HttpException(response); 
                     Logger?.LogError(ex, "Client credentials failure");
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
                 }

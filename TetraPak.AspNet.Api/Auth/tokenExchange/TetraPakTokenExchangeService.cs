@@ -48,13 +48,6 @@ namespace TetraPak.AspNet.Api.Auth
 
                 if (!response.IsSuccessStatusCode)
                 {
-// #if NET5_0_OR_GREATER obsolete
-//                     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-// #else                    
-//                     var errorContent = await response.Content.ReadAsStringAsync();
-// #endif
-//                     var statusCode = ((int) response.StatusCode).ToString();
-                    // var ex = new Exception($"Call failed with status: {statusCode} {response.ReasonPhrase}. {errorContent}");
                     var ex = new HttpException(response);
                     Logger.Error(ex, "Token exchange failure");
                     return Outcome<TokenExchangeResponse>.Fail(ex);

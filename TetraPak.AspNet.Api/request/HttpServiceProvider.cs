@@ -88,7 +88,7 @@ namespace TetraPak.AspNet.Api
                     cancellationToken, 
                     logger),
                 
-                GrantType.None => throw new NotSupportedException($"Cannot authenticate with no specified grant type"), // Outcome<ActorToken>.Success(client), obsolete
+                GrantType.None => throw new NotSupportedException($"Cannot authenticate with no specified grant type"), 
                 GrantType.Inherited => throw unexpectedMethod(),
                 null => throw unexpectedMethod(),
                 _ => throw unexpectedMethod()

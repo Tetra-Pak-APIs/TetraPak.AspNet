@@ -50,25 +50,9 @@ namespace TetraPak.AspNet
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
 
-        // public Outcome<ActorToken> GetAccessToken()
-        // {
-        //     return _httpContextAccessor.HttpContext.GetAccessToken();
-        //     // return _httpContextAccessor.HttpContext.Items.TryGetValue(Keys.AccessToken, out var obj) && obj is string token obsolete
-        //     //     ? Outcome<string>.Success(token)
-        //     //     : Outcome<string>.Fail(new ArgumentOutOfRangeException());
-        // }
-        
         public Task<Outcome<ActorToken>> GetIdTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetIdTokenAsync(authConfig);
 
-        // public Outcome<ActorToken> GetIdToken()
-        // {
-        //     return _httpContextAccessor.HttpContext.GetIdToken();
-        //     // return _httpContextAccessor.HttpContext.Items.TryGetValue(Keys.IdToken, out var obj) && obj is string token obsolete
-        //     //     ? Outcome<string>.Success(token)
-        //     //     : Outcome<string>.Fail(new ArgumentOutOfRangeException());
-        // }
-        
         /// <summary>
         ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).
         /// </summary>

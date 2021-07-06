@@ -248,12 +248,6 @@ namespace TetraPak.AspNet.Auth
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
-                        // OnAuthorizationCodeReceived = context => obsolete
-                        // {
-                        //     var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{authConfig.ClientId}:{authConfig.ClientSecret}"));
-                        //     context.Backchannel.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        //     return Task.CompletedTask;
-                        // },
                         OnTokenValidated = context =>
                         {
                             var handler = new JwtSecurityTokenHandler();

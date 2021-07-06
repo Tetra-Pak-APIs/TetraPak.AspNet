@@ -119,7 +119,7 @@ namespace TetraPak.AspNet.Api.Auth
             SubjectTokenType = subjectTokenType;
             Scope = scope.Length != 0
                 ? scope
-                : null; // new[] {"general"}; // obsolete (set to null)
+                : null;
         }
     }
 }

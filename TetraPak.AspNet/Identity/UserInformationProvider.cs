@@ -124,7 +124,7 @@ namespace TetraPak.AspNet.Identity
                             if (value is not JsonElement jsonElement)
                                 throw new Exception();
 
-                            dictionary[key] = jsonElement.GetRawText(); // parseJsonElement(jsonElement); obsolete
+                            dictionary[key] = jsonElement.GetRawText();
                         }
 
                         var userInformation = new UserInformation(dictionary);
@@ -142,51 +142,6 @@ namespace TetraPak.AspNet.Identity
                 }
             });
             return tcs;
-
-        //     static string parseJsonElement(JsonElement jsonElement) obsolete
-        //     {
-        //         switch (jsonElement.ValueKind)
-        //         {
-        //             case JsonValueKind.Undefined:
-        //                 return "(undefined)";
-        //                 
-        //             case JsonValueKind.Object:
-        //                 return jsonElement.GetRawText();
-        //                 // var objectEnumerator = jsonElement.EnumerateObject();
-        //                 // var dictionary = new Dictionary<string, string>();
-        //                 // foreach (var jsonProperty in objectEnumerator)
-        //                 // {
-        //                 //     dictionary[jsonProperty.Name] = parseJsonElement(jsonProperty.Value);
-        //                 // }
-        //                 //
-        //                 // var objectStringValue = new ObjectStringValue(dictionary);
-        //                 // return objectStringValue;
-        //             
-        //             case JsonValueKind.Array:
-        //                 return jsonElement.GetRawText();
-        //                 // var stringsArray = new string[jsonElement.GetArrayLength()];
-        //                 // var arrayEnumerator = jsonElement.EnumerateArray();
-        //                 // var i = 0;
-        //                 // foreach (var arrayElement in arrayEnumerator)
-        //                 // {
-        //                 //     stringsArray[i++] = parseJsonElement(arrayElement);
-        //                 // }
-        //                 //
-        //                 // return new MultiStringValue(stringsArray);
-        //
-        //             case JsonValueKind.String:
-        //             case JsonValueKind.Number:
-        //             case JsonValueKind.True:
-        //             case JsonValueKind.False:
-        //             case JsonValueKind.Null:
-        //                 return jsonElement.GetRawText();
-        //
-        //             default:
-        //                 throw new ArgumentOutOfRangeException();
-        //         }
-        //
-        //     }
-        //
         }
 
         async Task<object> getCachedAsync(string accessToken)
