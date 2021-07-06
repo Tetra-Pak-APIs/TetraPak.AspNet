@@ -6,7 +6,7 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.12.16-alpha</PackageVersion>
+        <PackageVersion>0.12.17-alpha</PackageVersion>
         <Title>Tetra Pak Api library </Title>
         <Authors>Tetra Pak</Authors>
         <Description>A common library for Tetra Pak API development</Description>
@@ -15,8 +15,8 @@
         <PackageReleaseNotes>Initial (pre) release</PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
-        <AssemblyVersion>0.12.16</AssemblyVersion>
-        <FileVersion>0.12.16</FileVersion>
+        <AssemblyVersion>0.12.17</AssemblyVersion>
+        <FileVersion>0.12.17</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -31,7 +31,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.16" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
     <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
   </ItemGroup>
 

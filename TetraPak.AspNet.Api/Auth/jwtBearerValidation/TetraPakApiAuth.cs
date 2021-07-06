@@ -54,8 +54,8 @@ namespace TetraPak.AspNet.Api.Auth
         where TCache : class, ITimeLimitedRepositories
         {
             c.AddSingleton<HostProvider>();
-            c.AddSingleton<TetraPakAuthApiConfig>();            
-            c.AddSingleton<TetraPakAuthConfig, TetraPakAuthApiConfig>();
+            c.AddSingleton<TetraPakApiAuthConfig>();            
+            c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
 
             addCachingIfAllowed();
             
@@ -105,6 +105,11 @@ namespace TetraPak.AspNet.Api.Auth
         ///   An <see cref="IApplicationBuilder"/> instance.
         /// </param>
         /// <param name="env"></param>
+        /// <param name="enableTetraPakMessageId">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to also enforce the Tetra Pak message id functionality.
+        ///   This is akin to calling <see cref="TetraPakApiHelper.UseTetraPakMessageId"/>.
+        /// </param>
         /// <returns>
         ///   An <see cref="IApplicationBuilder"/> instance.
         /// </returns>
@@ -147,10 +152,15 @@ namespace TetraPak.AspNet.Api.Auth
         /// </remarks>
         public static IApplicationBuilder UseSidecarJwtAuthentication(
             this IApplicationBuilder app, 
-            IWebHostEnvironment env)
+            IWebHostEnvironment env,
+            bool enableTetraPakMessageId = true)
         {
             var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
             var sidecarUrl = config?.JwtBearerValidation.DevSidecar;
+            if (enableTetraPakMessageId)
+            {
+                app.UseTetraPakMessageId();
+            }
             if (!string.IsNullOrEmpty(sidecarUrl))
             {
                 app.UseDevSidecar(env, sidecarUrl);

@@ -97,7 +97,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         public TetraPakWebApiClaimsTransformation(
             AmbientData ambientData, 
-            TetraPakAuthApiConfig config, 
+            TetraPakApiAuthConfig config, 
             TetraPakUserInformation userInformation, 
             IHttpContextAccessor httpContextAccessor,
             ITokenExchangeService tokenExchangeService,

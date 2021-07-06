@@ -86,14 +86,14 @@ namespace TetraPak.AspNet
         
             return principal;
 
-            ClaimsPrincipal mapFromIdToken(string idToken)
+            ClaimsPrincipal mapFromIdToken(ActorToken token)
             {
                 var clone = principal.Clone();
                 var identity = (ClaimsIdentity) clone.Identity;
                 if (identity is null)
                     return clone;
                 
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token.Identity);
                 var claimsDictionary = new Dictionary<string, string>(jwt.Claims.Select(
                     claim => new KeyValuePair<string, string>(claim.Type, claim.Value)));
 
@@ -106,7 +106,7 @@ namespace TetraPak.AspNet
                         : new Claim(toKey, claimValue);
                 });
                 
-                identity.BootstrapContext = idToken;
+                identity.BootstrapContext = token;
                 identity.AddClaims(mappedClaims);
                 identity.AddClaim(new Claim(identity.NameClaimType, jwt.Subject));
                 return clone;

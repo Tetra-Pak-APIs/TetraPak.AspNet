@@ -18,7 +18,7 @@ namespace TetraPak.AspNet.Api.Controllers
 {
     public class BusinessApiController : ControllerBase
     {
-        public TetraPakAuthApiConfig Config { get; }
+        public TetraPakApiAuthConfig Config { get; }
 
         protected ILogger Logger => Config.Logger;
 
@@ -153,7 +153,7 @@ namespace TetraPak.AspNet.Api.Controllers
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
         
-        public BusinessApiController(TetraPakAuthApiConfig config)
+        public BusinessApiController(TetraPakApiAuthConfig config)
         {
             Config = config;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);

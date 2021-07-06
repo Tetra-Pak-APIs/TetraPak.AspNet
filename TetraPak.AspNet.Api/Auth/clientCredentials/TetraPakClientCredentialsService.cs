@@ -15,7 +15,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// </summary>
     public class TetraPakClientCredentialsService : IClientCredentialsService
     {
-        readonly TetraPakAuthApiConfig _config;
+        readonly TetraPakApiAuthConfig _config;
 
         /// <summary>
         ///   Gets a logger provider.
@@ -95,7 +95,7 @@ namespace TetraPak.AspNet.Api.Auth
             return new BasicAuthCredentials(_config.ClientId, _config.ClientSecret);
         }
 
-        public TetraPakClientCredentialsService(TetraPakAuthApiConfig config)
+        public TetraPakClientCredentialsService(TetraPakApiAuthConfig config)
         {
             _config = config;
         }

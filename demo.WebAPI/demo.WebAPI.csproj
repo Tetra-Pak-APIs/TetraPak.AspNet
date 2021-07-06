@@ -26,7 +26,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
-      <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
     </ItemGroup>
 
 </Project>

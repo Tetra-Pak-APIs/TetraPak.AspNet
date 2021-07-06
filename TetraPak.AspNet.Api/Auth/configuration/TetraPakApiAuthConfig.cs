@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakAuthApiConfig : TetraPakAuthConfig
+    public class TetraPakApiAuthConfig : TetraPakAuthConfig
     {
         protected override void OnSetProperty(PropertyInfo property, object value)
         {
@@ -20,9 +20,9 @@ namespace TetraPak.AspNet.Api.Auth
             base.OnSetProperty(property, value);
         }
 
-        public TetraPakAuthApiConfig(
+        public TetraPakApiAuthConfig(
             IConfiguration configuration,
-            ILogger<TetraPakAuthApiConfig> logger,
+            ILogger<TetraPakApiAuthConfig> logger,
             bool loadDiscoveryDocument = false,
             string sectionIdentifier = null)
         : base(configuration, logger, loadDiscoveryDocument, sectionIdentifier)

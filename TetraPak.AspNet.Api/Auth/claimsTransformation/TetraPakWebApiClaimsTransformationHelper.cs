@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.Api.Auth
         {
             c.AddHttpContextAccessor();
             c.TryAddTransient<AmbientData>();
-            c.TryAddSingleton<TetraPakAuthConfig, TetraPakAuthApiConfig>();
+            c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
             c.AddTransient<IClaimsTransformation, TetraPakWebApiClaimsTransformation>();
             c.AddTetraPakTokenExchangeService();
             c.AddTetraPakUserInformation();

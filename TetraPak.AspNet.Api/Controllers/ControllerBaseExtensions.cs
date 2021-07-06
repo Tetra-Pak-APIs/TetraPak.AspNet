@@ -11,9 +11,9 @@ namespace TetraPak.AspNet.Api.Controllers
 {
     public static class ControllerBaseExtensions
     {
-        static readonly Dictionary<ControllerBase, TetraPakAuthApiConfig> s_configs = new();
+        static readonly Dictionary<ControllerBase, TetraPakApiAuthConfig> s_configs = new();
         
-        public static void Configure(this ControllerBase self, TetraPakAuthApiConfig config, bool replace = false)
+        public static void Configure(this ControllerBase self, TetraPakApiAuthConfig config, bool replace = false)
         {
             if (s_configs.ContainsKey(self) && !replace)
                 throw new InvalidOperationException("Controller was already configured");
@@ -134,12 +134,12 @@ namespace TetraPak.AspNet.Api.Controllers
             config.Logger.Error(exception, message, referenceId);
         }
 
-        public static bool TryGetTetraPakConfiguration(this ControllerBase self, out TetraPakAuthApiConfig config)
+        public static bool TryGetTetraPakConfiguration(this ControllerBase self, out TetraPakApiAuthConfig config)
         {
             return s_configs.TryGetValue(self, out config);
         }
         
-        public static TetraPakAuthApiConfig GetTetraPakConfiguration(this ControllerBase self)
+        public static TetraPakApiAuthConfig GetTetraPakConfiguration(this ControllerBase self)
         {
             if (self.TryGetTetraPakConfiguration(out var config))
                 return config;

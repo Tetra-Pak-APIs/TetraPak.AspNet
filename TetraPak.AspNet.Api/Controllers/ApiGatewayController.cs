@@ -7,7 +7,7 @@ namespace TetraPak.AspNet.Api.Controllers
     {
         public TBackendService Service { get; }
 
-        public ApiGatewayController(TBackendService service, TetraPakAuthApiConfig config)
+        public ApiGatewayController(TBackendService service, TetraPakApiAuthConfig config)
         : base(config)
         {
             Service = service;

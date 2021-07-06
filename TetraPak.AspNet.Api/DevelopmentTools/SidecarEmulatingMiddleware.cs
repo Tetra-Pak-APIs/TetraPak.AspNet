@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.DynamicEntities;
 using TetraPak.Logging;
+using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api.DevelopmentTools
 {
@@ -44,9 +45,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
 
             var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity);
+            object description = null;
+            var messageId = context.Request.GetMessageId(_authConfig);
             if (!jwtBearerOutcome)
             {
-                object description = null;
+                string descriptionJson = null;
                 if (jwtBearerOutcome.Exception is HttpException httpException)
                 {
                     var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
@@ -55,6 +58,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         try
                         {
                             description = JsonSerializer.Deserialize<DynamicEntity>(targetError);
+                            descriptionJson = description.ToJson(true);
                         }
                         catch
                         {
@@ -62,20 +66,19 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         }
                     }
                 }
-                
-                Logger.Error(jwtBearerOutcome.Exception);
+
+                description ??= jwtBearerOutcome.Exception.Message;
+                Logger.Error(
+                    jwtBearerOutcome.Exception,
+                    "Local development sidecar failed to authenticate access token: " +
+                    $"{tokenOutcome.Value}{Environment.NewLine}{descriptionJson ?? description}", 
+                    messageId);
                 context.Response.OnStarting(async () =>
                 {
-                    var messageId = context.Request.GetMessageId(_authConfig);
                     var error = new ApiErrorResponse(
                         $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
                         description,
                         messageId);
-                    // var content = new obsolete
-                    // {
-                    //     message = $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
-                    //     targetError = targetError ?? "(none)"
-                    // };
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
                 return false;
@@ -97,19 +100,28 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     return Outcome<ActorToken>.Fail(new HttpException(response));
 
                 await using var stream = await response.Content.ReadAsStreamAsync();
+                var isEmptyResponseBody = false;
                 try
                 {
                     var responseBody = await JsonSerializer.DeserializeAsync<SidecarResponseBody>(stream);
-                    if (responseBody is null)
-                        throw new Exception("JSON serialization returned an empty response body");
-
-                    return Outcome<ActorToken>.Success(responseBody.Token);
+                    if (responseBody is { }) 
+                        return Outcome<ActorToken>.Success(responseBody.Token);
+                    
+                    isEmptyResponseBody = true;
+                    throw new Exception("JSON serialization returned an empty response body");
                 }
                 catch (Exception ex)
                 {
+                    const string EmptyResponseMessage = "Could not get a JWT bearer. Successful response was empty";
+                    if (isEmptyResponseBody)
+                        return Outcome<ActorToken>.Fail(new FormatException(EmptyResponseMessage, ex));
+
+                    var body = await response.Content.ReadAsStringAsync();
+                    if (string.IsNullOrWhiteSpace(body))
+                        return Outcome<ActorToken>.Fail(new FormatException(EmptyResponseMessage, ex));
                     
                     return Outcome<ActorToken>.Fail(new FormatException(
-                        "Could not get a JWT bearer. Error while parsing successful response", ex));
+                        $"Could not get a JWT bearer. Error while parsing successful response: {body}", ex));
                 }
             }
             catch (Exception ex)

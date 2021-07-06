@@ -10,21 +10,24 @@ namespace TetraPak.AspNet.Api.Auth
         public static bool TryReadCustomAuthorization(
             this MessageReceivedContext context,
             JwtBearerOptions options,
-            TetraPakAuthApiConfig config,
+            TetraPakApiAuthConfig config,
             ILogger logger, 
-            out string authorization)
+            out ActorToken token)
         {
             using (logger?.BeginScope($"Looking for authorization in header: {config.AuthorizationHeader}"))
             {
                 if (!config.IsCustomAuthorizationHeader)
                 {
                     logger.Debug("Default authorization header is in use");
-                    authorization = null;
+                    token = null;
                     return false;
                 }
             
-                authorization = context.Request.Headers[config.AuthorizationHeader];
+                string authorization = context.Request.Headers[config.AuthorizationHeader];
                 var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
+                if (!ActorToken.TryParse(authorization, out token))
+                    return false;
+                
                 var isJwtToken = authorization.TryParseToJwtSecurityToken(out var jwt);
 
                 if (!logger?.IsEnabled(LogLevel.Debug) ?? false)

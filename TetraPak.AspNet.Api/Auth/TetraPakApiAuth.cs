@@ -10,11 +10,11 @@ namespace TetraPak.AspNet.Api.Auth
 
         public static IApplicationBuilder UseRequestReferenceId(this IApplicationBuilder app)
         {
-            var authConfig = app.ApplicationServices.GetService<TetraPakAuthApiConfig>();
+            var authConfig = app.ApplicationServices.GetService<TetraPakApiAuthConfig>();
             if (authConfig is null)
                 throw new InvalidOperationException(
                     "Cannot use request id middleware. "+
-                    $"Unable to resolve a {typeof(TetraPakAuthApiConfig)} service");
+                    $"Unable to resolve a {typeof(TetraPakApiAuthConfig)} service");
                 
             app.Use((context, func) =>
             {

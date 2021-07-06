@@ -18,7 +18,7 @@ namespace demo.WebApp.Controllers
         
         public SamplesController(
             SamplesService backend, 
-            TetraPakAuthApiConfig authConfig) 
+            TetraPakApiAuthConfig authConfig) 
         : base(backend, authConfig)
         {
         }

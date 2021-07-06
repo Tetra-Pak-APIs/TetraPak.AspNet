@@ -11,7 +11,7 @@ namespace TetraPak.AspNet.Api.Auth
 {
     public class TetraPakTokenExchangeService : ITokenExchangeService
     {
-        readonly TetraPakAuthApiConfig _config;
+        readonly TetraPakApiAuthConfig _config;
 
         protected ILogger<TetraPakTokenExchangeService> Logger { get; }
 
@@ -83,7 +83,7 @@ namespace TetraPak.AspNet.Api.Auth
             return new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public TetraPakTokenExchangeService(TetraPakAuthApiConfig config, ILogger<TetraPakTokenExchangeService> logger)
+        public TetraPakTokenExchangeService(TetraPakApiAuthConfig config, ILogger<TetraPakTokenExchangeService> logger)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             Logger = logger;

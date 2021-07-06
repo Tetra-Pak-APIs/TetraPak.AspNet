@@ -5,9 +5,9 @@
     /// </summary>
     public class SidecarJwBearerAssertionOptions
     {
-        public TetraPakAuthApiConfig Config { get; }
+        public TetraPakApiAuthConfig Config { get; }
 
-        public SidecarJwBearerAssertionOptions(TetraPakAuthApiConfig config)
+        public SidecarJwBearerAssertionOptions(TetraPakApiAuthConfig config)
         {
             Config = config;
         }

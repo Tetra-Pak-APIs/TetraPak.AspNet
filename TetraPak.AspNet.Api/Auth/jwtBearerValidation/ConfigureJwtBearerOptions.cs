@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         bool IsDevelopment => _hostEnvironment.IsDevelopment();
         
-        public TetraPakAuthApiConfig Config => _options.Config;
+        public TetraPakApiAuthConfig Config => _options.Config;
 
         public ILogger Logger { get; }
         
@@ -78,7 +78,7 @@ namespace TetraPak.AspNet.Api.Auth
                         await Logger.Debug(context.Request);
                         if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
                         {
-                            context.Token = token;
+                            context.Token = token.Identity;
                         }   
                     },
                     OnTokenValidated = _ =>

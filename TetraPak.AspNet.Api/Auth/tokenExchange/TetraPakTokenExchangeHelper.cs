@@ -7,14 +7,14 @@ namespace TetraPak.AspNet.Api.Auth
     {
         public static IServiceCollection AddTetraPakTokenExchangeService(this IServiceCollection c)
         {
-            c.TryAddSingleton<TetraPakAuthApiConfig>();
+            c.TryAddSingleton<TetraPakApiAuthConfig>();
             c.TryAddSingleton<ITokenExchangeService, TetraPakTokenExchangeService>();
             return c;
         }
 
         public static IServiceCollection AddTetraPakClientCredentialsService(this IServiceCollection c)
         {
-            c.TryAddSingleton<TetraPakAuthApiConfig>();
+            c.TryAddSingleton<TetraPakApiAuthConfig>();
             c.TryAddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>();
             return c;
         }
