@@ -9,9 +9,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 
-namespace TetraPak.AspNet.DevelopmentTools
+namespace TetraPak.AspNet.Api.DevelopmentTools
 {
     class SidecarEmulatingMiddleware
     {
@@ -26,6 +27,7 @@ namespace TetraPak.AspNet.DevelopmentTools
             if (ambientData is null)
                 return false;
 
+            // note: passing an unassigned Auth Config to ensure we always pick the access token from default header ...
             var tokenOutcome = await ambientData.GetAccessTokenAsync(null);
             if (!tokenOutcome)
             {
@@ -44,20 +46,37 @@ namespace TetraPak.AspNet.DevelopmentTools
             var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity);
             if (!jwtBearerOutcome)
             {
-                string targetError = null;
+                object description = null;
                 if (jwtBearerOutcome.Exception is HttpException httpException)
                 {
-                    targetError = await httpException.Response.Content.ReadAsStringAsync();
+                    var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
+                    if (targetError.StartsWith('{'))
+                    {
+                        try
+                        {
+                            description = JsonSerializer.Deserialize<DynamicEntity>(targetError);
+                        }
+                        catch
+                        {
+                            description = targetError;
+                        }
+                    }
                 }
+                
                 Logger.Error(jwtBearerOutcome.Exception);
                 context.Response.OnStarting(async () =>
                 {
-                    var content = new
-                    {
-                        message = $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
-                        targetError = targetError ?? "(none)"
-                    };
-                    await context.RespondAsync(HttpStatusCode.Unauthorized, content);
+                    var messageId = context.Request.GetMessageId(_authConfig);
+                    var error = new ApiErrorResponse(
+                        $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
+                        description,
+                        messageId);
+                    // var content = new obsolete
+                    // {
+                    //     message = $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
+                    //     targetError = targetError ?? "(none)"
+                    // };
+                    await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
                 return false;
             }
@@ -88,6 +107,7 @@ namespace TetraPak.AspNet.DevelopmentTools
                 }
                 catch (Exception ex)
                 {
+                    
                     return Outcome<ActorToken>.Fail(new FormatException(
                         "Could not get a JWT bearer. Error while parsing successful response", ex));
                 }

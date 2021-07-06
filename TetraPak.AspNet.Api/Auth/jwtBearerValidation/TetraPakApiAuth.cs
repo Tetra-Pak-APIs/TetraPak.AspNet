@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TetraPak.AspNet.Api.DevelopmentTools;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.DevelopmentTools;
 using TetraPak.Caching;
 
 namespace TetraPak.AspNet.Api.Auth

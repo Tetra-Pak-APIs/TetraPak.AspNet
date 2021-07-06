@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
-namespace TetraPak.AspNet.DevelopmentTools
+namespace TetraPak.AspNet.Api.DevelopmentTools
 {
     public static class DevSidecarHelper
     {

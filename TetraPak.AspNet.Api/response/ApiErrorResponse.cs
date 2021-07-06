@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
-using TetraPak.AspNet.Api.Auth;
-using TetraPak.AspNet.Auth;
 using TetraPak.DynamicEntities;
 using TetraPak.Serialization;
 
@@ -22,9 +19,9 @@ namespace TetraPak.AspNet.Api
         }
 
         [JsonPropertyName("description")]
-        public string Description // { get; set; }
+        public object Description // { get; set; }
         {
-            get => Get<string>();
+            get => Get<object>();
             set => Set(value);
         }
 
@@ -57,6 +54,17 @@ namespace TetraPak.AspNet.Api
                 MessageId = messageId;
             }
         }
+        
+        public ApiErrorResponse(string title, object description, string messageId)
+        {
+            Title = title;
+            Description = description;
+            if (messageId is { })
+            {
+                MessageId = messageId;
+            }
+        }
+
     }
 
     public static class ApiErrorResponseHelper
@@ -118,6 +126,6 @@ namespace TetraPak.AspNet.Api
 
         public bool TransformChildren { get; set; } = false;
 
-        public static DictionaryTransformationOptions Default => new DictionaryTransformationOptions();
+        public static DictionaryTransformationOptions Default => new();
     }
 }
