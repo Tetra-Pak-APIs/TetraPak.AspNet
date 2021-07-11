@@ -12,9 +12,9 @@ namespace TetraPak.AspNet.Api.Auth
     {
         protected override void OnSetProperty(PropertyInfo property, object value)
         {
-            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(ServiceEndpointUrl)))
+            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(ServiceEndpoint)))
             {
-                value = new ServiceEndpointUrl(stringValue);
+                value = new ServiceEndpoint(stringValue);
             }
 
             base.OnSetProperty(property, value);

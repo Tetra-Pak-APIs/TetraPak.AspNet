@@ -8,9 +8,8 @@ using TetraPak.Caching;
 
 namespace TetraPak.AspNet
 {
-    public class AmbientData
+    public class AmbientData : IMessageIdProvider, IAccessTokenProvider
     {
-        readonly TetraPakAuthConfig _authConfig;
         readonly IHttpContextAccessor _httpContextAccessor;
 
         public static class Keys
@@ -21,34 +20,26 @@ namespace TetraPak.AspNet
             public const string ExpiresAt = "expires_at";
             public const string ExpiresIn = "expires_in";
             public const string RequestMessageId = "api-flow-id";
-
         }
+
+        public TetraPakAuthConfig AuthConfig { get; }
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger Logger => _authConfig.Logger;
+        public ILogger Logger => AuthConfig.Logger;
 
         /// <summary>
         ///   Gets a ambient cache.
         /// </summary>
         public ITimeLimitedRepositories Cache { get; }
 
-        /// <summary>
-        ///   Gets a standardized value used for referencing a unique request. 
-        /// </summary>
-        /// <param name="enforce">
-        ///   (optional; default=<c>false</c>)<br/>
-        ///   When set, a random unique string will be generated and attached to the request.  
-        /// </param>
-        /// <returns>
-        ///   A unique <see cref="string"/> value. 
-        /// </returns>
+        /// <inheritdoc />
         public string GetMessageId(bool enforce = false) 
-            => _httpContextAccessor.HttpContext?.Request.GetMessageId(_authConfig, enforce);
+            => _httpContextAccessor.HttpContext?.Request.GetMessageId(AuthConfig, enforce);
 
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
-            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync() 
+            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(AuthConfig);
 
         public Task<Outcome<ActorToken>> GetIdTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetIdTokenAsync(authConfig);
@@ -84,7 +75,7 @@ namespace TetraPak.AspNet
             IHttpContextAccessor httpContextAccessor,
             ITimeLimitedRepositories cache = null)
         {
-            _authConfig = authConfig;
+            AuthConfig = authConfig;
             _httpContextAccessor = httpContextAccessor;
             Cache = cache;
         }

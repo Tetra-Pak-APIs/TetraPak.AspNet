@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets or sets an authentication header value to be used for the requested client.
         /// </summary>
-        public AuthenticationHeaderValue Authentication { get; set; }
+        public ActorToken Authorization { get; set; }
 
         /// <summary>
         ///   A custom <see cref="HttpMessageHandler"/> to be used by the requested <see cref="HttpClient"/>.
@@ -39,11 +39,11 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Fluid API for assigning the <see cref="Authentication"/> property value.
+        ///   Fluid API for assigning the <see cref="Authorization"/> property value.
         /// </summary>
-        public HttpClientOptions WithAuthentication(AuthenticationHeaderValue authentication)
+        public HttpClientOptions WithAuthorization(ActorToken authorization)
         {
-            Authentication = authentication;
+            Authorization = authorization;
             return this;
         }
 

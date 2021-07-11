@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
 using TetraPak.Logging;
@@ -13,9 +15,9 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public class ServiceEndpoints : ConfigurationSection, 
+    public abstract class ServiceEndpoints : ConfigurationSection, 
         IServiceAuthConfig,
-        IEnumerable<KeyValuePair<string, ServiceEndpointUrl>>
+        IEnumerable<KeyValuePair<string, ServiceEndpoint>>
     {
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType; 
@@ -26,7 +28,7 @@ namespace TetraPak.AspNet.Api
         MultiStringValue _scope;
         // ReSharper restore NotAccessedField.Local
 
-        readonly Dictionary<string, ServiceEndpointUrl> _urls = new();
+        readonly Dictionary<string, ServiceEndpoint> _urls = new();
         List<Exception> _issues;
 
         public bool IsValid => _issues is null;
@@ -34,6 +36,8 @@ namespace TetraPak.AspNet.Api
         public IEnumerable<Exception> GetIssues() => _issues;
         
         public ServicesAuthConfig ServicesAuthConfig { get; }
+
+        internal AmbientData AmbientData => ServicesAuthConfig.AmbientData;
 
         internal TetraPakAuthConfig AuthConfig => ServicesAuthConfig.AuthConfig;
         
@@ -103,10 +107,10 @@ namespace TetraPak.AspNet.Api
 
         internal IBackendService BackendService { get; set; }
 
-        public IEnumerator<KeyValuePair<string, ServiceEndpointUrl>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {
             var propertyArray = GetType().GetProperties().Where(i => 
-                i.PropertyType == typeof(ServiceEndpointUrl)).ToArray();
+                i.PropertyType == typeof(ServiceEndpoint)).ToArray();
 
             for (var i = 0; i < propertyArray.Length; i++)
             {
@@ -114,52 +118,42 @@ namespace TetraPak.AspNet.Api
                 if (property.IsIndexer())
                     continue;
                 
-                var value = (ServiceEndpointUrl) property.GetValue(this);
+                var value = (ServiceEndpoint) property.GetValue(this);
                 if (value is null)
                 {
                     Logger.Warning($"Unassigned endpoint: {Path}:{property.Name}");
                     continue;
                 }
                 
-                yield return new KeyValuePair<string, ServiceEndpointUrl>(property.Name, value);
+                yield return new KeyValuePair<string, ServiceEndpoint>(property.Name, value);
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public ServiceEndpointUrl this[string endpointName] => getServiceEndpointUrl(endpointName);
+        /// <summary>
+        ///   Gets a named endpoint. Intended to be called from endpoint properties getter.
+        /// </summary>
+        /// <param name="propertyName">
+        ///   The (property) name of the endpoint.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ServiceEndpoint"/> object on success,
+        ///   or a <see cref="ServiceInvalidEndpoint"/> on failure.
+        /// </returns>
+        public ServiceEndpoint GetEndpoint([CallerMemberName] string propertyName = null) =>
+            getServiceEndpoint(propertyName);
+        
+        public ServiceEndpoint this[string endpointName] => getServiceEndpoint(endpointName);
 
-        ServiceEndpointUrl getServiceEndpointUrl(string endpointName)
+        ServiceEndpoint getServiceEndpoint(string endpointName)
         {
-            var property = GetType().GetProperties().FirstOrDefault(i => i.Name == endpointName && isEndpointUrl(i));
-            if (property is { })
-                return (ServiceEndpointUrl) property.GetValue(this);
-            
-            if (!IsValid)
-                return ServicesAuthConfig.GetInvalidEndpointUrl(endpointName, GetIssues());
+            if (!_urls.TryGetValue(endpointName, out var endpoint))
+                return ServicesAuthConfig.GetInvalidEndpoint(
+                    endpointName, 
+                    new[] {new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")});
 
-            if (_urls.TryGetValue(endpointName, out var endpointUrl))
-                return endpointUrl;
-                
-            var value = Section[endpointName];
-            if (string.IsNullOrWhiteSpace(value))
-                ServicesAuthConfig.GetInvalidEndpointUrl(
-                    endpointName, 
-                    new[] {new FormatException("Missing url value")});
-                
-            try
-            {
-                endpointUrl = value;
-                endpointUrl.SetBackendService(BackendService);
-                _urls.Add(endpointName, endpointUrl);
-                return endpointUrl;
-            }
-            catch (Exception ex)
-            {
-                return ServicesAuthConfig.GetInvalidEndpointUrl(
-                    endpointName, 
-                    new[] { new FormatException($"Invalid url: {value}") });
-            }
+            return endpoint;
         }
 
         void addIssue(Exception exception)
@@ -170,6 +164,9 @@ namespace TetraPak.AspNet.Api
 
         void validate(string sectionIdentifier)
         {
+            if (ParentSection == Section)
+                return;
+            
             if (!ParentSection.ContainsKey(sectionIdentifier))
             {
                 addIssue(new ConfigurationException($"Missing configuration section: {sectionIdentifier}"));
@@ -188,37 +185,103 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        static bool isEndpointUrl(PropertyInfo property) => typeof(ServiceEndpointUrl).IsAssignableFrom(property.PropertyType);
+        // static bool isEndpoint(PropertyInfo property) => typeof(ServiceEndpoint).IsAssignableFrom(property.PropertyType); obsolete
 
-        void initializeServiceEndpointProperties()
+        void initializeEndpoints()
         {
-            // initialize endpoint properties ...
-            var endpointProperties = GetType().GetProperties()
-                .Where(isEndpointUrl);
-            foreach (var property in endpointProperties)
+            var type = GetType();
+            var children = Section.GetChildren();
+            foreach (var child in children)
             {
-                if (property.IsIndexer())
+                var name = child.Key;
+                if (isReservedIdentifier(name))
                     continue;
-                
-                var path = $"{Path}:{property.Name}";
-                if (!property.CanWrite)
+
+                var property = type.GetProperty(name);
+                var stringValue = Section[name];
+                ServiceEndpoint url;
+                if (stringValue is { })
                 {
-                    Logger.Error(new InvalidOperationException($"Service Endpoint URL property {GetType()}.{property.Name} cannot be set. No setter found"));
-                    continue;
-                }
-                
-                var stringValue = Section[property.Name];
-                if (stringValue is null)
-                {
-                    var issue = new ConfigurationException($"Missing endpoint configuration: {path}");
-                    var invalidUrl = ServicesAuthConfig.GetInvalidEndpointUrl(property.Name, new[] {issue});
-                    property.SetValue(this, invalidUrl);
+                    url = new ServiceEndpoint(stringValue).WithIdentity(name, this);
+                    addUrl(url, property);
                     continue;
                 }
 
-                var url = new ServiceEndpointUrl(stringValue);
-                property.SetValue(this, url);
+                var section = Section.GetSection(name);
+                if (section is null || section.IsEmpty()) 
+                    continue;
+                
+                url = configureServiceEndpoint(section);
+                addUrl(url, property);
             }
+        }
+
+        bool isReservedIdentifier(string name)
+        {
+            return name switch
+            {
+                nameof(Host) => true,
+                nameof(BasePath) => true,
+                 "this" => true,
+                _ => ServicesAuthConfig.IsAuthIdentifier(name)
+            };
+        }
+
+        void addUrl(ServiceEndpoint url, PropertyInfo property)
+        {
+            if (!_urls.ContainsKey(url.Name))
+            {
+                _urls.Add(url.Name, url);
+                if (property?.CanWrite ?? false)
+                {
+                    property.SetValue(this, url);
+                }
+                return;
+            }
+            
+            var invalidUrl = ServicesAuthConfig.GetInvalidEndpoint(url.Name, new[]
+            {
+                new ConfigurationException($"Same endpoint was configured multiple times: {url.Path}")
+            });
+            _urls[url.Name] = invalidUrl;
+            property?.SetValue(this, invalidUrl);
+        }
+
+        ServiceEndpoint configureServiceEndpoint(IConfigurationSection section)
+        {
+            var pathSection = section.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("path", StringComparison.InvariantCultureIgnoreCase));
+            
+            if (pathSection is null)
+                return ServicesAuthConfig.GetInvalidEndpoint(section.Key, new []
+                {
+                    new Exception("Missing endpoint 'Path' value")
+                });
+
+            var path = pathSection.Value;
+
+            var grantTypeSection = section.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("grantType", StringComparison.InvariantCultureIgnoreCase));
+            var grantType = parseGrantType(grantTypeSection?.Value, GrantType.Inherited);
+            var clientId = section.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("clientId", StringComparison.InvariantCultureIgnoreCase))?.Value;
+            var clientSecret = section.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("clientSecret", StringComparison.InvariantCultureIgnoreCase))?.Value;
+            var scope = section.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("scope", StringComparison.InvariantCultureIgnoreCase))?.Value;
+
+            return new ServiceEndpoint(path).WithIdentity(section.Key, this)
+                .WithConfig(grantType, clientId, clientSecret, scope);
+        }
+
+        static GrantType parseGrantType(string stringValue, GrantType useDefault)
+        {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return useDefault;
+
+            return !Enum.TryParse<GrantType>(stringValue, out var grantType)
+                ? useDefault
+                : grantType;
         }
 
         public ServiceEndpoints(ServicesAuthConfig servicesAuthConfig, string sectionIdentifier = "Endpoints")
@@ -227,7 +290,7 @@ namespace TetraPak.AspNet.Api
             ServicesAuthConfig = servicesAuthConfig;
             Path = $"{servicesAuthConfig.Path}:{sectionIdentifier}";
             validate(sectionIdentifier);
-            initializeServiceEndpointProperties();
+            initializeEndpoints();
         }
     }
 }

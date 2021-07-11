@@ -11,7 +11,6 @@ namespace demo.WebApp.Controllers
 {
     public class HomeController : Controller
     {
-        readonly ILogger<HomeController> _logger;
         readonly TetraPakAuthConfig _authConfig;
 
         [Authorize]
@@ -41,7 +40,6 @@ namespace demo.WebApp.Controllers
         
         public HomeController(ILogger<HomeController> logger, TetraPakAuthConfig authConfig)
         {
-            _logger = logger;
             _authConfig = authConfig;
         }
     }

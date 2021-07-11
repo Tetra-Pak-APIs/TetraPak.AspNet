@@ -10,13 +10,15 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class TetraPakUserInformation
     {
-        readonly TetraPakAuthConfig _authConfig;
+        readonly AmbientData _ambientData;
+        
+        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
 
-        public ILogger Logger => _authConfig.Logger;
+        public ILogger Logger => _ambientData.Logger;
 
         public async Task<Outcome<UserInformation>> GetUserInformationAsync(string accessToken)
         {
-            var loader = new UserInformationProvider(_authConfig);
+            var loader = new UserInformationProvider(_ambientData);
             try
             {
                 var userInformation = await loader.GetUserInformationAsync(accessToken);
@@ -28,9 +30,9 @@ namespace TetraPak.AspNet.Identity
             }
         }
         
-        public TetraPakUserInformation(TetraPakAuthConfig authConfig)
+        public TetraPakUserInformation(AmbientData ambientData)
         {
-            _authConfig = authConfig;
+            _ambientData = ambientData;
         }
     }
 }

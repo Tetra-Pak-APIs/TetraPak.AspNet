@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Gets the subject token to be exchanged.
         /// </summary>
-        public string SubjectToken { get; set; }
+        public ActorToken SubjectToken { get; set; }
 
         /// <summary>
         ///   Gets the subject token type.
@@ -109,13 +109,13 @@ namespace TetraPak.AspNet.Api.Auth
             return dictionary;
         }
 
-        public TokenExchangeArgs(Credentials credentials, string subjectToken, string subjectTokenType, params string[] scope)
+        public TokenExchangeArgs(Credentials credentials, ActorToken subjectToken, string subjectTokenType, params string[] scope)
         {
             if (string.IsNullOrWhiteSpace(subjectToken)) throw new ArgumentNullException(nameof(subjectToken));
             if (string.IsNullOrWhiteSpace(subjectTokenType)) throw new ArgumentNullException(nameof(subjectTokenType));
 
             Credentials = credentials;
-            SubjectToken = subjectToken;
+            SubjectToken = subjectToken.Identity;
             SubjectTokenType = subjectTokenType;
             Scope = scope.Length != 0
                 ? scope

@@ -18,13 +18,13 @@ namespace TetraPak.AspNet.Api
         internal static void SetBackendService(this ServiceEndpoints self, IBackendService backendService)
         {
             self.BackendService = backendService;
-            foreach (var (_, endpointUrl)  in self)
+            foreach (var (_, endpoint)  in self)
             {
-                endpointUrl.SetBackendService(backendService);
+                endpoint.SetBackendService(backendService);
             }
         }
 
-        public static Outcome<ActorToken> GetInvalidEndpointUrlAuthorization(this ServiceInvalidEndpointUrl url)
+        public static Outcome<ActorToken> GetInvalidEndpointAuthorization(this ServiceInvalidEndpoint url)
         {
             var issues = url.GetIssues();
             var errorMessage = 
@@ -40,21 +40,21 @@ namespace TetraPak.AspNet.Api
             return Outcome<ActorToken>.Fail(new Exception(errorResponse.Title));
         }
         
-        public static Outcome<HttpResponseMessage> GetInvalidEndpointUrlResponse(
-            this ServiceInvalidEndpointUrl url,
+        public static Outcome<HttpResponseMessage> GetInvalidEndpointResponse(
+            this ServiceInvalidEndpoint url,
             HttpMethod method,
             string path,
             string queryParameters)
         {
-            return GetInvalidEndpointUrlResponse(
+            return GetInvalidEndpointResponse(
                 url,
                 method.ToString(),
                 path,
                 queryParameters);
         }
         
-        public static Outcome<HttpResponseMessage> GetInvalidEndpointUrlResponse(
-            this ServiceInvalidEndpointUrl url,
+        public static Outcome<HttpResponseMessage> GetInvalidEndpointResponse(
+            this ServiceInvalidEndpoint url,
             string method,
             string path,
             string queryParameters)

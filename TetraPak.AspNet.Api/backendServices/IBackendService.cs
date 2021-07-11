@@ -25,18 +25,18 @@ namespace TetraPak.AspNet.Api
         ///   Sends a POST request to the backend service.
         /// </summary>
         /// <param name="path">
-        ///     The path to the requested resource. 
+        ///   The path to the requested resource. 
         /// </param>
         /// <param name="content">
-        ///     The content to be posted.
+        ///   The content to be posted.
         /// </param>
         /// <param name="clientOptions">
-        ///     (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///     Specifies options for creating a client.
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
         /// </param>
         /// <param name="cancellationToken">
-        ///     (optional)<br/>
-        ///     A <see cref="CancellationToken"/>.
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
@@ -49,22 +49,22 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null);
 
         /// <summary>
-        ///   Sends a POST request to the backend service.
+        ///   Sends a GEt request to the backend service to retrieve a <see cref="HttpResponseMessage"/>.
         /// </summary>
         /// <param name="path">
-        ///     The path to the requested resource. 
+        ///   The path to the requested resource. 
         /// </param>
         /// <param name="queryParameters">
-        ///     (optional)
-        ///     Query parameters.
+        ///   (optional)
+        ///   Query parameters.
         /// </param>
         /// <param name="clientOptions">
-        ///     (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///     Specifies options for creating a client.
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
         /// </param>
         /// <param name="cancellationToken">
-        ///     (optional)<br/>
-        ///     A <see cref="CancellationToken"/>.
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
         ///   (optional)<bt/>
@@ -74,6 +74,9 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
+        /// <seealso cref="GetAsync(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
         Task<Outcome<HttpResponseMessage>> GetAsync(
             string path,
             IDictionary<string, string> queryParameters,
@@ -82,22 +85,60 @@ namespace TetraPak.AspNet.Api
             string messageId = null);
 
         /// <summary>
-        ///   Sends a POST request to the backend service.
+        ///   Sends a GET request to the backend service to retrieve an object of a specified type.
         /// </summary>
         /// <param name="path">
-        ///     The path to the requested resource. 
+        ///   The path to the requested resource. 
         /// </param>
         /// <param name="queryParameters">
-        ///     (optional)
-        ///     Query parameters.
+        ///   (optional)
+        ///   Query parameters.
         /// </param>
         /// <param name="clientOptions">
-        ///     (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///     Specifies options for creating a client.
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
         /// </param>
         /// <param name="cancellationToken">
-        ///     (optional)<br/>
-        ///     A <see cref="CancellationToken"/>.
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
+        /// </param>
+        /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <seealso cref="GetAsync(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        Task<Outcome<T>> GetAsync<T>(
+            string path,
+            IDictionary<string, string> queryParameters,
+            HttpClientOptions clientOptions,
+            CancellationToken? cancellationToken = null,
+            string messageId = null);
+
+        
+        /// <summary>
+        ///   Sends a GET request to the backend service to retrieve a <see cref="HttpResponseMessage"/>.
+        /// </summary>
+        /// <param name="path">
+        ///   The path to the requested resource. 
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)
+        ///   Query parameters.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
         ///   (optional)<bt/>
@@ -107,11 +148,52 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
+        /// <seealso cref="GetAsync(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
         Task<Outcome<HttpResponseMessage>> GetAsync(
             string path,
             string queryParameters = null,
             HttpClientOptions clientOptions = null,
             CancellationToken? cancellationToken = null,
             string messageId = null);
+
+        /// <summary>
+        ///   Sends a GET request to the backend service to retrieve an object of a specified type.
+        /// </summary>
+        /// <param name="path">
+        ///   The path to the requested resource. 
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)
+        ///   Query parameters.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   A <see cref="CancellationToken"/>.
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
+        /// </param>
+        /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <seealso cref="GetAsync(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync(string,string,TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,System.Collections.Generic.IDictionary{string,string},TetraPak.AspNet.Api.HttpClientOptions,System.Nullable{System.Threading.CancellationToken},string)"/>
+        Task<Outcome<T>> GetAsync<T>(
+            string path,
+            string queryParameters = null,
+            HttpClientOptions clientOptions = null,
+            CancellationToken? cancellationToken = null,
+            string messageId = null);
+
     }
 }

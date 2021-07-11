@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using TetraPak;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
-using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 using WebAPI.services;
 
@@ -13,18 +15,40 @@ namespace WebAPI.Controllers
     public class HelloWorldController : ApiGatewayController<BackendService<HelloWorldEndpoints>>
     {
         [HttpGet]
-        public async Task<ActionResult> Get(bool proxy = false)
+        public async Task<ActionResult> Get(string svc = null)
         {
             var userIdentity = User.Identity;
-            this.LogDebug($"GET /helloworld{(proxy ? "proxy=true" : "")}");
-            if (!proxy)
-                return Ok(new { message = "Hello World!", userId = userIdentity.Name ?? "(unresolved)" } );
+            this.LogDebug($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
+            if (string.IsNullOrEmpty(svc))
+                return Ok(new 
+                { 
+                    message = "Hello World!", 
+                    remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+
+                              "credentials, consuming a downstream service",
+                    userId = userIdentity.Name ?? "(unresolved)" 
+                } );
 
-            return await OutcomeResultAsync(await Service.Endpoints.HelloWorld.GetAsync());
+            switch (svc.ToLowerInvariant())
+            {
+                case "tx":
+                    if (!await GetAccessTokenAsync())
+                        return UnauthorizedError(
+                            new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
+                        
+                    // note This is an example of how you can use an indexer to fetch the endpoint:
+                    return await RespondAsync(await Service.Endpoints["HelloWorldWithTokenExchange"].GetAsync());
+                
+                case "cc": 
+                    // note This is an example of how you can use a POC property to fetch the endpoint:
+                    return await RespondAsync(await Service.Endpoints["HelloWorldWithClientCredentials"].GetAsync());
+                
+                default:
+                    return await RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
+            }
         }
 
-        public HelloWorldController(BackendService<HelloWorldEndpoints> service, TetraPakApiAuthConfig config)
-        : base(service, config)
+        public HelloWorldController(BackendService<HelloWorldEndpoints> service, AmbientData ambientData)
+        : base(service, ambientData)
         {
         }
     }

@@ -75,7 +75,8 @@ namespace TetraPak.AspNet
             if (s is {} && ActorToken.TryParse(s, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            authConfig?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'");
+            var messageId = self.Request.GetMessageId(authConfig);
+            authConfig?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'", messageId);
             
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found")));
         }

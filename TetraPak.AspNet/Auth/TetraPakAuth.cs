@@ -226,25 +226,27 @@ namespace TetraPak.AspNet.Auth
                         },
                         OnRemoteFailure = context =>
                         {
-                            authConfig.Logger.Error(context.Failure,"OIDC authentication error!");
+                            var messageId = context.Request.GetMessageId(null);
+                            authConfig.Logger.Error(context.Failure,"OIDC authentication error!", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnTicketReceived = context =>
                         {
-                            authConfig.Logger.Debug("Token received");
                             context.Properties.IsPersistent = true;
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context =>
                         {
-                            authConfig.Logger.Warning($"OIDC authentication failed! {context.Exception.Message}");
+                            var messageId = context.Request.GetMessageId(null);
+                            authConfig.Logger.Warning($"OIDC authentication failed! {context.Exception.Message}", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnAccessDenied = context =>
                         {
-                            authConfig.Logger.Information($"Access denied: {context.AccessDeniedPath}");
+                            var messageId = context.Request.GetMessageId(null);
+                            authConfig.Logger.Information($"Access denied: {context.AccessDeniedPath}", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -283,7 +285,6 @@ namespace TetraPak.AspNet.Auth
             
             void addCachingIfAllowed()
             {
-                var cProvider = services.BuildServiceProvider();
                 if (authConfig is null || !authConfig.IsCachingAllowed)
                     return;
 

@@ -15,7 +15,7 @@ namespace TetraPak.AspNet.Api
                 public static IServiceCollection AddBackendServices(this IServiceCollection c, bool addControllerBackendServices = true)
         {
             c.TryAddSingleton<ServicesAuthConfig>();
-            c.AddTetraPakServiceEndpointUrls();
+            c.AddTetraPakServiceEndpoints();
             c.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
             c.AddTetraPakTokenExchangeService();
             c.AddTetraPakClientCredentialsService();
@@ -26,10 +26,10 @@ namespace TetraPak.AspNet.Api
             return c;
         }
 
-        public static IServiceCollection AddTetraPakServiceEndpointUrls(this IServiceCollection c)
+        public static IServiceCollection AddTetraPakServiceEndpoints(this IServiceCollection c)
         {
             c.TryAddTransient<AmbientData>();
-            c.TryAddTransient<ServiceInvalidEndpointUrl>();
+            c.TryAddTransient<ServiceInvalidEndpoint>();
             return c;
         }
 
@@ -62,6 +62,14 @@ namespace TetraPak.AspNet.Api
                             $"Unexpected error: Generic service type {serviceType} does not inherit from {typeof(BackendService<>)}");
 
                     var endpointsType = backendServiceType.GetGenericArguments().First();
+                    if (serviceType.IsAbstract)
+                        throw new InvalidOperationException(
+                            $"Invalid backend service type: {serviceType}. Type cannot be abstract");
+                        
+                    if (endpointsType.IsAbstract)
+                        throw new InvalidOperationException(
+                            $"Invalid backend endpoints type: {endpointsType}. Type cannot be abstract");
+
                     c.TryAddSingleton(serviceType);
                     c.TryAddSingleton(endpointsType);
                     registered.Add(serviceType);

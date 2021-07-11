@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,7 +15,9 @@ namespace TetraPak.AspNet.Api.Controllers
 {
     public class BusinessApiController : ControllerBase
     {
-        public TetraPakApiAuthConfig Config { get; }
+        protected AmbientData AmbientData { get; }
+
+        protected TetraPakApiAuthConfig Config => (TetraPakApiAuthConfig) AmbientData.AuthConfig;
 
         protected ILogger Logger => Config.Logger;
 
@@ -31,6 +30,10 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   Gets a message id for the request. 
         /// </summary>
         public string MessageId => HttpContext.Request.GetMessageId(Config);
+
+        internal TetraPakApiAuthConfig GetConfig() => Config;
+
+        protected Task<Outcome<ActorToken>> GetAccessTokenAsync() => ControllerBaseExtensions.GetAccessTokenAsync(this);
 
         protected ActionResult ErrorExpectedQueryParameter(string queryParameterName, string example = null)
         {
@@ -61,78 +64,77 @@ namespace TetraPak.AspNet.Api.Controllers
 
         protected virtual ActionResult OnError(HttpStatusCode status, Exception error) => this.Error(status, error);
 
-        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome, StringResponseDelegate responseDelegate = null)
+        /// <summary>
+        ///   Transforms an <see cref="Outcome"/> to an <see cref="ActionResult"/> response,
+        ///   including errors, in a format adhering to Tetra Pak's business API guidelines. 
+        /// </summary>
+        /// <param name="outcome">
+        ///   The outcome to be transformed into an <see cref="ActionResult"/>. 
+        /// </param>
+        /// <param name="responseDelegate">
+        ///   (optional)<br/>
+        ///   A <see cref="ResponseDelegate{T}"/> to be called before transforming the value/error into a
+        ///   correctly formed <see cref="ActionResult"/> response (see remarks).
+        /// </param>
+        /// <typeparam name="T">
+        ///   The type of value expected by the <paramref name="outcome"/>.
+        /// </typeparam>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> instance.
+        /// </returns>
+        /// <remarks>
+        ///   The <paramref name="responseDelegate"/> should be expected to handle these three types of values,
+        ///   passed in via its "data" parameter:
+        ///   <list> 
+        ///   <item>
+        ///     <term>
+        ///     object
+        ///     </term>
+        ///     <description>
+        ///     Any value carried by the <paramref name="outcome"/> when the outcome type is not a <see cref="HttpResponseMessage"/>. 
+        ///     </description>
+        ///   </item>
+        ///   <item>
+        ///     <term>
+        ///     <see cref="HttpResponseMessage"/>
+        ///     </term>
+        ///     <description>
+        ///     The raw response message carried by the <paramref name="outcome"/>. The delegate is responsible for
+        ///     downloading the response message content and transform it into  
+        ///     </description>
+        ///   </item>
+        ///   </list>
+        /// </remarks>
+        protected async Task<ActionResult> RespondAsync<T>(
+            Outcome<T> outcome, 
+            ResponseDelegate<T> responseDelegate = null)
         {
             if (!outcome)
                 return Error(outcome.Exception);
-
-            var value = outcome.Value;
-            if (value is not HttpResponseMessage responseMessage) 
-                return Ok(outcome.Value);
-
-            var content = await responseMessage.Content.ReadAsStringAsync();
-            try
+            
+            if (responseDelegate is {})
             {
-                if (responseDelegate is { })
+                try
                 {
-                    var delegateOutcome = await responseDelegate(content);
-                    if (!delegateOutcome)
-                        return Error(delegateOutcome.Exception);
-
-                    content = delegateOutcome.Value;
+                    var delegateOutcome = await responseDelegate(outcome.Value);
+                    return !delegateOutcome ? Error(delegateOutcome.Exception) : Ok(delegateOutcome.Value);
                 }
-
-                object objects = content.Trim().StartsWith('[')
-                    ? JsonSerializer.Deserialize<DynamicEntity[]>(content)
-                    : JsonSerializer.Deserialize<DynamicEntity>(content);
-                
-                return Ok(objects);
+                catch (Exception ex)
+                {
+                    return Error(ex);
+                }
             }
-            catch
-            {
-                return Error(new SerializationException($"Failed when deserializing JSON data"));
 
-            }
-        }
-
-        protected async Task<ActionResult> OutcomeResultAsync<T>(Outcome<T> outcome, StreamResponseDelegate responseDelegate)
-        {
-            if (!outcome)
-                return Error(outcome.Exception);
-
-            var value = outcome.Value;
-            if (value is not HttpResponseMessage responseMessage) 
+            if (outcome.Value is not HttpResponseMessage responseMessage) 
                 return Ok(outcome.Value);
             
-            var streamOutcome = await responseDelegate(responseMessage);
-            if (!streamOutcome)
-                return Error(streamOutcome.Exception);
-
-            var stream = streamOutcome.Value;
-            try
-            {
-                var objects = await JsonSerializer.DeserializeAsync<JsonDocument>(stream);
-                return Ok(objects);
-            }
-            catch
-            {
-                return Error(new SerializationException($"Failed when deserializing JSON data"));
-            }
+            var stringValue = await responseMessage.Content.ReadAsStringAsync();
+            var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
+            return Ok(entityOutcome
+                ? entityOutcome.Value
+                : stringValue);
         }
 
-        protected virtual async Task<Outcome<Stream>> OnGetResponseStreamAsync(HttpResponseMessage responseMessage)
-        {
-            try
-            {
-                var stream = await responseMessage.Content.ReadAsStreamAsync();
-                return Outcome<Stream>.Success(stream);
-            }
-            catch (Exception ex)
-            {
-                return Outcome<Stream>.Fail(ex);
-            }
-        }
-        
         protected OkObjectResult Ok<T>(EnumOutcome<T> outcome, int totalCount = -1)
         {
             return this.Ok(outcome, totalCount, HttpContext.Request.GetMessageId(Config));
@@ -153,9 +155,9 @@ namespace TetraPak.AspNet.Api.Controllers
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
         
-        public BusinessApiController(TetraPakApiAuthConfig config)
+        public BusinessApiController(AmbientData ambientData)
         {
-            Config = config;
+            AmbientData = ambientData;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(environment))
             {
@@ -170,6 +172,5 @@ namespace TetraPak.AspNet.Api.Controllers
         }
     }
 
-    public delegate Task<Outcome<string>> StringResponseDelegate(string data);
-    public delegate Task<Outcome<Stream>> StreamResponseDelegate(HttpResponseMessage responseMessage);
+    public delegate Task<Outcome<T>> ResponseDelegate<T>(object data);
 }

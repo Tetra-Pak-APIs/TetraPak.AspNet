@@ -7,20 +7,11 @@ namespace TetraPak.AspNet.Api
     ///   Represents a service endpoint with issues.
     ///   The reason for such endpoints is to assist in creating meaningful error handling.
     /// </summary>
-    public class ServiceInvalidEndpointUrl : ServiceEndpointUrl
+    public class ServiceInvalidEndpoint : ServiceEndpoint, IMessageIdProvider
     {
         IEnumerable<Exception> _issues;
 
-        /// <summary>
-        ///   Retrieves a request message id if available. 
-        /// </summary>
-        /// <param name="enforce">
-        ///   (optional; default=<c>false</c>)<br/>
-        ///   When set a message id will be generated and injected into the request/response context.
-        /// </param>
-        /// <returns>
-        ///   A <see cref="string"/> value if a message id was available (or enforced); otherwise <c>null</c>.
-        /// </returns>
+        /// <inheritdoc />
         public string GetMessageId(bool enforce = false) => AmbientData.GetMessageId(enforce);
 
         /// <summary>
@@ -31,7 +22,7 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public IEnumerable<Exception> GetIssues() => _issues;
 
-        internal ServiceInvalidEndpointUrl WithInformation(string name, IEnumerable<Exception> issues)
+        internal ServiceInvalidEndpoint WithInformation(string name, IEnumerable<Exception> issues)
         {
             Name = name;
             StringValue = $"(name={name})"; 
@@ -40,13 +31,13 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Initializes the <see cref="ServiceInvalidEndpointUrl"/>.
+        ///   Initializes the <see cref="ServiceInvalidEndpoint"/>.
         ///   This constructor is mainly intended for the use by the dependency injection services. 
         /// </summary>
         /// <param name="ambientData">
         ///   An instance providing access to ambient date.
         /// </param>
-        public ServiceInvalidEndpointUrl(AmbientData ambientData) 
+        public ServiceInvalidEndpoint(AmbientData ambientData) 
         : base(ambientData)
         {
         }

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using demo.WebApp.Backends;
 using Microsoft.AspNetCore.Mvc;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 
@@ -18,8 +19,8 @@ namespace demo.WebApp.Controllers
         
         public SamplesController(
             SamplesService backend, 
-            TetraPakApiAuthConfig authConfig) 
-        : base(backend, authConfig)
+            AmbientData ambientData) 
+        : base(backend, ambientData)
         {
         }
     }

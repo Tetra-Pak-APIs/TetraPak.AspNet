@@ -24,13 +24,17 @@ namespace TetraPak.AspNet.Api.Auth
         ///   (optional)<br/>
         ///   Scope to be requested for the authorization.
         /// </param>
+        /// <param name="allowCached">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to reuse a cached token if available, or to cache an acquired token when successful.
+        /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> instance indicating success/failure, and the requested token
         ///   when successful; otherwise an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
-            CancellationToken cancellationToken,
+        Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(CancellationToken cancellationToken,
             Credentials clientCredentials = null,
-            MultiStringValue scope = null);
+            MultiStringValue scope = null, 
+            bool allowCached = true);
     }
 }

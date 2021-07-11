@@ -10,6 +10,11 @@ namespace TetraPak.AspNet.Api.Auth
 
         public MultiStringValue Scope { get; }
 
+        public ClientCredentialsResponse Clone(TimeSpan expiresIn)
+        {
+            return new ClientCredentialsResponse(AccessToken, expiresIn, Scope);
+        }
+
         internal static Outcome<ClientCredentialsResponse> TryParse(ClientCredentialsResponseBody body)
         {
             var accessToken = string.IsNullOrWhiteSpace(body.TokenType)

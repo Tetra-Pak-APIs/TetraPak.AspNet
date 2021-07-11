@@ -144,7 +144,7 @@ namespace TetraPak.AspNet
         }
 
         protected virtual async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken) 
-            => await AmbientData.GetAccessTokenAsync(AuthConfig);
+            => await AmbientData.GetAccessTokenAsync();
 
         protected virtual async Task<Outcome<ActorToken>> OnGetIdTokenAsync(CancellationToken cancellationToken)
             => await AmbientData.GetIdTokenAsync(AuthConfig);

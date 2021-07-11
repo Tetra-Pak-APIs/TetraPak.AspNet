@@ -30,7 +30,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
             Credentials credentials,
-            string accessToken, 
+            ActorToken accessToken, 
             CancellationToken cancellationToken);
 
         Task<Outcome<TokenExchangeResponse>> ExchangeAsync(

@@ -11,7 +11,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   Provides a <see cref="HttpClient"/>, either as a singleton or a transient instance.   
     /// </summary>
-    public interface IHttpServiceProvider
+    public interface IHttpServiceProvider : IApiLoggerProvider, IMessageIdProvider, IAccessTokenProvider
     {
         Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig);
         
@@ -89,12 +89,12 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         ILogger GetLogger();
 
-        /// <summary>
-        ///   Sets a specific logging provider.
-        /// </summary>
-        /// <param name="logger">
-        ///   A logging provider to be used.
-        /// </param>
-        void SetLogger(ILogger logger);
+        // /// <summary>
+        // ///   Sets a specific logging provider. obsolete
+        // /// </summary>
+        // /// <param name="logger">
+        // ///   A logging provider to be used.
+        // /// </param>
+        // void SetLogger(ILogger logger);
     }
 }

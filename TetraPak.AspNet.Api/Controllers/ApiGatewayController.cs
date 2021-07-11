@@ -1,5 +1,3 @@
-using TetraPak.AspNet.Api.Auth;
-
 namespace TetraPak.AspNet.Api.Controllers
 {
     public abstract class ApiGatewayController<TBackendService> : BusinessApiController
@@ -7,11 +5,10 @@ namespace TetraPak.AspNet.Api.Controllers
     {
         public TBackendService Service { get; }
 
-        public ApiGatewayController(TBackendService service, TetraPakApiAuthConfig config)
-        : base(config)
+        public ApiGatewayController(TBackendService service, AmbientData ambientData)
+        : base(ambientData)
         {
             Service = service;
-           // this.Configure(authConfig);
         }
     }
 }

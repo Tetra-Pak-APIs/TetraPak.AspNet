@@ -662,9 +662,6 @@ namespace TetraPak.AspNet.Auth
         : base(configuration, logger, sectionIdentifier)
         {
             Configuration = configuration;
-
-            var nisse = Section.GetChildren();
-            
             Environment = resolveRuntimeEnvironment(configDelegate);
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();

@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 
 namespace TetraPak.AspNet
 {
+    [DebuggerDisplay("{ToString()}")]
     public class HttpException : Exception
     {
-        public HttpStatusCode StatusCode => Response.StatusCode;
+        readonly HttpStatusCode? _statusCode;
+        
+        public HttpStatusCode StatusCode => _statusCode ?? Response.StatusCode;
         
         public HttpResponseMessage Response { get; }
+
+        public override string ToString() => $"{((int)StatusCode).ToString()} ({StatusCode}) {base.ToString()}";
+
+        public HttpException(HttpStatusCode statusCode, string message = null, Exception innerException = null)
+        : base(message, innerException)
+        {
+            _statusCode = statusCode;
+        }
         
         public HttpException(
             HttpResponseMessage response, 

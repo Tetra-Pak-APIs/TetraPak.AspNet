@@ -18,7 +18,7 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassNeverInstantiated.Global
     public class TetraPakWebApiAccessTokenAuthenticationHandler : TetraPakAccessTokenAuthenticationHandler
     {
-        const string CacheRepository = "ExchangedAccessTokens";
+        const string CacheRepository = "ExchangedTokens";
 
         readonly IClientCredentialsProvider _clientCredentialsProvider;
         readonly ITokenExchangeService _tokenExchangeService;

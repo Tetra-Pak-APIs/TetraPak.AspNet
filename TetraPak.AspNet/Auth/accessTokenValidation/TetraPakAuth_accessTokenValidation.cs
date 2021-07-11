@@ -83,7 +83,7 @@ namespace TetraPak.AspNet.Auth
 
         protected virtual Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
         {
-            return AmbientData.GetAccessTokenAsync(AuthConfig);
+            return AmbientData.GetAccessTokenAsync();
         }
 
         public TetraPakAccessTokenAuthenticationHandler(

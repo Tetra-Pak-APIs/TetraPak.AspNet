@@ -19,12 +19,14 @@ namespace TetraPak.AspNet.Identity
     public class UserInformationProvider
     {
         readonly string _instanceId = new RandomString(8);
+        readonly AmbientData _ambientData;
         readonly ITimeLimitedRepositories _cache;
-        readonly TetraPakAuthConfig _authConfig;
+        
+        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
         
         string CacheRepository => $"{nameof(UserInformationProvider)}-{_instanceId}"; 
         
-        ILogger Logger => _authConfig.Logger;
+        ILogger Logger => _ambientData.Logger;
 
         /// <summary>
         ///   Obtains (and, optionally, caches) user information. 
@@ -67,13 +69,13 @@ namespace TetraPak.AspNet.Identity
             }
 
             Logger?.Debug("Obtains discovery document");
-            var discoveryDocument = await _authConfig.GetDiscoveryDocumentAsync();
+            var discoveryDocument = await AuthConfig.GetDiscoveryDocumentAsync();
             if (discoveryDocument is null)
             {
                 const string MissingDiscoDocErrorMessage =
                     "Could not obtain user information from Tetra Pak's User Information services. " +
                     "Failed when downloading discovery document";
-                Logger?.Warning(MissingDiscoDocErrorMessage);
+                Logger?.Warning(MissingDiscoDocErrorMessage, _ambientData.GetMessageId());
                 throw new Exception(MissingDiscoDocErrorMessage);
             }
             var userInfoEndpoint = discoveryDocument.UserInformationEndpoint;
@@ -166,19 +168,19 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Initializes the <see cref="UserInformationProvider"/>.
         /// </summary>
-        /// <param name="authConfig">
-        ///   Provides Tetra Pak auth configuration.
+        /// <param name="ambientData">
+        ///   Provides ambient data and configuration.
         /// </param>
         /// <param name="cache">
         ///   (optional)<br/>
         ///   A caching service to be used for caching user information.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="authConfig"/> was unassigned.
+        ///   <paramref name="ambientData"/> was unassigned.
         /// </exception>
-        public UserInformationProvider(TetraPakAuthConfig authConfig, ITimeLimitedRepositories cache = null)
+        public UserInformationProvider(AmbientData ambientData, ITimeLimitedRepositories cache = null)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
             _cache = cache;
         }
     }

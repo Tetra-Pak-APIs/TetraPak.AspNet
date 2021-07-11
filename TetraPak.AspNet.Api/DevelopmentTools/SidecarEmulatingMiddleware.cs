@@ -29,10 +29,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return false;
 
             // note: passing an unassigned Auth Config to ensure we always pick the access token from default header ...
-            var tokenOutcome = await ambientData.GetAccessTokenAsync(null);
+            var tokenOutcome = await ambientData.GetAccessTokenAsync();
+            var messageId = context.Request.GetMessageId(_authConfig);
             if (!tokenOutcome)
             {
-                Logger.Warning("Failed to resolve an access token");
+                Logger.Warning("Failed to resolve an access token", messageId);
                 return false;
             }
 
@@ -44,9 +45,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return true;
             }
 
-            var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity);
+            var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity, messageId);
             object description = null;
-            var messageId = context.Request.GetMessageId(_authConfig);
             if (!jwtBearerOutcome)
             {
                 string descriptionJson = null;
@@ -89,7 +89,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             return true;
         }
 
-        async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken)
+        async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken, string messageId)
         {
             try
             {
@@ -97,7 +97,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await client.GetAsync(_url);
                 if (!response.IsSuccessStatusCode)
+                {
+                    var exception = new HttpException(response);
+                    Logger.Error(exception, $"Failed on acquiring JWT bearer from: {_url}", messageId);
                     return Outcome<ActorToken>.Fail(new HttpException(response));
+                }
 
                 await using var stream = await response.Content.ReadAsStreamAsync();
                 var isEmptyResponseBody = false;
@@ -112,7 +116,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 }
                 catch (Exception ex)
                 {
-                    const string EmptyResponseMessage = "Could not get a JWT bearer. Successful response was empty";
+                    const string EmptyResponseMessage = "Could not get a JWT bearer. Successful response body was empty";
                     if (isEmptyResponseBody)
                         return Outcome<ActorToken>.Fail(new FormatException(EmptyResponseMessage, ex));
 

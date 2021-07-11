@@ -17,9 +17,24 @@ namespace TetraPak.AspNet.Api
 
         IServiceProvider ServiceProvider { get; }
 
-        internal TetraPakAuthConfig AuthConfig { get; }
+        public AmbientData AmbientData { get; }
+
+        internal TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
         
         internal string Path { get; }
+
+        internal bool IsAuthIdentifier(string identifier)
+        {
+            return identifier switch
+            {
+                nameof(Path) => true,
+                nameof(GrantType) => true,
+                nameof(ClientId) => true,
+                nameof(ClientSecret) => true,
+                nameof(Scope) => true,
+                _ => false
+            };
+        }
 
         public virtual GrantType GrantType
         {
@@ -65,18 +80,18 @@ namespace TetraPak.AspNet.Api
                 ? sectionIdentifier
                 : $"{TetraPakAuthConfig.Identifier}:{sectionIdentifier}";
         
-        public ServiceInvalidEndpointUrl GetInvalidEndpointUrl(string endpointName, IEnumerable<Exception> issues)
+        public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)
         {
-            return ServiceProvider.GetService<ServiceInvalidEndpointUrl>()?.WithInformation(endpointName, issues);
+            return ServiceProvider.GetService<ServiceInvalidEndpoint>()?.WithInformation(endpointName, issues);
         }
 
         public ServicesAuthConfig(
-            TetraPakAuthConfig authConfig, 
+            AmbientData ambientData,
             IServiceProvider serviceProvider,
             string sectionIdentifier = "Services") 
-        : base(authConfig.Configuration, authConfig.Logger, getSectionPath(sectionIdentifier))
+        : base(ambientData.AuthConfig.Configuration, ambientData.Logger, getSectionPath(sectionIdentifier))
         {
-            AuthConfig = authConfig;
+            AmbientData = ambientData;
             ServiceProvider = serviceProvider;
             Path = getSectionPath(sectionIdentifier);
         }
