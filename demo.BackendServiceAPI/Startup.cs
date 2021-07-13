@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TetraPak.AspNet.Api.Auth;
-using TetraPak.AspNet.Auth;
 
 namespace demo.BackendServiceAPI
 {

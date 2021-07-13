@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Api.Auth
         readonly TetraPakApiAuthConfig _config;
         readonly AmbientData _ambientData;
 
-        const string TokenCacheRepository = "ClientCredentialsTokens";
+        const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
 
         /// <summary>
         ///   Gets a logger provider.
@@ -103,7 +103,7 @@ namespace TetraPak.AspNet.Api.Auth
                 return Outcome<ClientCredentialsResponse>.Fail(new Exception("No cached token"));
 
             var cachedOutcome = await _ambientData.Cache.GetAsync<ClientCredentialsResponse>(
-                TokenCacheRepository, 
+                CacheRepository, 
                 credentials.Identity,
                 out var remainingLifeSpan);
 
@@ -131,7 +131,7 @@ namespace TetraPak.AspNet.Api.Auth
                 return;
 
             await _ambientData.Cache.AddOrUpdateAsync(
-                TokenCacheRepository,
+                CacheRepository,
                 credentials.Identity,
                 response, 
                 response.ExpiresIn);

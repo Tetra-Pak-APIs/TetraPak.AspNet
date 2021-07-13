@@ -66,13 +66,13 @@ namespace TetraPak.AspNet.Api
         public virtual string ClientId
         {
             get => GetFromFieldThenSection<string>() ?? ServicesAuthConfig.ClientId;
-            set => _clientId = value;
+            set => _clientId = value?.Trim();
         }
 
         public virtual string ClientSecret
         {
             get => GetFromFieldThenSection<string>() ?? ServicesAuthConfig.ClientSecret;
-            set => _clientSecret = value;
+            set => _clientSecret = value?.Trim();
         }
 
         public virtual MultiStringValue Scope

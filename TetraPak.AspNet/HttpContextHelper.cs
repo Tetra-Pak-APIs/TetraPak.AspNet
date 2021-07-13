@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
@@ -37,7 +36,7 @@ namespace TetraPak.AspNet
         ///   otherwise <c>null</c>.
         /// </returns>
         /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig, bool)"/>
         public static ActorToken GetAccessToken(this HttpContext self, TetraPakAuthConfig authConfig)
         {
             var task = GetAccessTokenAsync(self, authConfig);
@@ -53,7 +52,7 @@ namespace TetraPak.AspNet
         ///   declares the problem via its <see cref="Outcome.Exception"/> property. 
         /// </returns>
         /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig, bool)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self, TetraPakAuthConfig authConfig)
             => self.HttpContext.GetAccessTokenAsync(authConfig);
 

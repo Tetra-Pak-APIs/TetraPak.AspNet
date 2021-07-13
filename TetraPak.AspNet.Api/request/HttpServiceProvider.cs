@@ -176,13 +176,11 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var ct = cancellationToken ?? CancellationToken.None;
-                var clientId = authConfig.ClientId?.Trim();
-                if (string.IsNullOrEmpty(clientId))
-                    throw new ConfigurationException("Token exchange error: No client id was provided");
+                var clientId = authConfig.ClientId
+                    ?? throw new ConfigurationException("Token exchange error: No client id was provided");;
 
-                var clientSecret = authConfig.ClientSecret?.Trim();
-                if (string.IsNullOrEmpty(clientSecret))
-                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                var clientSecret = authConfig.ClientSecret
+                    ?? throw new ConfigurationException("Token exchange error: No client secret was provided");
             
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
                 var txOutcome = await TokenExchangeService.ExchangeAccessTokenAsync(credentials, accessToken, ct);

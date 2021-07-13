@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -17,6 +18,14 @@ namespace TetraPak.AspNet.Api.Auth
             c.TryAddSingleton<TetraPakApiAuthConfig>();
             c.TryAddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>();
             return c;
+        }
+
+        public static TimeSpan? GetLifespan(this TokenExchangeResponse self)
+        {
+            if (string.IsNullOrWhiteSpace(self.ExpiresIn) || !int.TryParse(self.ExpiresIn, out var seconds))
+                return null;
+            
+            return TimeSpan.FromSeconds(seconds);
         }
     }
 }

@@ -269,7 +269,7 @@ namespace TetraPak.AspNet.Auth
         public virtual string ClientId
         {
             get => GetFromFieldThenSection<string>();
-            set => _clientId = value;
+            set => _clientId = value?.Trim();
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace TetraPak.AspNet.Auth
         public virtual string ClientSecret
         {
             get => GetFromFieldThenSection<string>();
-            set => _clientSecret = value;
+            set => _clientSecret = value?.Trim();
         }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace TetraPak.AspNet.Auth
         public string CallbackPath
         {
             get => GetFromFieldThenSection(DefaultCallbackPath);
-            set => _callbackPath = value;
+            set => _callbackPath = value?.Trim();
         }
         
         /// <summary>

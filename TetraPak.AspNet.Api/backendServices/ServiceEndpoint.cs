@@ -57,14 +57,14 @@ namespace TetraPak.AspNet.Api
         public string ClientId
         {
             get => _clientId ?? Parent.ClientId;
-            set => _clientId = value;
+            set => _clientId = value?.Trim();
         }
 
         /// <inheritdoc />
         public string ClientSecret
         {
             get => _clientSecret ?? Parent.ClientSecret;
-            set => _clientSecret = value;
+            set => _clientSecret = value?.Trim();
         }
 
         /// <inheritdoc />

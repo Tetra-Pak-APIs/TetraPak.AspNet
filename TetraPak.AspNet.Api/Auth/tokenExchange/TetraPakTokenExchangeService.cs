@@ -9,15 +9,19 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakTokenExchangeService : ITokenExchangeService, IMessageIdProvider
     {
-        readonly TetraPakApiAuthConfig _config;
+        const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
+
         readonly AmbientData _ambientData;
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger Logger => _config.Logger;
+        protected ILogger Logger => _ambientData.Logger;
+
+        protected TetraPakApiAuthConfig AuthConfig =>  (TetraPakApiAuthConfig) _ambientData.AuthConfig;
 
         /// <inheritdoc />
         public string GetMessageId(bool enforce = false) => _ambientData.GetMessageId();
@@ -28,6 +32,10 @@ namespace TetraPak.AspNet.Api.Auth
             ActorToken accessToken,
             CancellationToken cancellationToken)
         {
+            var cachedOutcome = await getCached(credentials);
+            if (cachedOutcome)
+                return cachedOutcome;
+
             var args = new TokenExchangeArgs(
                 credentials, 
                 accessToken, 
@@ -40,8 +48,12 @@ namespace TetraPak.AspNet.Api.Auth
             TokenExchangeArgs args, 
             CancellationToken cancellationToken)
         {
+            var cachedOutcome = await getCached(args.Credentials);
+            if (cachedOutcome)
+                return cachedOutcome;
+            
             using var client = new HttpClient();
-            if (!(args.Credentials is BasicAuthCredentials basicAuthCredentials))
+            if (args.Credentials is not BasicAuthCredentials basicAuthCredentials)
                 return Outcome<TokenExchangeResponse>.Fail(
                     new InvalidOperationException(
                         $"Tetra Pak token exchange expects credentials to be of type {typeof(BasicAuthCredentials)}"));
@@ -49,7 +61,7 @@ namespace TetraPak.AspNet.Api.Auth
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
-                var discovery = await _config.GetDiscoveryDocumentAsync();
+                var discovery = await AuthConfig.GetDiscoveryDocumentAsync();
                 var dictionary = args.ToDictionary();
                 var response = await client.PostAsync(
                     discovery.TokenEndpoint, 
@@ -71,12 +83,32 @@ namespace TetraPak.AspNet.Api.Auth
                 var responseBody =
                     await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream,
                         cancellationToken: cancellationToken);
+
+                await cache(args.Credentials, responseBody);
                 return Outcome<TokenExchangeResponse>.Success(responseBody);
             }
             catch (Exception ex)
             {
                 return Outcome<TokenExchangeResponse>.Fail(ex);
             }
+        }
+
+        async Task<Outcome<TokenExchangeResponse>> getCached(Credentials credentials)
+        {
+            if (_ambientData.Cache is null)
+                return Outcome<TokenExchangeResponse>.Fail(new Exception($"Caching is not supported"));
+                
+            var key = credentials.Identity;
+            return await _ambientData?.Cache?.GetAsync<TokenExchangeResponse>(CacheRepository, key);
+        }
+
+        async Task cache(Credentials credentials, TokenExchangeResponse response)
+        {
+            if (_ambientData.Cache is null)
+                return;
+
+            var lifespan = response.GetLifespan();
+            await _ambientData.Cache.AddAsync(CacheRepository, credentials.Identity, response, lifespan);
         }
 
         /// <inheritdoc />
@@ -86,10 +118,11 @@ namespace TetraPak.AspNet.Api.Auth
             return new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public TetraPakTokenExchangeService(TetraPakApiAuthConfig config, AmbientData ambientData)
+        public TetraPakTokenExchangeService(AmbientData ambientData)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
-            _ambientData = ambientData;
+            _ambientData = ambientData  ?? throw new ArgumentNullException(nameof(ambientData));
+            if (_ambientData.AuthConfig is not TetraPakApiAuthConfig)
+                throw new ConfigurationException($"The configuration carried by {nameof(ambientData)} should be {typeof(TetraPakApiAuthConfig)}");
         }
     }
 }

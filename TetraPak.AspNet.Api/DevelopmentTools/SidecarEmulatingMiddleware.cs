@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 {
     class SidecarEmulatingMiddleware
     {
-        const string CacheRepository = "DevSidecarTokens";
+        const string CacheRepository = CacheRepositories.Tokens.DevSidecar;
         const string CacheRepositoryToken = "JwtBearer";
         
         readonly AmbientData _ambientData;

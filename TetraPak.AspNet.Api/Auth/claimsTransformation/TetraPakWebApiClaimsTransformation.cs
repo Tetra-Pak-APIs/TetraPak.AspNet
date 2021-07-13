@@ -25,7 +25,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// </example> 
     public class TetraPakWebApiClaimsTransformation : TetraPakClaimsTransformation
     {
-        const string IdentityTokenCache = "IdentityTokens";
+        const string CacheRepository = CacheRepositories.Tokens.Identity;
         
         readonly ITokenExchangeService _tokenExchangeService;
         
@@ -81,7 +81,7 @@ namespace TetraPak.AspNet.Api.Auth
             if (AmbientData.Cache is null)
                 return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
 
-            return await AmbientData.Cache.GetAsync<ActorToken>(IdentityTokenCache, accessToken);
+            return await AmbientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
         }
 
         async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
@@ -89,7 +89,7 @@ namespace TetraPak.AspNet.Api.Auth
             if (AmbientData.Cache is { })
             {
                 await AmbientData.Cache.AddOrUpdateAsync(
-                    IdentityTokenCache, 
+                    CacheRepository, 
                     accessToken,
                     exchangedToken);
             }
