@@ -2,6 +2,10 @@
 
 namespace WebAPI.services
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
+    /// <summary>
+    ///   Typed endpoints, instantiated by <see cref="TetraPakControllerFactory"/>.
+    /// </summary>
     public class HelloWorldEndpoints : ServiceEndpoints
     {
         public ServiceEndpoint HelloWorldWithClientCredentials => GetEndpoint();

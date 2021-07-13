@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Serialization;
@@ -27,6 +28,8 @@ namespace TetraPak.AspNet.Api
         internal IBackendService Service { get; set; }
         
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
+
+        public HttpContext HttpContext => AmbientData.HttpContext;
         
         /// <summary>
         ///   Gets the name of the service endpoint URL (as specified in the configuration).
@@ -100,7 +103,8 @@ namespace TetraPak.AspNet.Api
         public override string ToString() => StringValue;
 
         /// <inheritdoc />
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync() => AmbientData.GetAccessTokenAsync();
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
+            => AmbientData.GetAccessTokenAsync(forceStandardHeader);
 
         #region .  Equality  .
 

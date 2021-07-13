@@ -20,10 +20,10 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
+
             // services.AddSingleton<IClientCredentialsService, TetraPakClientCredentialsService>(); // <-- add this
-            services.AddSidecarJwtAuthentication(); // <-- add this
-            services.AddBackendServices();          // <-- add this
+            services.AddSidecarJwtAuthentication(); // <-- add this for JWT authorization
+            services.AddTetraPakServices();         // <-- add this _after_ services.AddControllers()
 
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
         }
@@ -47,6 +47,7 @@ namespace WebAPI
             app.UseRouting();
             app.UseRequestReferenceId();
 
+            app.UseTetraPakServicesDiagnostics(); // <-- add this to allow diagnostics, such a profiling headers
             app.UseSidecarJwtAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)
             
             app.UseAuthorization();

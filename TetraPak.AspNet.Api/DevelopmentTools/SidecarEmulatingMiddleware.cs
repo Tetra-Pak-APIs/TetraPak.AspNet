@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.diagnostics;
+using TetraPak.Caching;
 using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 using TetraPak.Serialization;
@@ -17,10 +19,16 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 {
     class SidecarEmulatingMiddleware
     {
-        readonly TetraPakAuthConfig _authConfig;
+        const string CacheRepository = "DevSidecarTokens";
+        const string CacheRepositoryToken = "JwtBearer";
+        
+        readonly AmbientData _ambientData;
         readonly string _url;
 
-        ILogger Logger => _authConfig.Logger;
+        ILogger Logger => _ambientData.Logger;
+
+        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig; 
+        
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
@@ -28,9 +36,9 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (ambientData is null)
                 return false;
 
-            // note: passing an unassigned Auth Config to ensure we always pick the access token from default header ...
-            var tokenOutcome = await ambientData.GetAccessTokenAsync();
-            var messageId = context.Request.GetMessageId(_authConfig);
+            // note: enforcing picking the access token from HTTP standard authorization header ...
+            var tokenOutcome = await ambientData.GetAccessTokenAsync(true);
+            var messageId = context.Request.GetMessageId(AuthConfig);
             if (!tokenOutcome)
             {
                 Logger.Warning("Failed to resolve an access token", messageId);
@@ -42,6 +50,17 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (actorToken.IsJwt)
             {
                 Logger.Debug("Local development sidecar bails out. Token was already JWT token");
+                return true;
+            }
+
+            BearerToken bearer;
+            context.StartDiagnosticsTime("dev-sidecar");
+            var cacheOutcome = await tryGetCachedToken();
+            if (cacheOutcome)
+            {
+                bearer = cacheOutcome.Value.Identity.ToBearerToken();
+                context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
+                context.EndDiagnosticsTime("dev-sidecar");
                 return true;
             }
 
@@ -81,12 +100,39 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         messageId);
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
+                context.EndDiagnosticsTime("dev-sidecar");
                 return false;
             }
 
-            var bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
-            context.Request.Headers[_authConfig.AuthorizationHeader] = bearer.ToString();
+            bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
+            context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
+            await cacheToken(jwtBearerOutcome.Value);
+            context.EndDiagnosticsTime("dev-sidecar");
+ 
             return true;
+        }
+
+        async Task<Outcome<ActorToken>> tryGetCachedToken()
+        {
+            return await _ambientData.Cache?.GetAsync<ActorToken>(CacheRepository, CacheRepositoryToken);
+        }
+
+        async Task cacheToken(ActorToken token)
+        {
+            var expires = token.ToJwtSecurityToken().Expires();
+            var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
+            await _ambientData.Cache?.AddAsync(CacheRepository, CacheRepositoryToken, token, lifespan);
+        }
+
+        async void configureTokenCache()
+        {
+            var options = await _ambientData.Cache.GetRepositoryOptionsAsync(CacheRepository, false);
+            if (options is {})
+                return;
+            
+            var defaultOptions = SimpleTimeLimitedRepositoryOptions.Zero;
+            defaultOptions.LifeSpan = TimeSpan.FromSeconds(10);
+            await _ambientData.Cache.ConfigureAsync(CacheRepository, defaultOptions);
         }
 
         async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken, string messageId)
@@ -134,12 +180,13 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public SidecarEmulatingMiddleware(TetraPakAuthConfig authConfig, string url)
+        public SidecarEmulatingMiddleware(AmbientData ambientData, string url)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;
+            configureTokenCache();
         }
 
         class SidecarResponseBody

@@ -38,11 +38,13 @@ namespace TetraPak.AspNet
         public string GetMessageId(bool enforce = false) 
             => _httpContextAccessor.HttpContext?.Request.GetMessageId(AuthConfig, enforce);
 
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync() 
-            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(AuthConfig);
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
+            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(AuthConfig, forceStandardHeader);
 
         public Task<Outcome<ActorToken>> GetIdTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetIdTokenAsync(authConfig);
+
+        public HttpContext HttpContext => _httpContextAccessor.HttpContext; 
 
         /// <summary>
         ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).
@@ -56,6 +58,21 @@ namespace TetraPak.AspNet
 
             return false;
         }
+
+        public void SetValue(string key, object value)
+        {
+            HttpContext.Items[key] = value;
+        }
+
+        public object this[string key]
+        {
+            get => GetValue(key);
+            set => SetValue(key, value);
+        }
+
+        public object GetValue(string key, object useDefault = null) => GetValue<object>(key, useDefault);
+
+        public T GetValue<T>(string key, T useDefault = default) => HttpContext.GetValue(key, useDefault);
 
         /// <summary>
         ///   Initializes the <see cref="AmbientData"/> instance.

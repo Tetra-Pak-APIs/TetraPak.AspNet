@@ -12,8 +12,8 @@ namespace TetraPak.AspNet.Api
 {
     public static class ServiceConfigHelper
     {
-        public static Uri GetUri(this ServiceEndpoints self, string path) 
-            => new Uri($"{self.Host}{self.BasePath}{path}");
+        // public static Uri GetUri(this ServiceEndpoints self, string path)  obsolete
+        //     => new Uri($"{self.Host}{self.BasePath}{path}");
         
         internal static void SetBackendService(this ServiceEndpoints self, IBackendService backendService)
         {
@@ -110,7 +110,6 @@ namespace TetraPak.AspNet.Api
             return Outcome<HttpResponseMessage>.Fail(responseMessage, new Exception(errorResponse.Title));
         }
 
-        
         public static string RequestToString(string method, string path, string queryParameters)
         {
             var sb = new StringBuilder(method);

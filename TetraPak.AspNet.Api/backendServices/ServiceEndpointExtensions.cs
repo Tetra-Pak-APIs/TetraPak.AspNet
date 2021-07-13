@@ -10,7 +10,7 @@ namespace TetraPak.AspNet.Api
     {
         internal static void SetBackendService(this ServiceEndpoint self, IBackendService service)
         {
-            if (self.Service is {})
+            if (self.Service is {} && self.Service != service)
                 throw new ArgumentException($"Endpoint {self} is already assigned to service {self.Service}", nameof(service));
 
             self.Service = service;

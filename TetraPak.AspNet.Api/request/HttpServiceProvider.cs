@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.diagnostics;
+using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
@@ -16,7 +18,7 @@ namespace TetraPak.AspNet.Api
     ///   Implements base functionality for providing HTTP clients
     ///   to be used when consuming configured backend services. 
     /// </summary>
-    public class HttpServiceProvider : IHttpServiceProvider
+    public class HttpServiceProvider : IHttpServiceProvider, ITetraPakDiagnosticsProvider
     {
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
         readonly IHttpContextAccessor _httpContextAccessor;
@@ -40,7 +42,8 @@ namespace TetraPak.AspNet.Api
         public string GetMessageId(bool enforce = false) => _ambientData.GetMessageId();
 
         /// <inheritdoc />
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync() => _ambientData.GetAccessTokenAsync();
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
+            => _ambientData.GetAccessTokenAsync(forceStandardHeader);
 
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
@@ -68,7 +71,7 @@ namespace TetraPak.AspNet.Api
 
             if (!authenticate) 
                 return Outcome<HttpClient>.Success(client);
-            
+
             var authOutcome = await AuthenticateAsync(options, cancellationToken, logger);
             if (!authOutcome)
             {
@@ -85,6 +88,12 @@ namespace TetraPak.AspNet.Api
             return Outcome<HttpClient>.Success(client);
         }
 
+        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => GetDiagnostics()?.StartTimer(timerKey);
+
+        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
+
+        protected ServiceDiagnostics GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(null); 
+
         /// <inheritdoc />
         public async Task<Outcome<ActorToken>> AuthenticateAsync(
             HttpClientOptions options,
@@ -93,22 +102,35 @@ namespace TetraPak.AspNet.Api
         {
             try
             {
-                return options?.AuthConfig.GrantType switch
+                switch (options?.AuthConfig.GrantType)
                 {
-                    GrantType.TokenExchange => await OnTokenExchangeAuthenticationAsync(
-                        options.AuthConfig,
-                        options.Authorization,
-                        cancellationToken),
-
-                    GrantType.ClientCredentials => await OnClientCredentialsAuthenticationAsync(
-                        options.AuthConfig,
-                        cancellationToken),
-                
-                    GrantType.None => throw new NotSupportedException($"Cannot authenticate with no specified grant type"), 
-                    GrantType.Inherited => throw unexpectedMethod(),
-                    null => throw unexpectedMethod(),
-                    _ => throw unexpectedMethod()
-                };
+                    case GrantType.TokenExchange:
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer("svc-auth-tx");
+                        var outcome = await OnTokenExchangeAuthenticationAsync(
+                            options.AuthConfig,
+                            options.Authorization,
+                            cancellationToken);
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer("svc-auth-tx");
+                        return outcome;
+                    
+                    case GrantType.ClientCredentials:
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer("svc-auth-cc");
+                        outcome = await OnClientCredentialsAuthenticationAsync(
+                            options.AuthConfig,
+                            cancellationToken);
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer("svc-auth-cc");
+                        return outcome;
+                    
+                    case GrantType.None:
+                        throw new NotSupportedException($"Cannot authenticate with no specified grant type");
+                    
+                    case GrantType.Inherited:
+                    case null:
+                        throw unexpectedMethod();
+                    
+                    default:
+                        throw unexpectedMethod();
+                }
             }
             catch (Exception ex)
             {
@@ -250,5 +272,12 @@ namespace TetraPak.AspNet.Api
             _ambientData = ambientData;
             _singletonClientOptions = singletonClientOptions;
         }
+    }
+
+    public interface ITetraPakDiagnosticsProvider
+    {
+        void DiagnosticsStartTimer(string timerKey);
+
+        void DiagnosticsEndTimer(string timerKey);
     }
 }

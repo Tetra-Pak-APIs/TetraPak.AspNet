@@ -5,8 +5,11 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
@@ -53,10 +56,21 @@ namespace TetraPak.AspNet
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self, TetraPakAuthConfig authConfig)
             => self.HttpContext.GetAccessTokenAsync(authConfig);
-        
+
         /// <summary>
         ///   Tries obtaining an access token from the request. 
         /// </summary>
+        /// <param name="self">
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="authConfig">
+        ///   A Tetra Pak configuration object.
+        /// </param>
+        /// <param name="forceStandardHeader">
+        ///   (optional; default=<c>false</c>)<br/>
+        ///   When set the configured (see <see cref="TetraPakAuthConfig.AuthorizationHeader"/>) authorization
+        ///   header is ignored in favour of the HTTP standard <see cref="HeaderNames.Authorization"/> header. 
+        /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> instance indicating success/failure. On success the outcome
         ///   holds the access token in its <see cref="Outcome{T}.Value"/> property. On failure the outcome 
@@ -64,13 +78,18 @@ namespace TetraPak.AspNet
         /// </returns>
         /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpContext self, TetraPakAuthConfig authConfig)
+        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(
+            this HttpContext self, 
+            TetraPakAuthConfig authConfig, 
+            bool forceStandardHeader = false)
         {
             var headerKey = AmbientData.Keys.AccessToken;
             if (self.Items.TryGetValue(headerKey, out var o) && o is string s && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            headerKey = authConfig?.AuthorizationHeader ?? HeaderNames.Authorization;
+            headerKey = forceStandardHeader || authConfig?.AuthorizationHeader is null
+                ? HeaderNames.Authorization
+                : authConfig.AuthorizationHeader;
             s = self.Request.Headers[headerKey].FirstOrDefault();
             if (s is {} && ActorToken.TryParse(s, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
@@ -208,6 +227,43 @@ namespace TetraPak.AspNet
             var key = authConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;
             return request.Headers.GetSingleValue(key, enforce ? new RandomString() : null, enforce);
         }
+
+        /// <summary>
+        ///   Gets a telemetry level from the request (if any).
+        /// </summary>
+        /// <param name="request">
+        ///   The <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="logger">
+        ///   A logger provider.
+        /// </param>
+        /// <param name="useDefault">
+        ///   A default telemetry level to be returned when no level was specified, or when
+        ///   the specified telemetry level could not be successfully parsed.  
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ServiceDiagnosticsLevel"/> value.
+        /// </returns>
+        public static ServiceDiagnosticsLevel GetDiagnosticsLevel(
+            this HttpRequest request,
+            ILogger logger,
+            ServiceDiagnosticsLevel useDefault = ServiceDiagnosticsLevel.None)
+        {
+            if (!request.Headers.TryGetValue(Headers.ServiceDiagnostics, out var values))
+                return useDefault;
+
+            var value = values.First();
+            if (Enum.TryParse<ServiceDiagnosticsLevel>(values, true, out var level)) 
+                return level;
+            
+            logger.Warning($"Unknown telemetry level requested: '{value}'");
+            return useDefault;
+        }
+
+        public static void SetValue(this HttpContext self, string key, object value) => self.Items[key] = value; 
+
+        public static T GetValue<T>(this HttpContext self, string key, T useDefault = default)
+            => self.Items.TryGetValue(key, out var obj) && obj is T tValue ? tValue : useDefault; 
 
         /// <summary>
         ///   Writes a HTTP response.

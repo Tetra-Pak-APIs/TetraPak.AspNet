@@ -46,6 +46,7 @@ namespace TetraPak.AspNet.Auth
         bool? _isCachingAllowed;
         TimeSpan? _defaultCachingLifetime;
         bool? _isPkceUsed;
+        bool? _enableDiagnostics;
         MultiStringValue _scope;
         GrantType _method;
         // ReSharper restore NotAccessedField.Local
@@ -156,6 +157,15 @@ namespace TetraPak.AspNet.Auth
         {
             get => GetFromFieldThenSection(TimeSpan.FromMinutes(10));
             set => _defaultCachingLifetime = value;
+        }
+
+        /// <summary>
+        ///   Gets or sets a value specifying whether to enable service diagnostics.
+        /// </summary>
+        public bool EnableDiagnostics
+        {
+            get => GetFromFieldThenSection(false); 
+            set => _enableDiagnostics = value;
         }
 
         /// <summary>

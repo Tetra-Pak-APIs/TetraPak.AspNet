@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TetraPak.AspNet.Debugging;
+using TetraPak.AspNet.diagnostics;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -74,6 +75,7 @@ namespace TetraPak.AspNet.Api.Auth
                 {
                     OnMessageReceived = async context =>
                     {
+                        context.HttpContext.StartDiagnosticsTime("auth-jwt");
                         Logger.DebugAssembliesInUse();
                         await Logger.Debug(context.Request);
                         if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
@@ -81,13 +83,15 @@ namespace TetraPak.AspNet.Api.Auth
                             context.Token = token.Identity;
                         }   
                     },
-                    OnTokenValidated = _ =>
+                    OnTokenValidated = context =>
                     {
+                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
                         Logger.Debug("JWT Bearer is valid");
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
+                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
                         if (Logger.IsEnabled(LogLevel.Debug))
                         {
                             var message = context.Exception is { }
@@ -112,8 +116,9 @@ namespace TetraPak.AspNet.Api.Auth
                         });
                         return Task.CompletedTask;
                     },
-                    OnForbidden = _ =>
+                    OnForbidden = context =>
                     {
+                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
                         return Task.CompletedTask;
                     },
                     OnChallenge = _ =>

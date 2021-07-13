@@ -2,22 +2,20 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
-using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
-using WebAPI.services;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("SimpleHelloWorld")]
     // [Authorize]
-    public class HelloWorldController : ApiGatewayController<BackendService<HelloWorldEndpoints>>
+    public class UntypedHelloWorldController : ApiGatewayController //<BackendService<HelloWorldEndpoints>>
     {
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)
         {
-            var userIdentity = User.Identity;
+            var userIdentity = User?.Identity;
             this.LogDebug($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
             if (string.IsNullOrEmpty(svc))
                 return Ok(new 
@@ -25,7 +23,7 @@ namespace WebAPI.Controllers
                     message = "Hello World!", 
                     remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+
                               "credentials, consuming a downstream service",
-                    userId = userIdentity.Name ?? "(unresolved)" 
+                    userId = userIdentity?.Name ?? "(unresolved)" 
                 } );
 
             switch (svc.ToLowerInvariant())
@@ -45,11 +43,6 @@ namespace WebAPI.Controllers
                 default:
                     return await RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
-        }
-
-        public HelloWorldController(BackendService<HelloWorldEndpoints> service, AmbientData ambientData)
-        : base(service, ambientData)
-        {
         }
     }
 }

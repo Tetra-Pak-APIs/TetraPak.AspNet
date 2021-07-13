@@ -17,13 +17,13 @@ namespace TetraPak.AspNet.Api
         ///   Gets the endpoint configuration.
         /// </summary>
         // ReSharper disable MemberCanBePrivate.Global
-        public TEndpoints Endpoints { get; }
+        public TEndpoints Endpoints { get; private set; }
 
         /// <summary>
         ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
         ///   used to consumer the backend service.
         /// </summary>
-        protected IHttpServiceProvider HttpServiceProvider { get; }
+        protected IHttpServiceProvider HttpServiceProvider { get; private set; }
 
         /// <summary>
         ///   Gets logging provider.  
@@ -44,6 +44,16 @@ namespace TetraPak.AspNet.Api
         public MultiStringValue Scope => Endpoints.Scope;
 
         public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
+
+        internal void DiagnosticsStartTimer(string timerKey)
+        {
+            (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsStartTimer(timerKey);
+        }
+
+        internal void DiagnosticsEndTimer(string timerKey)
+        {
+            (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsEndTimer(timerKey);
+        }
 
         public async Task<Outcome<ActorToken>> AuthenticateAsync(
             HttpClientOptions clientOptions, 
@@ -142,7 +152,7 @@ namespace TetraPak.AspNet.Api
         {
             if (!Endpoints.IsValid)
                 return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues(), messageId);
-                
+
             var ct = cancellationToken ?? CancellationToken.None;
             clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
             var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
@@ -158,7 +168,9 @@ namespace TetraPak.AspNet.Api
 
             try
             {
+                DiagnosticsStartTimer("svc-get");
                 var response = await client.GetAsync(path.TrimStart('/'), ct);
+                DiagnosticsEndTimer("svc-get");
                 return response.IsSuccessStatusCode
                     ? Outcome<HttpResponseMessage>.Success(response)
                     : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
@@ -186,7 +198,9 @@ namespace TetraPak.AspNet.Api
         {
             try
             {
+                DiagnosticsStartTimer("svc-get");
                 var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
+                DiagnosticsEndTimer("svc-get");
                 if (!outcome)
                     return Outcome<T>.Fail(outcome.Exception);
 
@@ -308,11 +322,23 @@ namespace TetraPak.AspNet.Api
             return clientOutcome;
         }
 
-        public BackendService(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
+        // ReSharper disable once UnusedMember.Global
+        internal bool IsInitialized() => Endpoints is { };
+
+        internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
         {
             Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
-            HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider));
+            HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
             Endpoints.SetBackendService(this);
+        }
+
+        public BackendService()
+        {
+        }
+
+        public BackendService(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
+        {
+            Initialize(endpoints, httpServiceProvider);
         }
     }
 }

@@ -25,7 +25,19 @@ namespace TetraPak.AspNet.Auth
 
             return sb.ToString();
         }
-        
+
+        /// <summary>
+        ///   Gets the expiration time for a <see cref="JwtSecurityToken"/>. 
+        /// </summary>
+        /// <param name="jwt">
+        ///   The <see cref="JwtSecurityToken"/>.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="DateTime"/> value if the <paramref name="jwt"/> contains an "exp" claim;
+        ///   otherwise <c>null</c>. 
+        /// </returns>
+        public static DateTime? Expires(this JwtSecurityToken jwt) => jwt.Payload.Exp?.EpochToDateTime();
+
         /// <summary>
         ///   Parses a JWT token and returns a <see cref="JwtSecurityToken"/> from the content.
         /// </summary>

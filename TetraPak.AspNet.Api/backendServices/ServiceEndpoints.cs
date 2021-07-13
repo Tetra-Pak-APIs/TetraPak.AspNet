@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
-using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
@@ -15,7 +14,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public abstract class ServiceEndpoints : ConfigurationSection, 
+    public class ServiceEndpoints : ConfigurationSection, 
         IServiceAuthConfig,
         IEnumerable<KeyValuePair<string, ServiceEndpoint>>
     {
@@ -28,7 +27,7 @@ namespace TetraPak.AspNet.Api
         MultiStringValue _scope;
         // ReSharper restore NotAccessedField.Local
 
-        readonly Dictionary<string, ServiceEndpoint> _urls = new();
+        readonly Dictionary<string, ServiceEndpoint> _endpoints = new();
         List<Exception> _issues;
 
         public bool IsValid => _issues is null;
@@ -109,23 +108,9 @@ namespace TetraPak.AspNet.Api
 
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {
-            var propertyArray = GetType().GetProperties().Where(i => 
-                i.PropertyType == typeof(ServiceEndpoint)).ToArray();
-
-            for (var i = 0; i < propertyArray.Length; i++)
+            foreach (var (key, value) in _endpoints)
             {
-                var property = propertyArray[i];
-                if (property.IsIndexer())
-                    continue;
-                
-                var value = (ServiceEndpoint) property.GetValue(this);
-                if (value is null)
-                {
-                    Logger.Warning($"Unassigned endpoint: {Path}:{property.Name}");
-                    continue;
-                }
-                
-                yield return new KeyValuePair<string, ServiceEndpoint>(property.Name, value);
+                yield return new KeyValuePair<string, ServiceEndpoint>(key, value);
             }
         }
 
@@ -148,7 +133,7 @@ namespace TetraPak.AspNet.Api
 
         ServiceEndpoint getServiceEndpoint(string endpointName)
         {
-            if (!_urls.TryGetValue(endpointName, out var endpoint))
+            if (!_endpoints.TryGetValue(endpointName, out var endpoint))
                 return ServicesAuthConfig.GetInvalidEndpoint(
                     endpointName, 
                     new[] {new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")});
@@ -229,9 +214,9 @@ namespace TetraPak.AspNet.Api
 
         void addUrl(ServiceEndpoint url, PropertyInfo property)
         {
-            if (!_urls.ContainsKey(url.Name))
+            if (!_endpoints.ContainsKey(url.Name))
             {
-                _urls.Add(url.Name, url);
+                _endpoints.Add(url.Name, url);
                 if (property?.CanWrite ?? false)
                 {
                     property.SetValue(this, url);
@@ -243,7 +228,7 @@ namespace TetraPak.AspNet.Api
             {
                 new ConfigurationException($"Same endpoint was configured multiple times: {url.Path}")
             });
-            _urls[url.Name] = invalidUrl;
+            _endpoints[url.Name] = invalidUrl;
             property?.SetValue(this, invalidUrl);
         }
 
@@ -283,7 +268,7 @@ namespace TetraPak.AspNet.Api
                 ? useDefault
                 : grantType;
         }
-
+        
         public ServiceEndpoints(ServicesAuthConfig servicesAuthConfig, string sectionIdentifier = "Endpoints")
         : base(servicesAuthConfig.Section, servicesAuthConfig.Logger, sectionIdentifier)
         {

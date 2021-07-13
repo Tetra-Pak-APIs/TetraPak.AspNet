@@ -15,16 +15,32 @@ namespace TetraPak.AspNet.Api.Controllers
 {
     public class BusinessApiController : ControllerBase
     {
-        protected AmbientData AmbientData { get; }
+        protected AmbientData AmbientData { get; private set; }
 
-        protected TetraPakApiAuthConfig Config => (TetraPakApiAuthConfig) AmbientData.AuthConfig;
+        protected TetraPakApiAuthConfig Config => (TetraPakApiAuthConfig) AmbientData?.AuthConfig;
 
-        protected ILogger Logger => Config.Logger;
+        protected ILogger Logger => Config?.Logger;
 
         public AuthenticationHeaderValue AuthenticationHeaderValue =>
             AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
                 ? authHeader
                 : null;
+
+        internal void SetAmbientData(AmbientData ambientData)
+        {
+            AmbientData = ambientData;
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+            if (string.IsNullOrEmpty(environment))
+            {
+                environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
+            }
+
+            if (string.IsNullOrEmpty(environment))
+            {
+                environment = "Production";
+            }
+            Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
+        }
 
         /// <summary>
         ///   Gets a message id for the request. 
@@ -154,21 +170,17 @@ namespace TetraPak.AspNet.Api.Controllers
         {
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
-        
-        public BusinessApiController(AmbientData ambientData)
-        {
-            AmbientData = ambientData;
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-            if (string.IsNullOrEmpty(environment))
-            {
-                environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
-            }
 
-            if (string.IsNullOrEmpty(environment))
+        public BusinessApiController()
+        {
+        }
+        
+        public BusinessApiController(AmbientData ambientData) 
+        {
+            if (ambientData is { })
             {
-                environment = "Production";
+                SetAmbientData(ambientData);
             }
-            Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
         }
     }
 

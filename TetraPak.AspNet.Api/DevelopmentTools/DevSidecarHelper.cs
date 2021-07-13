@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.DevelopmentTools
@@ -33,12 +32,12 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return app;
 
             var logger = app.ApplicationServices.GetService<ILogger<SidecarEmulatingMiddleware>>();
-            var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
-            if (config is null)
-            {
-                logger.Warning($"Cannot inject a local sidecar. {nameof(TetraPakAuthConfig)} service is not set up");
-                return app;
-            }
+            // var config = app.ApplicationServices.GetService<TetraPakAuthConfig>(); obsolete
+            // if (config is null)
+            // {
+            //     logger.Warning($"Cannot inject a local sidecar. {nameof(TetraPakAuthConfig)} service is not set up");
+            //     return app;
+            // }
 
             var ambientData = app.ApplicationServices.GetService<AmbientData>();
             if (ambientData is null)
@@ -47,7 +46,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return app;
             }
 
-            var sidecar = new SidecarEmulatingMiddleware(config, sidecarUrl);
+            var sidecar = new SidecarEmulatingMiddleware(ambientData, sidecarUrl);
             app.Use(async (context, next) =>
             {
                 var isSuccessful = await sidecar.InvokeAsync(context);
