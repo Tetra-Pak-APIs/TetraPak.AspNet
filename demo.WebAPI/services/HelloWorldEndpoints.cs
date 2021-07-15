@@ -1,4 +1,5 @@
 ﻿using TetraPak.AspNet.Api;
+using TetraPak.AspNet.Auth;
 
 namespace WebAPI.services
 {
@@ -12,8 +13,8 @@ namespace WebAPI.services
 
         public ServiceEndpoint HelloWorldWithTokenExchange => GetEndpoint();
         
-        public HelloWorldEndpoints(ServicesAuthConfig servicesConfig, string sectionIdentifier = "HelloWorld") 
-        : base(servicesConfig, sectionIdentifier)
+        public HelloWorldEndpoints(IServiceAuthConfig serviceConfig, string sectionIdentifier = "HelloWorld") 
+        : base(serviceConfig, sectionIdentifier)
         {
         }
     }

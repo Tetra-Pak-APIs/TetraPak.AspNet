@@ -70,12 +70,14 @@ namespace TetraPak.AspNet.Api.Auth
                     options.TokenValidationParameters.ValidIssuer = Config.JwtBearerValidation.Issuer;
                     Logger?.Information($"Issuer={options.TokenValidationParameters.ValidIssuer}");
                 }
+
+                const string TimerName = "in-auth-jwt";
                 
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = async context =>
                     {
-                        context.HttpContext.StartDiagnosticsTime("auth-jwt");
+                        context.HttpContext.StartDiagnosticsTime(TimerName);
                         Logger.DebugAssembliesInUse();
                         await Logger.Debug(context.Request);
                         if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
@@ -85,13 +87,13 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnTokenValidated = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
+                        context.HttpContext.EndDiagnosticsTime(TimerName);
                         Logger.Debug("JWT Bearer is valid");
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
+                        context.HttpContext.EndDiagnosticsTime(TimerName);
                         if (Logger.IsEnabled(LogLevel.Debug))
                         {
                             var message = context.Exception is { }
@@ -118,7 +120,7 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnForbidden = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime("auth-jwt");
+                        context.HttpContext.EndDiagnosticsTime(TimerName);
                         return Task.CompletedTask;
                     },
                     OnChallenge = _ =>

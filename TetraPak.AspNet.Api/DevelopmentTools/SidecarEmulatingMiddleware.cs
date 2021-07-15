@@ -20,7 +20,6 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
     class SidecarEmulatingMiddleware
     {
         const string CacheRepository = CacheRepositories.Tokens.DevSidecar;
-        const string CacheRepositoryToken = "JwtBearer";
         
         readonly AmbientData _ambientData;
         readonly string _url;
@@ -45,17 +44,18 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return false;
             }
 
-            // ignore if token is already a JWT ...
-            var actorToken = tokenOutcome.Value;
-            if (actorToken.IsJwt)
+            var accessToken = tokenOutcome.Value;
+            if (accessToken.IsJwt)
             {
+                // access token is already a JWT; skip exchanging it ...
                 Logger.Debug("Local development sidecar bails out. Token was already JWT token");
+                context.Request.Headers[AuthConfig.AuthorizationHeader] = accessToken.ToString();
                 return true;
             }
 
             BearerToken bearer;
             context.StartDiagnosticsTime("dev-sidecar");
-            var cacheOutcome = await tryGetCachedToken();
+            var cacheOutcome = await tryGetCachedToken(accessToken);
             if (cacheOutcome)
             {
                 bearer = cacheOutcome.Value.Identity.ToBearerToken();
@@ -106,22 +106,28 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
             bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
             context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
-            await cacheToken(jwtBearerOutcome.Value);
+            await cacheToken(accessToken, jwtBearerOutcome.Value);
             context.EndDiagnosticsTime("dev-sidecar");
  
             return true;
         }
 
-        async Task<Outcome<ActorToken>> tryGetCachedToken()
+        async Task<Outcome<ActorToken>> tryGetCachedToken(Credentials accessToken)
         {
-            return await _ambientData.Cache?.GetAsync<ActorToken>(CacheRepository, CacheRepositoryToken);
+            if (_ambientData.Cache is null)
+                return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
+                
+            return await _ambientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken.Identity);
         }
 
-        async Task cacheToken(ActorToken token)
+        async Task cacheToken(Credentials accessToken, ActorToken jwtBearerToken)
         {
-            var expires = token.ToJwtSecurityToken().Expires();
+            if (_ambientData.Cache is null)
+                return;
+
+            var expires = jwtBearerToken.ToJwtSecurityToken().Expires();
             var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
-            await _ambientData.Cache?.AddAsync(CacheRepository, CacheRepositoryToken, token, lifespan);
+            await _ambientData.Cache?.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, lifespan);
         }
 
         async void configureTokenCache()

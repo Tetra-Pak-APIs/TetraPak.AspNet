@@ -21,6 +21,8 @@ namespace TetraPak.AspNet.Api
             HttpClientOptions clientOptions,
             CancellationToken? cancellationToken = null);
 
+        ServiceEndpoint GetEndpoint(string name);
+
         /// <summary>
         ///   Sends a POST request to the backend service.
         /// </summary>

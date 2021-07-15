@@ -4,7 +4,7 @@
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6f389808_002D2636_002D4b62_002Da7a9_002D455e194c5e10/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="IsCollectionOfKeyValuePairs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::A9A70062-A5B2-49F9-B2DB-436138FA67AB::net5.0::TestProject1.TypeHelperTests.IsCollectionOfKeyValuePairs&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E0211074-D479-498F-9007-97248EA40CAA::net5.0::TestProject1.MultiStringValueTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -8,14 +9,22 @@ namespace TetraPak.AspNet.Api.Auth
     {
         internal static string Host { get; private set; }
 
-        public static IApplicationBuilder UseRequestReferenceId(this IApplicationBuilder app)
+        /// <summary>
+        ///   Ensures a unique message id is available through the whole request/response roundtrip. 
+        /// </summary>
+        /// <param name="app">
+        ///   The <see cref="IApplicationBuilder"/> instance.
+        /// </param>
+        /// <returns>
+        ///   The <see cref="IApplicationBuilder"/> instance.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The method requires an <see cref="TetraPakAuthConfig"/> service is available
+        ///   though the DI service locator but no such service could be obtained. 
+        /// </exception>
+        public static IApplicationBuilder UseMessageId(this IApplicationBuilder app)
         {
-            var authConfig = app.ApplicationServices.GetService<TetraPakApiAuthConfig>();
-            if (authConfig is null)
-                throw new InvalidOperationException(
-                    "Cannot use request id middleware. "+
-                    $"Unable to resolve a {typeof(TetraPakApiAuthConfig)} service");
-                
+            var authConfig = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
             app.Use((context, func) =>
             {
                 context.Request.GetMessageId(authConfig, true);

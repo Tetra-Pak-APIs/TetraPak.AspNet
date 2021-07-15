@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace TetraPak.AspNet.Diagnostics
 {
     public class ServiceDiagnostics : IEnumerable<KeyValuePair<string,object>>
     {
-        const string TimerPrefix = "tpd-time";
+        /// <summary>
+        ///   The prefix for timer values.
+        /// </summary>
+        /// <seealso cref="GetValues"/>
+        public const string TimerPrefix = "tpd-time";
 
         readonly Dictionary<string, object> _values = new();
         
@@ -19,7 +24,7 @@ namespace TetraPak.AspNet.Diagnostics
         public void StartTimer(string key)
         {
             key = key == TimerPrefix ? key : timerKey(key); 
-            _values.Add(key, new Timer(DateTime.Now.Ticks));
+            _values[key] = new Timer(DateTime.Now.Ticks);
         }
         
         public long? GetElapsedMs(string key = null, bool stopTimer = true)
@@ -32,6 +37,23 @@ namespace TetraPak.AspNet.Diagnostics
         }
         
         static string timerKey(string key) => $"{TimerPrefix}-{key}";
+
+        /// <summary>
+        ///   Returns all values, optionally filtered with a <paramref name="prefix"/> pattern.
+        /// </summary>
+        /// <param name="prefix">
+        ///   (optional)<br/>
+        ///   A prefix pattern for filtering result.
+        /// </param>
+        /// <returns>
+        ///   A collection of <see cref="KeyValuePair{String,Object}"/>.
+        /// </returns>
+        public IEnumerable<KeyValuePair<string, object>> GetValues(string prefix = null)
+        {
+            return string.IsNullOrWhiteSpace(prefix) 
+                ? _values 
+                : _values.Where(i => i.Key.StartsWith(prefix));
+        }
 
         public ServiceDiagnostics()
         {

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TetraPak.AspNet.Auth;
+using TetraPak.Configuration;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
 {
-    public class ServicesAuthConfig : ConfigurationSection, IServiceAuthConfig
+    [DebuggerDisplay("{" + nameof(ConfigPath) + "}")]
+    public class ServiceAuthConfig : ConfigurationSection, IServiceAuthConfig
     {
+        public const string ServicesConfigName = "Services";
+        
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType;
         string _clientId;
@@ -21,13 +27,15 @@ namespace TetraPak.AspNet.Api
 
         internal TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
         
-        internal string Path { get; }
+        protected IServiceAuthConfig ParentConfig { get; }
+        
+        // internal string Path { get; } obsolete
 
         internal bool IsAuthIdentifier(string identifier)
         {
             return identifier switch
             {
-                nameof(Path) => true,
+                nameof(ConfigPath) => true,
                 nameof(GrantType) => true,
                 nameof(ClientId) => true,
                 nameof(ClientSecret) => true,
@@ -45,11 +53,11 @@ namespace TetraPak.AspNet.Api
                         value = GrantType.Inherited.ToString();
 
                     if (!TetraPakAuthConfig.TryParseEnum(value, out grantType))
-                        throw new FormatException($"Invalid auth mechanism: '{value}' ({Path}.{nameof(GrantType)})");
+                        throw new FormatException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
 
                     if (grantType == GrantType.Inherited)
                     {
-                        grantType = AuthConfig.GrantType;
+                        grantType = ParentConfig.GrantType;
                     }
 
                     return true;
@@ -59,41 +67,52 @@ namespace TetraPak.AspNet.Api
         
         public virtual string ClientId
         {
-            get => GetFromFieldThenSection<string>() ?? AuthConfig.ClientId;
+            get => GetFromFieldThenSection<string>() ?? ParentConfig.ClientId;
             set => _clientId = value;
         }
 
         public virtual string ClientSecret
         {
-            get => GetFromFieldThenSection<string>() ?? AuthConfig.ClientSecret;
+            get => GetFromFieldThenSection<string>() ?? ParentConfig.ClientSecret;
             set => _clientSecret = value;
         }
         
         public virtual MultiStringValue Scope
         {
-            get => GetFromFieldThenSection<MultiStringValue>() ?? AuthConfig.Scope;
+            get => GetFromFieldThenSection<MultiStringValue>() ?? ParentConfig.Scope;
             set => _scope = value;
         }
 
-        static string getSectionPath(string sectionIdentifier) =>
-            sectionIdentifier.Contains(':')
-                ? sectionIdentifier
-                : $"{TetraPakAuthConfig.Identifier}:{sectionIdentifier}";
+        public IConfiguration Configuration => Section;
+
+        public static ConfigPath GetServiceConfigPath(string serviceName = null)
+        {
+            if (serviceName is null or ServicesConfigName)
+                return $"{TetraPakAuthConfig.Identifier}{ConfigPath.Separator}{ServicesConfigName}";
+
+            return serviceName.Contains(':')
+                ? serviceName 
+                : $"{TetraPakAuthConfig.Identifier}:{ServicesConfigName}:{serviceName}";
+        }
         
         public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)
         {
             return ServiceProvider.GetService<ServiceInvalidEndpoint>()?.WithInformation(endpointName, issues);
         }
 
-        public ServicesAuthConfig(
+        public ServiceAuthConfig(
             AmbientData ambientData,
+            IServiceAuthConfig parentConfig,
             IServiceProvider serviceProvider,
-            string sectionIdentifier = "Services") 
-        : base(ambientData.AuthConfig.Configuration, ambientData.Logger, getSectionPath(sectionIdentifier))
+            string sectionIdentifier = ServicesConfigName) 
+        : base(parentConfig.Configuration, ambientData.Logger, GetServiceConfigPath(sectionIdentifier))
         {
+            var nisse = Section.GetChildren(); // nisse
+            nisse = parentConfig.Configuration.GetChildren(); // nisse
+            
             AmbientData = ambientData;
+            ParentConfig = parentConfig;
             ServiceProvider = serviceProvider;
-            Path = getSectionPath(sectionIdentifier);
         }
     }
 }

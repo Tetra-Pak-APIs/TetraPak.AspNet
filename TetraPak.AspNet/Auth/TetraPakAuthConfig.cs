@@ -66,7 +66,9 @@ namespace TetraPak.AspNet.Auth
         public JwtBearerValidationConfig JwtBearerValidation { get; }
         
         public IConfiguration Configuration { get; }
-        
+
+        public AmbientData AmbientData => throw new NotSupportedException(); // todo Consider supporting ambient data here
+
         protected override FieldInfo OnGetField(string fieldName)
         {
             var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
@@ -119,7 +121,7 @@ namespace TetraPak.AspNet.Auth
 
         /// <summary>
         ///   Gets or sets the name of the header used to obtain the request message id.
-        ///   The default value is <see cref="AmbientData.Keys.RequestMessageId"/>).
+        ///   The default value is <see cref="TetraPak.AspNet.AmbientData.Keys.RequestMessageId"/>).
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///   An invalid/empty value was assigned.

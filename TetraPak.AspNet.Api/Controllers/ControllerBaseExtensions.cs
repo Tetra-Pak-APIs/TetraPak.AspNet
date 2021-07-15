@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using TetraPak.AspNet.Api.Auth;
+using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
@@ -39,20 +41,38 @@ namespace TetraPak.AspNet.Api.Controllers
             int totalCount = -1, 
             ReadChunk chunk = null)
         {
+            if (value.GetType().IsGenericBase(typeof(ApiDataResponse<>))) 
+                return new OkObjectResult(value);
+            
             var messageId = self.GetMessageId();
             if (!value.IsCollection(out _, out var items, out var count))
-                return self.Ok(value is null
-                    ? ApiDataResponse<object>.Empty(messageId)
-                    : new ApiDataResponse<object>(new[] {value}));
+                return new OkObjectResult(new ApiDataResponse<object>(new[] {value}));
             
             totalCount = totalCount < 0 ? count : totalCount;
             var array = items.EnumerableToArray();
-            return self.Ok(new ApiDataResponse<object>(
+            return new OkObjectResult(new ApiDataResponse<object>(
                 array,
                 chunk?.Skip ?? -1, 
                 totalCount,
                 messageId));
-
+            
+            // if (value.GetType().IsGenericBase(typeof(ApiDataResponse<>)))  obsolete
+            //     return self.Ok(value);
+            //
+            // var messageId = self.GetMessageId();
+            // if (!value.IsCollection(out _, out var items, out var count))
+            //     return self.Ok(value is null
+            //         ? ApiDataResponse<object>.Empty(messageId)
+            //         : new ApiDataResponse<object>(new[] {value}));
+            //
+            // totalCount = totalCount < 0 ? count : totalCount;
+            // var array = items.EnumerableToArray();
+            // return self.Ok(new ApiDataResponse<object>(
+            //     array,
+            //     chunk?.Skip ?? -1, 
+            //     totalCount,
+            //     messageId));
+            
         }
         
         public static OkObjectResult Ok<T>(this ControllerBase self, EnumOutcome<T> outcome, int totalCount = -1)
@@ -78,15 +98,25 @@ namespace TetraPak.AspNet.Api.Controllers
             return self.Error(HttpStatusCode.InternalServerError, error);
         }
         
+        public static ActionResult Error(this ControllerBase self, Exception error)
+        {
+            if (error is HttpException httpException)
+            {
+                return self.StatusCode(
+                    (int) httpException.StatusCode, 
+                    new ApiErrorResponse(error.Message, self.GetMessageId()));
+            }
+
+            return self.InternalServerError(error);
+        }
+        
         public static ActionResult Error(this ControllerBase self, HttpStatusCode status, Exception error)
         {
-            var config = self.GetTetraPakApiAuthConfig();
-            
             // error message might already be a standard error response json object 
             var parseOutcome = tryParseTetraPakErrorResponse(error.Message);
             var errorResponse = parseOutcome
                 ? parseOutcome.Value
-                : new ApiErrorResponse(error.Message, self.HttpContext.Request.GetMessageId(config))
+                : new ApiErrorResponse(error.Message, self.GetMessageId())
                 {
                     Status = ((int) status).ToString()
                 };
@@ -94,6 +124,90 @@ namespace TetraPak.AspNet.Api.Controllers
             return self.StatusCode(
                 (int) status,
                 errorResponse);
+        }
+
+        public static async Task<ActionResult> RespondAsync<T>(
+            this ControllerBase self,
+            Outcome<T> outcome,
+            ResponseDelegate<T> responseDelegate = null)
+        {
+            if (!outcome)
+                return self.Error(outcome.Exception);
+            
+            if (responseDelegate is {})
+            {
+                try
+                {
+                    var delegateOutcome = await responseDelegate(outcome.Value);
+                    return !delegateOutcome ? self.Error(delegateOutcome.Exception) : self.Ok(delegateOutcome.Value);
+                }
+                catch (Exception ex)
+                {
+                    return self.Error(ex);
+                }
+            }
+
+            if (outcome.Value is not HttpResponseMessage responseMessage) 
+                return self.Ok(outcome.Value);
+            
+            var stringValue = await responseMessage.Content.ReadAsStringAsync();
+            var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
+            return Ok(self, entityOutcome
+                ? entityOutcome.Value
+                : stringValue);
+        }
+
+        public static TBackendService Service<TBackendService>(
+            this ControllerBase self, 
+            string serviceName = null) 
+            where TBackendService : IBackendService
+        {
+            var outcome = TetraPakServicesHelper.GetService<TBackendService>(self, serviceName);
+            if (outcome)
+                return outcome.Value;
+            
+            if (string.IsNullOrEmpty(serviceName))
+                throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
+            
+            throw new ConfigurationException(
+                $"Could not resolve a backend service \"{serviceName}\" "+
+                $"for controller {self} ");
+        }
+
+        public static BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(
+            this ControllerBase self, 
+            string serviceName = null) 
+            where TEndpoints : ServiceEndpoints
+        {
+            var outcome = TetraPakServicesHelper.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
+            if (outcome)
+                return (BackendService<TEndpoints>) outcome.Value;
+
+            if (string.IsNullOrEmpty(serviceName))
+                throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
+            
+            throw new ConfigurationException(
+                "Could not resolve a backend service with endpoints "+
+                $"of type {typeof(TEndpoints)} for controller {self} ");
+        }
+
+        public static IBackendService Service(
+            this ControllerBase controller, 
+            string serviceName = null)
+        {
+            var outcome = TetraPakServicesHelper.GetService(controller, serviceName);
+            if (outcome)
+                return outcome.Value;
+
+            if (string.IsNullOrEmpty(serviceName))
+                throw new ConfigurationException($"Could not resolve a backend service for controller {controller}");
+            
+            throw new ConfigurationException($"Could not resolve a backend service \"{serviceName}\" for controller {controller} ");
+        }
+
+        public static OkObjectResult Ok(this ControllerBase self)
+        {
+            return self.Ok(ApiDataResponse<object>.Empty(self.GetMessageId()));
         }
         
         public static void LogTrace(this ControllerBase self, string message, string messageId = null)

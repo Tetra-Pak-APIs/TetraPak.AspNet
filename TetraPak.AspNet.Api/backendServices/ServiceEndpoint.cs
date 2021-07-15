@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.Configuration;
 using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api
@@ -17,16 +20,16 @@ namespace TetraPak.AspNet.Api
         string _clientId;
         string _clientSecret;
         MultiStringValue _scope;
-        
+
         protected ServiceEndpoints Parent { get; private set; }
         
         /// <inheritdoc />
         public string StringValue { get; protected set; }
 
-        public string Path => $"{Parent.Path}:{Name}";
+        public ConfigPath ConfigPath => $"{Parent.ConfigPath}{ConfigPath.Separator}{Name}";
 
         internal IBackendService Service { get; set; }
-        
+
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
 
         public HttpContext HttpContext => AmbientData.HttpContext;
@@ -39,12 +42,14 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets an object to provide access to ambient data.
         /// </summary>
-        protected AmbientData AmbientData { get; private set; }
+        public AmbientData AmbientData { get; private set; }
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
         public ILogger Logger => AmbientData.Logger;
+
+        public IConfiguration Configuration { get; private set; }
 
         /// <inheritdoc />
         public GrantType GrantType
@@ -173,17 +178,37 @@ namespace TetraPak.AspNet.Api
             return this;
         }
 
-        internal ServiceEndpoint WithConfig(
-            GrantType grantType, 
-            string clientId, 
-            string clientSecret,
-            MultiStringValue scope)
+        internal ServiceEndpoint WithConfig(IConfiguration config)
+            // GrantType grantType, obsolete
+            // string clientId, 
+            // string clientSecret,
+            // MultiStringValue scope)
         {
-            _grantType = grantType;
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _scope = scope;
+            Configuration = config;
+            var grantTypeSection = config.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("grantType", StringComparison.InvariantCultureIgnoreCase));
+            _grantType = parseGrantType(grantTypeSection?.Value, GrantType.Inherited);
+            
+            _clientId = config.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("clientId", StringComparison.InvariantCultureIgnoreCase))?.Value;
+            
+            _clientSecret = config.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("clientSecret", StringComparison.InvariantCultureIgnoreCase))?.Value;
+            
+            _scope = config.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("scope", StringComparison.InvariantCultureIgnoreCase))?.Value;
+
             return this;
+        }
+        
+        static GrantType parseGrantType(string stringValue, GrantType useDefault) 
+        {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return useDefault;
+        
+            return !Enum.TryParse<GrantType>(stringValue, out var grantType)
+                ? useDefault
+                : grantType;
         }
         
         /// <summary>

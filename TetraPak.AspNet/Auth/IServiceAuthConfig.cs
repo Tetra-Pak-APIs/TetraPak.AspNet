@@ -1,9 +1,12 @@
+using Microsoft.Extensions.Configuration;
+using TetraPak.Configuration;
+
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
-    ///   Classes implementing this contract can provide information needed fot authorization purposes.
+    ///   Classes implementing this contract can provide information needed fot authorization purposes. 
     /// </summary>
-    public interface IServiceAuthConfig
+    public interface IServiceAuthConfig 
     {
         /// <summary>
         ///   Specifies the grant type (OAuth) or authorization mechanism. 
@@ -24,5 +27,17 @@ namespace TetraPak.AspNet.Auth
         ///   Gets a scope to be requested for authorization.
         /// </summary>
         MultiStringValue Scope { get; }
+
+        /// <summary>
+        ///   Gets the configuration path.
+        /// </summary>
+        ConfigPath ConfigPath { get; }
+        
+        /// <summary>
+        ///   Gets the <see cref="IConfiguration"/> instance used to populate the properties.
+        /// </summary>
+        IConfiguration Configuration { get; }
+        
+        AmbientData AmbientData { get; }
     }
 }

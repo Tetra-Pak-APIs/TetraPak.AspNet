@@ -34,14 +34,14 @@ namespace TetraPak.AspNet.Api
 
         public IEnumerable<Exception> GetIssues() => _issues;
         
-        public ServicesAuthConfig ServicesAuthConfig { get; }
+        public IServiceAuthConfig ServiceAuthConfig { get; private set; }
 
-        internal AmbientData AmbientData => ServicesAuthConfig.AmbientData;
+        public IConfiguration Configuration => ServiceAuthConfig.Configuration;
 
-        internal TetraPakAuthConfig AuthConfig => ServicesAuthConfig.AuthConfig;
+        public AmbientData AmbientData => ServiceAuthConfig.AmbientData;
+
+        internal TetraPakAuthConfig AuthConfig => ((ServiceAuthConfig) ServiceAuthConfig).AuthConfig;
         
-        public string Path { get; }
-
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.Inherited, 
@@ -51,11 +51,11 @@ namespace TetraPak.AspNet.Api
                         value = GrantType.Inherited.ToString();
                     
                     if (!TetraPakAuthConfig.TryParseEnum(value, out grantType))
-                        throw new ConfigurationException($"Invalid auth mechanism: '{value}' ({Path}.{nameof(GrantType)})");
+                        throw new ConfigurationException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
 
                     if (grantType == GrantType.Inherited)
                     {
-                        grantType = ServicesAuthConfig.GrantType;
+                        grantType = ServiceAuthConfig.GrantType;
                     }
 
                     return true;
@@ -65,19 +65,19 @@ namespace TetraPak.AspNet.Api
 
         public virtual string ClientId
         {
-            get => GetFromFieldThenSection<string>() ?? ServicesAuthConfig.ClientId;
+            get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientId;
             set => _clientId = value?.Trim();
         }
 
         public virtual string ClientSecret
         {
-            get => GetFromFieldThenSection<string>() ?? ServicesAuthConfig.ClientSecret;
+            get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientSecret;
             set => _clientSecret = value?.Trim();
         }
 
         public virtual MultiStringValue Scope
         {
-            get => GetFromFieldThenSection<MultiStringValue>() ?? ServicesAuthConfig.Scope;
+            get => GetFromFieldThenSection<MultiStringValue>() ?? ServiceAuthConfig.Scope;
             set => _scope = value;
         }
 
@@ -134,9 +134,12 @@ namespace TetraPak.AspNet.Api
         ServiceEndpoint getServiceEndpoint(string endpointName)
         {
             if (!_endpoints.TryGetValue(endpointName, out var endpoint))
-                return ServicesAuthConfig.GetInvalidEndpoint(
+                return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
                     endpointName, 
-                    new[] {new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")});
+                    new[]
+                    {
+                        new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
+                    });
 
             return endpoint;
         }
@@ -149,10 +152,10 @@ namespace TetraPak.AspNet.Api
 
         void validate(string sectionIdentifier)
         {
-            if (ParentSection == Section)
+            if (ParentConfiguration == Section)
                 return;
             
-            if (!ParentSection.ContainsKey(sectionIdentifier))
+            if (!ParentConfiguration.ContainsKey(sectionIdentifier))
             {
                 addIssue(new ConfigurationException($"Missing configuration section: {sectionIdentifier}"));
                 return;
@@ -170,8 +173,6 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        // static bool isEndpoint(PropertyInfo property) => typeof(ServiceEndpoint).IsAssignableFrom(property.PropertyType); obsolete
-
         void initializeEndpoints()
         {
             var type = GetType();
@@ -183,7 +184,7 @@ namespace TetraPak.AspNet.Api
                     continue;
 
                 var property = type.GetProperty(name);
-                var stringValue = Section[name];
+                var stringValue = child.Value;
                 ServiceEndpoint url;
                 if (stringValue is { })
                 {
@@ -192,11 +193,10 @@ namespace TetraPak.AspNet.Api
                     continue;
                 }
 
-                var section = Section.GetSection(name);
-                if (section is null || section.IsEmpty()) 
+                if (child.IsEmpty())
                     continue;
                 
-                url = configureServiceEndpoint(section);
+                url = configureServiceEndpoint(child);
                 addUrl(url, property);
             }
         }
@@ -208,7 +208,7 @@ namespace TetraPak.AspNet.Api
                 nameof(Host) => true,
                 nameof(BasePath) => true,
                  "this" => true,
-                _ => ServicesAuthConfig.IsAuthIdentifier(name)
+                _ => ((ServiceAuthConfig) ServiceAuthConfig).IsAuthIdentifier(name)
             };
         }
 
@@ -224,9 +224,9 @@ namespace TetraPak.AspNet.Api
                 return;
             }
             
-            var invalidUrl = ServicesAuthConfig.GetInvalidEndpoint(url.Name, new[]
+            var invalidUrl = ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(url.Name, new[]
             {
-                new ConfigurationException($"Same endpoint was configured multiple times: {url.Path}")
+                new ConfigurationException($"Same endpoint was configured multiple times: {url.ConfigPath}")
             });
             _endpoints[url.Name] = invalidUrl;
             property?.SetValue(this, invalidUrl);
@@ -238,44 +238,49 @@ namespace TetraPak.AspNet.Api
                 .FirstOrDefault(i => i.Key.Equals("path", StringComparison.InvariantCultureIgnoreCase));
             
             if (pathSection is null)
-                return ServicesAuthConfig.GetInvalidEndpoint(section.Key, new []
+                return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(section.Key, new []
                 {
                     new Exception("Missing endpoint 'Path' value")
                 });
 
             var path = pathSection.Value;
-
-            var grantTypeSection = section.GetChildren()
-                .FirstOrDefault(i => i.Key.Equals("grantType", StringComparison.InvariantCultureIgnoreCase));
-            var grantType = parseGrantType(grantTypeSection?.Value, GrantType.Inherited);
-            var clientId = section.GetChildren()
-                .FirstOrDefault(i => i.Key.Equals("clientId", StringComparison.InvariantCultureIgnoreCase))?.Value;
-            var clientSecret = section.GetChildren()
-                .FirstOrDefault(i => i.Key.Equals("clientSecret", StringComparison.InvariantCultureIgnoreCase))?.Value;
-            var scope = section.GetChildren()
-                .FirstOrDefault(i => i.Key.Equals("scope", StringComparison.InvariantCultureIgnoreCase))?.Value;
-
-            return new ServiceEndpoint(path).WithIdentity(section.Key, this)
-                .WithConfig(grantType, clientId, clientSecret, scope);
+            return new ServiceEndpoint(path).WithIdentity(section.Key, this).WithConfig(section);
         }
 
-        static GrantType parseGrantType(string stringValue, GrantType useDefault)
+        protected virtual void OnInitializeEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
         {
-            if (string.IsNullOrWhiteSpace(stringValue))
-                return useDefault;
-
-            return !Enum.TryParse<GrantType>(stringValue, out var grantType)
-                ? useDefault
-                : grantType;
-        }
-        
-        public ServiceEndpoints(ServicesAuthConfig servicesAuthConfig, string sectionIdentifier = "Endpoints")
-        : base(servicesAuthConfig.Section, servicesAuthConfig.Logger, sectionIdentifier)
-        {
-            ServicesAuthConfig = servicesAuthConfig;
-            Path = $"{servicesAuthConfig.Path}:{sectionIdentifier}";
+            ServiceAuthConfig = serviceAuthConfig;
             validate(sectionIdentifier);
             initializeEndpoints();
+        }
+
+        void initialize(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
+        {
+            OnInitializeEndpoints(serviceAuthConfig, sectionIdentifier);
+        }
+        
+        public ServiceEndpoints(
+            IServiceAuthConfig serviceAuthConfig, 
+            string sectionIdentifier = "Endpoints")
+        : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, sectionIdentifier)
+        {
+            initialize(serviceAuthConfig, sectionIdentifier);
+        }
+
+        internal class UntypedServiceEndpoints : ServiceEndpoints
+        {
+            protected override void OnInitializeEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
+            {
+                SetSection(ParentConfiguration);
+                base.OnInitializeEndpoints(serviceAuthConfig, sectionIdentifier);
+            }
+
+            public UntypedServiceEndpoints(
+                IServiceAuthConfig serviceAuthConfig, 
+                string sectionIdentifier = "Endpoints") 
+            : base(serviceAuthConfig, sectionIdentifier)
+            {
+            }
         }
     }
 }

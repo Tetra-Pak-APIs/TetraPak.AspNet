@@ -100,25 +100,28 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null,
             ILogger logger = null)
         {
+            const string TimerNameTx = "out-auth-tx";
+            const string TimerNameCc = "out-auth-cc";
+            
             try
             {
                 switch (options?.AuthConfig.GrantType)
                 {
                     case GrantType.TokenExchange:
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer("svc-auth-tx");
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameTx);
                         var outcome = await OnTokenExchangeAuthenticationAsync(
                             options.AuthConfig,
                             options.Authorization,
                             cancellationToken);
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer("svc-auth-tx");
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameTx);
                         return outcome;
                     
                     case GrantType.ClientCredentials:
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer("svc-auth-cc");
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameCc);
                         outcome = await OnClientCredentialsAuthenticationAsync(
                             options.AuthConfig,
                             cancellationToken);
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer("svc-auth-cc");
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameCc);
                         return outcome;
                     
                     case GrantType.None:

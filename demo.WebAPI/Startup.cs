@@ -45,7 +45,7 @@ namespace WebAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseRequestReferenceId();
+            app.UseMessageId();
 
             app.UseTetraPakServicesDiagnostics(); // <-- add this to allow diagnostics, such a profiling headers
             app.UseSidecarJwtAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)

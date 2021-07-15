@@ -9,8 +9,9 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("SimpleHelloWorld")]
+    [BackendService("HelloWorld")]
     // [Authorize]
-    public class UntypedHelloWorldController : ApiGatewayController //<BackendService<HelloWorldEndpoints>>
+    public class UntypedHelloWorldController : ControllerBase 
     {
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)
@@ -18,7 +19,7 @@ namespace WebAPI.Controllers
             var userIdentity = User?.Identity;
             this.LogDebug($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
             if (string.IsNullOrEmpty(svc))
-                return Ok(new 
+                return ControllerBaseExtensions.Ok(this, new 
                 { 
                     message = "Hello World!", 
                     remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+
@@ -29,19 +30,19 @@ namespace WebAPI.Controllers
             switch (svc.ToLowerInvariant())
             {
                 case "tx":
-                    if (!await GetAccessTokenAsync())
-                        return UnauthorizedError(
-                            new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
+                    if (!await this.GetAccessTokenAsync())
+                        return this.UnauthorizedError(
+                            new Exception("Cannot perform Token Exchange. No access token was passed in request"));
                         
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints["HelloWorldWithTokenExchange"].GetAsync());
+                    return await this.RespondAsync(await this.Service().Endpoints("HelloWorldWithTokenExchange").GetAsync());
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints["HelloWorldWithClientCredentials"].GetAsync());
+                    return await this.RespondAsync(await this.Service<HelloWorldService>().Endpoints.HelloWorldWithClientCredentials.GetAsync());
                 
                 default:
-                    return await RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
+                    return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
         }
     }

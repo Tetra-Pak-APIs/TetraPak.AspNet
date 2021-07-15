@@ -7,7 +7,7 @@ namespace TetraPak.AspNet.Api.Controllers
         
         protected TBackendService Service
         {
-            get => _service ?? createService();
+            get => _service ??= createService();
             private set => _service = value;
         }
 

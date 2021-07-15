@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
     [Route("HelloWorld")]
     [BackendService("HelloWorld")]
     // [Authorize]
-    public class TypedHelloWorldController : HelloWorldApiController // ApiGatewayController<BackendService<HelloWorldEndpoints>>
+    public class TypedHelloWorldController : HelloWorldApiController 
     {
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)

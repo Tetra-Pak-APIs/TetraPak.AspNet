@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -19,11 +20,18 @@ namespace TetraPak.AspNet.Api
 {
     public static class TetraPakServicesHelper
     {
+        readonly static IDictionary<ServiceKey, IBackendService> s_services = new Dictionary<ServiceKey, IBackendService>();
+        
         public static IServiceCollection AddTetraPakServices(
             this IServiceCollection c, 
             bool addControllerBackendServices = true)
         {
-            c.TryAddSingleton<ServicesAuthConfig>();
+            c.TryAddSingleton<IServiceAuthConfig>(p =>
+            {
+                var parentConfig = p.GetRequiredService<TetraPakAuthConfig>();
+                var ambientData = p.GetRequiredService<AmbientData>();
+                return new ServiceAuthConfig(ambientData, parentConfig, p);
+            });
             c.AddTetraPakServiceEndpoints();
             c.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
             c.AddTetraPakTokenExchangeService();
@@ -90,6 +98,8 @@ namespace TetraPak.AspNet.Api
         
         public static IApplicationBuilder UseTetraPakServicesDiagnostics(this IApplicationBuilder app)
         {
+            const string TotalName = "*";
+            
             var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
             if (!(config?.EnableDiagnostics ?? false))
                 return app;
@@ -98,22 +108,35 @@ namespace TetraPak.AspNet.Api
             {
                 var logger = app.ApplicationServices.GetService<ILogger<ServiceDiagnostics>>();
                 var diagnostics = context.BeginDiagnostics(logger);
-                context.Response.OnStarting(async () =>
+                context.Response.OnStarting(() =>
                 {
                     if (diagnostics is null)
-                        return;
+                        return Task.CompletedTask;
 
                     diagnostics.End(logger);
-                    foreach (var (key, value) in diagnostics)
+                    var timers = diagnostics.GetValues(ServiceDiagnostics.TimerPrefix).ToArray();
+                    var timerNameIndex = ServiceDiagnostics.TimerPrefix.Length + 1;
+                    var sb = new StringBuilder();
+                    var timer = (ServiceDiagnostics.Timer) timers[0].Value;
+                    var key = timers[0].Key;
+                    var name = key.Length == ServiceDiagnostics.TimerPrefix.Length 
+                        ? TotalName 
+                        : key[timerNameIndex..];
+                    sb.Append($"{name}={timer.ElapsedMs().ToString()}");
+                    for (var i = 1; i < timers.Length; i++)
                     {
-                        if (value is ServiceDiagnostics.Timer timer)
-                        {
-                            context.Response.Headers.Add(key, timer.ElapsedMs().ToString(CultureInfo.InvariantCulture));
-                            continue;
-                        }
-                        
-                        context.Response.Headers.Add(key, value?.ToString());
+                        sb.Append(", ");
+                        timer = (ServiceDiagnostics.Timer) timers[i].Value;
+                        key = timers[i].Key;
+                        name = key.Length == ServiceDiagnostics.TimerPrefix.Length 
+                            ? TotalName 
+                            : key[timerNameIndex..];
+                        sb.Append($"{name}={timer.ElapsedMs().ToString()}");
                     }
+
+                    var timerValues = sb.ToString();
+                    context.Response.Headers.Add(ServiceDiagnostics.TimerPrefix, timerValues);
+                    return Task.CompletedTask;
                 });
 
                 await func();
@@ -121,6 +144,51 @@ namespace TetraPak.AspNet.Api
 
             return app;
         }
+        
+        public static Outcome<TBackendService> GetService<TBackendService>(
+            ControllerBase controller, 
+            string serviceName = null) 
+            where TBackendService : IBackendService
+        {
+            var key = new ServiceKey(controller, typeof(TBackendService));
+            lock (s_services)
+            {
+                if (s_services.TryGetValue(key, out var service))
+                    return Outcome<TBackendService>.Success((TBackendService) service);
+                
+                var outcome = ServiceInfo.Resolve(controller.GetType(), controller.ControllerContext, serviceName);
+                if (!outcome)
+                    return Outcome<TBackendService>.Fail(outcome.Exception);
 
+                service = outcome.Value;
+                s_services.Add(key, outcome.Value);
+                return Outcome<TBackendService>.Success((TBackendService) service);
+            }
+        }
+
+        internal static Outcome<IBackendService> GetService(ControllerBase controller, string serviceName = null)
+            => GetServiceWithEndpoints<ServiceEndpoints>(controller, serviceName);
+
+        internal static Outcome<IBackendService> GetServiceWithEndpoints<TEndpoints>(
+            ControllerBase controller, 
+            string serviceName = null)
+        where TEndpoints : ServiceEndpoints
+        {
+            var key = new ServiceKey(controller, typeof(BackendService<TEndpoints>));
+            lock (s_services)
+            {
+                if (s_services.TryGetValue(key, out var service))
+                    return Outcome<IBackendService>.Success(service);
+
+                var outcome = ServiceInfo.Resolve(controller.GetType(), controller.ControllerContext, serviceName);
+                if (outcome)
+                {
+                    s_services.Add(key, outcome.Value);
+                }
+                return outcome;
+            }
+        }
+
+        public static ServiceEndpoint Endpoints(this IBackendService service, string name) => service.GetEndpoint(name);
     }
 }

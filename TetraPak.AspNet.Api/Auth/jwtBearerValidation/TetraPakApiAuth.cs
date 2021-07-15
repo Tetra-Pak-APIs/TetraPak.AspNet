@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Api.DevelopmentTools;
@@ -53,9 +54,9 @@ namespace TetraPak.AspNet.Api.Auth
             SidecarJwBearerAssertionOptions options = null)
         where TCache : class, ITimeLimitedRepositories
         {
-            c.AddSingleton<HostProvider>();
-            c.AddSingleton<TetraPakApiAuthConfig>();            
-            c.AddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
+            c.TryAddSingleton<HostProvider>();
+            c.TryAddSingleton<TetraPakApiAuthConfig>();            
+            c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
 
             addCachingIfAllowed();
             

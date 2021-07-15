@@ -6,8 +6,8 @@ namespace demo.WebApp.Backends
     {
         public ServiceEndpoint HelloWorld { get; set; }
         
-        public SamplesEndpoints(ServicesAuthConfig servicesConfig, string sectionId = "SamplesServices") 
-        : base(servicesConfig, sectionId)
+        public SamplesEndpoints(ServiceAuthConfig serviceConfig, string sectionId = "SamplesServices") 
+        : base(serviceConfig, sectionId)
         {
         }
     }

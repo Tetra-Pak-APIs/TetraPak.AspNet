@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.Configuration;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
@@ -13,6 +15,9 @@ namespace TetraPak.AspNet.Api
     public class BackendService<TEndpoints> : IBackendService
     where TEndpoints : ServiceEndpoints
     {
+        const string TimerGet = "out-get";
+        const string TimerPost = "out-post";
+        
         /// <summary>
         ///   Gets the endpoint configuration.
         /// </summary>
@@ -30,10 +35,17 @@ namespace TetraPak.AspNet.Api
         /// </summary>
         protected ILogger Logger => Endpoints.Logger;
 
+        /// <inheritdoc />
+        public AmbientData AmbientData => Endpoints.AmbientData;
+
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
         protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
+
+        public IConfiguration Configuration => AuthConfig.Configuration;
+
+        public ConfigPath ConfigPath => AuthConfig.ConfigPath;
         
         public GrantType GrantType => Endpoints.GrantType;
 
@@ -44,6 +56,8 @@ namespace TetraPak.AspNet.Api
         public MultiStringValue Scope => Endpoints.Scope;
 
         public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
+        
+        public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
 
         internal void DiagnosticsStartTimer(string timerKey)
         {
@@ -111,7 +125,9 @@ namespace TetraPak.AspNet.Api
             var contentString = await content.ReadAsStringAsync();
 #endif
             Logger.Debug($"Sending request CONTENT: {contentString}");
+            DiagnosticsStartTimer(TimerPost);
             var response = await client.PostAsync(path.TrimStart('/'), content, ct);
+            DiagnosticsEndTimer(TimerPost);
             return response.IsSuccessStatusCode
                 ? Outcome<HttpResponseMessage>.Success(response)
                 : Outcome<HttpResponseMessage>.Fail(response);
@@ -168,9 +184,9 @@ namespace TetraPak.AspNet.Api
 
             try
             {
-                DiagnosticsStartTimer("svc-get");
+                DiagnosticsStartTimer(TimerGet);
                 var response = await client.GetAsync(path.TrimStart('/'), ct);
-                DiagnosticsEndTimer("svc-get");
+                DiagnosticsEndTimer(TimerGet);
                 return response.IsSuccessStatusCode
                     ? Outcome<HttpResponseMessage>.Success(response)
                     : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
@@ -198,9 +214,9 @@ namespace TetraPak.AspNet.Api
         {
             try
             {
-                DiagnosticsStartTimer("svc-get");
+                DiagnosticsStartTimer(TimerGet);
                 var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
-                DiagnosticsEndTimer("svc-get");
+                DiagnosticsEndTimer(TimerGet);
                 if (!outcome)
                     return Outcome<T>.Fail(outcome.Exception);
 
@@ -323,7 +339,9 @@ namespace TetraPak.AspNet.Api
         }
 
         // ReSharper disable once UnusedMember.Global
-        internal bool IsInitialized() => Endpoints is { };
+        internal Outcome<ServiceEndpoints> IsInitialized() => Endpoints is { } 
+            ? Outcome<ServiceEndpoints>.Success(Endpoints) 
+            : Outcome<ServiceEndpoints>.Fail(new Exception("Not initialized"));
 
         internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
         {

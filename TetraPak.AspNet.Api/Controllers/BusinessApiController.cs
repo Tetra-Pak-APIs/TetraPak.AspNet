@@ -159,11 +159,12 @@ namespace TetraPak.AspNet.Api.Controllers
         public override OkObjectResult Ok(object value)
         {
             if (value is null)
-                return base.Ok(ApiDataResponse<object>.Empty(MessageId));
+                return ControllerBaseExtensions.Ok(this);
 
-            return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) 
-                ? base.Ok(value) 
-                : ControllerBaseExtensions.Ok(this, value);
+            return ControllerBaseExtensions.Ok(this, value);
+            // return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) obsolete 
+            //     ? base.Ok(value) 
+            //     : ControllerBaseExtensions.Ok(this, value);
         }
 
         protected static string DictionaryLogString(IDictionary<string, string> formDictionary, string indent = "  ")
