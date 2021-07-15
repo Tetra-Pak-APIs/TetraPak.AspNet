@@ -107,9 +107,6 @@ namespace TetraPak.AspNet.Api
             string sectionIdentifier = ServicesConfigName) 
         : base(parentConfig.Configuration, ambientData.Logger, GetServiceConfigPath(sectionIdentifier))
         {
-            var nisse = Section.GetChildren(); // nisse
-            nisse = parentConfig.Configuration.GetChildren(); // nisse
-            
             AmbientData = ambientData;
             ParentConfig = parentConfig;
             ServiceProvider = serviceProvider;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,8 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
-    class ServiceInfo
+    // todo consider merging the code in ServiceInfo into TetraPakServiceFactory
+    static class ServiceInfo
     {
         static readonly IDictionary<string, IServiceAuthConfig> s_serviceAuthConfigs 
             = new Dictionary<string, IServiceAuthConfig>();
@@ -21,17 +21,9 @@ namespace TetraPak.AspNet.Api
         static readonly IDictionary<ServiceKey, IBackendService> s_services =
             new Dictionary<ServiceKey, IBackendService>();
         
-        static readonly MultiStringValue s_baseServiceAuthConfigPath = ServiceAuthConfig.GetServiceConfigPath(null);
+        static readonly MultiStringValue s_baseServiceAuthConfigPath = ServiceAuthConfig.GetServiceConfigPath();
 
-        public static string BaseServiceAuthConfigPath => s_baseServiceAuthConfigPath;
-
-        public Type ServiceType { get; }
-            
-        public Type EndpointsType { get; }
-
-        public IBackendService Service { get; }
-        
-        public static Outcome<IBackendService> Resolve(Type controllerType, ControllerContext context, string serviceName = null)
+        internal static Outcome<IBackendService> Resolve(Type controllerType, ControllerContext context, string serviceName = null)
         {
             serviceName ??= controllerType.GetCustomAttribute<BackendServiceAttribute>()?.ServiceName 
                             ?? assumeSameAsControllerName(controllerType);
@@ -45,8 +37,8 @@ namespace TetraPak.AspNet.Api
             
             // note: We're resolving the service non-blocking, risking doing it twice in parallel threads but the performance makes it worth it
             var outcome = controllerType.TryGetGenericBase(typeof(ApiGatewayController<>), out var apiGatewayControllerType) 
-                ? resolveFromTypedController(controllerType, apiGatewayControllerType, context, serviceName) 
-                : resolveFromArbitraryController<ServiceEndpoints.UntypedServiceEndpoints>(/*controllerType, obsolete */ context, serviceName);
+                ? resolveFromTypedController(apiGatewayControllerType, context, serviceName) 
+                : resolveFromArbitraryController<ServiceEndpoints.UntypedServiceEndpoints>(context, serviceName);
 
             if (!outcome)
                 return outcome;
@@ -62,19 +54,7 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        // public static ServiceInfo Resolve<TEndpoints>( obsolete?
-        //     Type controllerType,
-        //     ControllerContext context, 
-        //     string serviceName = null)
-        // where TEndpoints : ServiceEndpoints
-        // {
-        //     return controllerType.TryGetGenericBase(typeof(ApiGatewayController<>), out var apiGatewayControllerType) 
-        //         ? resolveFromTypedController(controllerType, apiGatewayControllerType, context, serviceName) 
-        //         : resolveFromArbitraryController<TEndpoints>(controllerType, context, serviceName);
-        // }
-
         static Outcome<IBackendService> resolveFromTypedController(
-            Type controllerType, 
             Type apiGatewayControllerType, 
             ActionContext context,
             string serviceName)
@@ -84,21 +64,19 @@ namespace TetraPak.AspNet.Api
             var service = (IBackendService) provider.GetService(serviceType);
             if (service is { } && isInitialized(service, out var endpoints))
                 return Outcome<IBackendService>.Success(service);
-                // return new ServiceInfo(service, endpoints); obsolete
 
             if (!serviceType.TryGetGenericBase(typeof(BackendService<>), out var baseServiceType))
             {
                 service = (IBackendService) provider.GetService(serviceType);
                 if (isInitialized(service, out endpoints))
                     return Outcome<IBackendService>.Success(service);
-                    // return new ServiceInfo(service, endpoints); obsolete
             }
 
             try
             {
                 var endpointsType = baseServiceType.GetGenericArguments().First();
                 var httpServiceProvider = provider.GetRequiredService<IHttpServiceProvider>();
-                endpoints = createEndpoints(/*controllerType, obsolete */endpointsType, provider, serviceName);
+                endpoints = createEndpoints(endpointsType, provider, serviceName);
                 if (service is { })
                     return initialize(service, endpoints, httpServiceProvider);
                 
@@ -221,7 +199,7 @@ namespace TetraPak.AspNet.Api
                 //                   ?? assumeSameAsControllerName(controllerType);
 
                 var serviceConfigPath = ServiceAuthConfig.GetServiceConfigPath(serviceName);
-                var serviceAuthConfig = GetServiceAuthConfig(serviceConfigPath, provider);
+                var serviceAuthConfig = getServiceAuthConfig(serviceConfigPath, provider);
                 object[] parameters = null;
                 var paramList = new List<object>();
                 var ctors = endpointsType.GetConstructors();
@@ -266,13 +244,13 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        internal static IServiceAuthConfig GetServiceAuthConfig(ConfigPath servicePath, IServiceProvider provider)
+        static IServiceAuthConfig getServiceAuthConfig(ConfigPath servicePath, IServiceProvider provider)
         {
             if (servicePath == s_baseServiceAuthConfigPath)
                 return provider.GetRequiredService<IServiceAuthConfig>();
 
             var parentConfig = servicePath.Count - 1 > s_baseServiceAuthConfigPath.Count
-                ? GetServiceAuthConfig((ConfigPath) servicePath.TrimLast(), provider)
+                ? getServiceAuthConfig((ConfigPath) servicePath.TrimLast(), provider)
                 : provider.GetRequiredService<IServiceAuthConfig>();
             
             var ambientData = provider.GetRequiredService<AmbientData>();
@@ -295,13 +273,5 @@ namespace TetraPak.AspNet.Api
                 ? controllerType.Name[..^ControllerQualifier.Length] 
                 : controllerType.Name;
         }
-            
-        ServiceInfo(IBackendService service, ServiceEndpoints endpoints)
-        {
-            Service = service;
-            ServiceType = service.GetType();
-            EndpointsType = endpoints.GetType();
-        }
-
     }
 }

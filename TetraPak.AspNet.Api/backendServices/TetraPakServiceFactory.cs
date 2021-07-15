@@ -18,7 +18,7 @@ using TetraPak.AspNet.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
-    public static class TetraPakServicesHelper
+    public static class TetraPakServiceFactory
     {
         readonly static IDictionary<ServiceKey, IBackendService> s_services = new Dictionary<ServiceKey, IBackendService>();
         

@@ -162,7 +162,7 @@ namespace TetraPak.AspNet.Api.Controllers
             string serviceName = null) 
             where TBackendService : IBackendService
         {
-            var outcome = TetraPakServicesHelper.GetService<TBackendService>(self, serviceName);
+            var outcome = TetraPakServiceFactory.GetService<TBackendService>(self, serviceName);
             if (outcome)
                 return outcome.Value;
             
@@ -179,7 +179,7 @@ namespace TetraPak.AspNet.Api.Controllers
             string serviceName = null) 
             where TEndpoints : ServiceEndpoints
         {
-            var outcome = TetraPakServicesHelper.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
+            var outcome = TetraPakServiceFactory.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
             if (outcome)
                 return (BackendService<TEndpoints>) outcome.Value;
 
@@ -195,7 +195,7 @@ namespace TetraPak.AspNet.Api.Controllers
             this ControllerBase controller, 
             string serviceName = null)
         {
-            var outcome = TetraPakServicesHelper.GetService(controller, serviceName);
+            var outcome = TetraPakServiceFactory.GetService(controller, serviceName);
             if (outcome)
                 return outcome.Value;
 
