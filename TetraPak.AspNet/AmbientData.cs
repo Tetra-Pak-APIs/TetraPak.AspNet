@@ -100,19 +100,24 @@ namespace TetraPak.AspNet
 
     public static class ClaimsIdentityExtensions
     {
-        public static string FirstName(this ClaimsIdentity self)
-        {
-            return self.Claims.FirstOrDefault(i => i.Type == ClaimTypes.GivenName)?.Value;
-        }
+        public static string FirstName(this ClaimsIdentity self, bool trimStringQualifiers = true)
+            => claimValue(self, ClaimTypes.GivenName, trimStringQualifiers);
        
-        public static string LastName(this ClaimsIdentity self)
-        {
-            return self.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Surname)?.Value;
-        }
+        public static string LastName(this ClaimsIdentity self, bool trimStringQualifiers = true)
+            => claimValue(self, ClaimTypes.Surname, trimStringQualifiers);
 
-        public static string Email(this ClaimsIdentity self)
+        public static string Email(this ClaimsIdentity self, bool trimStringQualifiers = true)
+            => claimValue(self, ClaimTypes.Email, trimStringQualifiers);
+
+        static string claimValue(ClaimsIdentity self, string key, bool trimStringQualifiers = true)
         {
-            return self.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Email)?.Value;
+            var value = self.Claims.FirstOrDefault(i => i.Type == key)?.Value;
+            if (string.IsNullOrWhiteSpace(value))
+                return value;
+
+            return trimStringQualifiers
+                ? value.Trim('\"')
+                : value;
         }
     }
 }

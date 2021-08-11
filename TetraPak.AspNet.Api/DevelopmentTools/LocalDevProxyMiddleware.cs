@@ -17,9 +17,9 @@ using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api.DevelopmentTools
 {
-    class SidecarEmulatingMiddleware
+    class LocalDevProxyMiddleware
     {
-        const string CacheRepository = CacheRepositories.Tokens.DevSidecar;
+        const string CacheRepository = CacheRepositories.Tokens.DevProxy;
         
         readonly AmbientData _ambientData;
         readonly string _url;
@@ -31,6 +31,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
+            const string TimerName = "dev-proxy"; 
+            
             var ambientData = context.RequestServices.GetService<AmbientData>();
             if (ambientData is null)
                 return false;
@@ -48,19 +50,19 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (accessToken.IsJwt)
             {
                 // access token is already a JWT; skip exchanging it ...
-                Logger.Debug("Local development sidecar bails out. Token was already JWT token");
+                Logger.Debug("Local development proxy bails out. Token was already JWT token");
                 context.Request.Headers[AuthConfig.AuthorizationHeader] = accessToken.ToString();
                 return true;
             }
 
             BearerToken bearer;
-            context.StartDiagnosticsTime("dev-sidecar");
+            context.StartDiagnosticsTime(TimerName);
             var cacheOutcome = await tryGetCachedToken(accessToken);
             if (cacheOutcome)
             {
                 bearer = cacheOutcome.Value.Identity.ToBearerToken();
                 context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
-                context.EndDiagnosticsTime("dev-sidecar");
+                context.EndDiagnosticsTime(TimerName);
                 return true;
             }
 
@@ -89,25 +91,25 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 description ??= jwtBearerOutcome.Exception.Message;
                 Logger.Error(
                     jwtBearerOutcome.Exception,
-                    "Local development sidecar failed to authenticate access token: " +
+                    "Local development proxy failed to authenticate access token: " +
                     $"{tokenOutcome.Value}{Environment.NewLine}{descriptionJson ?? description}", 
                     messageId);
                 context.Response.OnStarting(async () =>
                 {
                     var error = new ApiErrorResponse(
-                        $"Local development sidecar failed to authenticate access token: {tokenOutcome.Value}",
+                        $"Local development proxy failed to authenticate access token: {tokenOutcome.Value}",
                         description,
                         messageId);
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
-                context.EndDiagnosticsTime("dev-sidecar");
+                context.EndDiagnosticsTime(TimerName);
                 return false;
             }
 
             bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
             context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
             await cacheToken(accessToken, jwtBearerOutcome.Value);
-            context.EndDiagnosticsTime("dev-sidecar");
+            context.EndDiagnosticsTime(TimerName);
  
             return true;
         }
@@ -127,7 +129,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
             var expires = jwtBearerToken.ToJwtSecurityToken().Expires();
             var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
-            await _ambientData.Cache?.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, lifespan);
+            await _ambientData.Cache?.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, customLifeSpan: lifespan);
         }
 
         async void configureTokenCache()
@@ -159,7 +161,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 var isEmptyResponseBody = false;
                 try
                 {
-                    var responseBody = await JsonSerializer.DeserializeAsync<SidecarResponseBody>(stream);
+                    var responseBody = await JsonSerializer.DeserializeAsync<ProxyResponseBody>(stream);
                     if (responseBody is { }) 
                         return Outcome<ActorToken>.Success(responseBody.Token);
                     
@@ -186,7 +188,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public SidecarEmulatingMiddleware(AmbientData ambientData, string url)
+        public LocalDevProxyMiddleware(AmbientData ambientData, string url)
         {
             _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
             _url = string.IsNullOrWhiteSpace(url) 
@@ -195,7 +197,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             configureTokenCache();
         }
 
-        class SidecarResponseBody
+        class ProxyResponseBody
         {
             [JsonPropertyName("assertion")]
             public string Token { get; set; }

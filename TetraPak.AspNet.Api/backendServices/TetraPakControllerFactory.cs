@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using TetraPak.AspNet.Api.Controllers;
@@ -16,9 +15,8 @@ namespace TetraPak.AspNet.Api
 
         public object CreateController(ControllerContext context)
         {
-            // todo consider refactoring to utilize 'ServiceInfo.Resolve()' when creating Controller with (backend) Service 
             var type = context.ActionDescriptor.ControllerTypeInfo;
-            var attribute = type.GetCustomAttribute<BackendServiceAttribute>();
+            // var attribute = type.GetCustomAttribute<BackendServiceAttribute>(); obsolete
             // var serviceName = attribute?.ServiceName ?? assumeSameAsControllerName(type); obsolete
             if (!type.TryGetGenericBase(typeof(ApiGatewayController<>), out var svcControllerType))
                 return s_defaultControllerFactory.CreateController(context);
@@ -28,12 +26,12 @@ namespace TetraPak.AspNet.Api
             if (serviceType != typeof(BackendService<ServiceEndpoints>))
                 return s_defaultControllerFactory.CreateController(context);
 
-            var outcome = ServiceInfo.Resolve(type, context);
+            var outcome = ServiceResolver.ResolveService(type, context);
             if (!outcome)
                 throw outcome.Exception;
 
-            return outcome.Value;
-            
+            throw new NotImplementedException(); // todo support creating typed service-consuming controllers
+
             // var p = context.HttpContext.RequestServices;
             // var servicesAuthConfig = p.GetRequiredService<IServiceAuthConfig>(); obsolete
             // var httpServiceProvider = p.GetRequiredService<IHttpServiceProvider>();
@@ -102,20 +100,11 @@ namespace TetraPak.AspNet.Api
         where TBackendService : IBackendService
         {
             // todo refactor 'ServiceInfo' to 'ServiceResolver' and make it return Outcome<TBackendService> with proper Outcome error handling
-            var outcome = ServiceInfo.Resolve(controllerType, context, serviceName);
+            var outcome = ServiceResolver.ResolveService(controllerType, context, serviceName);
             return outcome
                 ? Outcome<TBackendService>.Success((TBackendService) outcome.Value)
                 : Outcome<TBackendService>.Fail(outcome.Exception);
         }
-
-        // static string assumeSameAsControllerName(Type controllerType) obsolete
-        // {
-        //     const string ControllerQualifier = "Controller";
-        //
-        //     return controllerType.Name.EndsWith(ControllerQualifier) 
-        //         ? controllerType.Name[..^ControllerQualifier.Length] 
-        //         : controllerType.Name;
-        // }
 
         public TetraPakControllerFactory(IControllerFactory defaultControllerFactory)
         {

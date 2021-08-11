@@ -1,13 +1,13 @@
 ﻿namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>
-    ///   Used for configuring Sidecar JWT Bearer Assertion.
+    ///   Used for configuring JWT Bearer Assertion.
     /// </summary>
-    public class SidecarJwBearerAssertionOptions
+    public class JwBearerAssertionOptions
     {
         public TetraPakApiAuthConfig Config { get; }
 
-        public SidecarJwBearerAssertionOptions(TetraPakApiAuthConfig config)
+        public JwBearerAssertionOptions(TetraPakApiAuthConfig config)
         {
             Config = config;
         }

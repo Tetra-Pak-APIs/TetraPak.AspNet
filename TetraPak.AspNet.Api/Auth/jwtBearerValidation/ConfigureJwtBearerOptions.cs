@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Api.Auth
     {
         const string SelfReferenceIdentifier = "(me)";
         
-        readonly SidecarJwBearerAssertionOptions _options;
+        readonly JwBearerAssertionOptions _options;
         readonly HostProvider _hostProvider;
         readonly IWebHostEnvironment _hostEnvironment;
 
@@ -163,9 +163,9 @@ namespace TetraPak.AspNet.Api.Auth
             IServiceProvider provider, 
             HostProvider hostProvider,
             IWebHostEnvironment hostEnvironment,
-            SidecarJwBearerAssertionOptions options = null)
+            JwBearerAssertionOptions options = null)
         {
-            _options = options ?? ActivatorUtilities.CreateInstance<SidecarJwBearerAssertionOptions>(provider);
+            _options = options ?? ActivatorUtilities.CreateInstance<JwBearerAssertionOptions>(provider);
             _hostProvider = hostProvider;
             _hostEnvironment = hostEnvironment;
             Logger = provider.GetService<ILogger<ConfigureJwtBearerOptions>>();

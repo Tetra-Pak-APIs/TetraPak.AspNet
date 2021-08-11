@@ -7,7 +7,7 @@
             public const string Identity = "IdTokens";
             public const string TokenExchange = "TxTokens";
             public const string ClientCredentials = "CcTokens";
-            public const string DevSidecar = "DsTokens";
+            public const string DevProxy = "DpTokens";
         }
     }
 }

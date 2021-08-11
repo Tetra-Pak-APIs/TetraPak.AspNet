@@ -6,14 +6,11 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
+      <PackageReference Include="TetraPak.AspNet.Api" Version="0.13.0-alpha" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="README.md" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
     </ItemGroup>
 
 </Project>

@@ -28,7 +28,7 @@ namespace TetraPak.AspNet.Api
         
         public ServiceKey(Type type, string name)
         {
-            _hashCode = HashCode.Combine(type.AssemblyQualifiedName, name);;
+            _hashCode = HashCode.Combine(type.AssemblyQualifiedName, name);
         }
         
     }}

@@ -108,7 +108,7 @@ namespace TetraPak.AspNet.Api.Auth
                 return;
 
             var lifespan = response.GetLifespan();
-            await _ambientData.Cache.AddAsync(CacheRepository, credentials.Identity, response, lifespan);
+            await _ambientData.Cache.AddAsync(CacheRepository, credentials.Identity, response, customLifeSpan: lifespan);
         }
 
         /// <inheritdoc />

@@ -15,33 +15,32 @@ namespace TetraPak.AspNet.Api.Auth
     partial class TetraPakApiAuth // JWT Bearer validation 
     {
         /// <summary>
-        ///   Configures the app service for Tetra Pak Sidecar Jwt Bearer Authentication.
+        ///   Configures the app service for Jwt Bearer Authentication.
         /// </summary>
         /// <param name="c">
         ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
         /// </param>
         /// <param name="options">
-        ///   Options governing how/what to validate in the sidecar issued JWT bearer tokens. 
+        ///   Options governing how/what to validate JWT bearer tokens. 
         /// </param>
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddSidecarJwtAuthentication(
+        public static IServiceCollection AddJwtAuthentication(
             this IServiceCollection c,
-            SidecarJwBearerAssertionOptions options = null)
+            JwBearerAssertionOptions options = null)
         {
-            return c.AddSidecarJwtAuthentication<SimpleCache>(options);
+            return c.AddJwtAuthentication<SimpleCache>(options);
         }
 
         /// <summary>
-        ///   Configures the app service for Tetra Pak Sidecar Jwt Bearer Authentication while
-        ///   specifying a cache implementation.
+        ///   Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.
         /// </summary>
         /// <param name="c">
         ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
         /// </param>
         /// <param name="options">
-        ///   Options governing how/what to validate in the sidecar issued JWT bearer tokens. 
+        ///   Options governing how/what to validate JWT bearer tokens. 
         /// </param>
         /// <typeparam name="TCache">
         ///   Specifies a class for implementing caching (must implement <see cref="ITimeLimitedRepositories"/>).
@@ -49,9 +48,9 @@ namespace TetraPak.AspNet.Api.Auth
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddSidecarJwtAuthentication<TCache>(
+        public static IServiceCollection AddJwtAuthentication<TCache>(
             this IServiceCollection c,
-            SidecarJwBearerAssertionOptions options = null)
+            JwBearerAssertionOptions options = null)
         where TCache : class, ITimeLimitedRepositories
         {
             c.TryAddSingleton<HostProvider>();
@@ -99,8 +98,8 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         /// <summary>
-        ///   Installs sidecar JWT authentication middleware
-        ///   (and, optionally, a built-in "development sidecar"). Please see remarks. 
+        ///   Installs JWT authentication middleware
+        ///   (and, optionally, a built-in local "development proxy"). Please see remarks. 
         /// </summary>
         /// <param name="app">
         ///   An <see cref="IApplicationBuilder"/> instance.
@@ -119,23 +118,23 @@ namespace TetraPak.AspNet.Api.Auth
         ///   Enabling this mechanism is a flexible way to protect your secure endpoints. When enabled
         ///   client must call your protected endpoints through a reversed proxy acting as your API's "sidecar".
         ///   The sidecar will handle client authentication and, when successful, replace the client's
-        ///   access token with a short-lived, internal, JWT Bearer token. This JWT Bearer will automatically
-        ///   be validated for every request by the middleware installed by this method.
+        ///   access token with a short lived JWT Bearer token, to be exchanged only between the service and its sidecar.
+        ///   This JWT Bearer will automatically be validated for every request by the middleware installed by this method.
         ///   </para>
         ///   <para>
-        ///   While securing your traffic the downside with this approach is that your service cannot function
+        ///   While securing your traffic the flipside to this approach is that your service cannot function
         ///   without a sidecar. When there is no internal JWT Bearer to validate the request will automatically
         ///   fail and return an "Unauthorized" response (<see cref="HttpStatusCode.Unauthorized"/>).
         ///   This makes it impossible to host your service locally for debugging during development.
         ///   </para>
         ///   <para>
         ///   To deal with this you might have to introduce conditional validation and even remove authentication
-        ///   completely when debugging your service locally. This is a bad idea as it would mean you'd be debugging
-        ///   code that will then function differently when deployed to its TEST or PRODUCTION hosting environment. 
+        ///   completely when debugging your service locally. This is a very bad idea as it would mean you would
+        ///   effectively be debugging code that is different from the one deployed to its hosting environments. 
         ///   </para>
         ///   <para>
-        ///   A better solution is using a local development sidecar that acts as the real thing. You can do this
-        ///   by simply adding a <c>UseDevSidecar</c> flag to the <c>ValidateJwtBearer</c> sub section
+        ///   A better solution is using a local development proxy (sidecar) that acts as the real thing.
+        ///   You can do this by simply adding a <c>DevProxy</c> flag to the <c>ValidateJwtBearer</c> sub section
         ///   in your json configuration in appsettings.json or (better yet)
         ///   appsettings.Development.json, like so:
         ///   </para>
@@ -144,27 +143,29 @@ namespace TetraPak.AspNet.Api.Auth
         ///       "ClientId": "abcd1234",
         ///       "ValidateJwtBearer": {
         ///            "Audience": "demo-api",
-        ///            "UseDevSidecar": true
+        ///            "DevProxy": "demo-api-proxy"
         ///       }
         ///   }
         ///   </code>
-        ///   Please note that the "development sidecar" will ONLY be enabled when your service is running
-        ///   in the "Development" runtime environment, regardless of the your configuration.
+        ///   The value for the <c>DevProxy</c> key should be the Apigee proxy name (you probably need to ask for it),
+        ///   or the full proxy URL. Please note that the local development proxy will ONLY be enabled when
+        ///   your service is running in the "Development" runtime environment, regardless of the your configuration.
+        ///   This is to ensure you cannot accidentally deploy it to any other environment.
         /// </remarks>
-        public static IApplicationBuilder UseSidecarJwtAuthentication(
+        public static IApplicationBuilder UseJwtAuthentication(
             this IApplicationBuilder app, 
             IWebHostEnvironment env,
             bool enableTetraPakMessageId = true)
         {
             var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
-            var sidecarUrl = config?.JwtBearerValidation.DevSidecar;
+            var proxyUrl = config?.JwtBearerValidation.DevProxy;
             if (enableTetraPakMessageId)
             {
                 app.UseTetraPakMessageId();
             }
-            if (!string.IsNullOrEmpty(sidecarUrl))
+            if (!string.IsNullOrEmpty(proxyUrl))
             {
-                app.UseDevSidecar(env, sidecarUrl);
+                app.UseLocalDevProxy(env, proxyUrl);
             }
             app.Use((context, func) =>
             {

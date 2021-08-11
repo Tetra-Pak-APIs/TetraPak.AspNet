@@ -13,7 +13,7 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet.Api
 {
     // todo consider merging the code in ServiceInfo into TetraPakServiceFactory
-    static class ServiceInfo
+    static class ServiceResolver
     {
         static readonly IDictionary<string, IServiceAuthConfig> s_serviceAuthConfigs 
             = new Dictionary<string, IServiceAuthConfig>();
@@ -23,7 +23,7 @@ namespace TetraPak.AspNet.Api
         
         static readonly MultiStringValue s_baseServiceAuthConfigPath = ServiceAuthConfig.GetServiceConfigPath();
 
-        internal static Outcome<IBackendService> Resolve(Type controllerType, ControllerContext context, string serviceName = null)
+        internal static Outcome<IBackendService> ResolveService(Type controllerType, ControllerContext context, string serviceName = null)
         {
             serviceName ??= controllerType.GetCustomAttribute<BackendServiceAttribute>()?.ServiceName 
                             ?? assumeSameAsControllerName(controllerType);

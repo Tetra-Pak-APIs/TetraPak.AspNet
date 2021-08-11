@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -18,9 +17,10 @@ using TetraPak.AspNet.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
-    public static class TetraPakServiceFactory
+    public static partial class TetraPakServiceFactory
     {
-        readonly static IDictionary<ServiceKey, IBackendService> s_services = new Dictionary<ServiceKey, IBackendService>();
+        static readonly IDictionary<ServiceKey, IBackendService> s_services 
+            = new Dictionary<ServiceKey, IBackendService>();
         
         public static IServiceCollection AddTetraPakServices(
             this IServiceCollection c, 
@@ -41,11 +41,11 @@ namespace TetraPak.AspNet.Api
                 // register all API gateway controllers and corresponding services,
                 // then replace controller factory to automatically activate non-custom (derived) services and endpoints 
                 c.AddControllerBackendServices();
-                var p = c.BuildServiceProvider();
-                var defaultControllerFactory = p.GetService<IControllerFactory>();
-                c.Replace(new ServiceDescriptor(typeof(IControllerFactory), 
-                    _ => new TetraPakControllerFactory(defaultControllerFactory), 
-                    ServiceLifetime.Singleton));
+                // var p = c.BuildServiceProvider(); // todo Consider re-introducing custom controller factory when needed
+                // var defaultControllerFactory = p.GetService<IControllerFactory>();
+                // c.Replace(new ServiceDescriptor(typeof(IControllerFactory), 
+                //     _ => new TetraPakControllerFactory(defaultControllerFactory), 
+                //     ServiceLifetime.Singleton));
             }
 
             return c;
@@ -156,7 +156,7 @@ namespace TetraPak.AspNet.Api
                 if (s_services.TryGetValue(key, out var service))
                     return Outcome<TBackendService>.Success((TBackendService) service);
                 
-                var outcome = ServiceInfo.Resolve(controller.GetType(), controller.ControllerContext, serviceName);
+                var outcome = ServiceResolver.ResolveService(controller.GetType(), controller.ControllerContext, serviceName);
                 if (!outcome)
                     return Outcome<TBackendService>.Fail(outcome.Exception);
 
@@ -180,7 +180,7 @@ namespace TetraPak.AspNet.Api
                 if (s_services.TryGetValue(key, out var service))
                     return Outcome<IBackendService>.Success(service);
 
-                var outcome = ServiceInfo.Resolve(controller.GetType(), controller.ControllerContext, serviceName);
+                var outcome = ServiceResolver.ResolveService(controller.GetType(), controller.ControllerContext, serviceName);
                 if (outcome)
                 {
                     s_services.Add(key, outcome.Value);
