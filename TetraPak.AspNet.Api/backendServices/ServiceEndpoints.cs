@@ -6,7 +6,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 using TetraPak.Configuration;
+using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
@@ -42,6 +44,7 @@ namespace TetraPak.AspNet.Api
 
         internal TetraPakAuthConfig AuthConfig => ((ServiceAuthConfig) ServiceAuthConfig).AuthConfig;
         
+        [StateDump]
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.Inherited, 
@@ -63,18 +66,21 @@ namespace TetraPak.AspNet.Api
             set => _grantType = value;
         }
 
+        [StateDump]
         public virtual string ClientId
         {
             get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientId;
             set => _clientId = value?.Trim();
         }
 
+        [StateDump]
         public virtual string ClientSecret
         {
             get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientSecret;
             set => _clientSecret = value?.Trim();
         }
 
+        [StateDump]
         public virtual MultiStringValue Scope
         {
             get => GetFromFieldThenSection<MultiStringValue>() ?? ServiceAuthConfig.Scope;
@@ -84,6 +90,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   The default host address.
         /// </summary>
+        [StateDump]
         public string Host
         {
             get => GetFromFieldThenSection<string>(); 
@@ -93,6 +100,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   A default base path.
         /// </summary>
+        [StateDump]
         public string BasePath
         {
             get => GetFromFieldThenSection<string>(); 

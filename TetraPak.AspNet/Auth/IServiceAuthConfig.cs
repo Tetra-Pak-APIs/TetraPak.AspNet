@@ -38,6 +38,9 @@ namespace TetraPak.AspNet.Auth
         /// </summary>
         IConfiguration Configuration { get; }
         
-        AmbientData AmbientData { get; }
+        /// <summary>
+        ///   Gets an <see cref="AmbientData"/> object.
+        /// </summary>
+        AmbientData AmbientData { get; } 
     }
 }

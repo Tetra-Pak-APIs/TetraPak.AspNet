@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
-    ///   Provides access to the main Tetra Pak authorization section in the configuration.  
+    ///   Provides access to the main Tetra Pak section in the configuration.  
     /// </summary>
     public class TetraPakAuthConfig : ConfigurationSection, IServiceAuthConfig
     {
@@ -66,8 +67,18 @@ namespace TetraPak.AspNet.Auth
         public JwtBearerValidationConfig JwtBearerValidation { get; }
         
         public IConfiguration Configuration { get; }
+        
+        /// <summary>
+        ///   Gets a delegate to provide client secrets.
+        /// </summary>
+        protected IClientSecretsProvider SecretsProvider { get; }
 
-        public AmbientData AmbientData => throw new NotSupportedException(); // todo Consider supporting ambient data here
+        [JsonIgnore]
+        public AmbientData AmbientData
+        {
+            get;
+            internal set;
+        }
 
         protected override FieldInfo OnGetField(string fieldName)
         {
@@ -75,6 +86,9 @@ namespace TetraPak.AspNet.Auth
             return field ?? base.OnGetField(fieldName);
         }
 
+        /// <summary>
+        ///   Configuration section specifying caching strategies. 
+        /// </summary>
         public SimpleCacheConfig Caching { get; }
 
         /// <summary>
@@ -85,6 +99,7 @@ namespace TetraPak.AspNet.Auth
         ///   An invalid/empty value was assigned.
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
+        [StateDump]
         public string AuthorizationHeader
         {
             get => GetFromFieldThenSection(HeaderNames.Authorization); 
@@ -106,6 +121,7 @@ namespace TetraPak.AspNet.Auth
         ///   An invalid/empty value was assigned.
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
+        [StateDump]
         public string IdentityTokenHeader
         {
             get => GetFromFieldThenSection(AmbientData.Keys.IdToken);
@@ -126,6 +142,7 @@ namespace TetraPak.AspNet.Auth
         /// <exception cref="ArgumentNullException">
         ///   An invalid/empty value was assigned.
         /// </exception>
+        [StateDump]
         public string RequestMessageIdHeader
         {
             get => GetFromFieldThenSection(AmbientData.Keys.RequestMessageId);
@@ -144,6 +161,7 @@ namespace TetraPak.AspNet.Auth
         ///   can be automatically cached.
         /// </summary>
         /// <seealso cref="DefaultCachingLifetime"/>
+        [StateDump]
         public bool IsCachingAllowed
         {
             get => GetFromFieldThenSection(true);
@@ -155,6 +173,7 @@ namespace TetraPak.AspNet.Auth
         ///   This value is only consumed by the auth framework when <see cref="IsCachingAllowed"/> is set. 
         /// </summary>
         /// <seealso cref="IsCachingAllowed"/>
+        [StateDump]
         public TimeSpan DefaultCachingLifetime
         {
             get => GetFromFieldThenSection(TimeSpan.FromMinutes(10));
@@ -181,11 +200,13 @@ namespace TetraPak.AspNet.Auth
         ///   Gets the current runtime environment (DEV, TEST, PROD ...).
         ///   The value is a <see cref="resolveRuntimeEnvironment"/> enum value. 
         /// </summary>
+        [StateDump]
         public RuntimeEnvironment Environment { get; }
 
         /// <summary>
         ///   Gets the domain element of the authority URI.
         /// </summary>
+        [StateDump]
         public string AuthDomain
         {
             get
@@ -195,10 +216,10 @@ namespace TetraPak.AspNet.Auth
 
                 return Environment switch
                 {
-                    RuntimeEnvironment.Production => "https://api.tetrapak.com",
-                    RuntimeEnvironment.Migration => "https://api-mig.tetrapak.com",
-                    RuntimeEnvironment.Development => "https://api-dev.tetrapak.com",
-                    RuntimeEnvironment.Sandbox => "https://api-sb.tetrapak.com",
+                    TetraPak.RuntimeEnvironment.Production => "https://api.tetrapak.com",
+                    TetraPak.RuntimeEnvironment.Migration => "https://api-mig.tetrapak.com",
+                    TetraPak.RuntimeEnvironment.Development => "https://api-dev.tetrapak.com",
+                    TetraPak.RuntimeEnvironment.Sandbox => "https://api-sb.tetrapak.com",
                     _ => throw new NotSupportedException($"Unsupported runtime environment: {Environment}")
                 };
             }
@@ -208,12 +229,14 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets the resource locator for the well-known OIDC discovery document.
         /// </summary>
+        [StateDump]
         public string DiscoveryDocumentUrl => Section[nameof(DiscoveryDocumentUrl)] 
                                               ?? $"{AuthDomain}{DiscoveryDocument.DefaultPath}";
 
         /// <summary>
         ///   Gets the resource locator for the authority.
         /// </summary>
+        [StateDump]
         public  string AuthorityUrl
         {
             get
@@ -234,11 +257,13 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets the resource locator for the token issuer endpoint.  
         /// </summary>
+        [StateDump]
         public string TokenIssuerUrl => _tokenIssuerUrl ?? defaultUrl("/oauth2/token");
 
         /// <summary>
         ///     Gets the resource locator for the user information query endpoint. 
         /// </summary>
+        [StateDump]
         public string UserInformationUrl => _tokenIssuerUrl ?? defaultUrl("/idp/userinfo");
         
         /// <summary>
@@ -246,6 +271,7 @@ namespace TetraPak.AspNet.Auth
         /// </summary>
         internal bool IsAuthDomainAssigned => !string.IsNullOrWhiteSpace(_authDomain);
 
+        [StateDump]
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.None, 
@@ -268,25 +294,39 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets a configured client id.
         /// </summary>
+        [StateDump]
         public virtual string ClientId
         {
-            get => GetFromFieldThenSection<string>();
+            get
+            {
+                var secrets = SecretsProvider?.GetClientSecrets();
+                return secrets is { }
+                    ? secrets.Identity 
+                    : GetFromFieldThenSection<string>();
+            }
             set => _clientId = value?.Trim();
         }
 
         /// <summary>
         ///   Gets a configured client secret.
         /// </summary>
-        [RestrictedValue]
+        [StateDump, RestrictedValue]
         public virtual string ClientSecret
         {
-            get => GetFromFieldThenSection<string>();
+            get
+            {
+                var secrets = SecretsProvider?.GetClientSecrets();
+                return secrets is { }
+                    ? secrets.Secret 
+                    : GetFromFieldThenSection<string>();
+            }
             set => _clientSecret = value?.Trim();
         }
 
         /// <summary>
         ///  Gets or sets a value specifying whether PKCE is to be used where applicable.
         /// </summary>
+        [StateDump]
         public bool IsPkceUsed
         {
             get => GetFromFieldThenSection<bool>(); // _isPkceUsed ?? parseBool(Section[nameof(IsPkceUsed)]);
@@ -296,6 +336,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets a configured callback path, or the default one (<see cref="DefaultCallbackPath"/>).  
         /// </summary>
+        [StateDump]
         public string CallbackPath
         {
             get => GetFromFieldThenSection(DefaultCallbackPath);
@@ -306,6 +347,7 @@ namespace TetraPak.AspNet.Auth
         ///   Specifies the source for identity claims (see <see cref="TetraPakIdentitySource"/>),
         ///   such as <see cref="TetraPakIdentitySource.Api"/> or <see cref="TetraPakIdentitySource.IdToken"/>).
         /// </summary>
+        [StateDump]
         public TetraPakIdentitySource IdentitySource { get; set; }
         
         // ReSharper restore UnusedMember.Global
@@ -392,14 +434,15 @@ namespace TetraPak.AspNet.Auth
         ///   a Refresh Flow will automatically be initiated to obtain a new access token.
         /// </para>
         /// <para>
-        ///   Setting this value to a positive value
-        ///   (negative values will automatically be converted to positive values)
-        ///   might be a good idea to account for response times in requests. 
+        ///   Setting this value might be a good idea to account for response times in requests.
+        ///   The value is expected to be a positive integer.
+        ///   Negative values will automatically be converted to positive values. 
         /// </para>
         /// </remarks>
+        [StateDump]
         public int RefreshThreshold
         {
-            get => _refreshThresholdSeconds ?? Section.GetValue<int>(nameof(RefreshThreshold)); // parseInt(Section[nameof(RefreshThreshold)]);
+            get => _refreshThresholdSeconds ?? Section.GetValue<int>(nameof(RefreshThreshold));
             set => _refreshThresholdSeconds = value;
         }
 
@@ -445,6 +488,7 @@ namespace TetraPak.AspNet.Auth
         ///   Gets or sets a scope of identity claims to be requested while authenticating the identity.
         ///   When omitted a default scope will be used. 
         /// </summary>
+        [StateDump]
         public MultiStringValue Scope
         {
             get => GetFromFieldThenSection<MultiStringValue>();
@@ -454,7 +498,8 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets the current runtime environment name.
         /// </summary>
-        public static string ProcessEnvironment
+        [StateDump]
+        public static string RuntimeEnvironment
         {
             get
             {
@@ -476,7 +521,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets a value indicating whether the host is run in a development environment.  
         /// </summary>
-        public static bool IsDevelopment => ProcessEnvironment == "Development";
+        public static bool IsDevelopment => RuntimeEnvironment == "Development";
 
         Task<DiscoveryDocument> discoverAsync()
         {
@@ -554,23 +599,23 @@ namespace TetraPak.AspNet.Auth
         ///   A custom delegate to be allowed to affect the result.
         /// </param>
         /// <returns>
-        ///   A resolved <see cref="RuntimeEnvironment"/> value.
+        ///   A resolved <see cref="TetraPak.RuntimeEnvironment"/> value.
         /// </returns>
         protected virtual RuntimeEnvironment OnResolveRuntimeEnvironment(
             string configuredStringValue,
             ITetraPakAuthConfigDelegate configDelegate)
         {
             var environment = configDelegate?.ResolveConfiguredEnvironment(configuredStringValue);
-            if (environment is {} && environment != RuntimeEnvironment.Unknown)
+            if (environment is {} && environment != TetraPak.RuntimeEnvironment.Unknown)
                 return environment.Value;
             
             return configuredStringValue is { } 
                 ? Enum.Parse<RuntimeEnvironment>(configuredStringValue) 
-                : resolve() ?? RuntimeEnvironment.Production;
+                : resolve() ?? TetraPak.RuntimeEnvironment.Production;
             
             static RuntimeEnvironment? resolve()
             {
-                var stringValue = ProcessEnvironment;
+                var stringValue = RuntimeEnvironment;
                 return string.IsNullOrWhiteSpace(stringValue)
                     ? null
                     : Enum.TryParse<RuntimeEnvironment>(stringValue, true, out var result)
@@ -646,10 +691,15 @@ namespace TetraPak.AspNet.Auth
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
         /// <param name="configuration">
-        ///     A <see cref="IConfiguration"/> instance.
+        ///   A <see cref="IConfiguration"/> instance.
         /// </param>
         /// <param name="logger">
-        ///     A <see cref="ILogger"/>.
+        ///   A <see cref="ILogger"/>.
+        /// </param>
+        /// <param name="secretsProvider">
+        ///   (optional)<br/>
+        ///   A delegate object to provide client secrets for the app.
+        ///   Use this as an alternative to specify these values in a configuration file.
         /// </param>
         /// <param name="loadDiscoveryDocument">
         ///     (optional; default = <c>false</c>)<br/>
@@ -668,12 +718,14 @@ namespace TetraPak.AspNet.Auth
             IConfiguration configuration,
             // ReSharper disable once SuggestBaseTypeForParameter
             ILogger<TetraPakAuthConfig> logger, 
+            IClientSecretsProvider secretsProvider = null,
             bool loadDiscoveryDocument = false,
             string sectionIdentifier = null,
             ITetraPakAuthConfigDelegate configDelegate = null) 
         : base(configuration, logger, sectionIdentifier)
         {
             Configuration = configuration;
+            SecretsProvider = secretsProvider; 
             Environment = resolveRuntimeEnvironment(configDelegate);
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();

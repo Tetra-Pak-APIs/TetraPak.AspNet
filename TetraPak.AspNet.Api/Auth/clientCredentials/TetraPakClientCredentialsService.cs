@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,15 +17,16 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakClientCredentialsService : IClientCredentialsService
     {
-        readonly TetraPakApiAuthConfig _config;
         readonly AmbientData _ambientData;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
 
+        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
+
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger Logger => _config.Logger;
+        protected ILogger Logger => _ambientData.Logger;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
@@ -51,16 +53,12 @@ namespace TetraPak.AspNet.Api.Auth
                     formsValues.Add("scope", scope.Items.ConcatCollection(" "));
                 }
                 var response = await client.PostAsync(
-                    _config.TokenIssuerUrl,
+                    AuthConfig.TokenIssuerUrl,
                     new FormUrlEncodedContent(formsValues),
                     cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    var ex = new HttpException(response); 
-                    Logger?.LogError(ex, "Client credentials failure");
-                    return Outcome<ClientCredentialsResponse>.Fail(ex);
-                }
+                    return loggedFailedOutcome(response);
 
 #if NET5_0_OR_GREATER
                 var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
@@ -84,6 +82,41 @@ namespace TetraPak.AspNet.Api.Auth
                 ex = new Exception($"Failed to acquire token using client credentials. {ex.Message}", ex);
                 Logger.Error(ex);
                 return Outcome<ClientCredentialsResponse>.Fail(ex);
+            }
+            
+            Outcome<ClientCredentialsResponse> loggedFailedOutcome(HttpResponseMessage response)
+            {
+                var ex = new HttpException(response); 
+                if (Logger is null)
+                    return Outcome<ClientCredentialsResponse>.Fail(ex);
+
+                var messageId = _ambientData.GetMessageId(true);
+                var message = new StringBuilder();
+                message.AppendLine(
+                    "Client credentials failure (details in follow-up entry if DEBUG log level is enabled)");
+
+                if (Logger.IsEnabled(LogLevel.Debug))
+                {
+                    message.AppendLine(">===== STATE BEGIN =====<");
+                    message.Append("\"AuthConfig\": ");
+                    var ignoredValues = new[]
+                    {
+                        nameof(TetraPakApiAuthConfig.GrantType),
+                        nameof(TetraPakAuthConfig.ClientId),
+                        nameof(TetraPakAuthConfig.ClientSecret),
+                        nameof(TetraPakAuthConfig.RequestMessageIdHeader),
+                        nameof(TetraPakAuthConfig.IsPkceUsed),
+                        nameof(TetraPakAuthConfig.CallbackPath)
+                    };
+                    var options = new StateDumpOptions(AuthConfig, LogLevel.Debug).WithIgnored(ignoredValues);
+                    message.AppendLine(AuthConfig.GetStateDump(options));
+                    message.Append("\"Credentials\": ");
+                    message.AppendLine(clientCredentials.GetStateDump(new StateDumpOptions(clientCredentials, LogLevel.Debug)));
+                    message.AppendLine(">====== STATE END ======<");
+                }
+                Logger.Error(ex, message.ToString(), messageId);
+                return Outcome<ClientCredentialsResponse>.Fail(ex);
+
             }
         }
 
@@ -147,23 +180,16 @@ namespace TetraPak.AspNet.Api.Auth
 
         protected virtual Credentials OnGetCredentials()
         {
-            if (string.IsNullOrWhiteSpace(_config.ClientId))
+            if (string.IsNullOrWhiteSpace(AuthConfig.ClientId))
                 throw new InvalidOperationException(
                     $"Cannot create client credentials. Please specify '{nameof(TetraPakAuthConfig.ClientId)}' in configuration");
                 
-            return new BasicAuthCredentials(_config.ClientId, _config.ClientSecret);
+            return new BasicAuthCredentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
         }
 
-        // async void configureCache()
-        // {
-        //     await _ambientData.Cache.ConfigureTokenCacheAsync(TokenCacheRepository); obsolete
-        // }
-
-        public TetraPakClientCredentialsService(TetraPakApiAuthConfig config, AmbientData ambientData)
+        public TetraPakClientCredentialsService(AmbientData ambientData)
         {
-            _config = config;
             _ambientData = ambientData;
-            // configureCache(); obsolete
         }
     }
 }

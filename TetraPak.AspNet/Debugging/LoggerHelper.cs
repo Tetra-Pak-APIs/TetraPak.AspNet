@@ -6,17 +6,33 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
-using TetraPak.Configuration;
 using TetraPak.Logging;
+using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Debugging
 {
+    /// <summary>
+    ///   Contains convenience/extension methods to assist with logging. 
+    /// </summary>
     public  static partial class LoggerHelper
     {
         static bool s_isAssemblyVersionsAlreadyLogged;
         static bool s_isAuthConfigAlreadyLogged;
         static readonly object s_syncRoot = new();
 
+        /// <summary>
+        ///   Logs all assemblies currently in use by the process. This method is intended to be called
+        ///   at a very early stage, where DI hasn't yet been fully set up, such as from the Program class
+        ///   in a web application.
+        /// </summary>
+        /// <param name="c">
+        ///   A <see cref="IServiceCollection"/>, used to set up DI.
+        /// </param>
+        /// <param name="justOnce">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to ignore logging if this method has already been invoked once by the process.
+        ///   This is to help avoiding littering the log files with the same information multiple times.
+        /// </param>
         public static void DebugAssembliesInUse(this IServiceCollection c, bool justOnce = true)
         {
             var services = c.BuildServiceProvider();
@@ -24,6 +40,17 @@ namespace TetraPak.AspNet.Debugging
             logger.DebugAssembliesInUse(justOnce);
         }
 
+        /// <summary>
+        ///   Logs all assemblies currently in use by the process.
+        /// </summary>
+        /// <param name="logger">
+        ///   A logger provider.
+        /// </param>
+        /// <param name="justOnce">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to ignore logging if this method has already been invoked once by the process.
+        ///   This is to help avoiding littering the log files with the same information multiple times.
+        /// </param>
         public static void DebugAssembliesInUse(this ILogger logger, bool justOnce = true)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Debug))
@@ -38,14 +65,14 @@ namespace TetraPak.AspNet.Debugging
             }
 
             var sb = new StringBuilder();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            // var assemblies = AppDomain.CurrentDomain.GetAssemblies(); obsolete
             sb.AppendLine(">===== ASSEMBLIES =====<");
-            sb.AppendAssembliesInUse();
+            sb.appendAssembliesInUse();
             sb.AppendLine(">======================<");
             logger.Debug(sb.ToString());
         }
 
-        public static void AppendAssembliesInUse(this StringBuilder sb)
+        static void appendAssembliesInUse(this StringBuilder sb)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
@@ -54,6 +81,21 @@ namespace TetraPak.AspNet.Debugging
             }
         }
 
+        /// <summary>
+        ///   Gets the lowest <see cref="LogLevel"/> defined for the logger provider. 
+        /// </summary>
+        /// <param name="logger">
+        ///   The logger provider.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="LogLevel"/> value.
+        /// </returns>
+        public static LogLevel GetLowestLogLevel(this ILogger logger)
+        {
+            var min = typeof(ILogger).GetEnumValues().Cast<int>().ToList().Min();
+            return (LogLevel) min;
+        }
+        
         public static void Debug(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)
         {
             // ReSharper disable once InconsistentNaming
@@ -88,7 +130,7 @@ namespace TetraPak.AspNet.Debugging
                     var isIgnored = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>() is { };
                     if (isIgnored)
                         continue;
-                    
+
                     var isRestricted = propertyInfo.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
                     var key = jsonProperty?.Name ?? propertyInfo.Name;
 
@@ -105,7 +147,7 @@ namespace TetraPak.AspNet.Debugging
                         }
                         
                         var value = propertyInfo.GetValue(sct);
-                        if (value.IsCollection(out var _, out var items, out var _))
+                        if (value.IsCollection(out _, out var items, out _))
                         {
                             value = items.Cast<object>().ConcatCollection();
                         }
@@ -138,8 +180,6 @@ namespace TetraPak.AspNet.Debugging
                     }
                 }
             }
-            
-            
         }
     }
 }

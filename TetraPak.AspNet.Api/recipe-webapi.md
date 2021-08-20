@@ -1,4 +1,6 @@
-# Building a Tetra Pak Web App - Recipe
+# Recipe: Building a Tetra Pak Web API
+
+TODO TODO TODO
 
 This document will walk you through creating a small ASP.NET Core/5+ web app and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing web app as well. 
 
@@ -61,7 +63,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TetraPak.AspNet;
-using TetraPak.AspNet.Auth;
+using TetraPakWebApp.Models;
 
 namespace TetraPakWebApp.Controllers
 {
@@ -72,9 +74,9 @@ namespace TetraPakWebApp.Controllers
         {
             var accessToken = await this.GetAccessTokenAsync();
             return View(new ViewModel(
+                "Tetra Pak Demo",
                 User.Identity, 
-                accessToken, 
-                "Tetra Pak Demo"));
+                accessToken));
         }
     }
 }
@@ -112,10 +114,10 @@ namespace TetraPakWebApp.Models
 
         public string LastName => ClaimsIdentity?.LastName();
 
-        public ViewModel(IIdentity identity, ActorToken accessToken, string title) 
+        public ViewModel(string title, IIdentity identity, ActorToken accessToken) 
         {
-            _identity = identity;
             Title = title;
+            _identity = identity;
             AccessToken = accessToken;
         }
     }
@@ -123,14 +125,14 @@ namespace TetraPakWebApp.Models
 
 ```
 
-Nothing too fancy here. The view model ctor (constructor) accepts an identity (`IIdentity`), an access token (`ActorToken`) and a title to be presented by the consuming view. The properties `UserName`, `FirstName` and `LastName` all relies on the identity.
+Nothing too fancy here. The view model ctor (constructor) accepts an title for the view, an identity (`IIdentity`), and an access token (`ActorToken`). The properties `UserName`, `FirstName` and `LastName` all relies on the identity.
 
-Let's finish the presentation side of things by suggesting a view before we look into integrating it all with Tetra Pak's Auth services:
+Let's finish the presentation side of things by suggesting a view before we look into integrating it all with Tetra Pak's Auth Services:
 
 ```html
 <!-- Views/Home/Index.cshtml -->
 
-@model ViewModel
+@model TetraPakWebApp.Models.ViewModel
 
 @functions {
 
@@ -178,75 +180,140 @@ Let's finish the presentation side of things by suggesting a view before we look
 
 The view is a simple [Razor][aspnet-razor] view that renders a very raw presentation from the values provided by the `ViewModel` instance passed to it. We won't dive into how Razor works however. If you need more details [start reading up on Razor here][aspnet-razor].
 
-To summarize so far, we have created a very plain ASP.NET Core/5+ web app and protected it's single supported endpoint. If you run it at this time you will see an generic ASP.NET error message, probably complaining about the fact there is no authentication scheme specified or something similar.
+We will now have a look into one more file - `Startup.cs` - to ensure the web app is set up to route all requests to controllers. For most project templates this is probably the case but if you used some "simpler" IDE, such as VS Code, then you might have to make a few adjustments. 
+
+Please open the `Startup.cs` file and have a look in the `ConfigureServices` method. This method must configure the DI to support controllers with views, like so:
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllersWithViews();
+}
+```
+
+> *There might be more code in the `ConfigureServices` method. That's ok but please ensure the above statement is one of them.*
+
+Next, we need to ensure routing is supported and that endpoints are directed to actual controllers. Please move on to the `Configure` method and ...
+
+- Ensure this line is included: `app.UseRouting();`
+- Ensure that this statement is there *after* `app.UseRouting();`: 
+  ```c#
+  app.UseEndpoints(endpoints =>
+  {
+      endpoints.MapControllerRoute(
+          name: "default",
+          pattern: "{controller=Home}/{action=Index}/{id?}");
+  });
+  ```
+
+Depending on the project template used the `app.UseEndpoints` might have already been added. If so, please ensure its argument is identical to the above. This is what sets up the rules for how the routing mechanism resolves endpoints in controller.
+
+For clarity's sake, this is what the `Startup.cs` can look like, as a minimum of what is needed:
+
+```c#
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace TetraPakWebApp
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+        }
+    }
+}
+```
+
+To summarize so far, we have created a very plain ASP.NET Core/5+ web app and protected its single endpoint. 
 
 ### Run the app
 
 Go ahead and run your app to make sure the code works. A browser window should now open and load the default page ("/" or "/index"). As the app is not yet integrated with Tetra Pak Auth Services and there is no authentication scheme set up so you will very likely see an error about the fact there is no authentication scheme specified or something similar.
 
+<a id="#save-local-url"></a>
 Either way, please make note of, or copy, the host name and port (eg. "https://localhost:8080"). This will be useful shortly.
 
 >*If nothing at all happens then please check out these [troubleshooting tips][tetra-pak-aspnet-issues-no-browser]*
 
 So, with a basic web app done, let's move on to the interesting part: Integrating your Web App with Tetra Pak Auth Services. This involves two steps:
 
-- Register your app with Tetra Pak (get a client id)
-- Integrating your app to authenticate with Tetra Pak
+- Register your app with Tetra Pak
+- Integrating your app to authenticate with Tetra Pak Auth Services
 
 ### Register your App in Developer portal
 
 For any app to integrate with the Tetra Pak Auth Services it needs to be recognized by Tetra Pak. This is done by simply registering the app, with a name and unique "consumer key" (a.k.a. "client id" or "API key"). You do this in the Tetra Pak Developer Portal like so:
 
-1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-dev-portal]
+1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-test-portal]
 
 
 >*This instruction assumes you are starting out with a DEV (Development) environment. For PROD (Production) please use the [Production development portal][tetra-pak-dev-portal].*
 
 
 2. Log in
-3. Click the "Apps" menu item in the top of the page
+3. Click the "Apps" menu item at the top of the page
 4. Click the "Add app" command (upper left part of page)
-5. Give your app a name and supply a short description of it.
-6. The "Callback URL" value provided by default won't work if you plan to be debugging your app from within your IDE (and you probably are). In that case please change it to something that will work for your localhost, like in this example: `https://localhost:8080/auth-callback`. 
+5. Give your app a name and supply a short description of it
+6. Specify the Callback URL (from [this step](#save-local-url)). The default callback path for this SDK is `/auth-callback`. So, for example, if your local host is `https://localhost:8080` then the Callback URL should be `https://localhost:8080/auth-callback`
    
-   Please note that this value can be edited later if you return to your app registration and select the "Edit" tab (will be visible once you save your app registration). If you are unsure at this time which port you'll be using locally then just change this value later, when you know the full callback URL. [For more information please go here][tetra-pak-dev-portal-appreg-callback].
+   > *Please note that this value can be edited later if you return to your app registration and select the "Edit" tab (will be visible once you save your app registration). If you are unsure at this time which port you'll be using locally then just change this value later, when you know the full callback URL. [For more information please go here][tetra-pak-dev-portal-appreg-callback].*
    
-6. Select one or more API products to be consumed by your app. 
+7. In a "real" web app you would probably want to consume one or more API products. For this recipe that is not the case. However, please double check that the "`Enterprise Application Security`" service is already selected, or select it otherwise. This service is critical for integrating with the Tetra Pak Auth Services. You might have to scroll down to see it
 
->*Please double check that the "Enterprise Application Security" service is already selected, or select it otherwise. This service is critical for integrating with the Tetra Pak Auth Services*
-
-7. Click "ADD APP" (you might have to scroll down to find the command)
-8. You are now taken to your app overview page, where all your app registrations are listed. Please select the one you just created by clicking it. This should present the App details.
-9.  From the App details click the "copy" icon next to the "Consumer Key" (you will need this value in the next phase; [Integrating your Web App](#integrating-your-web-app-aspnet-core--aspnet-5)) so please paste it somewhere, or repeat this step to copy it when needed.
+8. Scroll down to the end of the page and click "ADD APP"
+9. You are now taken to your app overview page, where all your app registrations are listed. Please select the one you just created by clicking it. This should present the App details
+10.  From the App details click the "copy" icon next to the "Consumer Key" (you will need this value in the next phase; [Integrating your Web App](#integrating-your-web-app-aspnet-core--aspnet-5)) so please paste it somewhere, or repeat this step to copy it when needed
 
 ![Copy consumer key (client id)](./_graphics/copy_client_id.png)
 
 ### Integrating your app to authenticate with Tetra Pak
 
-We can now move on to the final stage: To integrate the web app to automatically authorize access to protected resources via the Tetra Pak Auth Services. This involves two steps:
+We can now move on to the final stage: Integrating the web app with Tetra Pak Auth Services to automatically authorize access to protected endpoints. This involves two steps:
 
-- Configure the app to identity as a client with Tetra Pak
-- Add a few lines of code to enable Tetra Pak authentication
+- Add two lines of configuration
+- Add some code to enable Tetra Pak authentication
 
-Let's begin with the confiuration:
+Let's begin with the configuration:
 
 1. Open the `appsettings.json` file in an editor
 2. Add a new section and name it `"TetraPak"` and paste the consumer key you copied in the previous phase as a named `"ClientId"`:
 
 ```json
 "TetraPak":  {
-    "ClientId": "(paste the consumer key value here)"
+    "ClientId": "(paste the consumer key here)"
 }
 ```
 
 This is the minimum amount of configuration needed to successfully integrate your web app with Tetra Pak's Auth Services. 
 
-> *Please note that you can also specify the callback path, such as `"CallbackPath": "/call-me"`. If omitted the full callback URL will take the form `<host>/auth-callback`. So, if you're debugging locally on, say, port `8080` over the `HTTPS` scheme the full callback URL would be: `https://localhost:8080/auth-callback`. Please ensure that the callback path used is the one specified in your app registration.*
+> *Please note that you can also specify the callback path, such as `"CallbackPath": "/call-me"`. If omitted the full callback URL will take the form `<host>/auth-callback`. So, if you're debugging locally on, say, port `8080` over the `HTTPS` scheme the full callback URL would be: `https://localhost:8080/auth-callback`. Please ensure that the callback path used is the one specified in your [app registration](#register-your-app-in-developer-portal).*
 
-To finish the integration we need two lines of code in two separate methods of the `Startup` class:
+To finish the integration we need some code in two separate methods of the `Startup` class:
 
 3. Open the `Startup.cs` file.
-4. In the `ConfigureServices` method, add this line (anywhere in the method):
+4. Add a `using` statement at the start of the file: `using TetraPak.AspNet.Auth;`
+5. In the `ConfigureServices` method, add this line (anywhere in the method):
 
 ```c#
 services.AddTetraPakOidcAuthentication(); // <-- add this anywhere in method
@@ -312,6 +379,7 @@ That's it! Try running your app locally ([please ensure you have registered the 
 [middleware]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0
 [oauth-refresh-flow]: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5
 [aspnet-core-configuration]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0
+[tetra-pak-dev-test-portal]: https://developer-test.tetrapak.com
 [tetra-pak-dev-dev-portal]: https://developer-dev.tetrapak.com
 [tetra-pak-dev-portal]: https://developer.tetrapak.com
 [tetra-pak-dev-portal-appreg-consumer-key]: https://developer.tetrapak.com/products/getting-started/manage-your-app#consumer-key

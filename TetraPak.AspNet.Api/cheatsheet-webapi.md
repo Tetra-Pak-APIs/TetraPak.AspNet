@@ -1,40 +1,61 @@
-# TetraPak.AspNet - Troubleshooting
+# TetraPak.AspNet.Api - Cheat Sheet
 
-Here are a few issues you might bump into, and suggestions for how to resolve them:
+TODO TODO TODO
 
-## 401 - API key invalid
+This is the fast-track to get your web app integrated with Tetra Pak Auth Services with minimum fuzz. 
 
-Your web app is probably referencing the wrong `client id`. Please check your configuration (eg. `appsettings.json` file) and compare the `"ClientId"` value with your [app registration Consumer Key][tetra-pak-dev-portal-appreg-consumer-key].
+---
 
-## <a id="invalid-redirect-uri"></a> 400 - Invalid redirect_uri
+*NOTE*
 
-Your web app is probably not configured for the correct `callback URL`. Please check your configuration (eg. `appsettings.json` file) and compare the `"CallbackUrl"` value with your [app registration Callback URL][tetra-pak-dev-portal-appreg-consumer-key].
+*If you need a better overview and some in-depth then please check out the [README document][tetra-pak-aspnet-readme]. There is also a [nice recipe][tetra-pak-aspnet-recipe] where you are walked through building a simple web app and integrating it with the Tetra Pak Auth Services.*
 
-## <a id="no-browser"></a>No browser window opens when I run my web app
+---
 
-If you are debugging your web app (locally) from your IDE and no browser window opens when you Run or Debug then here's what you can do, depending on your IDE:
+## Register your app in the Tetra Pak Developer Portal
 
-**Visual Studio**
-- In the Solution Explorer; right-click the project node (`TetraPakWebApp`)
-- Select "Debug" section
-- Ensure the "Launch browser" check box is ticked
+1. Browse to https://developer.tetrapak.com and log in (for development/test purposes instead browse to https://developer-test.tetrapak.com)
+2. Click the "Apps" menu item in the top of the page
+3. Click the "Add app" command (upper left part of page)
+4. Give your app a name and supply a short description of it.
+5. If necessary, specify your callback URL 
 
-**VS Code**
-- In the "Explorer" (sidebar); open the "Properties" folder of your project
-- Open the `launchSettings.json` file
-- Look for the `TetraPakWebApp` json section
-- Ensure there is a setting: `"launchBrowser": true,`. Add it otherwise.
+    (always necessary for local debugging, e.g. https://localhost:8080/auth-callback)
 
-**Rider**
-- In the Solution Explorer; open the "Properties" folder of your project
-- Open the `launchSettings.json` file
-- Look for the `TetraPakWebApp` json section
-- Ensure there is a setting: `"launchBrowser": true,`. Add it otherwise.
+6. Copy the Consumer Key
 
-**(other IDE)**
-- Sorry, you are own your own but trying the method for VS Code or Rider is probably a good idea
+## Configure your web app
+
+7. In the `appsettings.json`; add section `"TetraPak"` and paste in the consumer key as `"ClientId"`:
+
+    ```json
+    "TetraPak": {
+        "ClientId": "(paste consumer key here)"
+    }
+    ```
+
+## Add Tetra Pak authentication to Startup.cs
+
+9. In your web app project; open the `Startup.cs` file
+10. Add this line anywhere in the `Startup.ConfigureServices` method:
+    
+    ```c#
+    services.AddTetraPakOidcAuthentication(); // <-- add this
+    ```
+11. In the `Startup.Configure` method; ensure these middleware exists in this order:
+
+    ```c#
+    app.UseRouting();        // <-- necessary
+
+    app.UseAuthentication(); // <-- _after_ routing and _before_ authorization
+
+    app.UseAuthorization();  // <-- necessary    
+    ```
 
 
+[tetra-pak-aspnet-readme]: ./README.md
+[tetra-pak-aspnet-troubleshooting]: ./troubleshooting.md
+[tetra-pak-aspnet-recipe]: ./recipe-webapp.md
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
 [github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api

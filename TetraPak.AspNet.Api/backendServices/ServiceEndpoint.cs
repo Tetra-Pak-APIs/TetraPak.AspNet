@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 using TetraPak.Configuration;
+using TetraPak.Logging;
 using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api
@@ -21,22 +23,30 @@ namespace TetraPak.AspNet.Api
         string _clientSecret;
         MultiStringValue _scope;
 
+        /// <summary>
+        ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
+        /// </summary>
         protected ServiceEndpoints Parent { get; private set; }
         
         /// <inheritdoc />
         public string StringValue { get; protected set; }
 
+        /// <inheritdoc />
         public ConfigPath ConfigPath => $"{Parent.ConfigPath}{ConfigPath.Separator}{Name}";
 
         internal IBackendService Service { get; set; }
 
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
 
+        /// <summary>
+        ///   Gets the current <see cref="HttpContext"/> instance.
+        /// </summary>
         public HttpContext HttpContext => AmbientData.HttpContext;
         
         /// <summary>
         ///   Gets the name of the service endpoint URL (as specified in the configuration).
         /// </summary>
+        [StateDump]
         public string Name { get; internal set; }
 
         /// <summary>
@@ -52,6 +62,7 @@ namespace TetraPak.AspNet.Api
         public IConfiguration Configuration { get; private set; }
 
         /// <inheritdoc />
+        [StateDump]
         public GrantType GrantType
         {
             get => _grantType is null or GrantType.Inherited ? Parent.GrantType : _grantType.Value;
@@ -59,6 +70,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
+        [StateDump]
         public string ClientId
         {
             get => _clientId ?? Parent.ClientId;
@@ -66,6 +78,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
+        [StateDump]
         public string ClientSecret
         {
             get => _clientSecret ?? Parent.ClientSecret;
@@ -73,6 +86,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
+        [StateDump]
         public MultiStringValue Scope
         {
             get => _scope ?? Parent.Scope;
@@ -179,10 +193,6 @@ namespace TetraPak.AspNet.Api
         }
 
         internal ServiceEndpoint WithConfig(IConfiguration config)
-            // GrantType grantType, obsolete
-            // string clientId, 
-            // string clientSecret,
-            // MultiStringValue scope)
         {
             Configuration = config;
             var grantTypeSection = config.GetChildren()
@@ -226,6 +236,10 @@ namespace TetraPak.AspNet.Api
             StringValue = stringValue ?? throw new ArgumentNullException(nameof(stringValue));
         }
 
+        /// <summary>
+        ///   Initializes an <see cref="ServiceEndpoint"/> 
+        /// </summary>
+        /// <param name="ambientData"></param>
         protected ServiceEndpoint(AmbientData ambientData)
         {
             AmbientData = ambientData;

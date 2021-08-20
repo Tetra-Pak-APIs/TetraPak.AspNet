@@ -19,6 +19,10 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet.Auth
 {
     // https://mauridb.medium.com/using-oauth2-middleware-with-asp-net-core-2-0-b31ffef58cd0
+    /// <summary>
+    ///   Provides convenience- and extension methods to help with integrating an ASP.NET Core/5+
+    ///   web application with the Tetra Pak Auth Services.
+    /// </summary>
     public static partial class TetraPakAuth
     {
         const string TetraPakScheme = "TetraPak-LoginAPI";
@@ -117,12 +121,29 @@ namespace TetraPak.AspNet.Auth
             });
         }
 
+        /// <summary>
+        ///   Adds the necessary middleware to integrate with Tetra Pak Auth Services using the
+        ///   Open Id Connection (OIDC) auth flow.
+        /// </summary>
+        /// <param name="services">
+        ///   An object implementing <see cref="IServiceCollection"/> (can be unassigned). 
+        /// </param>
         public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
         {
             services.AddTetraPakOidcAuthentication<SimpleCache>();
         }
         
         // todo Consider adding support for claims-based user info (see URL above class declaration)
+        /// <summary>
+        ///   Adds the necessary middleware to integrate with Tetra Pak Auth Services using the
+        ///   Open Id Connection (OIDC) auth flow.
+        /// </summary>
+        /// <param name="services">
+        ///   An object implementing <see cref="IServiceCollection"/> (can be unassigned). 
+        /// </param>
+        /// <typeparam name="TCache">
+        ///   Specifies class to be used for OIDC related caching purposes. 
+        /// </typeparam>
         public static void AddTetraPakOidcAuthentication<TCache>(this IServiceCollection services)
         where TCache : class, ITimeLimitedRepositories
         {

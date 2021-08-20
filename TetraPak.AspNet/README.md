@@ -1,232 +1,97 @@
 ﻿# TetraPak.AspNet
 
+## This document
+
+This document aims to provide the big picture of how to use this SDK. If this is the first few times you are using the SDK then this is a great place to start. But depending on your background you might also consider starting elsewhere:
+
+If you are somewhat new to ASP.NET Core/5+ web app development then it might be a good idea first check out the [ASP.NET Core/5+ Project Overview][aspnet-webapp-overview] and then come back here.
+
+If you are a seasoned ASP.NET Core/5+ developer and just want to quickly integrate your web app (or API) with Tetra Pak's Auth Services then you can either just skip ahead to the [cheat cheat][tetra-pak-aspnet-cheat-sheet] or try [this recipe][tetra-pak-aspnet-recipe] on how to build a simple web client and integrate it with Tetra Pak Auth Services.
+
+Also, if you are already well on your way with this SDK and are facing an issue or a use case you are unsure of how to resolve then it might be a good idea to check out [this document][tetra-pak-aspnet-usecases] 
+
+However, if you want some more background or need a better understanding; then please continue.
+
 ## Overview
 
-The TetraPak.AspNet SDK libraries are provided as a way to get more productive when writing web-based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (C3) such as authorization, logging and so on.
+The TetraPak.AspNet SDK is provided as a way to get more productive when writing web-based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, logging and so on. There are also some useful tools that should help you out to develop and test your solutions.
 
-## Authentication and security
+This document will first walk you through the motivation for this package and then introduce you to the project structure and start up procedure of a typical ASP.NET Core/5+ web application. This is to ensure you have the background information needed to better understand how this package can help you get more productive when building Tetra Pak integrated web apps. With that out of the way the document then provides an overview of the various code APIs and tools offered, explaining how they work and the options provided for them.
 
-When writing web-based solutions for Tetra Pak you should ensure you are in line with the current Tetra Pak guidelines and security policies and the simplest way to do so is to rely on the APIs and helpers provided by this package.
-
-There is a difference, however, depending on whether you are writing a web client application (such as a ASP.NET Core MVC solution based on Razor or Blazor) or whether you are writing a web API. This package mainly supports web applications so if you are writing a web API then please refer to the [TetraPak.AspNet.Api][tetrapak-api] package.
+This document mainly offers the "big picture" for concepts, tools, and code APIs. More details are then provided in separate documents. If you feel you already have a very good understanding of ASP.NET Core/5+ web app project structure and startup, then 
 
 ### The 20 minute rule
 
-We in the Tetra Pak API innovation team tries to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that our "customers" (usually developers) should never have to spend more than 20 minutes on solving a problem typical to most projects.
+We in the Tetra Pak API innovation team tries to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that our "customers" (usually developers) should never have to spend more than 20 minutes on solving a problem that is typical to most projects.
 
-We have seen over the years that many development projects spend large amounts of time just establishing proper *auth* (authorization and authentication) before they can start consuming Tetra Pak data through APIs or other services that require Tetra Pak authorization. This is something we want to address with this package. Hopefully, by the time you have read this documentation and tested the code APIs offered by the `TetraPak.AspNet` packages you will be able to just add a few lines of code, maybe add some configuration, and you should be good to go. When you start your next project you should be able to start building business value in 20 minutes or less!
+We have seen over the years that many development projects spend considerable amounts of time just establishing correct and safe *auth* (authentication and authorization) to enable Tetra Pak data consumption create new business value. This is something we want to address with this package.
 
-## Getting Started
+Hopefully, by the time you have read this documentation and tested the code APIs offered by the `TetraPak.AspNet` package you will be able to just add a few lines of code and configuration, and you should be good to go. When you start your next project you should be done with auth and ready to start building business value in 20 minutes or less!
 
----
+### Authentication and security
 
-*This package is focused on integrating **web applications** with the Tetra Pak authorization services. For **web API projects** please look to [TetraPak.AspNet.Api][tetrapak-api]*
+When writing web-based solutions for Tetra Pak you should ensure you are in line with the current Tetra Pak guidelines and security policies and the simplest way to do so is to rely on the code APIs and helpers provided by this SDK.
 
----
+There is a difference, however, depending on whether you are writing a web client application (such as a ASP.NET Core/5+ **web app**, based on [Razor][aspnet-razor]) or whether you are writing a **web API**. Web clients often relies on session state from cookies whereas APIs do not. Web apps are designed to be consumed by a web browser. If a request needs to be authorized but there is no security token within the request, the web app can automatically redirect the web client to the proper authority to participate in the required *auth flow* to establish a secure session and security token. The *auth flow* is one of several [OAuth flows][oauth-flows] (typically the [*authorization code grant*][oauth-auth-code-flow]). 
 
-In any Tetra Pak web application project, to integrate with the company's authorization services through this package, this is the typical pattern:
+ Web APIs, however, are designed to be consumed by any type of client. The client can be a native mobile or desktop app, a web app or even a daemon process running in some IOT device that regularily consumed pices of data to provide its service. As an API cannot rely on the capabilities of a web client (browser) it cannot offer the automated authorization funtionality of a web app. Instead, the API's client is responsible for "knowing" beforehand how to establish a secure session with the API and provide whatever security token is required when it makes its first request to the API.
 
-- Add one or two lines of code to the `Startup.cs` file to enable auth
-- Add whatever configuration is needed to the `appsettings.json` file(s). For a typical web applications no configuration is needed.
+This SDK supports the needs of a web app. If you are building a web API, or a web client that also supports an API, then you should instead look to the [TetraPak.AspNet.Api][nuget-tetrapak-api] package.
 
-We will look into what code needs to be added and talk more about configuration through the use of the existing demo project.
+## TetraPak.AspNet Code APIs
 
-### Demo projects
+With the ASP.NET Core/5+ project structure out of the way let's now turn our attention to the various options and tools you have when integrating your web app with the Tetra Pak Auth Services.
 
-A good way to get started is to investigate existing apps that consume the tools you are interested in. This is why we have included demo projects to the repository. For web apps check out the [demo.WebApp][demo.web-app] project. Let's walk through it ...
+The SDK currently supports integration with Tetra Pak's Auth Services using the Open Id Connection (IODC) auth flow. To use it just call the `IServiceCollection.AddTetraPakOidcAuthentication` method somewhere in the `Startup.ConfigureServices` method.
 
-In the `Startup` class there are two methods that gets created by any ASP.NET Core (or .NET 5+) project template: `ConfigureServices` and `Configure`. The first one - `ConfigureServices` - is where you set up your [Dependency Injection (DI)][dependency-injection]. The second method - `Configure` - is where you are supposed to configure the web app's [middleware][middleware], i e how requests should be handled and in what order.
+## Configuration
 
-Let's have a look at what you need to add in those two methods for your web app to be fully compliant with Tetra Pak's *auth* services:
 
-Anywhere in the `ConfigureServices` method just add this line:
 
-```c#
-services.AddTetraPakOidcAuthentication();
-```
+### Caching
 
-This will set up the required DI services for Tetra Pak *auth*.
+-- TODO --
 
-Next, in the `Configure` method, add this line:
 
-```c#
-app.UseAuthentication();
-```
+## API Management and Security Patterns
 
----
+**--TODO--** Overview / Intro to API mgmt and why we want to protect the APIs
 
-**IMPORTANT:** *This line needs to be added *after* `app.UseRouting()` and *before* `app.UseAuthorization()`.*
+**--TODO--** Graphic (Managed API Patterns)
 
----
+### Managed API pattern
 
-This will have you covered for basic auth with Tetra Pak's auth services. If that service also offers refresh tokens you can add support for [automatic token refreshing][oauth-refresh-flow] by adding a client id to your [configuration][aspnet-core-configuration], in the `appsettings.json` file(s).
+**--TODO--** Explanatory text
 
-In the `appsettings.json` file, add a section named "`TetraPak-Auth`" and add your client id to the "`ClientId`" value, like in this example:
 
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
-  "Auth-TetraPak": {
-    "ClientId": "example-1234567890"
-  }
-}
-```
 
-## Protecting your web app
 
-With the above steps your web app is now wired to automatically authenticate and authorize your resources but you still need to specify what resources requires authorization. Some pages might be open to anyone without needing to authenticate. In a MVC-based web project you can protect individual views or all views controlled by specific view controllers by attributing them with the `[Authorize]` attribute.
+[tetra-pak-aspnet]: ./README.md
+[tetra-pak-aspnet-use-cases]: ../UseCases.md
+[tetra-pak-aspnet-recipe]: ./_docs/Recipe-WebApp.md
+[tetra-pak-aspnet-cheat-sheet]: ./_docs/cheatsheet-webapp.md
+[aspnet-webapp-overview]: ./_docs/aspnet_webapp_overview.md
 
-In the following example the "Overview" and "Details" views requires authorization whereas the others are available to all (anonymous) users:
-
-```c#
-public class HomeController : Controller
- {
-     readonly ILogger<HomeController> _logger;
-     readonly IConfiguration _configuration;
-
-     public IActionResult Index()
-     {
-         return View();
-     }
-
-     [Authorize]
-     public async Task<IActionResult> Overview()
-     {
-         return View(new OverviewModel(User.Identity));
-     }
-
-     [Authorize]
-     public IActionResult Details()
-     {
-         var token = await Request.HttpContext.GetAccessTokenAsync();
-         return View(new DetailsModel(token));
-     }
-
-     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-     public IActionResult Error()
-     {
-         return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
-     }
-     
-     public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
-     {
-         _logger = logger;
-         _configuration = configuration;
-     }
- }
-```
-
-### Getting the user's identity
-
-Oftentimes you might need the (authenticated) user's identity. It might be because you simply want to present it in a view or because it is needed in calls to services you call to fetch data.
-
-The authorized user's identity is always available in the view controller's `User.Identity` property. Please check out the `Details` (view) method in the above example to see how that can be used.
-
----
-
-*Please not that the user identity is only reliably available if the user was actually authorized.*
-
----
-
-### Getting the access token
-
-At other times it might be necessary to obtain the security token provided by the authorized client/user. This value is provided by calling an extension method of the
-
-### Recipe: Securing static pages
-
-Sometimes you might have a need to use public static pages, located under the ASP.NET "wwwroot" folder. Such files are always publicly available (no authorization needed) but what if you need the user's identity? To get that authentication is needed and this recipe is one way to achieve that.
-
-#### Ingredients
-
-For this recipe, static page authentication includes the following:
-
-- A secured endpoint (we'll call it `/userinformation`)
-- Some restructuring and a few lines of extra code in the `Configure` method (Startup.cs file)
-
-#### Steps
-
-To make it work, do the following:
-
-1. Create a new controller and name it `UserInformationController`:
-```c#
-using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace TetraPak.AspNet.Recipe
-{
-    [ApiController]
-    public class UserInformationController : ControllerBase
-    {
-        [HttpGet]
-        [Authorize]
-        public ActionResult Get(string origin = null) 
-        {
-            if (origin is { })
-                return Redirect(origin);
-
-            var identity = (ClaimsIdentity) User.Identity;
-            var userInfo = new
-            {
-                userName = User.Identity.Name,
-                firstName = identity.FirstName(),
-                lastName = identity.LastName()
-            }; 
-            return Ok(userInfo);
-        }
-    }
-}
-```
-
-2. Open the *Startup.cs* file to edit the `Configure` method:
-   1. Ensure the `UseStaticFiles` middleware is included and then move it so that is inserted *after* the `UseAuthentication` middleware:
-
-   ```c#
-   public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-   {
-       if (env.IsDevelopment())
-       {
-           app.UseDeveloperExceptionPage();
-       }
-
-       app.UseDefaultFiles();
-       app.UseWebSockets();
-       app.UseRouting();
-       app.UseAuthentication();
-       app.UseAuthorization();
-       app.UseStaticFiles(); // <-- AFTER UseAuthentication
-       app.UseEndpoints(endpoints =>
-       {
-           endpoints.MapControllers();
-       });
-    }
-   ```
-   2. Edit the `UseStaticFiles` middleware to enforce redirect to the protected endpoint if user is not authenticated:
-
-   ```c#
-   app.UseStaticFiles(new StaticFileOptions
-   {
-       // always require authentication for static files ...
-       OnPrepareResponse = context => 
-       {
-           var path = context.Context.Request.Path.ToString();
-           if (!context.Context.User.Identity.IsAuthenticated)
-           {
-               context.Context.Response.Redirect($"/userInformation?origin={path}");
-           }
-       }
-    });
-   ```
-
-[tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api
+[github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
+[nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
+[github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api
+[nuget-tetrapak-api]: https://www.nuget.org/packages/TetraPak.AspNet.Api
+[github-tetrapak-common]: https://github.com/Tetra-Pak-APIs/TetraPak.Common
+[nuget-tetrapak-common]: https://www.nuget.org/packages/TetraPak.Common
 [demo.web-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/demo.WebApp
-[dependency-injection]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
+[di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
+[di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
 [middleware]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0
-[oauth-refresh-flow]: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5
 [aspnet-core-configuration]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0
+[tetra-pak-dev-dev-portal]: https://developer-dev.tetrapak.com
+[tetra-pak-dev-portal]: https://developer.tetrapak.com
+[tetra-pak-dev-portal-appreg-consumer-key]: https://developer.tetrapak.com/products/getting-started/manage-your-app#consumer-key
+[tetra-pak-dev-portal-appreg-callback]: https://developer.tetrapak.com/products/getting-started/manage-your-app#callback-url
+[hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+[aspnet-layout]: https://docs.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-5.0
+[aspnet-authorize-attribute]: https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-5.0
+[aspnet-razor]: https://docs.microsoft.com/en-us/aspnet/web-pages/overview/getting-started/introducing-razor-syntax-c
+[oauth-flows]: https://auth0.com/docs/flows
+[oauth-auth-code-flow]: https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.1
+[oauth-refresh-flow]: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5
+

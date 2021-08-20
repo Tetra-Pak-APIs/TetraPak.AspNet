@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using demo.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using TetraPak.AspNet.Api.Controllers;
+using TetraPak.AspNet;
 
 namespace demo.WebApp.Controllers
 {

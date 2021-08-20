@@ -31,9 +31,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{708865EB-B127-43BB-A7CF-D06EB4039404}"
 ProjectSection(SolutionItems) = preProject
 	README.md = README.md
-	Troubleshooting.md = Troubleshooting.md
-	recipe-webapp.md = recipe-webapp.md
-	cheatsheet-webapp.md = cheatsheet-webapp.md
+	UseCases.md = UseCases.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.BackendServiceAPI", "demo.BackendServiceAPI\demo.BackendServiceAPI.csproj", "{C6D820E1-1F41-4235-9466-C86AAB308E4F}"

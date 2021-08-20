@@ -6,6 +6,9 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
 {
+    /// <summary>
+    ///   Provides convenience- and extension methods to assist in the use of JavaScript Web Tokens (JWT). 
+    /// </summary>
     public static class JwtHelper
     {
         /// <summary>

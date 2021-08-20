@@ -39,12 +39,24 @@ namespace TetraPak.AspNet
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IClientCredentialsProvider _clientCredentialsProvider;
 
+        /// <summary>
+        ///   Gets a logger provider.
+        /// </summary>
         protected ILogger Logger => AuthConfig.Logger;
 
+        /// <summary>
+        ///   Gets an ambient data provider.
+        /// </summary>
         protected AmbientData AmbientData { get; }
 
-        protected TetraPakAuthConfig AuthConfig { get; }
+        /// <summary>
+        ///   Gets the Tetra Pak configuration object. 
+        /// </summary>
+        protected TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
 
+        /// <summary>
+        ///   Gets the current <see cref="HttpContext"/> instance.
+        /// </summary>
         protected HttpContext HttpContext => _httpContextAccessor.HttpContext;
 
         internal static OAuthTokenResponse TokenResponse
@@ -53,6 +65,7 @@ namespace TetraPak.AspNet
             set => s_tokenResponse.Value = value;
         }
 
+        /// <inheritdoc />
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
             Logger.Debug(AuthConfig);
@@ -143,24 +156,50 @@ namespace TetraPak.AspNet
             }
         }
 
+        /// <summary>
+        ///   Invoked from <see cref="TransformAsync"/> to acquire an access token.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///   A <see cref="CancellationToken"/> object used to allow operation cancellation.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
         protected virtual async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken) 
             => await AmbientData.GetAccessTokenAsync();
 
+        /// <summary>
+        ///   Invoked from <see cref="TransformAsync"/> to acquire an identity token.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///   A <see cref="CancellationToken"/> object used to allow operation cancellation.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
         protected virtual async Task<Outcome<ActorToken>> OnGetIdTokenAsync(CancellationToken cancellationToken)
-            => await AmbientData.GetIdTokenAsync(AuthConfig);
+            => await AmbientData.GetIdTokenAsync();
         
-        protected virtual async Task<Credentials> OnGetClientCredentials()
+        /// <summary>
+        ///   Call this method to obtain client credentials.
+        /// </summary>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="Credentials"/> object or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        protected virtual async Task<Outcome<Credentials>> OnGetClientCredentials()
         {
             if (_clientCredentialsProvider is { })
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
             if (AuthConfig.ClientId is null)
-                throw new InvalidOperationException("Failed obtaining client id from configuration");
+                return Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
             
-            if (AuthConfig.ClientSecret is null)
-                throw new InvalidOperationException("Failed obtaining client secret from configuration");
-            
-            return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
+            return AuthConfig.ClientSecret is { } 
+                ? Outcome<Credentials>.Success(new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret)) 
+                : Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
         }
 
         static IDictionary<string,string> makeClaimsMap()
@@ -176,15 +215,28 @@ namespace TetraPak.AspNet
         }
 
 
+        /// <summary>
+        ///   Initializes the <see cref="TetraPakClaimsTransformation"/> instance.
+        /// </summary>
+        /// <param name="ambientData">
+        ///   Initializes the <see cref="AmbientData"/> property.
+        /// </param>
+        /// <param name="userInformation">
+        ///   Used internally to obtain user information.
+        /// </param>
+        /// <param name="httpContextAccessor">
+        ///   Used internally to get access to the current <see cref="HttpContext"/> object.
+        /// </param>
+        /// <param name="clientCredentialsProvider">
+        ///   Used internally to obtain client credentials.
+        /// </param>
         public TetraPakClaimsTransformation(
             AmbientData ambientData, 
-            TetraPakAuthConfig authConfig, 
             TetraPakUserInformation userInformation,
             IHttpContextAccessor httpContextAccessor,
             IClientCredentialsProvider clientCredentialsProvider = null)
         {
             AmbientData = ambientData;
-            AuthConfig = authConfig;
             _userInformation = userInformation;
             _httpContextAccessor = httpContextAccessor;
             _clientCredentialsProvider = clientCredentialsProvider;

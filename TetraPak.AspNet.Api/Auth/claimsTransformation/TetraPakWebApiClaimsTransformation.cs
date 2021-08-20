@@ -29,6 +29,7 @@ namespace TetraPak.AspNet.Api.Auth
         
         readonly ITokenExchangeService _tokenExchangeService;
         
+        /// <inheritdoc />
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
         {
             try
@@ -44,8 +45,11 @@ namespace TetraPak.AspNet.Api.Auth
                     return cachedOutcome;
                 
                 // exchange token for 
-                var clientCredentials = await OnGetClientCredentials();
-                var credentials = new BasicAuthCredentials(clientCredentials.Identity, clientCredentials.Secret);
+                var ccOutcome = await OnGetClientCredentials();
+                if (!ccOutcome)
+                    return Outcome<ActorToken>.Fail(ccOutcome.Exception);
+
+                var credentials = new BasicAuthCredentials(ccOutcome.Value.Identity, ccOutcome.Value.Secret);
 
                 var bearerToken = accessTokenOutcome.Value as BearerToken;
                 var isBearerToken = bearerToken is { };
@@ -95,14 +99,32 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
+        /// <summary>
+        ///   Initializes the <see cref="TetraPakWebApiClaimsTransformation"/> instance.
+        /// </summary>
+        /// <param name="ambientData">
+        ///   Initializes the <see cref="AmbientData"/> property.
+        /// </param>
+        /// <param name="userInformation">
+        ///   Used internally to obtain user information.
+        /// </param>
+        /// <param name="httpContextAccessor">
+        ///   Used internally to get access to the current <see cref="HttpContext"/> object.
+        /// </param>
+        /// <param name="tokenExchangeService">
+        ///   User internally to support the token exchange auth flow,
+        ///   which is necessary when consuming user information from the Tetra Pak Auth Services. 
+        /// </param>
+        /// <param name="clientCredentialsProvider">
+        ///   Used internally to obtain client credentials.
+        /// </param>
         public TetraPakWebApiClaimsTransformation(
             AmbientData ambientData, 
-            TetraPakApiAuthConfig config, 
             TetraPakUserInformation userInformation, 
             IHttpContextAccessor httpContextAccessor,
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(ambientData, config, userInformation, httpContextAccessor, clientCredentialsProvider)
+        : base(ambientData, userInformation, httpContextAccessor, clientCredentialsProvider)
         {
             _tokenExchangeService = tokenExchangeService;
         }

@@ -4,6 +4,9 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet.Auth
 {
+    /// <summary>
+    ///   Implementors of this class are capable of providing an access token from a request context. 
+    /// </summary>
     public interface IAccessTokenProvider
     {
         /// <summary>
