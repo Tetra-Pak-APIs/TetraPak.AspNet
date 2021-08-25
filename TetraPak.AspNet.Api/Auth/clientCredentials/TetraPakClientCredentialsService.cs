@@ -6,8 +6,9 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -26,18 +27,19 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger Logger => _ambientData.Logger;
+        protected ILogger? Logger => _ambientData.Logger;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
             CancellationToken cancellationToken,
-            Credentials clientCredentials = null,
-            MultiStringValue scope = null, 
+            Credentials? clientCredentials = null,
+            MultiStringValue? scope = null, 
             bool allowCached = true)
         {
             try
             {
-                var basicAuthCredentials = validateBasicAuthCredentials(clientCredentials ?? OnGetCredentials());
+                clientCredentials ??= OnGetCredentials();
+                var basicAuthCredentials = validateBasicAuthCredentials(clientCredentials);
                 var cachedOutcome = await OnGetCachedResponse(basicAuthCredentials);
                 if (cachedOutcome && cachedOutcome.Value.ExpiresIn.Subtract(TimeSpan.FromSeconds(2)) > TimeSpan.Zero)
                     return cachedOutcome;
@@ -92,31 +94,27 @@ namespace TetraPak.AspNet.Api.Auth
 
                 var messageId = _ambientData.GetMessageId(true);
                 var message = new StringBuilder();
-                message.AppendLine(
-                    "Client credentials failure (details in follow-up entry if DEBUG log level is enabled)");
-
+                message.AppendLine("Client credentials failure (state dump to follow if DEBUG log level is enabled)");
+                
                 if (Logger.IsEnabled(LogLevel.Debug))
                 {
-                    message.AppendLine(">===== STATE BEGIN =====<");
-                    message.Append("\"AuthConfig\": ");
-                    var ignoredValues = new[]
-                    {
-                        nameof(TetraPakApiAuthConfig.GrantType),
-                        nameof(TetraPakAuthConfig.ClientId),
-                        nameof(TetraPakAuthConfig.ClientSecret),
-                        nameof(TetraPakAuthConfig.RequestMessageIdHeader),
-                        nameof(TetraPakAuthConfig.IsPkceUsed),
-                        nameof(TetraPakAuthConfig.CallbackPath)
-                    };
-                    var options = new StateDumpOptions(AuthConfig, LogLevel.Debug).WithIgnored(ignoredValues);
-                    message.AppendLine(AuthConfig.GetStateDump(options));
-                    message.Append("\"Credentials\": ");
-                    message.AppendLine(clientCredentials.GetStateDump(new StateDumpOptions(clientCredentials, LogLevel.Debug)));
-                    message.AppendLine(">====== STATE END ======<");
+                    var options = new StateDumpOptions(AuthConfig)
+                        .WithIgnored(
+                            nameof(TetraPakApiAuthConfig.GrantType),
+                            nameof(TetraPakAuthConfig.ClientId),
+                            nameof(TetraPakAuthConfig.ClientSecret),
+                            nameof(TetraPakAuthConfig.RequestMessageIdHeader),
+                            nameof(TetraPakAuthConfig.IsPkceUsed),
+                            nameof(TetraPakAuthConfig.CallbackPath))
+                        .WithTargetLogger(Logger);
+                    var dump = new StateDump().WithStackTrace();
+                    dump.Add(AuthConfig, "AuthConfig", options);
+                    options = new StateDumpOptions(clientCredentials).WithTargetLogger(Logger);
+                    dump.Add(clientCredentials, "Credentials", options);
+                    message.AppendLine(dump.ToString());
                 }
                 Logger.Error(ex, message.ToString(), messageId);
                 return Outcome<ClientCredentialsResponse>.Fail(ex);
-
             }
         }
 

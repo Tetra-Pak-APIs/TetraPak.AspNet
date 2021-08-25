@@ -179,11 +179,18 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var ct = cancellationToken ?? CancellationToken.None;
-                var clientId = authConfig.ClientId
-                    ?? throw new ConfigurationException("Token exchange error: No client id was provided");;
+                              var context = new AuthContext(GrantType.TokenExchange, authConfig);
+                var idOutcome = await authConfig.GetClientIdAsync(context);
+                if (!idOutcome)
+                    throw new ConfigurationException("Token exchange error: No client id was provided");
 
-                var clientSecret = authConfig.ClientSecret
-                    ?? throw new ConfigurationException("Token exchange error: No client secret was provided");
+                var clientId = idOutcome.Value;
+                
+                var secretOutcome = await authConfig.GetClientSecretAsync(context);
+                if (!secretOutcome)
+                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                    
+                var clientSecret = secretOutcome.Value;
             
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
                 var txOutcome = await TokenExchangeService.ExchangeAccessTokenAsync(credentials, accessToken, ct);
@@ -226,15 +233,24 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var ct = cancellationToken ?? CancellationToken.None;
-                var clientId = authConfig.ClientId?.Trim();
-                if (string.IsNullOrEmpty(clientId))
+                var context = new AuthContext(GrantType.TokenExchange, authConfig);
+                var idOutcome = await authConfig.GetClientIdAsync(context);
+                if (!idOutcome)
                     throw new ConfigurationException("Token exchange error: No client id was provided");
 
-                var clientSecret = authConfig.ClientSecret?.Trim();
-                if (string.IsNullOrEmpty(clientSecret))
-                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                var clientId = idOutcome.Value;
 
-                var scope = authConfig.Scope;
+                var secretOutcome = await authConfig.GetClientSecretAsync(context);
+                if (!secretOutcome)
+                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                    
+                var clientSecret = secretOutcome.Value;
+
+                var scopeOutcome = await authConfig.GetScopeAsync(context);
+                if (!scopeOutcome)
+                    throw new ConfigurationException("Token exchange error: No scope was provided");
+                    
+                var scope = scopeOutcome.Value;
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
                 var ccOutcome = await ClientCredentialsService.AcquireTokenAsync(ct, credentials, scope);
                 if (!ccOutcome)

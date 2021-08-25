@@ -135,7 +135,6 @@ namespace TetraPak.AspNet.Api
         }
         
         static Outcome<IBackendService> resolveFromArbitraryController<TEndpoints>(
-            // Type controllerType, obsolete
             ControllerContext context,
             string serviceName)
         where TEndpoints : ServiceEndpoints
@@ -143,10 +142,10 @@ namespace TetraPak.AspNet.Api
             var provider = context.HttpContext.RequestServices;
             // todo consider supporting declaration of service and endpoints type in attribute
 
-            var endpoints = (TEndpoints) createEndpoints(/*controllerType, obsolete */ typeof(TEndpoints), provider, serviceName);
+            var endpoints = (TEndpoints) createEndpoints(typeof(TEndpoints), provider, serviceName);
             var httpServiceProvider = provider.GetRequiredService<IHttpServiceProvider>();
             var service = new BackendService<TEndpoints>(endpoints, httpServiceProvider);
-            return Outcome<IBackendService>.Success(service); // new ServiceInfo(service, endpoints); obsolete
+            return Outcome<IBackendService>.Success(service); 
         }
 
         static bool isInitialized(IBackendService service, out ServiceEndpoints endpoints)

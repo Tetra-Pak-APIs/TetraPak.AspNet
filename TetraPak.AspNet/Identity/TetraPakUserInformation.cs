@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Identity
 {
@@ -12,11 +11,24 @@ namespace TetraPak.AspNet.Identity
     {
         readonly AmbientData _ambientData;
         
-        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
+        /// <summary>
+        ///   Gets a logging provider.
+        /// </summary>
+        public ILogger Logger => AmbientData.Logger;
 
-        public ILogger Logger => _ambientData.Logger;
+        public AmbientData AmbientData { get; }
 
-        public async Task<Outcome<UserInformation>> GetUserInformationAsync(string accessToken)
+        /// <summary>
+        ///   Obtains and returns user information from the Tetra Pak Auth Services. 
+        /// </summary>
+        /// <param name="accessToken">
+        ///   The request access token.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="UserInformation"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        public async Task<Outcome<UserInformation>> GetUserInformationAsync(ActorToken accessToken)
         {
             var loader = new UserInformationProvider(_ambientData);
             try
@@ -30,9 +42,15 @@ namespace TetraPak.AspNet.Identity
             }
         }
         
+        /// <summary>
+        ///   Initializes the <see cref="TetraPakUserInformation"/> object.
+        /// </summary>
+        /// <param name="ambientData">
+        ///   Provides ambient data access.
+        /// </param>
         public TetraPakUserInformation(AmbientData ambientData)
         {
-            _ambientData = ambientData;
+            AmbientData = ambientData;
         }
     }
 }

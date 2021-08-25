@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.Logging;
@@ -21,6 +22,7 @@ namespace WebAPI
         {
             services.AddControllers();
 
+            services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>();
             services.AddJwtAuthentication();    // <-- add this for JWT authorization
             services.AddTetraPakServices();     // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services
 

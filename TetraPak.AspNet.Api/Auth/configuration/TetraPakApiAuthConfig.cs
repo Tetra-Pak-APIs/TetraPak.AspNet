@@ -1,7 +1,8 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -23,9 +24,8 @@ namespace TetraPak.AspNet.Api.Auth
         public TetraPakApiAuthConfig(
             IConfiguration configuration,
             ILogger<TetraPakApiAuthConfig> logger,
-            bool loadDiscoveryDocument = false,
-            string sectionIdentifier = null)
-        : base(configuration, logger, loadDiscoveryDocument, sectionIdentifier)
+            ITetraPakAuthConfigDelegate? configDelegate = null)
+        : base(configuration, logger, configDelegate)
         {
         }
     }

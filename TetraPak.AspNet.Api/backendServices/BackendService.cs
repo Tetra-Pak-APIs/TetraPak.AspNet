@@ -12,6 +12,13 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
+    /// <summary>
+    ///   Supports configuration for an individual backend service, and a collection of service endpoints. 
+    /// </summary>
+    /// <typeparam name="TEndpoints">
+    ///   The <see cref="Type"/> of service endpoints.
+    /// </typeparam>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class BackendService<TEndpoints> : IBackendService
     where TEndpoints : ServiceEndpoints
     {
@@ -38,25 +45,54 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public AmbientData AmbientData => Endpoints.AmbientData;
 
+        public IServiceAuthConfig ParentConfig => AuthConfig;
+
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
         protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
 
+        /// <inheritdoc />
         public IConfiguration Configuration => AuthConfig.Configuration;
 
+        /// <inheritdoc />
         public ConfigPath ConfigPath => AuthConfig.ConfigPath;
         
+        /// <inheritdoc />
+        [StateDump]
         public GrantType GrantType => Endpoints.GrantType;
 
+        [StateDump]
         public string ClientId => Endpoints.ClientId;
 
+        [StateDump]
         public string ClientSecret => Endpoints.ClientSecret;
 
+        [StateDump]
         public MultiStringValue Scope => Endpoints.Scope;
+        
+        /// <inheritdoc />
+        public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
 
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientIdAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null) => Endpoints.GetClientIdAsync(authContext, cancellationToken);
+
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientSecretAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null) => Endpoints.GetClientSecretAsync(authContext, cancellationToken);
+
+        /// <inheritdoc />
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null) => Endpoints.GetScopeAsync(authContext, cancellationToken);
+
+        /// <inheritdoc />
         public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
         
+        /// <inheritdoc />
         public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
 
         internal void DiagnosticsStartTimer(string timerKey)

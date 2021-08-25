@@ -8,6 +8,8 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     public static class ServiceConfigHelper
@@ -44,7 +46,7 @@ namespace TetraPak.AspNet.Api
             this ServiceInvalidEndpoint url,
             HttpMethod method,
             string path,
-            string queryParameters)
+            string? queryParameters)
         {
             return GetInvalidEndpointResponse(
                 url,
@@ -57,7 +59,7 @@ namespace TetraPak.AspNet.Api
             this ServiceInvalidEndpoint url,
             string method,
             string path,
-            string queryParameters)
+            string? queryParameters)
         {
             var issues = url.GetIssues();
             var errorMessage = 
@@ -76,9 +78,9 @@ namespace TetraPak.AspNet.Api
         public static Outcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
             HttpMethod method,
             string path, 
-            string queryParameters, 
+            string? queryParameters, 
             IEnumerable<Exception> issues,
-            string messageId,
+            string? messageId,
             ILogger logger)
         {
             return GetServiceConfigurationErrorResponse(
@@ -93,9 +95,9 @@ namespace TetraPak.AspNet.Api
         public static Outcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
             string method,
             string path, 
-            string queryParameters, 
+            string? queryParameters, 
             IEnumerable<Exception> issues,
-            string messageId,
+            string? messageId,
             ILogger logger)
         {
             var errorMessage = 
@@ -110,7 +112,7 @@ namespace TetraPak.AspNet.Api
             return Outcome<HttpResponseMessage>.Fail(responseMessage, new Exception(errorResponse.Title));
         }
 
-        public static string RequestToString(string method, string path, string queryParameters)
+        public static string RequestToString(string method, string path, string? queryParameters)
         {
             var sb = new StringBuilder(method);
             sb.Append(' ');

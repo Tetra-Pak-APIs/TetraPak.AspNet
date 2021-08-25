@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Debugging;
 using TetraPak.Configuration;
 using TetraPak.Logging;
 using TetraPak.Serialization;
@@ -28,6 +28,8 @@ namespace TetraPak.AspNet.Api
         /// </summary>
         protected ServiceEndpoints Parent { get; private set; }
         
+        public IServiceAuthConfig ParentConfig => Parent;
+
         /// <inheritdoc />
         public string StringValue { get; protected set; }
 
@@ -68,29 +70,59 @@ namespace TetraPak.AspNet.Api
             get => _grantType is null or GrantType.Inherited ? Parent.GrantType : _grantType.Value;
             set => _grantType = value;
         }
-
-        /// <inheritdoc />
+        
         [StateDump]
         public string ClientId
         {
-            get => _clientId ?? Parent.ClientId;
+            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
             set => _clientId = value?.Trim();
         }
 
-        /// <inheritdoc />
         [StateDump]
         public string ClientSecret
         {
-            get => _clientSecret ?? Parent.ClientSecret;
+            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
             set => _clientSecret = value?.Trim();
         }
 
-        /// <inheritdoc />
         [StateDump]
         public MultiStringValue Scope
         {
-            get => _scope ?? Parent.Scope;
+            get => GetScopeAsync(new AuthContext(GrantType, this)).Result;
             set => _scope = value;
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientIdAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_clientId))
+                return Parent.GetClientIdAsync(authContext, cancellationToken);
+
+            return Task.FromResult(Outcome<string>.Success(_clientId));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientSecretAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_clientSecret))
+                return Parent.GetClientSecretAsync(authContext, cancellationToken);
+
+            return Task.FromResult(Outcome<string>.Success(_clientSecret));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null)
+        {
+            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_scope))
+                return Parent.GetScopeAsync(authContext, cancellationToken);
+
+            return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
         }
 
         /// <summary>
@@ -191,6 +223,8 @@ namespace TetraPak.AspNet.Api
             AmbientData = parent.AmbientData;
             return this;
         }
+        
+        public string GetConfiguredValue(string key) => Configuration[key];
 
         internal ServiceEndpoint WithConfig(IConfiguration config)
         {

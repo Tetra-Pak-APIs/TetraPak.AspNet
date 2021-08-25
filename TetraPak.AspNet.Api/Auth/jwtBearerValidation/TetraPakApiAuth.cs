@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Api.DevelopmentTools;
-using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
 
 namespace TetraPak.AspNet.Api.Auth

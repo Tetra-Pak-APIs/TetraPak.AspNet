@@ -174,6 +174,7 @@ namespace TetraPak.AspNet
             ITimeLimitedRepositories cache = null)
         {
             AuthConfig = authConfig;
+            AuthConfig.AmbientData = this;
             _httpContextAccessor = httpContextAccessor;
             Cache = cache;
         }

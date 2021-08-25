@@ -212,22 +212,169 @@ With this you now have an *app registration*. Part of that registration is a *cl
 
 The *client id* and *client secret* is ***confidential information*** and you now have a responsibility to ensure they remain secrets!
 
-> One *classic* way to unintentionally reveal your app's *client id* and *client secret* to the world is to copy them to a file that is included in your (version controlled) code repository, perhaps on GitHub or some equivalent service. This could be because you hard-code the data into your code files (a BIG no-no!) or into a configuration file that is mistakenly included in your version controlled code repo.
+> One *classic* way to unintentionally reveal your app's *client id* and *client secret* to the world is to copy them to a file that is included in your code repository, perhaps on GitHub, BitBucket, or some equivalent service. This coule be by hard coding the confidential information as string literals into your code or as values in a configuration file that is mistakenly included in your version controlled code repo.
 >
-> **Please ensure you don't fall into that trap!**
+> **Please ensure you don't fall into those traps!**
 
-Protecting your secrets is a topic in itself and we will have to get back to that in the future. As of now there are no tools in this SDK to help you with this (it might be a feature for a a future version however, should you want it).
+Protecting your secrets is a topic in itself and we will have to get back to that later.
 
 **TIP**: Please check out the [web app recipe][tetra-pak-aspnet-recipe] (or [web API recipe][tetra-pak-aspnet-api-recipe]) if you want some more insight into how registering an app is actually done.
 
 ### Configuration
 
-Assuming you now have a *client id* (and *secret*) you now need to configure your app to use them for your integration with Tetra Pak. This can easily be done through:
+Assuming you now have a *client id* (and *secret*) you need to configure your app to use them for your integration with Tetra Pak. This can easily be done through:
 
 - The `appsettings.json` file
 - The `TetraPakAuthConfig` class
+- Implementing the `ITetraPakAuthConfigDelegate` interface
+
+Most Tetra Pak integration information can be supplied through the standard `IConfiguration` framework of ASP.NET. The SDK, however, makes this easier still by supplying you with the `TetraPakAuthConfig` class. To take advantage of this class just ensure all your configuration is added to a "`TetraPak`" section in your ``appsettings.json` file(s), like in this very simple example:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Trace",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "TetraPak": {
+    "ClientId": "noI7G3H457y5HQIkzwxa6XI7Smg2Iyxo",
+    "ClientSecret": "H6WDbPSabc2giefG"
+  }
+}
+```
+
+Again; this example is here for clarity. Adding a client secret to an unencrypted `json` file is very risky. It might be somewhat ok for stuff you intend to run in your "sandbox" environment, mostly for proof-of-concept purposes, and that is guaranteed never to consume any actual business related information. Also, you should probably ensure the `appsetting.json` file(s) are included in your `.gitignore` file, to keep the information within your dev team only.
+
+We will get back to how to protect secrets later so let's move on to how you can use the configuration through the `TetraPakAuthConfig` class.
+
+Whenever you inject Tetra Pak integration into your `Startup.ConfigureServices`, by adding `services.AddTetraPakOidcAuthentication()`, for example, the services also ensures the `TetraPakAuthConfig` class becomes available through service locaction and constructor injection. This means all you need to do to easily get to your Tetra Pak configuration is to simply add a parameter to any of your conrtroller's constructors, like so:
+
+```c#
+public class HelloWordlController : Controller
+{
+   readonly TetraPakAuthConfig authConfig;
+
+   [Authorize]
+   public IActionResult Index()
+   {
+      return View(new HelloWorldModel(_authConfig));
+   }
+
+   public HelloWordlController(TetraPakAuthConfig authConfig)
+   {
+      _authConfig = authConfig;
+   }
+}
+```
+
+Your view could, potentially, get to all Tetra Pak configuration through its model (`HelloWorldModel` in the above example):
+
+```html
+@model HelloWorldModel
+
+@{
+    ViewData["Title"] = "Configuration Details";
+}
+
+<div class="text-center">
+    
+    <h1>Your Web app Configuration</h1>
+    <p>Runtime Environment: @Model.RuntimeEnvironment</p>
+    <p>ClientID: @Model.ClientId</p>
+
+</div>
+```
+
+While you might not have much use for the configuration details in your code the Tetra Pak SDK needs this information and can always get to it through service location or dependency injection.
+  
+Please check out the [`TetraPakAuthConfig` code API][md-code-api-tetrapakauthconfig] for more details.
 
 ### Runtime Environment
+
+One very important concept when working with the SDK is to understand how it relies on the current runtime environment as it provides its services to your code!
+
+The Tetra Pak Auth Services run in isolated runtime landscapes (environments), such as:
+
+- `Sandbox`
+
+  Intended for internal proof of concept/development of the Tetra Pak Auth Services themselves. Your code should typically never need this environment, unless you start working with/for one of the teams developing the Tetra Pak Auth Services of course.
+  
+- `Development`
+
+  Intended for early development/proof-of-concept work. This environment should never allow access to actual production backens services. Expect all data concumed to be mock/fakes.
+
+- `Migration`
+
+  Completely emulates the production environment but data might be very old or "correcte" in various ways as to not risk leaking sensitive information to unfinished 
+
+- `Production` 
+
+  Intended for fully tested/authorized applications only. Provides full access to Tetra Pak backends to be consumed for production data. 
+
+Your development process probably also support a lifecycle that starts in some sort of "sandbox". It might simply be your team trying to prove a concept locally or you might have a sandbox environment set up for you. Please note that your projects should not connect to the Tetra Pak Auth Services "Sandbox" environment however. For development purposes you should always consume the Tetra Pak Auth Services `Development` runtime environment.
+
+As your code matures and becomes stable you will probably deploy it to some sort of "test" environment. When you do this it is time to consume the Tetra Pak Auth Services' `Migration` runtime environment.
+
+As you are ready to release your new solution for actual production use you should, of course, integrate with the Tetra Pak Auth Services `Production` runtime environment.
+
+There are two ways to configure your app for consuming the correct Tetra Pak Auth Services runtime environment:
+
+- **Implicit method**: Using environment variable
+- **Explicit method**: Configuring your project
+
+The first (implicit) method is what you should normally use, as it guarantees your whole project is being run in the correct runtime environment, which will also target the equivalent Tetra Pak Auth Services runtime environment. If you, however, run in a "`Sandbox`" runtime environment you need to use the second (explicit) method.
+
+The Implicit method is simply setting the `ASPNETCORE_ENVIRONMENT` environment variable. If you run your project locally you can do this by opening your project's `launchSettings.json` file (located under the project's `Properties` sub folder). In this (JSON) file you see a `profiles` cofiguration section, like in this example:
+
+```json
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "myWebApp": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+
+```
+
+This example supports two launch profiles - "`IIS Express`" and "`myWebApp`". As you start your project locally, for debugging or to be consumed by some other project, your IDE probably allows some way to select the launch profile you prefer. This file is being set up for you by your project template and can therfore differ in content. In the above example both launch profiles include a "`environmentVariables`" sub section, which goes on to set the `ASPNETCORE_ENVIRONMENT` environment variable for your debug/run session.
+
+#### Implicit Runtime Environment Method
+
+This is a very convenient way to launch your code locally to emulate the correct runtime environment. It will not, however, work when you deploy your code to a remote (cloud) service, such as Azure as the `launchSettings.json` file is ignored by the host of such services.
+
+Please consult the documentation for your preferred hosting service to learn how to configure the `ASPNETCORE_ENVIRONMENT` environment variable 
+
+> *For Azure: Open app blade and pick "Configuration" and then the "Application settings". You can add any number of environment varibables here, including `ASPNETCORE_ENVIRONMENT`*
+
+#### Explicit Runtime Environment Method
+
+As already stated, this method should only be considered when you, for whatever reason, need to run your project in a runtime environment that differs from Tetra Pak Auth Services. This methos relies on the `TetraPakAuthConfig` code API and overrides the value specified by runtime variable `ASPNETCORE_ENVIRONMENT`.
+
+To explicitly specify a runtime environment **for the Tetra Pak Auth Services integration** (it does not affect any other logic you might have in your project) just add an `Environment` value to the SDK section of your `appsettings.json` file(s), like so:
+
+```json
+"TetraPak": {
+    "ClientId": "noI7G3H457y5HQIkzwxa6XI7Smg2Iyxo",
+    "Environment": "Migration"
+  },
+  ```
+
+The SDK will parse the value to a `RuntimeEnvironment` (enum) value.
 
 ### Identity
 
@@ -242,6 +389,8 @@ Assuming you now have a *client id* (and *secret*) you now need to configure you
 [tetra-pak-aspnet-api-recipe]: ./TetraPak.AspNet.Api/recipe-webapi.md
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
 [doc-webapp-overview-middleware]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#middleware
+[md-code-api-tetrapakauthconfig]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md
+[md-code-api-runtimeenvironment]: ./TetraPak.AspNet/_docs/_codeApi/
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
 [github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api

@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Debugging;
 using TetraPak.Configuration;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
@@ -42,6 +43,8 @@ namespace TetraPak.AspNet.Api
 
         public AmbientData AmbientData => ServiceAuthConfig.AmbientData;
 
+        public IServiceAuthConfig ParentConfig => ServiceAuthConfig;
+
         internal TetraPakAuthConfig AuthConfig => ((ServiceAuthConfig) ServiceAuthConfig).AuthConfig;
         
         [StateDump]
@@ -69,23 +72,77 @@ namespace TetraPak.AspNet.Api
         [StateDump]
         public virtual string ClientId
         {
-            get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientId;
+            get
+            {
+                if (AuthConfig.IsDelegated)
+                    return ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+                
+                return GetFromFieldThenSection<string>() ?? ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+            }
             set => _clientId = value?.Trim();
         }
 
         [StateDump]
         public virtual string ClientSecret
         {
-            get => GetFromFieldThenSection<string>() ?? ServiceAuthConfig.ClientSecret;
+            get
+            {
+                if (AuthConfig.IsDelegated)
+                    return ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+                
+                return GetFromFieldThenSection<string>() ?? ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+            }
             set => _clientSecret = value?.Trim();
         }
 
         [StateDump]
         public virtual MultiStringValue Scope
         {
-            get => GetFromFieldThenSection<MultiStringValue>() ?? ServiceAuthConfig.Scope;
+            get
+            {
+                if (AuthConfig.IsDelegated)
+                    return ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
+                
+                return GetFromFieldThenSection<MultiStringValue>() ?? ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
+            }
             set => _scope = value;
         }
+        
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientIdAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_clientId))
+                return AuthConfig.GetClientIdAsync(authContext, cancellationToken);
+
+            return Task.FromResult(Outcome<string>.Success(_clientId));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientSecretAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_clientSecret))
+                return AuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this));
+
+            return Task.FromResult(Outcome<string>.Success(_clientSecret));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null)
+        {
+            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_scope))
+                return AuthConfig.GetScopeAsync(new AuthContext(GrantType, this));
+
+            return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
+        }
+
+        /// <inheritdoc />
+        public string GetConfiguredValue(string key) => Section[key];
 
         /// <summary>
         ///   The default host address.
@@ -113,6 +170,8 @@ namespace TetraPak.AspNet.Api
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
 
         internal IBackendService BackendService { get; set; }
+        
+        internal bool IsDelegated => AuthConfig.IsDelegated;
 
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {

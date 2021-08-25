@@ -36,7 +36,6 @@ namespace TetraPak.AspNet
         static readonly AsyncLocal<OAuthTokenResponse> s_tokenResponse = new();
         static readonly IDictionary<string, string> s_claimsMap = makeClaimsMap();
         readonly TetraPakUserInformation _userInformation;
-        readonly IHttpContextAccessor _httpContextAccessor;
         readonly IClientCredentialsProvider _clientCredentialsProvider;
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets an ambient data provider.
         /// </summary>
-        protected AmbientData AmbientData { get; }
+        protected AmbientData AmbientData => _userInformation.AmbientData;
 
         /// <summary>
         ///   Gets the Tetra Pak configuration object. 
@@ -57,7 +56,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the current <see cref="HttpContext"/> instance.
         /// </summary>
-        protected HttpContext HttpContext => _httpContextAccessor.HttpContext;
+        protected HttpContext HttpContext => AmbientData.HttpContext;
 
         internal static OAuthTokenResponse TokenResponse
         {
@@ -83,7 +82,7 @@ namespace TetraPak.AspNet
                         AuthConfig.Logger.Warning("Could not populate identity from id token. No id token was available");
                         break;
             
-                    case TetraPakIdentitySource.Api:
+                    case TetraPakIdentitySource.RemoteService:
                         var accessTokenOutcome = await OnGetAccessTokenAsync(_);
                         if (accessTokenOutcome)
                             return await mapFromApiAsync(accessTokenOutcome.Value);
@@ -194,8 +193,8 @@ namespace TetraPak.AspNet
             if (_clientCredentialsProvider is { })
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
-            if (AuthConfig.ClientId is null)
-                return Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
+            // if (AuthConfig.ClientId is null) obsolete
+            //     return Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
             
             return AuthConfig.ClientSecret is { } 
                 ? Outcome<Credentials>.Success(new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret)) 
@@ -218,27 +217,17 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes the <see cref="TetraPakClaimsTransformation"/> instance.
         /// </summary>
-        /// <param name="ambientData">
-        ///   Initializes the <see cref="AmbientData"/> property.
-        /// </param>
         /// <param name="userInformation">
         ///   Used internally to obtain user information.
-        /// </param>
-        /// <param name="httpContextAccessor">
-        ///   Used internally to get access to the current <see cref="HttpContext"/> object.
         /// </param>
         /// <param name="clientCredentialsProvider">
         ///   Used internally to obtain client credentials.
         /// </param>
         public TetraPakClaimsTransformation(
-            AmbientData ambientData, 
             TetraPakUserInformation userInformation,
-            IHttpContextAccessor httpContextAccessor,
             IClientCredentialsProvider clientCredentialsProvider = null)
         {
-            AmbientData = ambientData;
             _userInformation = userInformation;
-            _httpContextAccessor = httpContextAccessor;
             _clientCredentialsProvider = clientCredentialsProvider;
         }
     }

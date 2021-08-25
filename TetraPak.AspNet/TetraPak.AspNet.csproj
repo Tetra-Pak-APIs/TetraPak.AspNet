@@ -30,12 +30,10 @@
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile></DocumentationFile>
-    </PropertyGroup>
-
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <DocumentationFile>bin\Release\TetraPak.AspNet.xml</DocumentationFile>
+      <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
+      <DefaultDocumentationGeneratedPages>Namespaces, Types</DefaultDocumentationGeneratedPages>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
@@ -55,8 +53,11 @@
     <ItemGroup>
       <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="_docs\_codeApi" />
+    </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="python $(ProjectDir)_buildScripts/copyFiles.py -s *.md -f $(ProjectDir)bin/Release -t $(ProjectDir)_docs" Condition="$(ConfigurationName)=='Release'" />
+        <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />
     </Target>
 
 </Project>

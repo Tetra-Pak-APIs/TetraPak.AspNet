@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
+using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Api
@@ -23,13 +26,19 @@ namespace TetraPak.AspNet.Api
 
         IServiceProvider ServiceProvider { get; }
 
+        /// <inheritdoc />
         public AmbientData AmbientData { get; }
 
         internal TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
         
-        protected IServiceAuthConfig ParentConfig { get; }
+        /// <inheritdoc />
+        public IServiceAuthConfig ParentConfig { get; }
         
-        // internal string Path { get; } obsolete
+        /// <summary>
+        ///   Gets a value indicating whether the configuration has been delegated.  
+        /// </summary>
+        /// <see cref="ITetraPakAuthConfigDelegate"/>
+        protected virtual bool IsConfigDelegated => AmbientData.AuthConfig.IsDelegated;
 
         internal bool IsAuthIdentifier(string identifier)
         {
@@ -44,6 +53,7 @@ namespace TetraPak.AspNet.Api
             };
         }
 
+        /// <inheritdoc />
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.Inherited, 
@@ -65,41 +75,80 @@ namespace TetraPak.AspNet.Api
             set => _grantType = value;
         }
         
-        public virtual string ClientId
+        /// <inheritdoc />
+        public string GetConfiguredValue(string key) => Section[key];
+        
+        [StateDump]
+        public string ClientId
         {
-            get => GetFromFieldThenSection<string>() ?? ParentConfig.ClientId;
-            set => _clientId = value;
+            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+            set => _clientId = value?.Trim();
         }
 
-        public virtual string ClientSecret
+        [StateDump]
+        public string ClientSecret
         {
-            get => GetFromFieldThenSection<string>() ?? ParentConfig.ClientSecret;
-            set => _clientSecret = value;
+            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+            set => _clientSecret = value?.Trim();
         }
-        
-        public virtual MultiStringValue Scope
+
+        [StateDump]
+        public MultiStringValue Scope
         {
-            get => GetFromFieldThenSection<MultiStringValue>() ?? ParentConfig.Scope;
+            get => GetScopeAsync(new AuthContext(GrantType, this)).Result;
             set => _scope = value;
         }
-
+        
         public IConfiguration Configuration => Section;
 
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientIdAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (IsConfigDelegated || string.IsNullOrWhiteSpace(_clientId))
+                return ParentConfig.GetClientIdAsync(authContext, cancellationToken);
+            
+            return Task.FromResult(Outcome<string>.Success(_clientId));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<string>> GetClientSecretAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken = null)
+        {
+            if (IsConfigDelegated || string.IsNullOrWhiteSpace(_clientSecret))
+                return ParentConfig.GetClientSecretAsync(authContext, cancellationToken);
+            
+            return Task.FromResult(Outcome<string>.Success(_clientSecret));
+        }
+
+        /// <inheritdoc />
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null)
+        {
+            if (IsConfigDelegated || string.IsNullOrWhiteSpace(_scope))
+                return ParentConfig.GetScopeAsync(authContext, cancellationToken);
+            
+            return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
+        }
+        
         public static ConfigPath GetServiceConfigPath(string serviceName = null)
         {
             if (serviceName is null or ServicesConfigName)
-                return $"{TetraPakAuthConfig.Identifier}{ConfigPath.Separator}{ServicesConfigName}";
+                return $"{TetraPakAuthConfig.DefaultSectionIdentifier}{ConfigPath.Separator}{ServicesConfigName}";
 
             return serviceName.Contains(':')
                 ? serviceName 
-                : $"{TetraPakAuthConfig.Identifier}:{ServicesConfigName}:{serviceName}";
+                : $"{TetraPakAuthConfig.DefaultSectionIdentifier}:{ServicesConfigName}:{serviceName}";
         }
         
         public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)
         {
             return ServiceProvider.GetService<ServiceInvalidEndpoint>()?.WithInformation(endpointName, issues);
         }
-
+        
         public ServiceAuthConfig(
             AmbientData ambientData,
             IServiceAuthConfig parentConfig,

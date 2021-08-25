@@ -1,10 +1,14 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TetraPak.Configuration;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
-    ///   Classes implementing this contract can provide information needed fot authorization purposes. 
+    ///   Classes implementing this contract can provide information needed for authorization purposes. 
     /// </summary>
     public interface IServiceAuthConfig 
     {
@@ -12,21 +16,54 @@ namespace TetraPak.AspNet.Auth
         ///   Specifies the grant type (OAuth) or authorization mechanism. 
         /// </summary>
         GrantType GrantType { get; }
-        
+
         /// <summary>
-        ///   Gets the client id.
+        ///   Gets a client id.
         /// </summary>
-        string ClientId { get; }
+        /// <param name="authContext">
+        ///     Details the auth context in which the (confidential) client secrets are requested.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Cancellation token for cancellation the operation.
+        /// </param>
+        Task<Outcome<string>> GetClientIdAsync(AuthContext authContext, CancellationToken? cancellationToken = null);
         
         /// <summary>
         ///   Gets a client secret.
         /// </summary>
-        string ClientSecret { get; }
-        
+        /// <param name="authContext">
+        ///   Details the auth context in which the (confidential) client secrets are requested.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Cancellation token for cancellation the operation.
+        /// </param>
+        Task<Outcome<string>> GetClientSecretAsync(AuthContext authContext, CancellationToken? cancellationToken = null);
+
         /// <summary>
         ///   Gets a scope to be requested for authorization.
         /// </summary>
-        MultiStringValue Scope { get; }
+        /// <param name="authContext">
+        ///   Details the auth context in which the (confidential) client secrets are requested.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Cancellation token for cancellation the operation.
+        /// </param>
+        Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken = null);
+
+        /// <summary>
+        ///   Gets a "raw" configured value, as it is specified within the <see cref="IConfiguration"/> sources,
+        ///   unaffected by delegates or other internal types of logic.
+        /// </summary>
+        /// <param name="key">
+        ///   Identifies the requested value.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="string"/> when a value is configured; otherwise <c>null</c>.
+        /// </returns>
+        string? GetConfiguredValue(string key);
 
         /// <summary>
         ///   Gets the configuration path.
@@ -41,6 +78,11 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets an <see cref="AmbientData"/> object.
         /// </summary>
-        AmbientData AmbientData { get; } 
+        AmbientData AmbientData { get; }
+
+        /// <summary>
+        ///   Gets a declaring configuration (when this configuration is a sub configuration).
+        /// </summary>
+        IServiceAuthConfig? ParentConfig { get; }
     }
 }
