@@ -48,20 +48,6 @@ This [Nuget][nuget] package contains additional code APIs and tools to help you 
 > 
 > If this is the case then you should rely on the [TetraPak.AspNet.Api][nuget-tetrapak-api] Nuget package. By adding this package, as it implicitly relies on the [TetraPak.AspNet][nuget-tetrapak-app] package, you will get the full support for both views and API endpoints.
 
-There are three documents to help you get up to speed using the [TetraPak.AspNet.Api][nuget-tetrapak-api]:
-
-- [README][tetra-pak-aspnet-api]
-  
-  This document covers the introduction, overview and details of the Nuget package's code APIs. Start here if you have the time and want the full picture.
-
-- [Recipe][tetra-pak-aspnet-api-recipe]
-
-  Provides a walk-through building a very simple ASP.NET web API and integrate it with the Tetra Pak Auth Services. This might be a great place to start for a quick introduction without too many details.
-
-- [Cheat Sheet][tetra-pak-aspnet-api-cheat-sheet]
-
-  A very fast and no-nonsense checklist for quickly integrating an existing ASP.NET Core/5+ web API with the Tetra Pak Auth Services. Start here if you have used the SDK for this purpose one or two times before and just need a quick reminder.
-
 ## General Concepts
 
 Regardless of what type of web project you are building - a web app or a web API (or both) - you might find it useful to understand the concepts supported by this SDK. 
