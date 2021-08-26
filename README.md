@@ -316,6 +316,7 @@ The first (implicit) method is what you should normally use, as it guarantees yo
 The Implicit method is simply setting the `ASPNETCORE_ENVIRONMENT` environment variable. If you run your project locally you can do this by opening your project's `launchSettings.json` file (located under the project's `Properties` sub folder). In this (JSON) file you see a `profiles` cofiguration section, like in this example:
 
 ```json
+{
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -334,6 +335,7 @@ The Implicit method is simply setting the `ASPNETCORE_ENVIRONMENT` environment v
       }
     }
   }
+}
 
 ```
 
@@ -349,22 +351,37 @@ Please consult the documentation for your preferred hosting service to learn how
 
 #### Explicit Runtime Environment Method
 
-As already stated, this method should only be considered when you, for whatever reason, need to run your project in a runtime environment that differs from Tetra Pak Auth Services. This methos relies on the `TetraPakAuthConfig` code API and overrides the value specified by runtime variable `ASPNETCORE_ENVIRONMENT`.
+As already stated, this method should only be considered when you, for whatever reason, need to run your project in a runtime environment that differs from Tetra Pak Auth Services. This method relies on the `TetraPakAuthConfig` code API and overrides the value specified by runtime variable `ASPNETCORE_ENVIRONMENT`.
 
-To explicitly specify a runtime environment **for the Tetra Pak Auth Services integration** (it does not affect any other logic you might have in your project) just add an `Environment` value to the SDK section of your `appsettings.json` file(s), like so:
+> *Please note that setting the runtime environment explicitly only affects the SDK. Most importantly, the SDK will ensure the correct services, in the specified environment, will be consumed. Your own code, or code from other libraries you are including will not be affected by this value.*
+
+To explicitly specify a runtime environment for the Tetra Pak Auth Services integration just add an `Environment` value to the SDK section of your `appsettings.json` file(s), like so:
 
 ```json
-"TetraPak": {
+{
+  "TetraPak": {
     "ClientId": "noI7G3H457y5HQIkzwxa6XI7Smg2Iyxo",
     "Environment": "Migration"
-  },
+  }
+}
   ```
 
 The SDK will parse the value to a `RuntimeEnvironment` (enum) value.
 
 ### Identity
 
--- TODO --
+> *This section is provided to allow a better understanding. The construction of actor identity is automatically taken care of by the SDK but it might be useful to have some insight for better diagnostic capabilities.*
+
+After an actor is successfully authenticated his/her/its identity must be constructed. In its simplest form the identity can be just a "username" or UPN (Unique Principal Name) but often you also want details such as a users first and last name, email and so on. These details is generally called "claims" and the actor's identity (including its claims) are provided through your controller's `User` property (provided by the current [`HttpContext`][md-code-api-httpcontext]). The value you get back is an [`ClaimsPrincipal`][md-code-api-claimsprincipal] object.
+
+The SDK injects its own way for building this [`ClaimsPrincipal`][md-code-api-ClaimsPrincipal], however, through the [`TetraPakClaimsTransformation`][md-code-api-TetraPakClaimsTransformation] class. This class implements the (ASP.NET) [`IClaimsTransformation`](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.IClaimsTransformation?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0) contract and is automatically injected into the DI container by the methods you use for setting up authentication, such as [`IServiceCollection.AddTetraPakOidcAuthentication`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_TetraPakAuth.md#tetrapakauthaddtetrapakoidcauthenticationiservicecollection-method) (for web apps) or [`IServiceCollection.AddJwtAuthentication`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#tetrapakapiauthaddjwtauthenticationiservicecollection-jwbearerassertionoptions-method) (for web APIs).
+
+You *can* inject this Tetra Pak specific claims transformation explicitly by calling [`IServiceCollection.AddTetraPakClaimsTransformation`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#tetrapakclaimstransformationhelperaddtetrapakclaimstransformationiservicecollection-method) (for web apps) or [`IServiceCollection.AddTetraPakApiClaimsTransformation`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformationHelper.md#tetrapakapiclaimstransformationhelperaddtetrapakapiclaimstransformationiservicecollection-method) (for web APIs). The API-flavoured version overrides the default implementation for claims transformation to support the token exchange flow, which might be necessary when it interrogates the Tetra Pak Auth Services for user information (claims).
+
+## Planned Features
+
+- The Open Id Connect [DiscoveryDocument][md-code-api-discoverydocument] will support falling back to locally cached object when reading from (remote) master source fails
+- Restructuring. Code APIs might be moved between the two Nuget packages as needs and improved insight appears.
 
 [tetra-pak-aspnet]: ./TetraPak.AspNet/README.md
 [tetra-pak-aspnet_dependency-injection]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#startup
@@ -376,7 +393,15 @@ The SDK will parse the value to a `RuntimeEnvironment` (enum) value.
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
 [doc-webapp-overview-middleware]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#middleware
 [md-code-api-tetrapakauthconfig]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md
-[md-code-api-runtimeenvironment]: ./TetraPak.AspNet/_docs/_codeApi/
+[md-code-api-runtimeenvironment]: --TODO-- (link to TetraPak.Common GitHub documentation)
+[md-code-api-discoverydocument]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md
+[md-code-api-TetraPakClaimsTransformation]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformation.md
+[md-code-api-tetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformation.md
+[md-code-api-addtetrapakclaimstransformation]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakWebClientClaimsTransformationHelper.md#tetrapakwebclientclaimstransformationhelperaddtetrapakuserinformationiservicecollection-method
+[md-code-api-addtetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_codeApi/
+
+[md-code-api-httpcontext]: https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase.HttpContext?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0
+[md-code-api-ClaimsPrincipal]: https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
 [github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api

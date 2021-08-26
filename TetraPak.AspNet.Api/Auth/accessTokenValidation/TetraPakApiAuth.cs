@@ -16,7 +16,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <returns>
         ///   
         /// </returns>
-        public static IServiceCollection AddTetraPakWebApiAccessTokenAuthentication(this IServiceCollection services)
+        public static IServiceCollection AddTetraPakApiAccessTokenAuthentication(this IServiceCollection services)
         {
             services.TryAddTransient<UserInformationProvider>();
             services.TryAddSingleton<ITokenExchangeService,TetraPakTokenExchangeService>();

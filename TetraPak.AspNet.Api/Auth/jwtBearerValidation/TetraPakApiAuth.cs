@@ -11,6 +11,9 @@ using TetraPak.Caching;
 
 namespace TetraPak.AspNet.Api.Auth
 {
+    /// <summary>
+    ///   Provides convenience- and extension methods for Tetra Pak auth purposes.
+    /// </summary>
     partial class TetraPakApiAuth // JWT Bearer validation 
     {
         /// <summary>
@@ -58,7 +61,7 @@ namespace TetraPak.AspNet.Api.Auth
 
             addCachingIfAllowed();
             
-            c.AddTetraPakWebApiClaimsTransformation();
+            c.AddTetraPakApiClaimsTransformation();
             c.AddTetraPakUserInformation();
             
             c.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>(

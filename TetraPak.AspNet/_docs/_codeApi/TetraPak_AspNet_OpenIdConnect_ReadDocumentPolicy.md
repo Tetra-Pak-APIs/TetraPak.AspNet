@@ -1,6 +1,7 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet.OpenIdConnect](TetraPak_AspNet_OpenIdConnect.md 'TetraPak.AspNet.OpenIdConnect')
 ## ReadDocumentPolicy Enum
+Used to specify a fallback policy to be used when reading a [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
 ```csharp
 public enum ReadDocumentPolicy
 
@@ -30,3 +31,6 @@ Try reading from master source, such as a remote service.
 `None` 0  
 No fallback allowed; reading document will fail.  
   
+#### See Also
+- [ReadAsync(ReadDiscoveryDocumentArgs)](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md#TetraPak_AspNet_OpenIdConnect_DiscoveryDocument_ReadAsync(TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs) 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument.ReadAsync(TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs)')
+- [ReadDiscoveryDocumentArgs](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs')

@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## TetraPakAuthConfig Class
-Provides access to the main Tetra Pak section in the configuration.    
+Provides a code API to the main Tetra Pak section in the configuration.    
 ```csharp
 public class TetraPakAuthConfig : TetraPak.Configuration.ConfigurationSection,
 TetraPak.AspNet.Auth.IServiceAuthConfig

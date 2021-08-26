@@ -1,0 +1,160 @@
+#### [TetraPak.AspNet.Api](index.md 'index')
+### [TetraPak.AspNet.Api.Auth](TetraPak_AspNet_Api_Auth.md 'TetraPak.AspNet.Api.Auth')
+## TetraPakApiAuth Class
+```csharp
+public static class TetraPakApiAuth
+```
+
+Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakApiAuth  
+### Methods
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)'></a>
+## TetraPakApiAuth.AddJwtAuthentication(IServiceCollection, JwBearerAssertionOptions) Method
+Configures the app service for Jwt Bearer Authentication.  
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddJwtAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection c, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions options=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)_c'></a>
+`c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+A [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection'), to be configured for the requested auth flow.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)_options'></a>
+`options` [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions')  
+Options governing how/what to validate JWT bearer tokens.   
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection') instance.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)'></a>
+## TetraPakApiAuth.AddJwtAuthentication&lt;TCache&gt;(IServiceCollection, JwBearerAssertionOptions) Method
+Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.  
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddJwtAuthentication<TCache>(this Microsoft.Extensions.DependencyInjection.IServiceCollection c, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions options=null)
+    where TCache : class, TetraPak.Caching.ITimeLimitedRepositories;
+```
+#### Type parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)_TCache'></a>
+`TCache`  
+Specifies a class for implementing caching (must implement [TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')).  
+  
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)_c'></a>
+`c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+A [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection'), to be configured for the requested auth flow.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddJwtAuthentication_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions)_options'></a>
+`options` [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions')  
+Options governing how/what to validate JWT bearer tokens.   
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection') instance.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakApiAccessTokenAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
+## TetraPakApiAuth.AddTetraPakApiAccessTokenAuthentication(IServiceCollection) Method
+Configures a basic authentication scheme for Tetra Pak minted access tokens.  
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakApiAccessTokenAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakApiAccessTokenAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services'></a>
+`services` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The dependency injection service collection.  
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment_bool)'></a>
+## TetraPakApiAuth.UseJwtAuthentication(IApplicationBuilder, IWebHostEnvironment, bool) Method
+Installs JWT authentication middleware  
+(and, optionally, a built-in local "development proxy"). Please see remarks.   
+```csharp
+public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseJwtAuthentication(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, bool enableTetraPakMessageId=true);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment_bool)_app'></a>
+`app` [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+An [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder') instance.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment_bool)_env'></a>
+`env` [Microsoft.AspNetCore.Hosting.IWebHostEnvironment](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Hosting.IWebHostEnvironment 'Microsoft.AspNetCore.Hosting.IWebHostEnvironment')  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment_bool)_enableTetraPakMessageId'></a>
+`enableTetraPakMessageId` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`true`)<br />  
+Specifies whether to also enforce the Tetra Pak message id functionality.  
+This is akin to calling [UseTetraPakMessageId(IApplicationBuilder)](TetraPak_AspNet_Api_TetraPakApiHelper.md#TetraPak_AspNet_Api_TetraPakApiHelper_UseTetraPakMessageId(Microsoft_AspNetCore_Builder_IApplicationBuilder) 'TetraPak.AspNet.Api.TetraPakApiHelper.UseTetraPakMessageId(Microsoft.AspNetCore.Builder.IApplicationBuilder)').  
+  
+#### Returns
+[Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+An [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder') instance.  
+### Remarks
+Enabling this mechanism is a flexible way to protect your secure endpoints. When enabled  
+client must call your protected endpoints through a reversed proxy acting as your API's "sidecar".  
+The sidecar will handle client authentication and, when successful, replace the client's  
+access token with a short lived JWT Bearer token, to be exchanged only between the service and its sidecar.  
+This JWT Bearer will automatically be validated for every request by the middleware installed by this method.  
+
+
+
+
+  
+While securing your traffic the flipside to this approach is that your service cannot function  
+without a sidecar. When there is no internal JWT Bearer to validate the request will automatically  
+fail and return an "Unauthorized" response ([System.Net.HttpStatusCode.Unauthorized](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpStatusCode.Unauthorized 'System.Net.HttpStatusCode.Unauthorized')).  
+This makes it impossible to host your service locally for debugging during development.  
+
+
+
+
+  
+To deal with this you might have to introduce conditional validation and even remove authentication  
+completely when debugging your service locally. This is a very bad idea as it would mean you would  
+effectively be debugging code that is different from the one deployed to its hosting environments.   
+
+
+
+
+  
+A better solution is using a local development proxy (sidecar) that acts as the real thing.  
+You can do this by simply adding a `DevProxy` flag to the `ValidateJwtBearer` sub section  
+in your json configuration in appsettings.json or (better yet)  
+appsettings.Development.json, like so:  
+
+
+```csharp
+  
+ "TetraPak": {  
+    "ClientId": "abcd1234",  
+    "ValidateJwtBearer": {  
+         "Audience": "demo-api",  
+         "DevProxy": "demo-api-proxy"  
+    }  
+}  
+```
+  
+The value for the `DevProxy` key should be the Apigee proxy name (you probably need to ask for it),  
+or the full proxy URL. Please note that the local development proxy will ONLY be enabled when  
+your service is running in the "Development" runtime environment, regardless of the your configuration.  
+This is to ensure you cannot accidentally deploy it to any other environment.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseMessageId(Microsoft_AspNetCore_Builder_IApplicationBuilder)'></a>
+## TetraPakApiAuth.UseMessageId(IApplicationBuilder) Method
+Ensures a unique message id is available through the whole request/response roundtrip.   
+```csharp
+public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseMessageId(this Microsoft.AspNetCore.Builder.IApplicationBuilder app);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseMessageId(Microsoft_AspNetCore_Builder_IApplicationBuilder)_app'></a>
+`app` [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+The [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder') instance.  
+  
+#### Returns
+[Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+The [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder') instance.  
+#### Exceptions
+[System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
+The method requires an [TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig') service is available  
+though the DI service locator but no such service could be obtained.   
+  

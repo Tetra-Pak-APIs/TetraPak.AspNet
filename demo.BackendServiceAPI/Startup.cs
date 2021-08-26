@@ -25,8 +25,8 @@ namespace demo.BackendServiceAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.BackendServiceAPI", Version = "v1"});
             });
-            services.AddTetraPakWebApiAccessTokenAuthentication();
-            services.AddTetraPakWebApiClaimsTransformation();
+            services.AddTetraPakApiAccessTokenAuthentication();
+            services.AddTetraPakApiClaimsTransformation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

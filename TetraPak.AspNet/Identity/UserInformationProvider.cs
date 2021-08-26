@@ -32,11 +32,11 @@ namespace TetraPak.AspNet.Identity
         ///   Obtains (and, optionally, caches) user information. 
         /// </summary>
         /// <param name="accessToken">
-        ///     An access token, authenticating the requesting actor. 
+        ///   An access token, authenticating the requesting actor. 
         /// </param>
         /// <param name="cached">
-        ///     (optional; default=<c>true</c>)<br/>
-        ///     When set, the value will cache the downloaded result (and fetch it from the internal cache if present). 
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   When set, the value will cache the downloaded result (and fetch it from the internal cache if present). 
         /// </param>
         /// <returns>
         ///   A <see cref="UserInformation"/> value.

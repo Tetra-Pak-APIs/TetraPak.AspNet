@@ -24,7 +24,8 @@
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DocumentationFile>bin\Release\TetraPak.AspNet.xml</DocumentationFile>
-        <DefaultDocumentationFileNameMode>NameAndMd5Mix</DefaultDocumentationFileNameMode>
+        <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
+        <DefaultDocumentationGeneratedPages>Namespaces, Types</DefaultDocumentationGeneratedPages>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -56,7 +57,7 @@
     </PackageReference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />
+    <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />
   </Target>
 
 </Project>

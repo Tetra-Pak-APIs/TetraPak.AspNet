@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Auth
         public static void AddTetraPakWebClientAuthentication(this IServiceCollection services)
         {
             services.TryAddSingleton<TetraPakAuthConfig>();
-            services.AddTetraPakWebClientClaimsTransformation();
+            services.AddTetraPakClaimsTransformation();
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakAuthConfig>();
@@ -149,7 +149,7 @@ namespace TetraPak.AspNet.Auth
         where TCache : class, ITimeLimitedRepositories
         {
             services.AddSingleton<TetraPakAuthConfig>();
-            services.AddTetraPakWebClientClaimsTransformation();
+            services.AddTetraPakClaimsTransformation();
             services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
