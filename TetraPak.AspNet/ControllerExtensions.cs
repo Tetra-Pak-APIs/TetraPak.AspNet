@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet
 {
@@ -21,17 +20,44 @@ namespace TetraPak.AspNet
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
+        /// <exception cref="ConfigurationException">
+        ///   No <see cref="TetraPakAuthConfig"/> service could be obtained from service locator.
+        /// </exception>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this Controller self)
         {
             if (!self.TryGetTetraPakAuthConfig(out var config))
                 return Task.FromResult(Outcome<ActorToken>.Fail(
-                    new Exception(
-                        "Cannot get access token. Failed when trying to obtain a "+
+                    new ConfigurationException(
+                        "Cannot get access token. Failed to obtain a "+
                         $" configuration ({typeof(TetraPakAuthConfig)})")));
                 
             return self.HttpContext.Request.GetAccessTokenAsync(config);
         }
-        
+
+        /// <summary>
+        ///   Gets an identity token if present in the request.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="Controller"/> instance.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <exception cref="ConfigurationException">
+        ///   No <see cref="TetraPakAuthConfig"/> service could be obtained from service locator.
+        /// </exception>
+        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this Controller self)
+        {
+            if (!self.TryGetTetraPakAuthConfig(out var config))
+                return Task.FromResult(Outcome<ActorToken>.Fail(
+                    new ConfigurationException(
+                        "Cannot get identity token. Failed to obtain a "+
+                        $" configuration ({typeof(TetraPakAuthConfig)})")));
+                
+            return self.HttpContext.Request.GetAccessTokenAsync(config);
+        }
+
         /// <summary>
         ///   Attempts obtaining the <see cref="TetraPakAuthConfig"/> instance.
         /// </summary>

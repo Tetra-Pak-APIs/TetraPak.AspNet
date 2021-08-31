@@ -44,6 +44,9 @@ namespace TetraPak.AspNet
         /// <inheritdoc />
         protected override string SectionIdentifier => DefaultSectionIdentifier;
         
+        /// <summary>
+        ///   The name of the value in configuration. 
+        /// </summary>
         protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer";
         
         // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
@@ -58,7 +61,7 @@ namespace TetraPak.AspNet
         TimeSpan? _defaultCachingLifetime;
         bool? _isPkceUsed;
         bool? _enableDiagnostics;
-        MultiStringValue? _scope;
+        MultiStringValue? _scope; // todo Why is this field being warned about not being used while others doesn't?
         GrantType _method;
         // ReSharper restore NotAccessedField.Local
         string? _authorityUrl;
@@ -94,7 +97,7 @@ namespace TetraPak.AspNet
         public IServiceAuthConfig ParentConfig => null!;
         
         /// <inheritdoc />
-        protected override FieldInfo OnGetField(string fieldName)
+        protected override FieldInfo? OnGetField(string fieldName)
         {
             var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             return field ?? base.OnGetField(fieldName);
@@ -313,7 +316,7 @@ namespace TetraPak.AspNet
         {
             get
             {
-                var outcome = GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+                var outcome = GetClientIdAsync(new AuthContext(GrantType, this)).Result;
                 return outcome ? outcome.Value : throw new ConfigurationException("Client id could not be resolved");
             }
             set => _clientId = value;
@@ -328,7 +331,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
-                return outcome ? outcome.Value : null; //throw new ConfigurationException("Client secret could not be resolved"); obsolete
+                return outcome ? outcome.Value : null;
             }
             set => _clientSecret = value;
         }
@@ -342,7 +345,7 @@ namespace TetraPak.AspNet
         {
             get
             {
-                var outcome = GetScopeAsync(new AuthContext(GrantType, this)).Result;
+                var outcome = GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
                 return outcome ? outcome.Value : throw new ConfigurationException("Scope could not be resolved");
             }
             set => _clientSecret = value;
@@ -351,19 +354,20 @@ namespace TetraPak.AspNet
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(
             AuthContext authContext, 
-            CancellationToken? cancellationToken = null) => OnGetClientIdAsync(authContext);
+            CancellationToken? cancellationToken = null) => OnGetClientIdAsync(authContext, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientSecretAsync(
             AuthContext authContext, 
-            CancellationToken? cancellationToken = null) => OnGetClientSecretAsync(authContext);
+            CancellationToken? cancellationToken = null) => OnGetClientSecretAsync(authContext, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext, 
-            CancellationToken? cancellationToken = null) => OnGetScopeAsync(authContext);
+            MultiStringValue? useDefault = null,
+            CancellationToken? cancellationToken = null) => OnGetScopeAsync(authContext, useDefault, cancellationToken);
 
-        public string GetConfiguredValue(string key) => Section[key];
+        public string? GetConfiguredValue(string key) => Section[key];
 
         /// <summary>
         ///   Gets a client id.
@@ -371,7 +375,13 @@ namespace TetraPak.AspNet
         /// <param name="authContext">
         ///   Details the auth context in which the (confidential) client secrets are requested.
         /// </param>
-        protected virtual async Task<Outcome<string>> OnGetClientIdAsync(AuthContext authContext)
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Enables operation cancellation.
+        /// </param>
+        protected virtual async Task<Outcome<string>> OnGetClientIdAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken)
         {
             if (ConfigDelegate is null)
             {
@@ -379,7 +389,7 @@ namespace TetraPak.AspNet
                 return Outcome<string>.Success(value);
             }
             
-            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext);
+            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
             return outcome
                 ? Outcome<string>.Success(outcome.Value.Identity)
                 : throw outcome.Exception;
@@ -391,7 +401,13 @@ namespace TetraPak.AspNet
         /// <param name="authContext">
         ///   Details the auth context in which the (confidential) client secrets are requested.
         /// </param>
-        protected virtual async Task<Outcome<string>> OnGetClientSecretAsync(AuthContext authContext)
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Enables operation cancellation.
+        /// </param>
+        protected virtual async Task<Outcome<string>> OnGetClientSecretAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken)
         {
             if (ConfigDelegate is null)
             {
@@ -399,7 +415,7 @@ namespace TetraPak.AspNet
                 return Outcome<string>.Success(secret);
             }
             
-            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext);
+            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
             return outcome
                 ? Outcome<string>.Success(outcome.Value.Secret)
                 : throw outcome.Exception;
@@ -411,17 +427,36 @@ namespace TetraPak.AspNet
         /// <param name="authContext">
         ///   Details the auth context in which the (confidential) client secrets are requested.
         /// </param>
-        protected virtual async Task<Outcome<MultiStringValue>> OnGetScopeAsync(AuthContext authContext)
+        /// <param name="useDefault">
+        ///   (optional)<br/>
+        ///   Specifies a default value to be returned if scope cannot be resolved.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Cancellation token for cancellation the operation.
+        /// </param>
+        protected virtual async Task<Outcome<MultiStringValue>> OnGetScopeAsync(
+            AuthContext authContext, 
+            MultiStringValue? useDefault = null,
+            CancellationToken? cancellationToken = null)
         {
             if (ConfigDelegate is null)
             {
                 var scope = GetFromFieldThenSection<MultiStringValue>(propertyName: nameof(Scope));
-                return Outcome<MultiStringValue>.Success(scope);
+                if (scope is {})
+                    return Outcome<MultiStringValue>.Success(scope);
+
+                return useDefault is { }
+                    ? Outcome<MultiStringValue>.Success(useDefault)
+                    : Outcome<MultiStringValue>.Fail(new Exception($"Cannot resolve scope"));
             }
             
-            var outcome = await ConfigDelegate.GetScopeAsync(authContext);
-            return outcome
-                ? Outcome<MultiStringValue>.Success(outcome.Value)
+            var outcome = await ConfigDelegate.GetScopeAsync(authContext, cancellationToken);
+            if (outcome)
+                return outcome;
+            
+            return useDefault is { }
+                ? Outcome<MultiStringValue>.Success(useDefault)
                 : throw outcome.Exception;
         }
 

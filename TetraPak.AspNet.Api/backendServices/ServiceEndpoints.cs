@@ -12,6 +12,8 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
@@ -23,19 +25,19 @@ namespace TetraPak.AspNet.Api
     {
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType; 
-        string _host;
-        string _basePath;
-        string _clientId;
-        string _clientSecret;
-        MultiStringValue _scope;
+        string? _host;
+        string? _basePath;
+        string? _clientId;
+        string? _clientSecret;
+        MultiStringValue? _scope;
         // ReSharper restore NotAccessedField.Local
 
         readonly Dictionary<string, ServiceEndpoint> _endpoints = new();
-        List<Exception> _issues;
+        List<Exception>? _issues;
 
         public bool IsValid => _issues is null;
 
-        public IEnumerable<Exception> GetIssues() => _issues;
+        public IEnumerable<Exception>? GetIssues() => _issues;
         
         public IServiceAuthConfig ServiceAuthConfig { get; private set; }
 
@@ -70,29 +72,31 @@ namespace TetraPak.AspNet.Api
         }
 
         [StateDump]
-        public virtual string ClientId
+        public virtual string? ClientId
         {
             get
             {
                 if (AuthConfig.IsDelegated)
                     return ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
                 
-                return GetFromFieldThenSection<string>() ?? ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+                return GetFromFieldThenSection<string>() 
+                       ?? ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
             }
-            set => _clientId = value?.Trim();
+            set => _clientId = value?.Trim() ?? null!;
         }
 
         [StateDump]
-        public virtual string ClientSecret
+        public virtual string? ClientSecret
         {
             get
             {
                 if (AuthConfig.IsDelegated)
                     return ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
                 
-                return GetFromFieldThenSection<string>() ?? ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+                return GetFromFieldThenSection<string>() 
+                       ?? ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
             }
-            set => _clientSecret = value?.Trim();
+            set => _clientSecret = value?.Trim() ?? null!;
         }
 
         [StateDump]
@@ -103,7 +107,8 @@ namespace TetraPak.AspNet.Api
                 if (AuthConfig.IsDelegated)
                     return ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
                 
-                return GetFromFieldThenSection<MultiStringValue>() ?? ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
+                return GetFromFieldThenSection<MultiStringValue>() 
+                       ?? ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
             }
             set => _scope = value;
         }
@@ -132,7 +137,8 @@ namespace TetraPak.AspNet.Api
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
-            AuthContext authContext,
+            AuthContext authContext, 
+            MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
         {
             if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_scope))
@@ -148,7 +154,7 @@ namespace TetraPak.AspNet.Api
         ///   The default host address.
         /// </summary>
         [StateDump]
-        public string Host
+        public string? Host
         {
             get => GetFromFieldThenSection<string>(); 
             set => _host = value;
@@ -158,10 +164,10 @@ namespace TetraPak.AspNet.Api
         ///   A default base path.
         /// </summary>
         [StateDump]
-        public string BasePath
+        public string? BasePath
         {
             get => GetFromFieldThenSection<string>(); 
-            set => _basePath = value;
+            set => _basePath = value!;
         }
 
         /// <summary>
@@ -193,7 +199,7 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="ServiceEndpoint"/> object on success,
         ///   or a <see cref="ServiceInvalidEndpoint"/> on failure.
         /// </returns>
-        public ServiceEndpoint GetEndpoint([CallerMemberName] string propertyName = null) =>
+        public ServiceEndpoint GetEndpoint([CallerMemberName] string propertyName = null!) =>
             getServiceEndpoint(propertyName);
         
         public ServiceEndpoint this[string endpointName] => getServiceEndpoint(endpointName);
@@ -279,7 +285,7 @@ namespace TetraPak.AspNet.Api
             };
         }
 
-        void addUrl(ServiceEndpoint url, PropertyInfo property)
+        void addUrl(ServiceEndpoint url, PropertyInfo? property)
         {
             if (!_endpoints.ContainsKey(url.Name))
             {
@@ -326,6 +332,7 @@ namespace TetraPak.AspNet.Api
             OnInitializeEndpoints(serviceAuthConfig, sectionIdentifier);
         }
         
+#pragma warning disable 8618
         public ServiceEndpoints(
             IServiceAuthConfig serviceAuthConfig, 
             string sectionIdentifier = "Endpoints")
@@ -333,6 +340,7 @@ namespace TetraPak.AspNet.Api
         {
             initialize(serviceAuthConfig, sectionIdentifier);
         }
+#pragma warning restore 8618
 
         internal class UntypedServiceEndpoints : ServiceEndpoints
         {

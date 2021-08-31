@@ -10,6 +10,8 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     [DebuggerDisplay("{" + nameof(ConfigPath) + "}")]
@@ -19,9 +21,9 @@ namespace TetraPak.AspNet.Api
         
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType;
-        string _clientId;
-        string _clientSecret;
-        MultiStringValue _scope;
+        string? _clientId;
+        string? _clientSecret;
+        MultiStringValue? _scope;
         // ReSharper restore NotAccessedField.Local
 
         IServiceProvider ServiceProvider { get; }
@@ -74,29 +76,29 @@ namespace TetraPak.AspNet.Api
                 });
             set => _grantType = value;
         }
-        
+
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Section[key];
+        public string? GetConfiguredValue(string key) => Section?[key];
         
         [StateDump]
-        public string ClientId
+        public string? ClientId
         {
             get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
-            set => _clientId = value?.Trim();
+            set => _clientId = value?.Trim() ?? null!;
         }
 
         [StateDump]
-        public string ClientSecret
+        public string? ClientSecret
         {
             get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
-            set => _clientSecret = value?.Trim();
+            set => _clientSecret = value?.Trim() ?? null!;
         }
 
         [StateDump]
-        public MultiStringValue Scope
+        public MultiStringValue? Scope
         {
             get => GetScopeAsync(new AuthContext(GrantType, this)).Result;
-            set => _scope = value;
+            set => _scope = value!;
         }
         
         public IConfiguration Configuration => Section;
@@ -125,16 +127,17 @@ namespace TetraPak.AspNet.Api
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
-            AuthContext authContext,
+            AuthContext authContext, 
+            MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
         {
             if (IsConfigDelegated || string.IsNullOrWhiteSpace(_scope))
-                return ParentConfig.GetScopeAsync(authContext, cancellationToken);
+                return ParentConfig.GetScopeAsync(authContext, useDefault, cancellationToken);
             
             return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
         }
         
-        public static ConfigPath GetServiceConfigPath(string serviceName = null)
+        public static ConfigPath GetServiceConfigPath(string serviceName = null!)
         {
             if (serviceName is null or ServicesConfigName)
                 return $"{TetraPakAuthConfig.DefaultSectionIdentifier}{ConfigPath.Separator}{ServicesConfigName}";
@@ -146,7 +149,7 @@ namespace TetraPak.AspNet.Api
         
         public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)
         {
-            return ServiceProvider.GetService<ServiceInvalidEndpoint>()?.WithInformation(endpointName, issues);
+            return ServiceProvider.GetRequiredService<ServiceInvalidEndpoint>().WithInformation(endpointName, issues);
         }
         
         public ServiceAuthConfig(

@@ -10,6 +10,8 @@ using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
 using TetraPak.Logging;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
@@ -29,7 +31,7 @@ namespace TetraPak.AspNet.Api
         ///   Gets the endpoint configuration.
         /// </summary>
         // ReSharper disable MemberCanBePrivate.Global
-        public TEndpoints Endpoints { get; private set; }
+        public TEndpoints? Endpoints { get; private set; }
 
         /// <summary>
         ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
@@ -40,60 +42,67 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets logging provider.  
         /// </summary>
-        protected ILogger Logger => Endpoints.Logger;
+        protected ILogger? Logger => Endpoints?.Logger;
 
         /// <inheritdoc />
-        public AmbientData AmbientData => Endpoints.AmbientData;
+        public AmbientData AmbientData => Endpoints!.AmbientData;
 
         public IServiceAuthConfig ParentConfig => AuthConfig;
 
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
+        protected TetraPakAuthConfig AuthConfig => Endpoints!.AuthConfig;
 
         /// <inheritdoc />
         public IConfiguration Configuration => AuthConfig.Configuration;
 
         /// <inheritdoc />
-        public ConfigPath ConfigPath => AuthConfig.ConfigPath;
+        public ConfigPath? ConfigPath => AuthConfig.ConfigPath;
         
         /// <inheritdoc />
         [StateDump]
-        public GrantType GrantType => Endpoints.GrantType;
+        public GrantType GrantType => Endpoints!.GrantType;
 
         [StateDump]
-        public string ClientId => Endpoints.ClientId;
+        public string? ClientId => Endpoints?.ClientId;
 
         [StateDump]
-        public string ClientSecret => Endpoints.ClientSecret;
+        public string? ClientSecret => Endpoints?.ClientSecret;
 
         [StateDump]
-        public MultiStringValue Scope => Endpoints.Scope;
-        
+        public MultiStringValue? Scope => Endpoints?.Scope;
+
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
+        public string GetConfiguredValue(string key) => Endpoints!.GetConfiguredValue(key);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints.GetClientIdAsync(authContext, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints!.GetClientIdAsync(authContext, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientSecretAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints.GetClientSecretAsync(authContext, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints!.GetClientSecretAsync(authContext, cancellationToken);
+
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            CancellationToken? cancellationToken = null) => Endpoints!.GetScopeAsync(authContext, null, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
-            AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints.GetScopeAsync(authContext, cancellationToken);
-
-        /// <inheritdoc />
-        public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
+            AuthContext authContext, 
+            MultiStringValue? useDefault = null,
+            CancellationToken? cancellationToken = null)
+            => Endpoints!.GetScopeAsync(authContext, useDefault, cancellationToken);
+        
         
         /// <inheritdoc />
-        public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
+        public HttpClientOptions DefaultClientOptions => Endpoints!.ClientOptions;
+        
+        /// <inheritdoc />
+        public ServiceEndpoint GetEndpoint(string name) => Endpoints![name];
 
         internal void DiagnosticsStartTimer(string timerKey)
         {
@@ -121,7 +130,7 @@ namespace TetraPak.AspNet.Api
 
         public async Task<Outcome<HttpResponseMessage>> SendAsync(
             HttpRequestMessage request, 
-            HttpClientOptions clientOptions = null,
+            HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
             var ct = cancellationToken ?? CancellationToken.None;
@@ -142,7 +151,7 @@ namespace TetraPak.AspNet.Api
         public async Task<Outcome<HttpResponseMessage>> PostAsync(
             string path,
             HttpContent content,
-            HttpClientOptions clientOptions = null,
+            HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
             var ct = cancellationToken ?? CancellationToken.None;
@@ -175,7 +184,7 @@ namespace TetraPak.AspNet.Api
             IDictionary<string, string> queryParameters, 
             HttpClientOptions clientOptions,
             CancellationToken? cancellationToken = null, 
-            string messageId = null)
+            string? messageId = null)
         {
             try
             {
@@ -197,13 +206,13 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public async Task<Outcome<HttpResponseMessage>> GetAsync(
             string path,
-            string queryParameters = null,
-            HttpClientOptions clientOptions = null,
+            string? queryParameters = null,
+            HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null,
-            string messageId = null)
+            string? messageId = null)
         {
-            if (!Endpoints.IsValid)
-                return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues(), messageId);
+            if (!Endpoints!.IsValid)
+                return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues()!, messageId);
 
             var ct = cancellationToken ?? CancellationToken.None;
             clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
@@ -243,10 +252,10 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public async Task<Outcome<T>> GetAsync<T>(
             string path, 
-            string queryParameters = null, 
-            HttpClientOptions clientOptions = null,
+            string? queryParameters = null, 
+            HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null, 
-            string messageId = null)
+            string? messageId = null)
         {
             try
             {
@@ -273,7 +282,7 @@ namespace TetraPak.AspNet.Api
             IDictionary<string, string> queryParameters,
             HttpClientOptions clientOptions,
             CancellationToken? cancellationToken = null, 
-            string messageId = null)
+            string? messageId = null)
         {
             return GetAsync(
                 path,
@@ -307,9 +316,9 @@ namespace TetraPak.AspNet.Api
         protected virtual Outcome<HttpResponseMessage> OnServiceConfigurationError(
             HttpMethod method,
             string path, 
-            string queryParameters, 
+            string? queryParameters, 
             IEnumerable<Exception> issues,
-            string messageId)
+            string? messageId)
         {
             return ServiceConfigHelper.GetServiceConfigurationErrorResponse(
                 method,
@@ -320,7 +329,7 @@ namespace TetraPak.AspNet.Api
                 Logger);
         }
         
-        Outcome<HttpResponseMessage> requestErrorOutcome(Exception exception, HttpMethod method, string url, string messageId)
+        Outcome<HttpResponseMessage> requestErrorOutcome(Exception exception, HttpMethod method, string url, string? messageId)
         {
             Logger.Error(new Exception($"Error while performing request: {method} {url}: {exception.Message}", exception)
                 ,messageId:messageId);
@@ -379,12 +388,12 @@ namespace TetraPak.AspNet.Api
             ? Outcome<ServiceEndpoints>.Success(Endpoints) 
             : Outcome<ServiceEndpoints>.Fail(new Exception("Not initialized"));
 
-        internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
-        {
-            Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
-            HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
-            Endpoints.SetBackendService(this);
-        }
+        // internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider) obsolte
+        // {
+        //     Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
+        //     HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
+        //     Endpoints.SetBackendService(this);
+        // }
 
         public BackendService()
         {
@@ -392,7 +401,10 @@ namespace TetraPak.AspNet.Api
 
         public BackendService(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
         {
-            Initialize(endpoints, httpServiceProvider);
+            Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
+            HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
+            Endpoints.SetBackendService(this);
+            // Initialize(endpoints, httpServiceProvider);
         }
     }
 }

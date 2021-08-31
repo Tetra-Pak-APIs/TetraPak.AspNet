@@ -9,13 +9,14 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class TetraPakUserInformation
     {
-        readonly AmbientData _ambientData;
-        
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
         public ILogger Logger => AmbientData.Logger;
 
+        /// <summary>
+        ///   Gets the ambient data object.
+        /// </summary>
         public AmbientData AmbientData { get; }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace TetraPak.AspNet.Identity
         /// </returns>
         public async Task<Outcome<UserInformation>> GetUserInformationAsync(ActorToken accessToken)
         {
-            var loader = new UserInformationProvider(_ambientData);
+            var loader = new UserInformationProvider(AmbientData);
             try
             {
                 var userInformation = await loader.GetUserInformationAsync(accessToken);

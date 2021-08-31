@@ -8,11 +8,11 @@
 > 
 > *Also, if you have already started integrating your web solution but are facing issues then you might find this [troubleshooting guide][tetra-pak-aspnet-use-cases] useful.*  
  
-The TetraPak.AspNet SDK is provided as a way to get more productive when writing web-based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, logging and so on. There are also some useful tools that should help you out to develop and test your solutions.
+The TetraPak.AspNet SDK is provided as a way to get more productive when writing web based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, logging and so on. There are also some useful tools that should help you out to develop and test your solutions.
 
 ## The 20 minute rule
 
-We in the Tetra Pak API innovation team tries to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that API consumers (usually developers) should never have to spend more than 20 minutes on solving a problem that is typical to most projects.
+In the Tetra Pak API innovation team we try to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that API consumers (usually developers) should never have to spend more than 20 minutes on solving a problem that is typical to most projects.
 
 We have seen over the years that many development projects spend considerable time just establishing correct and safe *auth* (authorization & authentication) before they are able to move on to building new business value. This is something we want to address with this SDK.
 

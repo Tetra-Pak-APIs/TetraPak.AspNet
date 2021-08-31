@@ -16,52 +16,111 @@
     <list default="true" id="cb860bea-00ad-4990-a894-f385618ddd96" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TetraPak.AspNet/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TetraPak.AspNet/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/accessTokenValidation/TetraPakApiAuth.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/accessTokenValidation/TetraPakApiAuth.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/claimsTransformation/TetraPakWebApiClaimsTransformationHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/claimsTransformation/TetraPakApiClaimsTransformationHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/jwtBearerValidation/TetraPakApiAuth.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/Auth/jwtBearerValidation/TetraPakApiAuth.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/TetraPak.AspNet.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/TetraPak.AspNet.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints_.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints_.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__AmbientData.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__AuthConfig.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__ConfigPath.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__Configuration.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__DefaultClientOptions.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__Endpoints.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_string_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_string_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetClientIdAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetClientSecretAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__GrantType.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__HttpServiceProvider.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__Logger.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__OnGetHttpClientAsync(TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints__OnServiceConfigurationError(System_Net_Http_HttpMethod_string_string_System_Collections_Generic_IEnumerable_System_Exception__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_DefaultClientOptions.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_GetAsync(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_GetAsync(string_string_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_string_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_).md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ApiErrorResponseHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_ClientCredentialsResponseBody.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_IClientCredentialsService.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_ITokenExchangeService.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformation.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformationHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsService.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakWebApiAccessTokenAuthenticationHandler.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TokenExchangeArgs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TokenExchangeResponse.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_BackendService_TEndpoints_.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Controllers.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Controllers_BusinessApiController.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_DevelopmentTools.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_DevelopmentTools_DevProxyHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_HttpClientOptions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_HttpServiceProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IApiLoggerProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IBackendService.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_IHttpServiceProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Mapping.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Mapping_DtoMappingStrategy.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ServiceAuthConfig.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ServiceEndpoint.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ServiceEndpointExtensions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ServiceEndpoints.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_ServiceInvalidEndpoint.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_TetraPakApiHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_TetraPakControllerFactory.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/_docs/_codeApi/index.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/BackendService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/BackendService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceAuthConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceAuthConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceConfigHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceConfigHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceEndpoint.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceEndpoint.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceEndpoints.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/backendServices/ServiceEndpoints.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.Api/request/HttpClientOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.Api/request/HttpClientOptions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TetraPak.AspNet.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet.sln.DotSettings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/Auth/TetraPakAuth.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/Auth/TetraPakAuth.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/AmbientData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/AmbientData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/Auth/IClientConfigProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/Auth/IClientConfigProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/Auth/IServiceAuthConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/Auth/IServiceAuthConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/ClaimsIdentityExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/ClaimsIdentityExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/ControllerExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/ControllerExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/HttpContextHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/HttpContextHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/Identity/TetraPakUserInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/Identity/TetraPakUserInformation.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/Identity/UserInformationProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/Identity/UserInformationProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/OpenIdConnect/DiscoveryDocument.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/OpenIdConnect/DiscoveryDocument.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/OpenIdConnect/DiscoveryDocument_io.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/OpenIdConnect/DiscoveryDocument_io.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/TetraPak.AspNet.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/TetraPak.AspNet.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakWebClientClaimsTransformationHelper.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/claimsTransformation/TetraPakWebClientClaimsTransformationHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/claimsTransformation/TetraPakClaimsTransformationHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_buildScripts/copyFiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/_buildScripts/copyFiles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo.BackendServiceAPI/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/demo.BackendServiceAPI/Startup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_AmbientData.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_AmbientData_Keys.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_AuthContext.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_GrantType.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_IAccessTokenProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_IClientConfigProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_IClientCredentialsProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_IIdentityTokenProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_IServiceAuthConfig.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_JwtHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_TetraPakAuth.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_TetraPakIdentitySource.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_ClaimsIdentityExtensions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_ConfigurationException.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_ControllerExtensions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging_DebugHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging_LoggerHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging_RouteDebugArgs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging_RouteDebuggingLogging.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Debugging_RouteDebuggingOptions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Diagnostics.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Diagnostics_ServiceDiagnostics.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_FormUrlEncodedContentHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_HttpContextHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_IMessageIdProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_ITetraPakAuthConfigDelegate.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Identity.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Identity_TetraPakUserInformation.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Identity_UserInformation.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Identity_UserInformationProvider.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Identity_UserInformationTokenValidator.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_QueryParametersHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfigDelegate.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformation.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformationHelper.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakIdentityConfig.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/_docs/_codeApi/index.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/claimsTransformation/TetraPakClaimsTransformationHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/claimsTransformation/TetraPakClaimsTransformationHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/config/TetraPakAuthConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/config/TetraPakAuthConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TetraPak.AspNet/config/TetraPakAuthConfigDelegate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TetraPak.AspNet/config/TetraPakAuthConfigDelegate.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo.WebAPI/demo.WebAPI.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/demo.WebAPI/demo.WebAPI.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo.WebApp/demo.WebApp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/demo.WebApp/demo.WebApp.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +139,9 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bd2c5d44ed6f4661b7deaa636c271d2119800/53/2651f306/IServiceAuthConfig.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/49190d21e08446cabf9d36a7e3c0b32c1aed88/24/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2ddb40b0738046108973ccf11ec57cdd91d978/a3/dabb9b79/IEnumerator`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/abd41554fa92446e91a582992c96558c15b90/7/ClaimsPrincipal.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1xDaAGOlNwYBk0o8fABLhi39X3d" />
@@ -95,14 +156,15 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="XThreadsFramesViewSplitterKey" value="0.39312038" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+    <property name="settings.editor.selected.configurable" value="RiderNuGetOptionsPageId" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected="Python.copyFiles">
+  <component name="RunManager" selected=".NET Launch Settings Profile.demo.WebApp">
     <configuration name="nugetproj" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/aligncsproj/bin/Release/net5.0/nugetproj.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -255,7 +317,17 @@
       <workItem from="1629892415592" duration="16107000" />
       <workItem from="1629963832518" duration="629000" />
       <workItem from="1629964490223" duration="2245000" />
-      <workItem from="1629970226655" duration="3165000" />
+      <workItem from="1629970226655" duration="6124000" />
+      <workItem from="1630076030029" duration="2382000" />
+      <workItem from="1630325238695" duration="2818000" />
+      <workItem from="1630330733280" duration="7173000" />
+      <workItem from="1630342238887" duration="116000" />
+      <workItem from="1630342437138" duration="2895000" />
+      <workItem from="1630345595629" duration="1239000" />
+      <workItem from="1630349090329" duration="386000" />
+      <workItem from="1630351375881" duration="864000" />
+      <workItem from="1630353703716" duration="40000" />
+      <workItem from="1630389029417" duration="663000" />
     </task>
     <servers />
   </component>
@@ -279,5 +351,51 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/demo.WebAPI/Controllers/TypedHelloWorldController.cs</url>
+          <line>25</line>
+          <properties documentPath="C:\Data\Source\APIs_to_the_world\_nuget\TetraPak.AspNet\demo.WebAPI\Controllers\TypedHelloWorldController.cs" initialLine="25" containingFunctionPresentation="method 'Get'">
+            <startOffsets>
+              <option value="857" />
+            </startOffsets>
+            <endOffsets>
+              <option value="891" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <condition expression="ambientData is null" language="C#" />
+          <url>file://$PROJECT_DIR$/TetraPak.AspNet/Identity/UserInformationProvider.cs</url>
+          <line>180</line>
+          <properties documentPath="C:\Data\Source\APIs_to_the_world\_nuget\TetraPak.AspNet\TetraPak.AspNet\Identity\UserInformationProvider.cs" initialLine="180" containingFunctionPresentation="constructor 'UserInformationProvider'">
+            <startOffsets>
+              <option value="7230" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7231" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/TetraPak.AspNet/claimsTransformation/TetraPakClaimsTransformation.cs</url>
+          <line>68</line>
+          <properties documentPath="C:\Data\Source\APIs_to_the_world\_nuget\TetraPak.AspNet\TetraPak.AspNet\claimsTransformation\TetraPakClaimsTransformation.cs" initialLine="68" containingFunctionPresentation="method 'TransformAsync'">
+            <startOffsets>
+              <option value="2442" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2443" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

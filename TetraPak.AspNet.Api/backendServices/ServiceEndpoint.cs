@@ -12,6 +12,8 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     [JsonConverter(typeof(JsonStringValueSerializer<ServiceEndpoint>))]
@@ -19,22 +21,22 @@ namespace TetraPak.AspNet.Api
     public class ServiceEndpoint : IStringValue, IServiceAuthConfig, IAccessTokenProvider
     {
         GrantType? _grantType;
-        string _clientId;
-        string _clientSecret;
-        MultiStringValue _scope;
+        string? _clientId;
+        string? _clientSecret;
+        MultiStringValue? _scope;
 
         /// <summary>
         ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
         /// </summary>
-        protected ServiceEndpoints Parent { get; private set; }
+        protected ServiceEndpoints? Parent { get; private set; }
         
-        public IServiceAuthConfig ParentConfig => Parent;
+        public IServiceAuthConfig? ParentConfig => Parent;
 
         /// <inheritdoc />
-        public string StringValue { get; protected set; }
+        public string? StringValue { get; protected set; }
 
         /// <inheritdoc />
-        public ConfigPath ConfigPath => $"{Parent.ConfigPath}{ConfigPath.Separator}{Name}";
+        public ConfigPath? ConfigPath => $"{Parent?.ConfigPath}{ConfigPath.Separator}{Name}";
 
         internal IBackendService Service { get; set; }
 
@@ -72,24 +74,24 @@ namespace TetraPak.AspNet.Api
         }
         
         [StateDump]
-        public string ClientId
+        public string? ClientId
         {
             get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
-            set => _clientId = value?.Trim();
+            set => _clientId = value?.Trim() ?? null!;
         }
 
         [StateDump]
-        public string ClientSecret
+        public string? ClientSecret
         {
             get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
-            set => _clientSecret = value?.Trim();
+            set => _clientSecret = value?.Trim() ?? null!;
         }
 
         [StateDump]
-        public MultiStringValue Scope
+        public MultiStringValue? Scope
         {
-            get => GetScopeAsync(new AuthContext(GrantType, this)).Result;
-            set => _scope = value;
+            get => GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
+            set => _scope = value!;
         }
 
         /// <inheritdoc />
@@ -97,8 +99,8 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext, 
             CancellationToken? cancellationToken = null)
         {
-            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_clientId))
-                return Parent.GetClientIdAsync(authContext, cancellationToken);
+            if (Parent is { IsDelegated: true } || string.IsNullOrWhiteSpace(_clientId))
+                return Parent!.GetClientIdAsync(authContext, cancellationToken);
 
             return Task.FromResult(Outcome<string>.Success(_clientId));
         }
@@ -108,23 +110,24 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext, 
             CancellationToken? cancellationToken = null)
         {
-            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_clientSecret))
-                return Parent.GetClientSecretAsync(authContext, cancellationToken);
+            if (Parent is { IsDelegated: true } || string.IsNullOrWhiteSpace(_clientSecret))
+                return Parent!.GetClientSecretAsync(authContext, cancellationToken);
 
             return Task.FromResult(Outcome<string>.Success(_clientSecret));
         }
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
-            AuthContext authContext,
+            AuthContext authContext, 
+            MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
         {
-            if (Parent.IsDelegated || string.IsNullOrWhiteSpace(_scope))
-                return Parent.GetScopeAsync(authContext, cancellationToken);
+            if (Parent is { IsDelegated: true } || string.IsNullOrWhiteSpace(_scope))
+                return Parent!.GetScopeAsync(authContext, useDefault, cancellationToken);
 
             return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
         }
-
+        
         /// <summary>
         ///   Implicitly converts a string literal into a <see cref="ServiceEndpoint"/>.
         /// </summary>
@@ -148,10 +151,10 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   The <see cref="string"/> representation of <paramref name="value"/>.
         /// </returns>
-        public static implicit operator string(ServiceEndpoint value) => value?.StringValue;
+        public static implicit operator string?(ServiceEndpoint? value) => value?.StringValue;
 
         /// <inheritdoc />
-        public override string ToString() => StringValue;
+        public override string? ToString() => StringValue;
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
@@ -168,7 +171,7 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   <c>true</c> if <paramref name="other"/> is equal to the current value; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ServiceEndpoint other)
+        public bool Equals(ServiceEndpoint? other)
         {
             return !(other is null) && string.Equals(StringValue, other.StringValue);
         }
@@ -182,7 +185,7 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   <c>true</c> if the specified object is equal to the current version; otherwise <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return !(obj is null) && (obj is ServiceEndpoint other && Equals(other));
         }
@@ -195,13 +198,13 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public override int GetHashCode()
         {
-            return (StringValue != null ? StringValue.GetHashCode() : 0);
+            return (StringValue is {} ? StringValue.GetHashCode() : 0);
         }
 
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator ==(ServiceEndpoint left, ServiceEndpoint right)
+        public static bool operator ==(ServiceEndpoint left, ServiceEndpoint? right)
         {
             return left?.Equals(right) ?? right is null;
         }
@@ -209,7 +212,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator !=(ServiceEndpoint left, ServiceEndpoint right)
+        public static bool operator !=(ServiceEndpoint left, ServiceEndpoint? right)
         {
             return !left?.Equals(right) ?? right is { };
         }

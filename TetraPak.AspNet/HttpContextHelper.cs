@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
 namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Provides extension and convenience method for <see cref="HttpContext"/>.
+    /// </summary>
     public static class HttpContextHelper
     {
         /// <summary>
@@ -106,18 +108,18 @@ namespace TetraPak.AspNet
         ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetIdToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
-        /// <see cref="GetIdToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        public static ActorToken GetIdToken(this HttpRequest self, TetraPakAuthConfig authConfig) 
-            => self.HttpContext.GetIdToken(authConfig);
+        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext,TetraPak.AspNet.TetraPakAuthConfig)"/>
+        /// <see cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPak.AspNet.TetraPakAuthConfig)"/>
+        public static ActorToken GetIdentityToken(this HttpRequest self, TetraPakAuthConfig authConfig) 
+            => self.HttpContext.GetIdentityToken(authConfig);
 
-        public static ActorToken GetIdToken(this HttpContext self, TetraPakAuthConfig authConfig)
+        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakAuthConfig authConfig)
         {
-            var task = GetIdTokenAsync(self, authConfig);
+            var task = GetIdentityTokenAsync(self, authConfig);
             return task.ConfigureAwait(false).GetAwaiter().GetResult();
         }
         
-        public static Task<Outcome<ActorToken>> GetIdTokenAsync(this HttpContext self, TetraPakAuthConfig authConfig)
+        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this HttpContext self, TetraPakAuthConfig authConfig)
         {
             if (self.Items.TryGetValue(AmbientData.Keys.IdToken, out var obj) && obj is string s && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
@@ -142,7 +144,7 @@ namespace TetraPak.AspNet
                 {
                     tokenList.Add(accessTokenOutcome.Value);
                 }
-                var idTokenOutcome = await self.GetIdTokenAsync(authConfig);
+                var idTokenOutcome = await self.GetIdentityTokenAsync(authConfig);
                 if (idTokenOutcome)
                 {
                     tokenList.Add(idTokenOutcome.Value);

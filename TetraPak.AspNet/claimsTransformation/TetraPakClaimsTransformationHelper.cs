@@ -15,10 +15,10 @@ namespace TetraPak.AspNet
         /// </summary>
         public static void AddTetraPakClaimsTransformation(this IServiceCollection c)
         {
+            c.TryAddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
             c.AddHttpContextAccessor();
             c.TryAddTransient<AmbientData>();
             c.TryAddSingleton<TetraPakAuthConfig>();
-            c.TryAddTransient<IClaimsTransformation, TetraPakClaimsTransformation>();
         }
 
         /// <summary>

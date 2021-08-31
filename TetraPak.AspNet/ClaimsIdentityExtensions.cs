@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 
+#nullable enable
+
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -22,7 +24,7 @@ namespace TetraPak.AspNet
         ///   The first name claim when supported.
         /// </returns>
         public static string FirstName(this ClaimsIdentity self, bool trimStringQualifiers = true)
-            => claimValue(self, ClaimTypes.GivenName, trimStringQualifiers);
+            => claimValue(self, ClaimTypes.GivenName, "given_name", trimStringQualifiers);
        
         /// <summary>
         ///   Gets the last name claim, if present.
@@ -38,7 +40,7 @@ namespace TetraPak.AspNet
         ///   The last name claim when supported.
         /// </returns>
         public static string LastName(this ClaimsIdentity self, bool trimStringQualifiers = true)
-            => claimValue(self, ClaimTypes.Surname, trimStringQualifiers);
+            => claimValue(self, ClaimTypes.Surname, "family_name", trimStringQualifiers);
 
         /// <summary>
         ///   Gets the email claim, if present.
@@ -59,6 +61,20 @@ namespace TetraPak.AspNet
         static string claimValue(ClaimsIdentity self, string key, bool trimStringQualifiers = true)
         {
             var value = self.Claims.FirstOrDefault(i => i.Type == key)?.Value;
+            
+            if (string.IsNullOrWhiteSpace(value))
+                return value;
+
+            return trimStringQualifiers
+                ? value.Trim('\"')
+                : value;
+        }
+        
+        static string claimValue(ClaimsIdentity self, string key, string fallbackKey, bool trimStringQualifiers = true)
+        {
+            var value = self.Claims.FirstOrDefault(i 
+                => i.Type == key || i.Type == fallbackKey)?.Value;
+            
             if (string.IsNullOrWhiteSpace(value))
                 return value;
 

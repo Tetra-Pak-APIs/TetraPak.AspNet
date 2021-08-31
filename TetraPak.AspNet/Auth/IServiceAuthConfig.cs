@@ -47,11 +47,18 @@ namespace TetraPak.AspNet.Auth
         /// <param name="authContext">
         ///   Details the auth context in which the (confidential) client secrets are requested.
         /// </param>
+        /// <param name="useDefault">
+        ///   (optional)<br/>
+        ///   Specifies a default value to be returned if scope cannot be resolved.
+        /// </param>
         /// <param name="cancellationToken">
         ///   (optional)<br/>
         ///   Cancellation token for cancellation the operation.
         /// </param>
-        Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken = null);
+        Task<Outcome<MultiStringValue>> GetScopeAsync(
+            AuthContext authContext,
+            MultiStringValue? useDefault = null,
+            CancellationToken? cancellationToken = null);
 
         /// <summary>
         ///   Gets a "raw" configured value, as it is specified within the <see cref="IConfiguration"/> sources,
@@ -68,7 +75,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Gets the configuration path.
         /// </summary>
-        ConfigPath ConfigPath { get; }
+        ConfigPath? ConfigPath { get; }
         
         /// <summary>
         ///   Gets the <see cref="IConfiguration"/> instance used to populate the properties.

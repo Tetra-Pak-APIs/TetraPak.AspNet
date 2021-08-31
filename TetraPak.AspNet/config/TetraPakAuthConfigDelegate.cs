@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
@@ -17,10 +18,12 @@ namespace TetraPak.AspNet
             => OnResolveConfiguredEnvironment(configuredValue);
 
         /// <inheritdoc />
-        public Task<Outcome<Credentials>> GetClientSecretsAsync(AuthContext authContext) => OnGetClientSecretsAsync(authContext);
+        public Task<Outcome<Credentials>> GetClientSecretsAsync(AuthContext authContext, CancellationToken? cancellationToken)
+             => OnGetClientSecretsAsync(authContext);
 
         /// <inheritdoc />
-        public Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext) => OnGetScopeAsync(authContext);
+        public Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken)
+             => OnGetScopeAsync(authContext);
 
         /// <summary>
         ///   Called to obtain the client secrets for a specified "path". 

@@ -79,7 +79,7 @@ namespace TetraPak.AspNet
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetIdTokenAsync() 
-            => _httpContextAccessor.HttpContext.GetIdTokenAsync(AuthConfig);
+            => _httpContextAccessor.HttpContext.GetIdentityTokenAsync(AuthConfig);
 
         /// <summary>
         ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).

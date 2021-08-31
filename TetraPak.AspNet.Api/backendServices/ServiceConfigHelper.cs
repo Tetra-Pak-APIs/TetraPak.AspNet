@@ -81,7 +81,7 @@ namespace TetraPak.AspNet.Api
             string? queryParameters, 
             IEnumerable<Exception> issues,
             string? messageId,
-            ILogger logger)
+            ILogger? logger)
         {
             return GetServiceConfigurationErrorResponse(
                 method.ToString(),
@@ -98,7 +98,7 @@ namespace TetraPak.AspNet.Api
             string? queryParameters, 
             IEnumerable<Exception> issues,
             string? messageId,
-            ILogger logger)
+            ILogger? logger)
         {
             var errorMessage = 
                 $"Error calling service: {RequestToString(method, path, queryParameters)}{Environment.NewLine}" + 

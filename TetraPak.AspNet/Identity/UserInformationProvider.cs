@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Caching;
 using TetraPak.Logging;
