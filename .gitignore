@@ -8,3 +8,4 @@ riderModule.iml
 **/appsettings.Development.json
 
 /.vs
+.idea/.idea.TetraPak.AspNet/.idea/workspace.xml
