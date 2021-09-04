@@ -39,6 +39,7 @@ protected ServiceEndpoint(TetraPak.AspNet.AmbientData ambientData);
 #### Parameters
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(TetraPak_AspNet_AmbientData)_ambientData'></a>
 `ambientData` [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')  
+Provides ambient data and configuration.  
   
   
 ### Properties

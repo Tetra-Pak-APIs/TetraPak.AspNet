@@ -110,6 +110,17 @@ protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
   
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ServiceName'></a>
+## BackendService&lt;TEndpoints&gt;.ServiceName Property
+Gets the identity of the service. This identity should be unique with the runtime context.   
+```csharp
+public string ServiceName { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [ServiceName](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_ServiceName 'TetraPak.AspNet.Api.IBackendService.ServiceName')  
+  
 ### Methods
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_string__TetraPak_AspNet_Api_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetAsync(string, string?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;, string?) Method

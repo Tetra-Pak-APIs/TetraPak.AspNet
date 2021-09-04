@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>0.14.4</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Common</PackageProjectUrl>
@@ -16,8 +16,8 @@
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <AssemblyVersion>1.0.0</AssemblyVersion>
-        <FileVersion>1.0.0</FileVersion>
+        <AssemblyVersion>0.14.4</AssemblyVersion>
+        <FileVersion>0.14.4</FileVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
@@ -49,12 +49,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="TetraPak.Common" Version="0.14.4" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="_docs\_codeApi" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
     </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />

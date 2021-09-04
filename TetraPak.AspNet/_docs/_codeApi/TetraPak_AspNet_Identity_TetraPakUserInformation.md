@@ -17,7 +17,7 @@ public TetraPakUserInformation(TetraPak.AspNet.AmbientData ambientData);
 #### Parameters
 <a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_AmbientData)_ambientData'></a>
 `ambientData` [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData')  
-Provides ambient data access.  
+Provides ambient data and configuration.  
   
   
 ### Properties

@@ -44,7 +44,7 @@ public string[] Scope { get; }
 ## TetraPakIdentityConfig.SectionIdentifier Property
 Gets the configuration section name.  
 ```csharp
-protected override string SectionIdentifier { get; }
+public override string SectionIdentifier { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

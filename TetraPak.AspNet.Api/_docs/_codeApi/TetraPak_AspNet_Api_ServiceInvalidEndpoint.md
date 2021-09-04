@@ -22,7 +22,7 @@ public ServiceInvalidEndpoint(TetraPak.AspNet.AmbientData ambientData);
 #### Parameters
 <a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_ServiceInvalidEndpoint(TetraPak_AspNet_AmbientData)_ambientData'></a>
 `ambientData` [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')  
-An instance providing access to ambient date.  
+Provides ambient data and configuration.  
   
   
 ### Methods

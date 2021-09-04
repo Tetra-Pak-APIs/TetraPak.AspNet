@@ -21,6 +21,15 @@ TetraPak.AspNet.Api.HttpClientOptions DefaultClientOptions { get; }
 #### Property Value
 [HttpClientOptions](TetraPak_AspNet_Api_HttpClientOptions.md 'TetraPak.AspNet.Api.HttpClientOptions')
   
+<a name='TetraPak_AspNet_Api_IBackendService_ServiceName'></a>
+## IBackendService.ServiceName Property
+Gets the identity of the service. This identity should be unique with the runtime context.   
+```csharp
+string ServiceName { get; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
 ### Methods
 <a name='TetraPak_AspNet_Api_IBackendService_GetAsync(string_string_TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string)'></a>
 ## IBackendService.GetAsync(string, string, HttpClientOptions, Nullable&lt;CancellationToken&gt;, string) Method

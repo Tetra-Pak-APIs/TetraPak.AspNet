@@ -1,5 +1,5 @@
 ﻿import os
-from os.path import join 
+from os.path import join
 import sys
 import glob
 import shutil
@@ -25,15 +25,18 @@ def is_flagged(key) -> bool:
     return False
 
 
+is_verbose = is_flagged('-verbose')
+
+
 def delete_files(folder):
-    print(f'Cleans folder: {folder}')
+    if is_verbose:
+        print(f'Cleans folder: {folder}')
     existing_files = glob.glob1(folder, pattern)
     for existing_file in existing_files:
         file_path = join(folder, existing_file)
         os.unlink(file_path)
 
 
-is_verbose = is_flagged('-verbose')
 is_cleaning = is_flagged('-clean')
 is_moving = is_flagged('-move')
 pattern = get_arg('-name')

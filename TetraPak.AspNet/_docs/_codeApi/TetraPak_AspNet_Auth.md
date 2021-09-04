@@ -4,6 +4,7 @@
 | Classes | |
 | :--- | :--- |
 | [ConfiguredClientCredentialsProvider](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider') | Provides client credentials from the configuration framework.<br/> |
+| [JwtBearerValidationConfig](TetraPak_AspNet_Auth_JwtBearerValidationConfig.md 'TetraPak.AspNet.Auth.JwtBearerValidationConfig') |  |
 | [JwtHelper](TetraPak_AspNet_Auth_JwtHelper.md 'TetraPak.AspNet.Auth.JwtHelper') | Provides convenience- and extension methods to assist in the use of JavaScript Web Tokens (JWT). <br/> |
 | [TetraPakAuth](TetraPak_AspNet_Auth_TetraPakAuth.md 'TetraPak.AspNet.Auth.TetraPakAuth') | Provides convenience- and extension methods to help with integrating an ASP.NET Core/5+<br/>web application with the Tetra Pak Auth Services.<br/> |
 | [TokenRefreshResponse](TetraPak_AspNet_Auth_TokenRefreshResponse.md 'TetraPak.AspNet.Auth.TokenRefreshResponse') | Used to present the result from a token refresh flow response.<br/> |

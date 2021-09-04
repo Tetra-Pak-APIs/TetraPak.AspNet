@@ -270,7 +270,7 @@ Gets configuration for how to validate JWT tokens.
 public TetraPak.AspNet.Auth.JwtBearerValidationConfig JwtBearerValidation { get; }
 ```
 #### Property Value
-[TetraPak.AspNet.Auth.JwtBearerValidationConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.JwtBearerValidationConfig 'TetraPak.AspNet.Auth.JwtBearerValidationConfig')
+[JwtBearerValidationConfig](TetraPak_AspNet_Auth_JwtBearerValidationConfig.md 'TetraPak.AspNet.Auth.JwtBearerValidationConfig')
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_ParentConfig'></a>
 ## TetraPakAuthConfig.ParentConfig Property
@@ -347,7 +347,7 @@ Can be overridden. Returns the expected configuration section identifier like in
 }  
 ```
 ```csharp
-protected override string SectionIdentifier { get; }
+public override string SectionIdentifier { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
