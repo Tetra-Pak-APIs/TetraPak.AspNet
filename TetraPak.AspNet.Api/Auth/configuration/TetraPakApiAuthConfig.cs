@@ -1,6 +1,5 @@
+using System;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 #nullable enable
 
@@ -22,10 +21,11 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         public TetraPakApiAuthConfig(
-            IConfiguration configuration,
-            ILogger<TetraPakApiAuthConfig> logger,
+            IServiceProvider provider,
+            // IConfiguration configuration, obsolete
+            // ILogger<TetraPakApiAuthConfig> logger,
             ITetraPakAuthConfigDelegate? configDelegate = null)
-        : base(configuration, logger, configDelegate)
+        : base(provider, configDelegate)
         {
         }
     }

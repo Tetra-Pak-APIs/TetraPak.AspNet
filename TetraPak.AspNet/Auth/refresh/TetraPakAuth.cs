@@ -11,9 +11,9 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
 {
-    partial class TetraPakAuth // refresh token flow
+    partial class TetraPakAuth // refresh token flow 
     {
-        public static async Task<Outcome<TokenRefreshResponse>> RefreshTokenAsync(
+        public static async Task<Outcome<TokenRefreshResponse>> RefreshTokenAsync( // todo Consider refactoring to service (like with ITokenExchangeService)
             this TetraPakAuthConfig authConfig,
             string refreshToken,
             ILogger logger)
@@ -38,7 +38,7 @@ namespace TetraPak.AspNet.Auth
 
                 using var r = new StreamReader(stream); 
                 var text = await r.ReadToEndAsync();
-                logger.Debug(response as HttpWebResponse, text);
+                await logger.TraceAsync(response, _ => Task.FromResult(text));
                 return await buildAuthResultAsync(text);
             }
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace TetraPak.AspNet.Auth
             dict.TryGetValue(AmbientData.Keys.RefreshToken, out var refreshToken);
             dict.TryGetValue("id_token", out var idToken);
             
-            return Task.FromResult(Outcome<TokenRefreshResponse>.Success(new TokenRefreshResponse()
+            return Task.FromResult(Outcome<TokenRefreshResponse>.Success(new TokenRefreshResponse
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
@@ -83,16 +83,5 @@ namespace TetraPak.AspNet.Auth
                 ExpiresInSeconds = expiresInSeconds
             }));
         }
-    }
-    
-    public class TokenRefreshResponse
-    {
-        public string AccessToken { get; set; }
-        
-        public string RefreshToken { get; set; }
-        
-        public string IdToken { get; set; }
-
-        public int? ExpiresInSeconds { get; set; }
     }
 }

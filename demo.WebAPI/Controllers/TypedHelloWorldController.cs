@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
     /// <summary>
     ///   This is an example of a typed Business API  Gateway controller.
     ///   It derives from a generic api gateway controller supporting a
-    ///   custom endpoints class (<see cref="HelloWorldEndpoints"/>),
+    ///   custom endpoints class (<see cref="HelloWorldEndpointCollection"/>),
     ///   allowing for type-safe use of those endpoints and intellisense support when consuming the endpoints. 
     /// </summary>
     [ApiController]
@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         public async Task<ActionResult> Get(string svc = null)
         {
             var userIdentity = User?.Identity;
-            this.LogDebug($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
+            this.LogTrace($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
             if (string.IsNullOrEmpty(svc))
                 return Ok(new 
                 { 
@@ -57,12 +57,10 @@ namespace WebAPI.Controllers
     public class HelloWorldApiController : ApiGatewayController<HelloWorldService>
     {}
     
-    public class HelloWorldService : BackendService<HelloWorldEndpoints>
+    public class HelloWorldService : BackendService<HelloWorldEndpointCollection>
     {
-        public HelloWorldService(
-            HelloWorldEndpoints endpoints, 
-            IHttpServiceProvider httpServiceProvider) 
-        : base(endpoints, httpServiceProvider)
+        public HelloWorldService(HelloWorldEndpointCollection endpointCollection, IHttpServiceProvider httpServiceProvider) 
+        : base(endpointCollection, httpServiceProvider)
         {
         }
     }

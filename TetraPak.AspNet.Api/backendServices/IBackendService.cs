@@ -13,6 +13,11 @@ namespace TetraPak.AspNet.Api
     public interface IBackendService : IServiceAuthConfig
     {
         /// <summary>
+        ///   Gets the identity of the service. This identity should be unique with the runtime context. 
+        /// </summary>
+        string ServiceName { get; }
+        
+        /// <summary>
         ///   Gets default options for the creating clients for the backend service. 
         /// </summary>
         HttpClientOptions DefaultClientOptions { get; }

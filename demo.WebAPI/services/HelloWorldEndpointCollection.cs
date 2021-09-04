@@ -7,13 +7,13 @@ namespace WebAPI.services
     /// <summary>
     ///   Typed endpoints, instantiated by <see cref="TetraPakControllerFactory"/>.
     /// </summary>
-    public class HelloWorldEndpoints : ServiceEndpoints
+    public class HelloWorldEndpointCollection : ServiceEndpointCollection
     {
         public ServiceEndpoint HelloWorldWithClientCredentials => GetEndpoint();
 
         public ServiceEndpoint HelloWorldWithTokenExchange => GetEndpoint();
         
-        public HelloWorldEndpoints(IServiceAuthConfig serviceConfig, string sectionIdentifier = "HelloWorld") 
+        public HelloWorldEndpointCollection(IServiceAuthConfig serviceConfig, string sectionIdentifier = "HelloWorld") 
         : base(serviceConfig, sectionIdentifier)
         {
         }

@@ -1,10 +1,27 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
+    [DebuggerDisplay("{ToString()}")]
     class ServiceKey
     {
         readonly int _hashCode;
+        
+#if DEBUG
+        readonly object _obj;
+
+        readonly string _name;
+
+        readonly Type _type;
+
+        public override string ToString()
+        {
+            return _obj is { } 
+                ? $"{_obj} | {_type}" 
+                : $"{_type} | {_name}";
+        }
+#endif
 
         #region .  Equality  .
 
@@ -24,11 +41,19 @@ namespace TetraPak.AspNet.Api
         public ServiceKey(object obj, Type type)
         {
             _hashCode = HashCode.Combine(obj.GetType().AssemblyQualifiedName, type);
+#if DEBUG
+            _obj = obj;
+            _type = type;
+#endif
         }
         
         public ServiceKey(Type type, string name)
         {
             _hashCode = HashCode.Combine(type.AssemblyQualifiedName, name);
+#if DEBUG
+            _type = type;
+            _name = name;
+#endif
         }
-        
-    }}
+    }
+}

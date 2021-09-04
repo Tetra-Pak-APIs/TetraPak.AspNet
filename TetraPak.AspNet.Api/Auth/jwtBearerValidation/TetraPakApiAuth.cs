@@ -28,11 +28,11 @@ namespace TetraPak.AspNet.Api.Auth
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddJwtAuthentication(
+        public static IServiceCollection AddTetraPakJwtBearerAssertion(
             this IServiceCollection c,
             JwBearerAssertionOptions options = null)
         {
-            return c.AddJwtAuthentication<SimpleCache>(options);
+            return c.AddTetraPakJwtBearerAssertion<SimpleCache>(options);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddJwtAuthentication<TCache>(
+        public static IServiceCollection AddTetraPakJwtBearerAssertion<TCache>(
             this IServiceCollection c,
             JwBearerAssertionOptions options = null)
         where TCache : class, ITimeLimitedRepositories
@@ -154,7 +154,7 @@ namespace TetraPak.AspNet.Api.Auth
         ///   your service is running in the "Development" runtime environment, regardless of the your configuration.
         ///   This is to ensure you cannot accidentally deploy it to any other environment.
         /// </remarks>
-        public static IApplicationBuilder UseJwtAuthentication(
+        public static IApplicationBuilder UseTetraPakJwtAuthentication(
             this IApplicationBuilder app, 
             IWebHostEnvironment env,
             bool enableTetraPakMessageId = true)

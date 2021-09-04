@@ -35,7 +35,7 @@ namespace TetraPak.AspNet.Api
         ///   This constructor is mainly intended for the use by the dependency injection services. 
         /// </summary>
         /// <param name="ambientData">
-        ///   An instance providing access to ambient date.
+        ///   Provides ambient data and configuration.
         /// </param>
         public ServiceInvalidEndpoint(AmbientData ambientData) 
         : base(ambientData)

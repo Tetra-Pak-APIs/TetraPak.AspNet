@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
-      <PackageReference Include="TetraPak.AspNet.Api" Version="0.14.2" />
+      <PackageReference Include="TetraPak.AspNet" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>

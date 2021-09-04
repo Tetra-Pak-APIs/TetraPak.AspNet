@@ -17,7 +17,7 @@ namespace TetraPak.AspNet.Api
         // public static Uri GetUri(this ServiceEndpoints self, string path)  obsolete
         //     => new Uri($"{self.Host}{self.BasePath}{path}");
         
-        internal static void SetBackendService(this ServiceEndpoints self, IBackendService backendService)
+        internal static void SetBackendService(this ServiceEndpointCollection self, IBackendService backendService)
         {
             self.BackendService = backendService;
             foreach (var (_, endpoint)  in self)

@@ -14,7 +14,8 @@ namespace TetraPak.AspNet.Auth
         string _devProxy;
         // ReSharper restore NotAccessedField.Local
 
-        protected override string SectionIdentifier => "ValidateJwtBearer";
+        /// <inheritdoc />
+        public override string SectionIdentifier => "ValidateJwtBearer";
 
         public string Audience
         {

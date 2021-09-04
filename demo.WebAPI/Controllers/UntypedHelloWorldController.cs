@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
                             new Exception("Cannot perform Token Exchange. No access token was passed in request"));
                         
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await this.RespondAsync(await this.Service().Endpoints("HelloWorldWithTokenExchange").GetAsync());
+                    return await this.RespondAsync(await this.Service().Endpoint("HelloWorldWithTokenExchange").GetAsync());
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:

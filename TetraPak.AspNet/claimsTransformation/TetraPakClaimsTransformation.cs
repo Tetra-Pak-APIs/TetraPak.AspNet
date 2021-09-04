@@ -67,7 +67,7 @@ namespace TetraPak.AspNet
         /// <inheritdoc />
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            Logger.Debug(AuthConfig);
+            Logger.TraceAsync(AuthConfig);
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))
             {
                 var _ = new CancellationToken();
@@ -126,7 +126,7 @@ namespace TetraPak.AspNet
             
             async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
             {
-                Logger.Debug("Fetches identity from Tetra Pak User Information Service");
+                Logger.Trace("Fetches identity from Tetra Pak User Information Service");
                 var userInfoOutcome = await _userInformation.GetUserInformationAsync(accessToken);
                 if (!userInfoOutcome)
                 {

@@ -6,7 +6,7 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.14.3</PackageVersion>
+        <PackageVersion>1.0.0</PackageVersion>
         <Title>Tetra Pak Api library </Title>
         <Authors>Tetra Pak</Authors>
         <Description>A common library for Tetra Pak API development</Description>
@@ -18,8 +18,8 @@
         </PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
-        <AssemblyVersion>0.14.3</AssemblyVersion>
-        <FileVersion>0.14.3</FileVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -51,7 +51,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TetraPak.AspNet" Version="0.14.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />

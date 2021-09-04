@@ -175,7 +175,7 @@ namespace TetraPak.AspNet.OpenIdConnect
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 var discoveryDocument = await JsonSerializer.DeserializeAsync<DiscoveryDocument>(stream);
-                logger.Debug($"Successfully downloaded discovery document from {url}");
+                logger.Trace($"Successfully downloaded discovery document from {url}");
                 return Outcome<DiscoveryDocument>.Success(discoveryDocument);
             }
             catch (Exception ex)

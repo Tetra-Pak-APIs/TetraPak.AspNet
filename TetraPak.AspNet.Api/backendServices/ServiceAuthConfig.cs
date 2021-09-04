@@ -153,13 +153,16 @@ namespace TetraPak.AspNet.Api
         }
         
         public ServiceAuthConfig(
-            AmbientData ambientData,
-            IServiceAuthConfig parentConfig,
+            // AmbientData ambientData, obsolete
             IServiceProvider serviceProvider,
+            IServiceAuthConfig parentConfig,
             string sectionIdentifier = ServicesConfigName) 
-        : base(parentConfig.Configuration, ambientData.Logger, GetServiceConfigPath(sectionIdentifier))
+        : base(
+            parentConfig.Configuration,
+            serviceProvider.GetRequiredService<AmbientData>().Logger,
+            GetServiceConfigPath(sectionIdentifier))
         {
-            AmbientData = ambientData;
+            AmbientData = serviceProvider.GetRequiredService<AmbientData>();
             ParentConfig = parentConfig;
             ServiceProvider = serviceProvider;
         }

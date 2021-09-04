@@ -17,7 +17,7 @@ using TetraPak.AspNet.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
-    public static partial class TetraPakServiceFactory
+    public static class TetraPakServiceFactory
     {
         static readonly IDictionary<ServiceKey, IBackendService> s_services 
             = new Dictionary<ServiceKey, IBackendService>();
@@ -29,8 +29,8 @@ namespace TetraPak.AspNet.Api
             c.TryAddSingleton<IServiceAuthConfig>(p =>
             {
                 var parentConfig = p.GetRequiredService<TetraPakAuthConfig>();
-                var ambientData = p.GetRequiredService<AmbientData>();
-                return new ServiceAuthConfig(ambientData, parentConfig, p);
+                // var ambientData = p.GetRequiredService<AmbientData>(); obsolete
+                return new ServiceAuthConfig(p, parentConfig);
             });
             c.AddTetraPakServiceEndpoints();
             c.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
@@ -86,7 +86,7 @@ namespace TetraPak.AspNet.Api
 
                     // non-custom (derived) service and endpoints will be handled by custom controller factory
                     // (see TetraPakControllerFactory)
-                    if (serviceType == typeof(BackendService<ServiceEndpoints>))
+                    if (serviceType == typeof(BackendService<ServiceEndpointCollection>))
                         continue;
                     
                     c.TryAddSingleton(serviceType);
@@ -148,7 +148,7 @@ namespace TetraPak.AspNet.Api
         public static Outcome<TBackendService> GetService<TBackendService>(
             ControllerBase controller, 
             string serviceName = null) 
-            where TBackendService : IBackendService
+        where TBackendService : IBackendService
         {
             var key = new ServiceKey(controller, typeof(TBackendService));
             lock (s_services)
@@ -156,7 +156,11 @@ namespace TetraPak.AspNet.Api
                 if (s_services.TryGetValue(key, out var service))
                     return Outcome<TBackendService>.Success((TBackendService) service);
                 
-                var outcome = ServiceResolver.ResolveService(controller.GetType(), controller.ControllerContext, serviceName);
+                var outcome = ServiceResolver.ResolveService(
+                    controller.GetType(), 
+                    controller.ControllerContext, 
+                    typeof(TBackendService),
+                    serviceName);
                 if (!outcome)
                     return Outcome<TBackendService>.Fail(outcome.Exception);
 
@@ -167,12 +171,12 @@ namespace TetraPak.AspNet.Api
         }
 
         internal static Outcome<IBackendService> GetService(ControllerBase controller, string serviceName = null)
-            => GetServiceWithEndpoints<ServiceEndpoints>(controller, serviceName);
+            => GetServiceWithEndpoints<ServiceEndpointCollection>(controller, serviceName);
 
         internal static Outcome<IBackendService> GetServiceWithEndpoints<TEndpoints>(
             ControllerBase controller, 
             string serviceName = null)
-        where TEndpoints : ServiceEndpoints
+        where TEndpoints : ServiceEndpointCollection
         {
             var key = new ServiceKey(controller, typeof(BackendService<TEndpoints>));
             lock (s_services)
@@ -180,7 +184,11 @@ namespace TetraPak.AspNet.Api
                 if (s_services.TryGetValue(key, out var service))
                     return Outcome<IBackendService>.Success(service);
 
-                var outcome = ServiceResolver.ResolveService(controller.GetType(), controller.ControllerContext, serviceName);
+                var outcome = ServiceResolver.ResolveService(
+                    controller.GetType(),
+                    controller.ControllerContext, 
+                    typeof(BackendService<TEndpoints>), 
+                    serviceName);
                 if (outcome)
                 {
                     s_services.Add(key, outcome.Value);
@@ -189,6 +197,6 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        public static ServiceEndpoint Endpoints(this IBackendService service, string name) => service.GetEndpoint(name);
+        public static ServiceEndpoint Endpoint(this IBackendService service, string name) => service.GetEndpoint(name);
     }
 }

@@ -22,7 +22,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the configuration section name.
         /// </summary>
-        protected override string SectionIdentifier => "Identity";
+        public override string SectionIdentifier => "Identity";
 
         /// <summary>
         ///   Specifies the source for identity claims.

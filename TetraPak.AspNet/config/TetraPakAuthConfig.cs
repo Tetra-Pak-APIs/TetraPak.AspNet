@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
@@ -42,7 +43,7 @@ namespace TetraPak.AspNet
         const string SourceKeyApi = "api";
 
         /// <inheritdoc />
-        protected override string SectionIdentifier => DefaultSectionIdentifier;
+        public override string SectionIdentifier => DefaultSectionIdentifier;
         
         /// <summary>
         ///   The name of the value in configuration. 
@@ -71,6 +72,7 @@ namespace TetraPak.AspNet
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument? s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
+        readonly IServiceProvider _provider;
 
         // ReSharper disable UnusedMember.Global
         
@@ -91,7 +93,7 @@ namespace TetraPak.AspNet
 
         /// <inheritdoc />
         [JsonIgnore]
-        public AmbientData AmbientData { get; internal set; }
+        public AmbientData AmbientData => _provider.GetRequiredService<AmbientData>();
 
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
@@ -710,7 +712,7 @@ namespace TetraPak.AspNet
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
-                        Logger.Debug(this);
+                        Logger.TraceAsync(this);
                         return done(discoveryDocument);
                     }
                 }
@@ -843,15 +845,18 @@ namespace TetraPak.AspNet
         ///   A delegate instance used for custom configuration behavior.
         /// </param>
         public TetraPakAuthConfig(
-            IConfiguration configuration,
-            // ReSharper disable once SuggestBaseTypeForParameterInConstructor
-            ILogger<TetraPakAuthConfig> logger,
+            // IConfiguration configuration,
+            IServiceProvider provider,
+            // ReSharper disable once SuggestBaseTypeForParameterInConstructor obsolete
+            //ILogger<TetraPakAuthConfig> logger,
             ITetraPakAuthConfigDelegate? configDelegate = null) 
-        : base(configuration, logger, DefaultSectionIdentifier)
+        : base(provider.GetRequiredService<IConfiguration>(), provider.GetService<ILogger<TetraPakAuthConfig>>(), DefaultSectionIdentifier)
         {
-            Configuration = configuration;
+            _provider = provider;
+            Configuration = provider.GetRequiredService<IConfiguration>();
             ConfigDelegate = configDelegate;
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
+            var logger = provider.GetService<ILogger<TetraPakAuthConfig>>();
             JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();

@@ -47,7 +47,7 @@ namespace TetraPak.AspNet.Identity
         ///   Initializes the <see cref="TetraPakUserInformation"/> object.
         /// </summary>
         /// <param name="ambientData">
-        ///   Provides ambient data access.
+        ///   Provides ambient data and configuration.
         /// </param>
         public TetraPakUserInformation(AmbientData ambientData)
         {

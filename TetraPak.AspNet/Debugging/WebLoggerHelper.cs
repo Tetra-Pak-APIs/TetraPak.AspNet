@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
@@ -14,7 +13,7 @@ namespace TetraPak.AspNet.Debugging
     /// <summary>
     ///   Contains convenience/extension methods to assist with logging. 
     /// </summary>
-    public  static partial class LoggerHelper
+    public  static partial class WebLoggerHelper
     {
         static bool s_isAssemblyVersionsAlreadyLogged;
         static bool s_isAuthConfigAlreadyLogged;
@@ -96,7 +95,7 @@ namespace TetraPak.AspNet.Debugging
             return (LogLevel) min;
         }
         
-        public static void Debug(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)
+        public static void TraceAsync(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)
         {
             // ReSharper disable once InconsistentNaming
             const int Indent = 3;
@@ -112,6 +111,7 @@ namespace TetraPak.AspNet.Debugging
             }
 
             var sb = new StringBuilder();
+            sb.AppendLine();
             sb.AppendLine(">===== AUTH CONFIGURATION =====<");
             sb.AppendLine(authConfig.GetSectionIdentifier());
             sb.AppendLine("{");

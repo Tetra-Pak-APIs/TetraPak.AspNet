@@ -22,10 +22,13 @@ namespace TetraPak.AspNet.Api
     /// </typeparam>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class BackendService<TEndpoints> : IBackendService
-    where TEndpoints : ServiceEndpoints
+    where TEndpoints : ServiceEndpointCollection
     {
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
+        
+        /// <inheritdoc />
+        public string ServiceName { get; set; }
         
         /// <summary>
         ///   Gets the endpoint configuration.
@@ -194,7 +197,7 @@ namespace TetraPak.AspNet.Api
 
                 var stream = await outcome.Value.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<T>(stream);
-                return Outcome<T>.Success(result);
+                return Outcome<T>.Success(result!);
             }
             catch (Exception ex)
             {
@@ -384,24 +387,25 @@ namespace TetraPak.AspNet.Api
         }
 
         // ReSharper disable once UnusedMember.Global
-        internal Outcome<ServiceEndpoints> IsInitialized() => Endpoints is { } 
-            ? Outcome<ServiceEndpoints>.Success(Endpoints) 
-            : Outcome<ServiceEndpoints>.Fail(new Exception("Not initialized"));
+        internal Outcome<ServiceEndpointCollection> IsInitialized() => Endpoints is { } 
+            ? Outcome<ServiceEndpointCollection>.Success(Endpoints) 
+            : Outcome<ServiceEndpointCollection>.Fail(new Exception("Not initialized"));
 
-        // internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider) obsolte
+        // internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider) obsolete
         // {
         //     Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
         //     HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
         //     Endpoints.SetBackendService(this);
         // }
 
-        public BackendService()
-        {
-        }
+        // public BackendService() obsolete?
+        // {
+        // }
 
-        public BackendService(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider)
+        public BackendService(TEndpoints endpointCollection, IHttpServiceProvider httpServiceProvider)
         {
-            Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
+            ServiceName = endpointCollection.SectionIdentifier;
+            Endpoints = endpointCollection ?? throw new ArgumentNullException(nameof(endpointCollection));
             HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
             Endpoints.SetBackendService(this);
             // Initialize(endpoints, httpServiceProvider);

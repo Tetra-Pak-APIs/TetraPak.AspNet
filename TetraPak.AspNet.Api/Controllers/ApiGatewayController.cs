@@ -26,7 +26,7 @@ namespace TetraPak.AspNet.Api.Controllers
         }
     }
 
-    public abstract class ApiGatewayController : ApiGatewayController<BackendService<ServiceEndpoints>>
+    public abstract class ApiGatewayController : ApiGatewayController<BackendService<ServiceEndpointCollection>>
     {
         public ApiGatewayController()
         {

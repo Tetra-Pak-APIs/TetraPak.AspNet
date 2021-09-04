@@ -28,7 +28,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
         /// </summary>
-        protected ServiceEndpoints? Parent { get; private set; }
+        protected ServiceEndpointCollection? Parent { get; private set; }
         
         public IServiceAuthConfig? ParentConfig => Parent;
 
@@ -38,7 +38,7 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public ConfigPath? ConfigPath => $"{Parent?.ConfigPath}{ConfigPath.Separator}{Name}";
 
-        internal IBackendService Service { get; set; }
+        internal IBackendService? Service { get; set; }
 
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
 
@@ -219,7 +219,7 @@ namespace TetraPak.AspNet.Api
 
         #endregion
 
-        internal ServiceEndpoint WithIdentity(string name, ServiceEndpoints parent)
+        internal ServiceEndpoint WithIdentity(string name, ServiceEndpointCollection parent)
         {
             Name = name;
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));
@@ -276,7 +276,9 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Initializes an <see cref="ServiceEndpoint"/> 
         /// </summary>
-        /// <param name="ambientData"></param>
+        /// <param name="ambientData">
+        ///   Provides ambient data and configuration.
+        /// </param>
         protected ServiceEndpoint(AmbientData ambientData)
         {
             AmbientData = ambientData;

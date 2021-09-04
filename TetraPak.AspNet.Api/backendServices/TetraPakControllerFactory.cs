@@ -23,7 +23,7 @@ namespace TetraPak.AspNet.Api
             
             // use default factory unless controller supports BackendService<T> implementation of IBackendService 
             var serviceType = svcControllerType.GetGenericArguments().First();
-            if (serviceType != typeof(BackendService<ServiceEndpoints>))
+            if (serviceType != typeof(BackendService<ServiceEndpointCollection>))
                 return s_defaultControllerFactory.CreateController(context);
 
             var outcome = ServiceResolver.ResolveService(type, context);
@@ -99,8 +99,7 @@ namespace TetraPak.AspNet.Api
             string serviceName = null) 
         where TBackendService : IBackendService
         {
-            // todo refactor 'ServiceInfo' to 'ServiceResolver' and make it return Outcome<TBackendService> with proper Outcome error handling
-            var outcome = ServiceResolver.ResolveService(controllerType, context, serviceName);
+            var outcome = ServiceResolver.ResolveService(controllerType, context, typeof(TBackendService), serviceName);
             return outcome
                 ? Outcome<TBackendService>.Success((TBackendService) outcome.Value)
                 : Outcome<TBackendService>.Fail(outcome.Exception);

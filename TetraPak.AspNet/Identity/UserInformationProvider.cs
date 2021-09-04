@@ -67,7 +67,7 @@ namespace TetraPak.AspNet.Identity
                 }
             }
 
-            Logger?.Debug("Obtains discovery document");
+            Logger?.Trace("Obtains discovery document");
             var discoveryDocument = await AuthConfig.GetDiscoveryDocumentAsync();
             if (discoveryDocument is null)
             {
@@ -88,7 +88,7 @@ namespace TetraPak.AspNet.Identity
 
         TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
         {
-            Logger?.Debug($"Calls user info endpoint: {userInfoUri}");
+            Logger?.Trace($"Calls user info endpoint: {userInfoUri}");
             var tcs = new TaskCompletionSource<UserInformation>();
             Task.Run(async () =>
             {
@@ -101,7 +101,7 @@ namespace TetraPak.AspNet.Identity
                         request.Method = "GET";
                         request.Accept = "*/*";
                         request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
-                        Logger?.Debug(request);
+                        Logger?.TraceAsync(request);
                         var response = await request.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(
@@ -110,7 +110,7 @@ namespace TetraPak.AspNet.Identity
                         using var r = new StreamReader(responseStream);
                         var text = await r.ReadToEndAsync();
 
-                        Logger?.Debug(response as HttpWebResponse, text);
+                        await Logger.TraceAsync(response, _ => Task.FromResult(text));
 
                         var objDictionary = JsonSerializer.Deserialize<IDictionary<string, object>>(text);
                         if (objDictionary is null)
@@ -138,7 +138,7 @@ namespace TetraPak.AspNet.Identity
                     }
                     finally
                     {
-                        Logger?.Debug("[GET USER INFO END]");
+                        Logger?.Trace("[GET USER INFO END]");
                     }
                 }
             });

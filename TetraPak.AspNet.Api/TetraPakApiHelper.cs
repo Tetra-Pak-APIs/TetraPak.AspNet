@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api

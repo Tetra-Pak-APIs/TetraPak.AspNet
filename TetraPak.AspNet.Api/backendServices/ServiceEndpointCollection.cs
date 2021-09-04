@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
-    public class ServiceEndpoints : ConfigurationSection, 
+    public class ServiceEndpointCollection : ConfigurationSection, 
         IServiceAuthConfig,
         IEnumerable<KeyValuePair<string, ServiceEndpoint>>
     {
@@ -258,19 +258,19 @@ namespace TetraPak.AspNet.Api
 
                 var property = type.GetProperty(name);
                 var stringValue = child.Value;
-                ServiceEndpoint url;
+                ServiceEndpoint endpoint;
                 if (stringValue is { })
                 {
-                    url = new ServiceEndpoint(stringValue).WithIdentity(name, this);
-                    addUrl(url, property);
+                    endpoint = new ServiceEndpoint(stringValue).WithIdentity(name, this).WithConfig(child);
+                    addEndpoint(endpoint, property);
                     continue;
                 }
 
                 if (child.IsEmpty())
                     continue;
                 
-                url = configureServiceEndpoint(child);
-                addUrl(url, property);
+                endpoint = configureServiceEndpoint(child);
+                addEndpoint(endpoint, property);
             }
         }
 
@@ -285,7 +285,7 @@ namespace TetraPak.AspNet.Api
             };
         }
 
-        void addUrl(ServiceEndpoint url, PropertyInfo? property)
+        void addEndpoint(ServiceEndpoint url, PropertyInfo? property)
         {
             if (!_endpoints.ContainsKey(url.Name))
             {
@@ -333,7 +333,7 @@ namespace TetraPak.AspNet.Api
         }
         
 #pragma warning disable 8618
-        public ServiceEndpoints(
+        public ServiceEndpointCollection(
             IServiceAuthConfig serviceAuthConfig, 
             string sectionIdentifier = "Endpoints")
         : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, sectionIdentifier)
@@ -342,7 +342,7 @@ namespace TetraPak.AspNet.Api
         }
 #pragma warning restore 8618
 
-        internal class UntypedServiceEndpoints : ServiceEndpoints
+        internal class UntypedServiceEndpointCollection : ServiceEndpointCollection
         {
             protected override void OnInitializeEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
             {
@@ -350,7 +350,7 @@ namespace TetraPak.AspNet.Api
                 base.OnInitializeEndpoints(serviceAuthConfig, sectionIdentifier);
             }
 
-            public UntypedServiceEndpoints(
+            public UntypedServiceEndpointCollection(
                 IServiceAuthConfig serviceAuthConfig, 
                 string sectionIdentifier = "Endpoints") 
             : base(serviceAuthConfig, sectionIdentifier)

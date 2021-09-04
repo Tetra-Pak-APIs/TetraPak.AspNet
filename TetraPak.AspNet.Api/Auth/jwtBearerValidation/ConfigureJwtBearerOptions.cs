@@ -79,7 +79,7 @@ namespace TetraPak.AspNet.Api.Auth
                     {
                         context.HttpContext.StartDiagnosticsTime(TimerName);
                         Logger.DebugAssembliesInUse();
-                        await Logger.Debug(context.Request);
+                        await Logger.TraceAsync(context.Request);
                         if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
                         {
                             context.Token = token.Identity;
