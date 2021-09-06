@@ -25,13 +25,20 @@ def is_flagged(key) -> bool:
     return False
 
 
+def dump_args():
+    args = "".join(sys.argv)
+    print(args)
+
+
 is_verbose = is_flagged('-verbose')
+if is_verbose:
+    dump_args()
 
 
 def delete_files(folder):
     if is_verbose:
         print(f'Cleans folder: {folder}')
-    existing_files = glob.glob1(folder, pattern)
+    existing_files = glob.glob1(folder, name)
     for existing_file in existing_files:
         file_path = join(folder, existing_file)
         os.unlink(file_path)
@@ -39,9 +46,9 @@ def delete_files(folder):
 
 is_cleaning = is_flagged('-clean')
 is_moving = is_flagged('-move')
-pattern = get_arg('-name')
-if pattern is None:
-    pattern = '*'
+name = get_arg('-name')
+if name is None:
+    name = '*'
 
 source = get_arg('-from')
 if source is None:
@@ -58,10 +65,10 @@ if target is None:
 if is_cleaning:
     delete_files(target)
 
-files = glob.glob1(source, pattern)
+files = glob.glob1(source, name)
 if len(files) == 0:
     if is_verbose:
-        print(f'No files found with pattern "{pattern}"')
+        print(f'No files found with pattern "{name}"')
     exit(0)
 
 os.chdir(source)

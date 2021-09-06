@@ -24,7 +24,7 @@ namespace WebAPI
 
             services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>();
             services.AddTetraPakJwtBearerAssertion();    // <-- add this for JWT bearer assertion
-            services.AddTetraPakServices();              // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services
+            services.AddTetraPakServices();              // <-- (experimental) add this _after_ services.AddControllers() to support backend Tetra Pak services
 
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
         }

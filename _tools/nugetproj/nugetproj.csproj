@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+        <RootNamespace>TetraPak.Tools</RootNamespace>
+        <Company>Tetra Pak AB</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+      <ProjectReference Include="..\TetraPak.CLI\TetraPak.CLI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="_testData\test.csproj" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="copy $(TargetDir)\$(TargetName).exe D:\_tools\nugetproj" />
+      <Exec Command="copy $(TargetDir)\$(TargetName).dll D:\_tools\nugetproj" />
+      <Exec Command="copy $(TargetDir)\TetraPak.CLI.dll D:\_tools\nugetproj" />
+      <Exec Command="copy $(TargetDir)\TetraPak.Common.dll D:\_tools\nugetproj" />
+    </Target>
+
+</Project>

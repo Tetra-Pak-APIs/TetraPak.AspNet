@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
 using TetraPak.AspNet.Api;
@@ -9,15 +10,15 @@ using WebAPI.services;
 namespace WebAPI.Controllers
 {
     /// <summary>
-    ///   This is an example of a typed Business API  Gateway controller.
+    ///   This is an example of a typed Business API Gateway controller.
     ///   It derives from a generic api gateway controller supporting a
     ///   custom endpoints class (<see cref="HelloWorldEndpointCollection"/>),
     ///   allowing for type-safe use of those endpoints and intellisense support when consuming the endpoints. 
     /// </summary>
     [ApiController]
-    [Route("HelloWorld")]
+    [Route("TypedHelloWorld")]
     [BackendService("HelloWorld")]
-    // [Authorize]
+    [Authorize]
     public class TypedHelloWorldController : HelloWorldApiController 
     {
         [HttpGet]

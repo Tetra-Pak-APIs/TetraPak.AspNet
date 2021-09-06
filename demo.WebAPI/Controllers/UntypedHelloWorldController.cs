@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
 using TetraPak.AspNet.Api;
@@ -10,7 +11,7 @@ namespace WebAPI.Controllers
     [ApiController]
     [Route("SimpleHelloWorld")]
     [BackendService("HelloWorld")]
-    // [Authorize]
+    [Authorize]
     public class UntypedHelloWorldController : ControllerBase 
     {
         [HttpGet]

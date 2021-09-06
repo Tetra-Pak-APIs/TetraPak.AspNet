@@ -2,22 +2,26 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>0.14.4</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
-        <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Common</PackageProjectUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Authors>Tetra Pak</Authors>
-        <Copyright>Tetra Pak</Copyright>
-        <PackageLicenseUrl>https://mit-license.org/</PackageLicenseUrl>
+
+        <PackageVersion>1.0.0</PackageVersion>
+        <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.AspNet</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageLicenseFile>license.txt</PackageLicenseFile>
+        <PackageReleaseNotes>Release version</PackageReleaseNotes>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.AspNet</RepositoryUrl>
+        <Copyright>Tetra Pak</Copyright>
         <RepositoryType>Git</RepositoryType>
-        <PackageReleaseNotes>Auth now supports automatic refresh flow</PackageReleaseNotes>
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <AssemblyVersion>0.14.4</AssemblyVersion>
-        <FileVersion>0.14.4</FileVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
@@ -49,13 +53,17 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="TetraPak.Common" Version="0.14.4" />
+      <PackageReference Include="TetraPak.Common" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="_docs\_codeApi" />
     </ItemGroup>
+    <ItemGroup>
+        <None Include="$(SolutionDir)_nuget\icon.png" Pack="true" PackagePath="\" />
+        <None Include="$(SolutionDir)_nuget\license.txt" Pack="true" PackagePath="\" />
+    </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />
+        <!--Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" /-->
     </Target>
 
 </Project>
