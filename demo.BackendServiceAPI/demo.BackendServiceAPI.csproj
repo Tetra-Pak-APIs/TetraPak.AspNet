@@ -6,12 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
-      <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
-      <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
+        <PackageReference Include="TetraPak.AspNet.Api" Version="1.0.0" />
     </ItemGroup>
 
 </Project>

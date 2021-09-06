@@ -260,14 +260,19 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <seealso cref="InternalServerError"/>
         public static ActionResult Error(this ControllerBase self, Exception error)
         {
-            if (error is HttpException httpException)
+            switch (error)
             {
-                return self.StatusCode(
-                    (int) httpException.StatusCode, 
-                    new ApiErrorResponse(error.Message, self.GetMessageId()));
+                case HttpException httpException:
+                    return self.StatusCode(
+                        (int) httpException.StatusCode, 
+                        new ApiErrorResponse(error.Message, self.GetMessageId()));
+                
+                case ApiErrorResponseException responseException:
+                    return self.StatusCode(responseException.StatusCode, responseException.ErrorResponse);
+                
+                default:
+                    return self.InternalServerError(error);
             }
-
-            return self.InternalServerError(error);
         }
 
         /// <summary>

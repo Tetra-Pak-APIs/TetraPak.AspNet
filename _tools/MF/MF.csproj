@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>mf</AssemblyName>
+        <Company>Tetra Pak</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TetraPak.CLI\TetraPak.CLI.csproj" />
+    </ItemGroup>
+
+</Project>
