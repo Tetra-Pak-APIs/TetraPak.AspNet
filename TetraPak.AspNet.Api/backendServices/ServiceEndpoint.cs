@@ -28,9 +28,12 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
         /// </summary>
-        protected ServiceEndpointCollection? Parent { get; private set; }
+        protected ServiceEndpoints? Parent { get; private set; }
         
         public IServiceAuthConfig? ParentConfig => Parent;
+
+        /// <inheritdoc />
+        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
         public string? StringValue { get; protected set; }
@@ -219,7 +222,7 @@ namespace TetraPak.AspNet.Api
 
         #endregion
 
-        internal ServiceEndpoint WithIdentity(string name, ServiceEndpointCollection parent)
+        internal ServiceEndpoint WithIdentity(string name, ServiceEndpoints parent)
         {
             Name = name;
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));

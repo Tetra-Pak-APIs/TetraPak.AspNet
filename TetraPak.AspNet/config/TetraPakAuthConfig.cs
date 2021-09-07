@@ -75,6 +75,8 @@ namespace TetraPak.AspNet
         readonly IServiceProvider _provider;
 
         // ReSharper disable UnusedMember.Global
+
+        protected IServiceProvider ServiceProvider => _provider;
         
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
@@ -97,7 +99,22 @@ namespace TetraPak.AspNet
 
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
-        
+
+        public static bool CheckIsAuthIdentifier(string identifier)
+        {
+            return identifier switch
+            {
+                nameof(ConfigPath) => true,
+                nameof(GrantType) => true,
+                nameof(ClientId) => true,
+                nameof(ClientSecret) => true,
+                nameof(Scope) => true,
+                _ => false
+            };
+        }
+
+        public bool IsAuthIdentifier(string identifier) => CheckIsAuthIdentifier(identifier);
+
         /// <inheritdoc />
         protected override FieldInfo? OnGetField(string fieldName)
         {
@@ -834,21 +851,15 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
-        /// <param name="configuration">
-        ///   A <see cref="IConfiguration"/> instance.
-        /// </param>
-        /// <param name="logger">
-        ///   A <see cref="ILogger"/>.
+        /// <param name="provider">
+        ///   A service locator.
         /// </param>
         /// <param name="configDelegate">
         ///   (optional)<br/>
         ///   A delegate instance used for custom configuration behavior.
         /// </param>
         public TetraPakAuthConfig(
-            // IConfiguration configuration,
             IServiceProvider provider,
-            // ReSharper disable once SuggestBaseTypeForParameterInConstructor obsolete
-            //ILogger<TetraPakAuthConfig> logger,
             ITetraPakAuthConfigDelegate? configDelegate = null) 
         : base(provider.GetRequiredService<IConfiguration>(), provider.GetService<ILogger<TetraPakAuthConfig>>(), DefaultSectionIdentifier)
         {

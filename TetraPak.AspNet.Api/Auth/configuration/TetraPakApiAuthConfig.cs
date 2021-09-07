@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 #nullable enable
 
@@ -20,11 +21,10 @@ namespace TetraPak.AspNet.Api.Auth
             base.OnSetProperty(property, value);
         }
 
-        public TetraPakApiAuthConfig(
-            IServiceProvider provider,
-            // IConfiguration configuration, obsolete
-            // ILogger<TetraPakApiAuthConfig> logger,
-            ITetraPakAuthConfigDelegate? configDelegate = null)
+        public ITetraPackServiceProvider? BackendServiceProvider =>
+            ServiceProvider.GetService<ITetraPackServiceProvider>();
+
+        public TetraPakApiAuthConfig(IServiceProvider provider, ITetraPakAuthConfigDelegate? configDelegate = null)
         : base(provider, configDelegate)
         {
         }

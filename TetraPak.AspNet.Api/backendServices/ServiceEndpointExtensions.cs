@@ -10,42 +10,9 @@ namespace TetraPak.AspNet.Api
     {
         internal static void SetBackendService(this ServiceEndpoint self, IBackendService service)
         {
-            switch (compareEndpointService(self, service))
-            {
-                case ServiceEndpointService.None:
-                    self.Service = service;
-                    break;
-
-                case ServiceEndpointService.Same:
-                    break;
-                
-                case ServiceEndpointService.Other:
-                    throw new ArgumentException($"Endpoint {self} is already assigned to service {self.Service}", nameof(service));
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            if (self.Service is null)
+                self.Service = service;
         }
-
-        static ServiceEndpointService compareEndpointService(ServiceEndpoint endpoint, IBackendService service)
-        {
-            if (endpoint.Service is null)
-                return ServiceEndpointService.None;
-            
-            return endpoint.Service.ServiceName == service.ServiceName 
-                ? ServiceEndpointService.Same
-                : ServiceEndpointService.Other;
-        }
-
-        enum ServiceEndpointService
-        {
-            None,
-            
-            Same,
-            
-            Other
-        }
-
         internal static IBackendService GetBackendService(this ServiceEndpoint self)
         {
             return self.Service 

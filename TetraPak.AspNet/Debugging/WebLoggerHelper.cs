@@ -64,7 +64,6 @@ namespace TetraPak.AspNet.Debugging
             }
 
             var sb = new StringBuilder();
-            // var assemblies = AppDomain.CurrentDomain.GetAssemblies(); obsolete
             sb.AppendLine(">===== ASSEMBLIES =====<");
             sb.appendAssembliesInUse();
             sb.AppendLine(">======================<");

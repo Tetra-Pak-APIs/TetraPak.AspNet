@@ -13,7 +13,7 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Controllers
 {
-    public class BusinessApiController : ControllerBase
+    public class TetraPakApiController : ControllerBase
     {
         protected AmbientData AmbientData { get; private set; }
 
@@ -158,13 +158,9 @@ namespace TetraPak.AspNet.Api.Controllers
 
         public override OkObjectResult Ok(object value)
         {
-            if (value is null)
-                return ControllerBaseExtensions.Ok(this);
-
-            return ControllerBaseExtensions.Ok(this, value);
-            // return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) obsolete 
-            //     ? base.Ok(value) 
-            //     : ControllerBaseExtensions.Ok(this, value);
+            return value is null 
+                ? ControllerBaseExtensions.Ok(this) 
+                : ControllerBaseExtensions.Ok(this, value);
         }
 
         protected static string DictionaryLogString(IDictionary<string, string> formDictionary, string indent = "  ")
@@ -172,11 +168,11 @@ namespace TetraPak.AspNet.Api.Controllers
             return formDictionary.ConcatDictionary($"\n{indent}");
         }
 
-        public BusinessApiController()
+        public TetraPakApiController()
         {
         }
         
-        public BusinessApiController(AmbientData ambientData) 
+        public TetraPakApiController(AmbientData ambientData) 
         {
             if (ambientData is { })
             {

@@ -43,15 +43,15 @@ namespace TetraPak.AspNet
         /// <param name="logger">
         ///   A <see cref="ILogger"/> instance.
         /// </param>
-        /// <param name="sectionIdentifier">
+        /// <param name="serviceName">
         ///   (optional; default=<see cref="SectionIdentifier"/>)<br/>
         ///   A custom configuration section identifier. 
         /// </param>
         public TetraPakIdentityConfig(
             IConfiguration configuration, 
             ILogger logger, 
-            string sectionIdentifier = null) 
-            : base(configuration, logger, sectionIdentifier)
+            string serviceName = null) 
+            : base(configuration, logger, serviceName)
         {
             Source = parseSource();
             // var scope = Section.GetList<string>(TetraPakAuthConfig.KeyScope, logger);

@@ -18,8 +18,6 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassNeverInstantiated.Global
     public class TetraPakWebApiAccessTokenAuthenticationHandler : TetraPakAccessTokenAuthenticationHandler
     {
-        // const string CacheRepository = Caching.Tokens. "ExchangedTokens"; obsolete
-
         readonly IClientCredentialsProvider _clientCredentialsProvider;
         readonly ITokenExchangeService _tokenExchangeService;
 
@@ -31,13 +29,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (!accessTokenOutcome)
                     return accessTokenOutcome;
                 
-                // try getting a cached exchanged token ...  obsolete
-                // var accessToken = accessTokenOutcome.Value;
-                // var cachedOutcome = await getCachedExchangedTokenAsync(accessToken);
-                // if (cachedOutcome)
-                //     return cachedOutcome;
-                
-                // exchange token for 
+                // exchange token  
                 var clientCredentials = await OnGetClientCredentials();
                 var credentials = new BasicAuthCredentials(clientCredentials.Identity, clientCredentials.Secret);
 
@@ -59,7 +51,6 @@ namespace TetraPak.AspNet.Api.Auth
                     : actorToken;
                 
                 // // cache exchanged token and return it ...
-                // await cacheTokenExchangeAsync(accessToken, exchangedToken); obsolete
                 return Outcome<ActorToken>.Success(exchangedToken);
             }
             catch (Exception ex)
@@ -79,25 +70,6 @@ namespace TetraPak.AspNet.Api.Auth
             
             return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
         }
-        
-        // async Task<Outcome<ActorToken>> getCachedExchangedTokenAsync(ActorToken accessToken) obsolete
-        // {
-        //     if (AmbientData.Cache is null)
-        //         return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
-        //
-        //     return await AmbientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
-        // }
-        //
-        // async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
-        // {
-        //     if (AmbientData.Cache is { })
-        //     {
-        //         await AmbientData.Cache.AddOrUpdateAsync(
-        //             CacheRepository, 
-        //             accessToken,
-        //             exchangedToken);
-        //     }
-        // }
 
         public TetraPakWebApiAccessTokenAuthenticationHandler(
             IOptionsMonitor<ValidateTetraPakAccessTokenSchemeOptions> options, 

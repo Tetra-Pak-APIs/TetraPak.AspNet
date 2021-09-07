@@ -53,11 +53,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TetraPak.AspNet" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(SolutionDir)_nuget\icon.png" Pack="true" PackagePath="\" />
     <None Include="$(SolutionDir)_nuget\license.txt" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+    <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!--Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" /-->

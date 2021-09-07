@@ -22,7 +22,7 @@ namespace TetraPak.AspNet.Api
     /// </typeparam>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class BackendService<TEndpoints> : IBackendService
-    where TEndpoints : ServiceEndpointCollection
+    where TEndpoints : ServiceEndpoints
     {
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
@@ -34,28 +34,31 @@ namespace TetraPak.AspNet.Api
         ///   Gets the endpoint configuration.
         /// </summary>
         // ReSharper disable MemberCanBePrivate.Global
-        public TEndpoints? Endpoints { get; private set; }
+        public TEndpoints Endpoints { get; private set; }
 
         /// <summary>
         ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
         ///   used to consumer the backend service.
         /// </summary>
-        protected IHttpServiceProvider HttpServiceProvider { get; private set; }
+        protected IHttpServiceProvider HttpServiceProvider => Endpoints.HttpServiceProvider;
 
         /// <summary>
         ///   Gets logging provider.  
         /// </summary>
-        protected ILogger? Logger => Endpoints?.Logger;
+        protected ILogger? Logger => Endpoints.Logger;
 
         /// <inheritdoc />
-        public AmbientData AmbientData => Endpoints!.AmbientData;
+        public AmbientData AmbientData => Endpoints.AmbientData;
 
         public IServiceAuthConfig ParentConfig => AuthConfig;
 
+        /// <inheritdoc />
+        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
+        
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig => Endpoints!.AuthConfig;
+        protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
 
         /// <inheritdoc />
         public IConfiguration Configuration => AuthConfig.Configuration;
@@ -65,40 +68,40 @@ namespace TetraPak.AspNet.Api
         
         /// <inheritdoc />
         [StateDump]
-        public GrantType GrantType => Endpoints!.GrantType;
+        public GrantType GrantType => Endpoints.GrantType;
 
         [StateDump]
-        public string? ClientId => Endpoints?.ClientId;
+        public string? ClientId => Endpoints.ClientId;
 
         [StateDump]
-        public string? ClientSecret => Endpoints?.ClientSecret;
+        public string? ClientSecret => Endpoints.ClientSecret;
 
         [StateDump]
-        public MultiStringValue? Scope => Endpoints?.Scope;
+        public MultiStringValue? Scope => Endpoints.Scope;
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Endpoints!.GetConfiguredValue(key);
+        public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints!.GetClientIdAsync(authContext, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints.GetClientIdAsync(authContext, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientSecretAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints!.GetClientSecretAsync(authContext, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints.GetClientSecretAsync(authContext, cancellationToken);
 
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints!.GetScopeAsync(authContext, null, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints.GetScopeAsync(authContext, null, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext, 
             MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
-            => Endpoints!.GetScopeAsync(authContext, useDefault, cancellationToken);
+            => Endpoints.GetScopeAsync(authContext, useDefault, cancellationToken);
         
         
         /// <inheritdoc />
@@ -214,7 +217,7 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null,
             string? messageId = null)
         {
-            if (!Endpoints!.IsValid)
+            if (!Endpoints.IsValid)
                 return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues()!, messageId);
 
             var ct = cancellationToken ?? CancellationToken.None;
@@ -386,29 +389,11 @@ namespace TetraPak.AspNet.Api
             return clientOutcome;
         }
 
-        // ReSharper disable once UnusedMember.Global
-        internal Outcome<ServiceEndpointCollection> IsInitialized() => Endpoints is { } 
-            ? Outcome<ServiceEndpointCollection>.Success(Endpoints) 
-            : Outcome<ServiceEndpointCollection>.Fail(new Exception("Not initialized"));
-
-        // internal void Initialize(TEndpoints endpoints, IHttpServiceProvider httpServiceProvider) obsolete
-        // {
-        //     Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
-        //     HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
-        //     Endpoints.SetBackendService(this);
-        // }
-
-        // public BackendService() obsolete?
-        // {
-        // }
-
-        public BackendService(TEndpoints endpointCollection, IHttpServiceProvider httpServiceProvider)
+        public BackendService(TEndpoints endpoints)
         {
-            ServiceName = endpointCollection.SectionIdentifier;
-            Endpoints = endpointCollection ?? throw new ArgumentNullException(nameof(endpointCollection));
-            HttpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); 
+            ServiceName = endpoints.SectionIdentifier;
+            Endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
             Endpoints.SetBackendService(this);
-            // Initialize(endpoints, httpServiceProvider);
         }
     }
 }

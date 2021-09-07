@@ -193,9 +193,6 @@ namespace TetraPak.AspNet
             if (_clientCredentialsProvider is { })
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
-            // if (AuthConfig.ClientId is null) obsolete
-            //     return Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
-            
             return AuthConfig.ClientSecret is { } 
                 ? Outcome<Credentials>.Success(new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret)) 
                 : Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));

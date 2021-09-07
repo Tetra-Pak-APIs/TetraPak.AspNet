@@ -42,18 +42,8 @@ namespace TetraPak.AspNet.Api
         /// <see cref="ITetraPakAuthConfigDelegate"/>
         protected virtual bool IsConfigDelegated => AmbientData.AuthConfig.IsDelegated;
 
-        internal bool IsAuthIdentifier(string identifier)
-        {
-            return identifier switch
-            {
-                nameof(ConfigPath) => true,
-                nameof(GrantType) => true,
-                nameof(ClientId) => true,
-                nameof(ClientSecret) => true,
-                nameof(Scope) => true,
-                _ => false
-            };
-        }
+        /// <inheritdoc />
+        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
         public virtual GrantType GrantType
@@ -153,7 +143,6 @@ namespace TetraPak.AspNet.Api
         }
         
         public ServiceAuthConfig(
-            // AmbientData ambientData, obsolete
             IServiceProvider serviceProvider,
             IServiceAuthConfig parentConfig,
             string sectionIdentifier = ServicesConfigName) 

@@ -10,17 +10,16 @@ using WebAPI.services;
 namespace WebAPI.Controllers
 {
     /// <summary>
-    ///   This is an example of a typed Business API Gateway controller.
-    ///   It derives from a generic api gateway controller supporting a
-    ///   custom endpoints class (<see cref="HelloWorldEndpointCollection"/>),
-    ///   allowing for type-safe use of those endpoints and intellisense support when consuming the endpoints. 
+    ///   This example shows how a controller can consume typed backend services,
+    ///   allowing for type-safety and intellisense support. 
     /// </summary>
     [ApiController]
     [Route("TypedHelloWorld")]
-    [BackendService("HelloWorld")]
     [Authorize]
-    public class TypedHelloWorldController : HelloWorldApiController 
+    public class TypedHelloWorldController : ControllerBase 
     {
+        readonly HelloWorldService _helloWorldService;
+
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)
         {
@@ -38,31 +37,26 @@ namespace WebAPI.Controllers
             switch (svc.ToLowerInvariant())
             {
                 case "tx":
-                    if (!await GetAccessTokenAsync())
-                        return UnauthorizedError(
+                    if (!await this.GetAccessTokenAsync())
+                        return this.UnauthorizedError(
                             new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
-                        
+
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints.HelloWorldWithTokenExchange.GetAsync());
+                    return await this.RespondAsync(await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"].GetAsync());
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints.HelloWorldWithClientCredentials.GetAsync());
+                    return await this.RespondAsync(await _helloWorldService.Endpoints.HelloWorldWithClientCredentials.GetAsync());
                 
                 default:
-                    return await RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
+                    return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
         }
-    }
-    
-    public class HelloWorldApiController : ApiGatewayController<HelloWorldService>
-    {}
-    
-    public class HelloWorldService : BackendService<HelloWorldEndpointCollection>
-    {
-        public HelloWorldService(HelloWorldEndpointCollection endpointCollection, IHttpServiceProvider httpServiceProvider) 
-        : base(endpointCollection, httpServiceProvider)
+
+        // ReSharper disable once UnusedParameter.Local
+        public TypedHelloWorldController(HelloWorldService helloWorldService) // <-- you need to add a TetraPakServices parameter
         {
+            _helloWorldService = helloWorldService;
         }
     }
 }

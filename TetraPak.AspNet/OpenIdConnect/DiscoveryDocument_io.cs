@@ -262,9 +262,6 @@ namespace TetraPak.AspNet.OpenIdConnect
             return new ReadDiscoveryDocumentArgs
             {
                 MasterSourceUrl = authConfig.DiscoveryDocumentUrl,
-                                  // ?? throw new InvalidOperationException( obsolete
-                                  //     "Cannot read discovery document from master source. "+
-                                  //     "Configuration does not specify a URL for the discovery document"),
                 Logger = authConfig.Logger,
                 AuthConfig = authConfig,
                 Timeout = timeout,

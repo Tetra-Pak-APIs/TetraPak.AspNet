@@ -56,8 +56,8 @@ namespace TetraPak.AspNet.Auth
         public JwtBearerValidationConfig(
             IConfiguration configuration,
             ILogger logger,
-            string sectionIdentifier = null)
-        : base(configuration, logger, sectionIdentifier)
+            string serviceName = null)
+        : base(configuration, logger, serviceName)
         {
         }
     }
