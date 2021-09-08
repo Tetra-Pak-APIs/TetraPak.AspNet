@@ -11,7 +11,6 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("SimpleHelloWorld")]
-    // [BackendService("HelloWorld")] 
     [Authorize]
     public class UntypedHelloWorldController : ControllerBase 
     {
@@ -36,7 +35,7 @@ namespace WebAPI.Controllers
                         return this.UnauthorizedError(
                             new Exception("Cannot perform Token Exchange. No access token was passed in request"));
                         
-                    // note This is an example of how you can use an indexer to fetch the endpoint:
+                    // note This is an example of how you can use methods and names only to consume a service endpoint:
                     return await this.RespondAsync(await this.Service("HelloWorld").Endpoint("HelloWorldWithTokenExchange").GetAsync());
                 
                 case "cc": 

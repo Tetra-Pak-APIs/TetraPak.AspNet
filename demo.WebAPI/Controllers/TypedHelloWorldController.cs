@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TetraPak;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
@@ -10,8 +11,27 @@ using WebAPI.services;
 namespace WebAPI.Controllers
 {
     /// <summary>
-    ///   This example shows how a controller can consume typed backend services,
-    ///   allowing for type-safety and intellisense support. 
+    ///   <para>
+    ///   This example shows how a controller can consume configured and typed backend services,
+    ///   allowing for type-safety, intellisense support and a very convenient approach that will
+    ///   have you focus on writing business logic and way less on boilerplate code such as getting your client
+    ///   authorized for backend service consumption.
+    ///   </para>
+    ///   <para>
+    ///   The typed service gets its configuration from the <see cref="IConfiguration"/> framework (appsettings.json),
+    ///   via the sub section <see cref="ServiceAuthConfig.ServicesConfigName"/>.
+    ///   </para>
+    ///   <para>
+    ///   <a href="https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/blob/master/TetraPak.AspNet.Api/README.md#backend-services">
+    ///   Read more here!
+    ///   </a>
+    ///   </para>
+    ///   <para>
+    ///   <i><b>CAUTION!</b><br/>
+    ///   This demo constitutes experimental code APIs that are not yet part of the official SDK.
+    ///   Feel free to try it out and get back to us with feedback<br/>
+    ///   - The API innovation team 2021-09-07</i>  
+    ///   </para> 
     /// </summary>
     [ApiController]
     [Route("TypedHelloWorld")]
@@ -54,7 +74,7 @@ namespace WebAPI.Controllers
         }
 
         // ReSharper disable once UnusedParameter.Local
-        public TypedHelloWorldController(HelloWorldService helloWorldService) // <-- you need to add a TetraPakServices parameter
+        public TypedHelloWorldController(HelloWorldService helloWorldService) // <-- just inject the typed backend service
         {
             _helloWorldService = helloWorldService;
         }

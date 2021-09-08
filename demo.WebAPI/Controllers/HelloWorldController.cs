@@ -32,7 +32,6 @@ namespace WebAPI.Controllers
         ///   <para>
         ///   Still, it may serve as a good starting point for your coding.</para>
         /// </summary>
-        // GET: /HelloWorld
         [HttpGet]
         public async Task<ActionResult> Get()
         {
