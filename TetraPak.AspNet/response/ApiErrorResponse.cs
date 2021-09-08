@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using TetraPak.DynamicEntities;
 using TetraPak.Serialization;
 
-namespace TetraPak.AspNet.Api
+namespace TetraPak.AspNet
 {
     [Serializable, JsonConverter(typeof(DynamicEntityJsonConverter<ApiErrorResponse>))]
     public class ApiErrorResponse  : DynamicEntity
     {
+        [JsonIgnore]
+        public int StatusCode => parseHttpStatusCode();
+        
         [JsonPropertyName("title")]
         public string Title //{ get; set; }
         {
@@ -65,6 +69,16 @@ namespace TetraPak.AspNet.Api
             }
         }
 
+        int parseHttpStatusCode()
+        {
+            if (int.TryParse(Status, out var code))
+                return code;
+
+            if (Enum.TryParse<HttpStatusCode>(Status, out var httpStatusCode))
+                return (int)httpStatusCode;
+
+            return (int) System.Net.HttpStatusCode.InternalServerError;
+        }
     }
 
     public static class ApiErrorResponseHelper
