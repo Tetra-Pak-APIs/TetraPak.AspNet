@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
 using TetraPak.AspNet.Api;
@@ -15,10 +16,10 @@ namespace WebAPI.Controllers
     ///   allowing for type-safe use of those endpoints and intellisense support when consuming the endpoints. 
     /// </summary>
     [ApiController]
-    [Route("HelloWorld")]
-    [BackendService("HelloWorld")]
-    // [Authorize]
-    public class TypedHelloWorldController : HelloWorldApiController 
+    [Route("TypedHelloWorld")]
+    //[BackendService("HelloWorld")]
+    [Authorize]
+    public class TypedHelloWorldController : ControllerBase 
     {
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)
@@ -37,19 +38,19 @@ namespace WebAPI.Controllers
             switch (svc.ToLowerInvariant())
             {
                 case "tx":
-                    if (!await GetAccessTokenAsync())
-                        return UnauthorizedError(
+                    if (!await this.GetAccessTokenAsync())
+                        return this.UnauthorizedError(
                             new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
                         
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints.HelloWorldWithTokenExchange.GetAsync());
+                    return await this.RespondAsync(await this.Service<HelloWorldService>().Endpoints.HelloWorldWithTokenExchange.GetAsync());
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
-                    return await RespondAsync(await Service.Endpoints.HelloWorldWithClientCredentials.GetAsync());
+                    return await this.RespondAsync(await this.Service<HelloWorldService>().Endpoints.HelloWorldWithClientCredentials.GetAsync());
                 
                 default:
-                    return await RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
+                    return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
         }
     }

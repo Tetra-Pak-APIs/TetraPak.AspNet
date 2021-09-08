@@ -34,7 +34,7 @@ namespace TetraPak.AspNet.Api
         ///   Gets the endpoint configuration.
         /// </summary>
         // ReSharper disable MemberCanBePrivate.Global
-        public TEndpoints? Endpoints { get; private set; }
+        public TEndpoints Endpoints { get; private set; }
 
         /// <summary>
         ///   Gets a delegate used to provide a <see cref="HttpClient"/>,

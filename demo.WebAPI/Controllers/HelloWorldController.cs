@@ -54,6 +54,14 @@ namespace WebAPI.Controllers
             return await this.RespondAsync(await response.ToOutcomeAsync()); 
         }
 
+        [AllowAnonymous]
+        [HttpGet, Route("/version")]
+        public Task<ActionResult> GetVersion()
+        {
+            var data = new { Version = typeof(Startup).Assembly.GetName().Version };
+            return this.RespondAsync(Outcome<object>.Success(data));
+        }
+
         /// <summary>
         ///   Initializes the controller.
         /// </summary>

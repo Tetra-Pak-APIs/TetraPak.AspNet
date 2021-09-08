@@ -9,8 +9,6 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("SimpleHelloWorld")]
-    [BackendService("HelloWorld")]
-    // [Authorize]
     public class UntypedHelloWorldController : ControllerBase 
     {
         [HttpGet]

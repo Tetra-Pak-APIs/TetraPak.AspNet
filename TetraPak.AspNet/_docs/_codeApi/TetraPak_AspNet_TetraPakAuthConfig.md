@@ -20,6 +20,7 @@ public TetraPakAuthConfig(System.IServiceProvider provider, TetraPak.AspNet.ITet
 #### Parameters
 <a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider_TetraPak_AspNet_ITetraPakAuthConfigDelegate_)_provider'></a>
 `provider` [System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')  
+A service locator.  
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider_TetraPak_AspNet_ITetraPakAuthConfigDelegate_)_configDelegate'></a>
 `configDelegate` [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate')  
@@ -72,7 +73,7 @@ public string AuthorityUrl { get; }
 Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.  
 The default value is [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization')).  
 ```csharp
-public string AuthorizationHeader { get; set; }
+public string? AuthorizationHeader { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -102,7 +103,7 @@ public string? CallbackPath { get; set; }
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_ClientId'></a>
 ## TetraPakAuthConfig.ClientId Property
-Gets a configured client id.  
+Gets a configured client id at this configuration level.  
 ```csharp
 public virtual string ClientId { get; set; }
 ```
@@ -111,12 +112,14 @@ public virtual string ClientId { get; set; }
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_ClientSecret'></a>
 ## TetraPakAuthConfig.ClientSecret Property
-Gets a configured client secret.  
+Gets a configured client secret at this configuration level.  
 ```csharp
 public virtual string? ClientSecret { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+#### See Also
+- [GetClientSecretAsync(AuthContext, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_GetClientSecretAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakAuthConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_ConfigDelegate'></a>
 ## TetraPakAuthConfig.ConfigDelegate Property
@@ -152,7 +155,7 @@ public System.TimeSpan DefaultCachingLifetime { get; set; }
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_DefaultSectionIdentifier'></a>
 ## TetraPakAuthConfig.DefaultSectionIdentifier Property
-The configuration section name.   
+The default root configuration section name for Tetra Pak configuration.   
 ```csharp
 public static string DefaultSectionIdentifier { get; set; }
 ```
@@ -187,6 +190,20 @@ public TetraPak.RuntimeEnvironment Environment { get; }
 #### Property Value
 [TetraPak.RuntimeEnvironment](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.RuntimeEnvironment 'TetraPak.RuntimeEnvironment')
   
+<a name='TetraPak_AspNet_TetraPakAuthConfig_GrantType'></a>
+## TetraPakAuthConfig.GrantType Property
+Specifies the grant type (a.k.a. OAuth "flow") used at this configuration level.  
+```csharp
+public virtual TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
+```
+#### Property Value
+[GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
+#### Exceptions
+[ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
+The configured (textual) value could not be parsed into a [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
+
+Implements [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  
+  
 <a name='TetraPak_AspNet_TetraPakAuthConfig_IdentitySource'></a>
 ## TetraPakAuthConfig.IdentitySource Property
 Specifies the source for identity claims (see [TetraPakIdentitySource](TetraPak_AspNet_Auth_TetraPakIdentitySource.md 'TetraPak.AspNet.Auth.TetraPakIdentitySource')),  
@@ -202,7 +219,7 @@ public TetraPak.AspNet.Auth.TetraPakIdentitySource IdentitySource { get; set; }
 Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.  
 The default value is [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization')).  
 ```csharp
-public string IdentityTokenHeader { get; set; }
+public string? IdentityTokenHeader { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -254,6 +271,20 @@ public static bool IsDevelopment { get; }
 #### Property Value
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
   
+<a name='TetraPak_AspNet_TetraPakAuthConfig_IsMessageIdEnabled'></a>
+## TetraPakAuthConfig.IsMessageIdEnabled Property
+Gets or sets a value to enable/disable the automatic use of a unique id to track  
+a specific request/response. This value is `true` by default.  
+```csharp
+public bool IsMessageIdEnabled { get; set; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
+### Remarks
+<a href="https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/blob/master/README.md#message-id">
+              You can read more about the message id concept here.
+              </a>
+  
 <a name='TetraPak_AspNet_TetraPakAuthConfig_IsPkceUsed'></a>
 ## TetraPakAuthConfig.IsPkceUsed Property
 Gets or sets a value specifying whether PKCE is to be used where applicable.  
@@ -263,14 +294,14 @@ public bool IsPkceUsed { get; set; }
 #### Property Value
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
   
-<a name='TetraPak_AspNet_TetraPakAuthConfig_JwtBearerValidation'></a>
-## TetraPakAuthConfig.JwtBearerValidation Property
+<a name='TetraPak_AspNet_TetraPakAuthConfig_JwtBearerAssertion'></a>
+## TetraPakAuthConfig.JwtBearerAssertion Property
 Gets configuration for how to validate JWT tokens.    
 ```csharp
-public TetraPak.AspNet.Auth.JwtBearerValidationConfig JwtBearerValidation { get; }
+public TetraPak.AspNet.Auth.JwtBearerAssertionConfig JwtBearerAssertion { get; }
 ```
 #### Property Value
-[JwtBearerValidationConfig](TetraPak_AspNet_Auth_JwtBearerValidationConfig.md 'TetraPak.AspNet.Auth.JwtBearerValidationConfig')
+[JwtBearerAssertionConfig](TetraPak_AspNet_Auth_JwtBearerAssertionConfig.md 'TetraPak.AspNet.Auth.JwtBearerAssertionConfig')
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_ParentConfig'></a>
 ## TetraPakAuthConfig.ParentConfig Property
@@ -311,7 +342,7 @@ Negative values will automatically be converted to positive values.
 Gets or sets the name of the header used to obtain the request message id.  
 The default value is [RequestMessageId](TetraPak_AspNet_AmbientData_Keys.md#TetraPak_AspNet_AmbientData_Keys_RequestMessageId 'TetraPak.AspNet.AmbientData.Keys.RequestMessageId')).  
 ```csharp
-public string RequestMessageIdHeader { get; set; }
+public string? RequestMessageIdHeader { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -330,27 +361,15 @@ public static string RuntimeEnvironment { get; }
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_Scope'></a>
 ## TetraPakAuthConfig.Scope Property
-Gets or sets a scope of identity claims to be requested while authenticating the identity.  
-When omitted a default scope will be used.   
+Gets or sets a scope of identity claims, a this configuration level,  
+to be requested while authenticating the identity. When omitted a default scope will be used.   
 ```csharp
 public TetraPak.MultiStringValue Scope { get; set; }
 ```
 #### Property Value
 [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
-  
-<a name='TetraPak_AspNet_TetraPakAuthConfig_SectionIdentifier'></a>
-## TetraPakAuthConfig.SectionIdentifier Property
-Can be overridden. Returns the expected configuration section identifier like in this example:<br />```csharp
-  
-"MySection": {  
-  :  
-}  
-```
-```csharp
-public override string SectionIdentifier { get; }
-```
-#### Property Value
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+#### See Also
+- [GetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_GetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakAuthConfig.GetScopeAsync(TetraPak.AspNet.AuthContext, TetraPak.MultiStringValue?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_TokenIssuerUrl'></a>
 ## TetraPakAuthConfig.TokenIssuerUrl Property
@@ -376,7 +395,7 @@ public string UserInformationUrl { get; }
 An alternative method of getting the authority URL from the discovery document, allowing for  
 the document to be refreshed online.  
 ```csharp
-public System.Threading.Tasks.Task<string> GetAuthorityUrlAsync();
+public System.Threading.Tasks.Task<string?> GetAuthorityUrlAsync();
 ```
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -424,14 +443,32 @@ Cancellation token for cancellation the operation.
 
 Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetClientSecretAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   
+<a name='TetraPak_AspNet_TetraPakAuthConfig_GetConfiguredValue(string)'></a>
+## TetraPakAuthConfig.GetConfiguredValue(string) Method
+Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
+unaffected by delegates or other internal types of logic.  
+```csharp
+public string? GetConfiguredValue(string key);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakAuthConfig_GetConfiguredValue(string)_key'></a>
+`key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Identifies the requested value.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') when a value is configured; otherwise `null`.  
+
+Implements [GetConfiguredValue(string)](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string) 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(string)')  
+  
 <a name='TetraPak_AspNet_TetraPakAuthConfig_GetDiscoveryDocumentAsync()'></a>
 ## TetraPakAuthConfig.GetDiscoveryDocumentAsync() Method
 Gets the "well known" OIDC discovery document. The document will be downloaded and cached as needed.    
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.OpenIdConnect.DiscoveryDocument> GetDiscoveryDocumentAsync();
+public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.OpenIdConnect.DiscoveryDocument>> GetDiscoveryDocumentAsync();
 ```
 #### Returns
-[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 A [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_GetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_)'></a>
@@ -465,7 +502,7 @@ Implements [GetScopeAsync(AuthContext, MultiStringValue?, Nullable<CancellationT
 An alternative method of getting the token issuer endpoint URL from the discovery document, allowing for  
 the document to be refreshed online.  
 ```csharp
-public System.Threading.Tasks.Task<string> GetTokenIssuerUrlAsync();
+public System.Threading.Tasks.Task<string?> GetTokenIssuerUrlAsync();
 ```
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -476,7 +513,7 @@ The token issuer endpoint resource locator.
 An alternative method of getting the user information URL from the discovery document, allowing for  
 the document to be refreshed online.  
 ```csharp
-public System.Threading.Tasks.Task<string> GetUserInformationUrlAsync();
+public System.Threading.Tasks.Task<string?> GetUserInformationUrlAsync();
 ```
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  

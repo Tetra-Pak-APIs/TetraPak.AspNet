@@ -38,12 +38,15 @@ Microsoft.Extensions.Configuration.IConfiguration Configuration { get; }
   
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType'></a>
 ## IServiceAuthConfig.GrantType Property
-Specifies the grant type (OAuth) or authorization mechanism.   
+Specifies the grant type (a.k.a. OAuth "flow") used at this configuration level.  
 ```csharp
 TetraPak.AspNet.Auth.GrantType GrantType { get; }
 ```
 #### Property Value
 [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
+#### Exceptions
+[ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
+The configured (textual) value could not be parsed into a [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
   
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_ParentConfig'></a>
 ## IServiceAuthConfig.ParentConfig Property

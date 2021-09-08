@@ -205,7 +205,7 @@ namespace TetraPak.AspNet.Api
                 var exception = new HttpException(
                     HttpStatusCode.Unauthorized,
                     "Token exchanged failed (see inner exception)", ex);
-                Logger.Error(exception, GetMessageId());
+                Logger.Error(exception, messageId: GetMessageId());
                 return Outcome<ActorToken>.Fail(exception);
             }
         }

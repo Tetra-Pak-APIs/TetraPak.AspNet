@@ -69,8 +69,8 @@ namespace TetraPak.AspNet.Api.Auth
             
             c.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>(
                 p => new ConfigureJwtBearerOptions(p, 
-                    p.GetService<HostProvider>(), 
-                    p.GetService<IWebHostEnvironment>(),
+                    p.GetRequiredService<HostProvider>(), 
+                    p.GetRequiredService<IWebHostEnvironment>(),
                     options));
             c.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null);
