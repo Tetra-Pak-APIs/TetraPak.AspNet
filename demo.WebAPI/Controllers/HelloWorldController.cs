@@ -13,7 +13,7 @@ using TetraPak.AspNet.Api.Controllers;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("HelloWorld")]
+    [Route("[controller]")]
     [Authorize]
     public class HelloWorldController : ControllerBase
     {
@@ -55,10 +55,10 @@ namespace WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet, Route("/version")]
+        [HttpGet, Route("version")]
         public Task<ActionResult> GetVersion()
         {
-            var data = new { Version = typeof(Startup).Assembly.GetName().Version };
+            var data = new { Version = typeof(Startup).Assembly.GetName().Version?.ToString() ?? "(unknown)" };
             return this.RespondAsync(Outcome<object>.Success(data));
         }
 

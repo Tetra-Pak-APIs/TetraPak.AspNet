@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TetraPak;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
-using WebAPI.services;
+using TetraPak.AspNet.Auth;
 
 namespace WebAPI.Controllers
 {
@@ -17,7 +17,6 @@ namespace WebAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("TypedHelloWorld")]
-    //[BackendService("HelloWorld")]
     [Authorize]
     public class TypedHelloWorldController : ControllerBase 
     {
@@ -58,11 +57,23 @@ namespace WebAPI.Controllers
     public class HelloWorldApiController : ApiGatewayController<HelloWorldService>
     {}
     
-    public class HelloWorldService : BackendService<HelloWorldEndpointCollection>
+    public class HelloWorldService : BackendService<HelloWorldService.HelloWorldEndpoints>
     {
-        public HelloWorldService(HelloWorldEndpointCollection endpointCollection, IHttpServiceProvider httpServiceProvider) 
+        public HelloWorldService(HelloWorldEndpoints endpointCollection, IHttpServiceProvider httpServiceProvider) 
         : base(endpointCollection, httpServiceProvider)
         {
+        }
+        
+        public class HelloWorldEndpoints : ServiceEndpointCollection
+        {
+            public ServiceEndpoint HelloWorldWithTokenExchange => GetEndpoint();
+            
+            public ServiceEndpoint HelloWorldWithClientCredentials => GetEndpoint();
+            
+            public HelloWorldEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier = "Endpoints") 
+            : base(serviceAuthConfig, sectionIdentifier)
+            {
+            }
         }
     }
 }

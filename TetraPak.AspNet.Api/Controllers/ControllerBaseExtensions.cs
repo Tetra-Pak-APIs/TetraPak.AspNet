@@ -60,7 +60,7 @@ namespace TetraPak.AspNet.Api.Controllers
             
             var messageId = self.GetMessageId();
             if (!value.IsCollection(out _, out var items, out var count))
-                return new OkObjectResult(new ApiDataResponse<object>(new[] {value}));
+                return new OkObjectResult(new ApiDataResponse<object>(new[] {value}, messageId: messageId));
             
             totalCount = totalCount < 0 ? count : totalCount;
             var array = items.EnumerableToArray();
@@ -125,7 +125,7 @@ namespace TetraPak.AspNet.Api.Controllers
             }
 
             if (outcome.Value is not HttpResponseMessage responseMessage) 
-                return self.Ok(outcome.Value);
+                return Ok(self, outcome.Value);
             
             var stringValue = await responseMessage.Content.ReadAsStringAsync();
             var entityOutcome = stringValue.TryParseJsonToDynamicEntity();

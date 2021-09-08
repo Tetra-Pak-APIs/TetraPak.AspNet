@@ -47,10 +47,10 @@ namespace TetraPak.AspNet
         // /// <inheritdoc />
         // public override string SectionIdentifier => DefaultSectionIdentifier; obsolete
         
-        /// <summary>
-        ///   The name of the value in configuration. 
-        /// </summary>
-        protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer";
+        // /// <summary>
+        // ///   The name of the value in configuration. 
+        // /// </summary>
+        // protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer";
         
         // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
         // ReSharper disable NotAccessedField.Local
@@ -892,7 +892,7 @@ namespace TetraPak.AspNet
             ConfigDelegate = configDelegate;
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
             var logger = provider.GetService<ILogger<TetraPakAuthConfig>>();
-            JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger, SectionJwtBearerValidationIdentifier);
+            JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
             Caching = new SimpleCacheConfig(null, Section, logger, nameof(Caching));
