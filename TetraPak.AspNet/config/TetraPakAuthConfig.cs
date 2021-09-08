@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,7 +28,7 @@ namespace TetraPak.AspNet
     public class TetraPakAuthConfig : ConfigurationSection, IServiceAuthConfig
     {
         /// <summary>
-        ///   The configuration section name. 
+        ///   The default root configuration section name for Tetra Pak configuration. 
         /// </summary>
         public static string DefaultSectionIdentifier { get; set; } = "TetraPak";
         
@@ -42,8 +44,8 @@ namespace TetraPak.AspNet
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
 
-        /// <inheritdoc />
-        public override string SectionIdentifier => DefaultSectionIdentifier;
+        // /// <inheritdoc />
+        // public override string SectionIdentifier => DefaultSectionIdentifier; obsolete
         
         /// <summary>
         ///   The name of the value in configuration. 
@@ -52,6 +54,7 @@ namespace TetraPak.AspNet
         
         // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
         // ReSharper disable NotAccessedField.Local
+        bool? _isMessageIdEnabled;
         string? _clientId;
         string? _clientSecret;
         string? _callbackPath;
@@ -62,7 +65,9 @@ namespace TetraPak.AspNet
         TimeSpan? _defaultCachingLifetime;
         bool? _isPkceUsed;
         bool? _enableDiagnostics;
+#pragma warning disable 169
         MultiStringValue? _scope; // todo Why is this field being warned about not being used while others doesn't?
+#pragma warning restore 169
         GrantType _method;
         // ReSharper restore NotAccessedField.Local
         string? _authorityUrl;
@@ -79,7 +84,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
-        public JwtBearerValidationConfig JwtBearerValidation { get; }
+        public JwtBearerAssertionConfig JwtBearerAssertion { get; }
         
         /// <summary>
         ///   Gets the <see cref="IConfiguration"/> used to populate this object.
@@ -119,7 +124,7 @@ namespace TetraPak.AspNet
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         [StateDump]
-        public string AuthorizationHeader
+        public string? AuthorizationHeader
         {
             get => GetFromFieldThenSection(HeaderNames.Authorization); 
             set
@@ -141,7 +146,7 @@ namespace TetraPak.AspNet
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         [StateDump]
-        public string IdentityTokenHeader
+        public string? IdentityTokenHeader
         {
             get => GetFromFieldThenSection(AmbientData.Keys.IdToken);
             set
@@ -162,7 +167,7 @@ namespace TetraPak.AspNet
         ///   An invalid/empty value was assigned.
         /// </exception>
         [StateDump]
-        public string RequestMessageIdHeader
+        public string? RequestMessageIdHeader
         {
             get => GetFromFieldThenSection(AmbientData.Keys.RequestMessageId);
             set
@@ -249,14 +254,14 @@ namespace TetraPak.AspNet
         ///   Gets the resource locator for the well-known OIDC discovery document.
         /// </summary>
         [StateDump]
-        public string DiscoveryDocumentUrl => Section[nameof(DiscoveryDocumentUrl)] 
+        public string DiscoveryDocumentUrl => Section![nameof(DiscoveryDocumentUrl)] 
                                               ?? $"{AuthDomain}{DiscoveryDocument.DefaultPath}";
 
         /// <summary>
         ///   Gets the resource locator for the authority.
         /// </summary>
         [StateDump]
-        public  string AuthorityUrl
+        public string AuthorityUrl
         {
             get
             {
@@ -268,7 +273,7 @@ namespace TetraPak.AspNet
 
                 var outcome = _masterSourceTcs.AwaitResult();
                 return outcome
-                    ? outcome.Value?.AuthorizationEndpoint
+                    ? outcome.Value?.AuthorizationEndpoint ?? string.Empty
                     : string.Empty;
             }
         }
@@ -290,6 +295,22 @@ namespace TetraPak.AspNet
         /// </summary>
         internal bool IsAuthDomainAssigned => !string.IsNullOrWhiteSpace(_authDomain);
 
+        /// <summary>
+        ///   Gets or sets a value to enable/disable the automatic use of a unique id to track
+        ///   a specific request/response. This value is <c>true</c> by default.
+        /// </summary>
+        /// <remarks>
+        ///   <a href="https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/blob/master/README.md#message-id">
+        ///   You can read more about the message id concept here.
+        ///   </a>
+        /// </remarks>
+        public bool IsMessageIdEnabled
+        {
+            get => GetFromFieldThenSection(true);
+            set => _isMessageIdEnabled = value;
+        }
+
+        /// <inheritdoc />
         [StateDump]
         public virtual GrantType GrantType
         {
@@ -311,8 +332,9 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Gets a configured client id.
+        ///   Gets a configured client id at this configuration level.
         /// </summary>
+        /// <see cref="GetClientIdAsync"/>
         [StateDump]
         public virtual string ClientId
         {
@@ -325,8 +347,9 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Gets a configured client secret.
+        ///   Gets a configured client secret at this configuration level.
         /// </summary>
+        /// <seealso cref="GetClientSecretAsync"/>
         [StateDump, RestrictedValue(DisclosureLogLevels = new[] { LogLevel.Debug })]
         public virtual string? ClientSecret
         {
@@ -339,9 +362,10 @@ namespace TetraPak.AspNet
         }
         
         /// <summary>
-        ///   Gets or sets a scope of identity claims to be requested while authenticating the identity.
-        ///   When omitted a default scope will be used. 
+        ///   Gets or sets a scope of identity claims, a this configuration level,
+        ///   to be requested while authenticating the identity. When omitted a default scope will be used. 
         /// </summary>
+        /// <seealso cref="GetScopeAsync"/>
         [StateDump]
         public MultiStringValue Scope 
         {
@@ -369,7 +393,8 @@ namespace TetraPak.AspNet
             MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null) => OnGetScopeAsync(authContext, useDefault, cancellationToken);
 
-        public string? GetConfiguredValue(string key) => Section[key];
+        /// <inheritdoc />
+        public string? GetConfiguredValue(string key) => Section![key];
 
         /// <summary>
         ///   Gets a client id.
@@ -388,7 +413,9 @@ namespace TetraPak.AspNet
             if (ConfigDelegate is null)
             {
                 var value = GetFromFieldThenSection<string>(propertyName: nameof(ClientId));
-                return Outcome<string>.Success(value);
+                return value is { }
+                    ? Outcome<string>.Success(value)
+                    : Outcome<string>.Fail(new ConfigurationException("Client id could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
@@ -414,7 +441,9 @@ namespace TetraPak.AspNet
             if (ConfigDelegate is null)
             {
                 var secret = GetFromFieldThenSection<string>(propertyName: nameof(ClientSecret));
-                return Outcome<string>.Success(secret);
+                return secret is {} 
+                    ? Outcome<string>.Success(secret)
+                    : Outcome<string>.Fail(new ConfigurationException("Client secret could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
@@ -499,13 +528,15 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   A <see cref="DiscoveryDocument"/>.
         /// </returns>
-        public async Task<DiscoveryDocument> GetDiscoveryDocumentAsync()
+        public async Task<Outcome<DiscoveryDocument>> GetDiscoveryDocumentAsync()
         {
             if (s_discoveryDocument is { })
-                return s_discoveryDocument; 
+                return Outcome<DiscoveryDocument>.Success(s_discoveryDocument); 
                 
             s_discoveryDocument = await discoverAsync();
-            return s_discoveryDocument;
+            return s_discoveryDocument is not null
+                ? Outcome<DiscoveryDocument>.Success(s_discoveryDocument)
+                : Outcome<DiscoveryDocument>.Fail(new Exception("Could not download OIDC discovery document")); 
         }
 
         string defaultUrl(string path) => $"{AuthDomain}{path}";
@@ -517,14 +548,16 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The authority resource locator.
         /// </returns>
-        public async Task<string> GetAuthorityUrlAsync()
+        public async Task<string?> GetAuthorityUrlAsync()
         {
-            var url = _authorityUrl ?? Section[KeyAuthorityUrl];
+            var url = _authorityUrl ?? Section![KeyAuthorityUrl];
             if (url is {})
                 return url;
 
-            var document = await GetDiscoveryDocumentAsync();
-            return document.AuthorizationEndpoint;
+            var discoOutcome = await GetDiscoveryDocumentAsync();
+            return discoOutcome
+                ? discoOutcome.Value.AuthorizationEndpoint
+                : null;
         }
 
         /// <summary>
@@ -534,14 +567,16 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The token issuer endpoint resource locator.
         /// </returns>
-        public async Task<string> GetTokenIssuerUrlAsync()
+        public async Task<string?> GetTokenIssuerUrlAsync()
         {
-            var url = _tokenIssuerUrl ?? Section[KeyTokenIssuerUrl];
+            var url = _tokenIssuerUrl ?? Section![KeyTokenIssuerUrl];
             if (url is {})
                 return url;
 
-            var document = await GetDiscoveryDocumentAsync();
-            return document.TokenEndpoint;
+            var discoOutcome = await GetDiscoveryDocumentAsync();
+            return discoOutcome
+                ? discoOutcome.Value.TokenEndpoint
+                : null;
         }
 
         /// <summary>
@@ -551,14 +586,16 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The user information resource locator.
         /// </returns>
-        public async Task<string> GetUserInformationUrlAsync()
+        public async Task<string?> GetUserInformationUrlAsync()
         {
-            var url = _userInfoUrl ?? Section[KeyUserInfoUrl];
+            var url = _userInfoUrl ?? Section![KeyUserInfoUrl];
             if (url is {})
                 return url;
 
-            var document = await GetDiscoveryDocumentAsync();
-            return document.UserInformationEndpoint;
+            var discoOutcome = await GetDiscoveryDocumentAsync();
+            return discoOutcome
+                ? discoOutcome.Value.UserInformationEndpoint
+                : null;
         }
 
         /// <summary>
@@ -684,9 +721,9 @@ namespace TetraPak.AspNet
 
             // ReSharper disable InconsistentlySynchronizedField
             if (waitForMasterSource)
-                return _masterSourceTcs.Task;
+                return _masterSourceTcs!.Task;
             
-            _masterSourceTcs = new TaskCompletionSource<DiscoveryDocument>();
+            _masterSourceTcs = new TaskCompletionSource<DiscoveryDocument>()!;
             // ReSharper restore InconsistentlySynchronizedField
 
             Task.Run(async () =>
@@ -770,11 +807,11 @@ namespace TetraPak.AspNet
             }
         }
         
-        RuntimeEnvironment resolveRuntimeEnvironment() => OnResolveRuntimeEnvironment(Section["Environment"]);
+        RuntimeEnvironment resolveRuntimeEnvironment() => OnResolveRuntimeEnvironment(Section!["Environment"]);
 
         TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.RemoteService)
         {
-            var s = Section[KeyIdentitySource];
+            var s = Section![KeyIdentitySource];
             if (s is null)
                 return useDefault;
                 
@@ -806,58 +843,56 @@ namespace TetraPak.AspNet
             return new MultiStringValue(scope.ToArray());
         }
         
-        protected void InitializeProperties(IConfiguration configuration) 
-        {
-            var properties = GetType().GetProperties();
-            foreach (var property in properties.Where(i => i.CanWrite))
-            {
-                var value = configuration[property.Name];
-                if (value is null)
-                    continue;
-        
-                OnSetProperty(property, value);
-            }
-        }
-        
-        protected virtual void OnSetProperty(PropertyInfo property, object value) 
-        {
-            if (property.PropertyType == typeof(string))
-            {
-                property.SetValue(this, value);
-                return;
-            }
-            
-            var obj = Convert.ChangeType(value, property.PropertyType);
-            property.SetValue(this, obj);
-        }
+        // protected void InitializeProperties(IConfiguration configuration) // obsolete?
+        // {
+        //     var properties = GetType().GetProperties();
+        //     foreach (var property in properties.Where(i => i.CanWrite))
+        //     {
+        //         var value = configuration[property.Name];
+        //         if (value is null)
+        //             continue;
+        //
+        //         OnSetProperty(property, value);
+        //     }
+        // }
+        //
+        // protected virtual void OnSetProperty(PropertyInfo property, object value) 
+        // {
+        //     if (property.PropertyType == typeof(string))
+        //     {
+        //         property.SetValue(this, value);
+        //         return;
+        //     }
+        //     
+        //     var obj = Convert.ChangeType(value, property.PropertyType);
+        //     property.SetValue(this, obj);
+        // }
 
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
-        /// <param name="configuration">
-        ///   A <see cref="IConfiguration"/> instance.
-        /// </param>
-        /// <param name="logger">
-        ///   A <see cref="ILogger"/>.
+        /// <param name="provider">
+        ///   A service locator.
         /// </param>
         /// <param name="configDelegate">
         ///   (optional)<br/>
         ///   A delegate instance used for custom configuration behavior.
         /// </param>
         public TetraPakAuthConfig(
-            // IConfiguration configuration,
             IServiceProvider provider,
-            // ReSharper disable once SuggestBaseTypeForParameterInConstructor obsolete
-            //ILogger<TetraPakAuthConfig> logger,
             ITetraPakAuthConfigDelegate? configDelegate = null) 
-        : base(provider.GetRequiredService<IConfiguration>(), provider.GetService<ILogger<TetraPakAuthConfig>>(), DefaultSectionIdentifier)
+        : base(
+            provider.GetRequiredService<IConfiguration>(), 
+            provider.GetService<ILogger<TetraPakAuthConfig>>(), 
+            DefaultSectionIdentifier)
         {
+            SectionIdentifier = DefaultSectionIdentifier;
             _provider = provider;
             Configuration = provider.GetRequiredService<IConfiguration>();
             ConfigDelegate = configDelegate;
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
             var logger = provider.GetService<ILogger<TetraPakAuthConfig>>();
-            JwtBearerValidation = new JwtBearerValidationConfig(Section, logger, SectionJwtBearerValidationIdentifier);
+            JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger, SectionJwtBearerValidationIdentifier);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
             Caching = new SimpleCacheConfig(null, Section, logger, nameof(Caching));

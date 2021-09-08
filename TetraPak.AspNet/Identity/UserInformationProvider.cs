@@ -68,8 +68,8 @@ namespace TetraPak.AspNet.Identity
             }
 
             Logger?.Trace("Obtains discovery document");
-            var discoveryDocument = await AuthConfig.GetDiscoveryDocumentAsync();
-            if (discoveryDocument is null)
+            var discoOutcome = await AuthConfig.GetDiscoveryDocumentAsync();
+            if (!discoOutcome)
             {
                 const string MissingDiscoDocErrorMessage =
                     "Could not obtain user information from Tetra Pak's User Information services. " +
@@ -77,7 +77,9 @@ namespace TetraPak.AspNet.Identity
                 Logger?.Warning(MissingDiscoDocErrorMessage, _ambientData.GetMessageId());
                 throw new Exception(MissingDiscoDocErrorMessage);
             }
-            var userInfoEndpoint = discoveryDocument.UserInformationEndpoint;
+
+            var disco = discoOutcome.Value;
+            var userInfoEndpoint = disco.UserInformationEndpoint;
             var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint));
             if (cached)
             {

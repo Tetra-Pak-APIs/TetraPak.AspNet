@@ -9,12 +9,20 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.Logging;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api.Auth
 {
+    /// <summary>
+    ///   This code API can be used to access/manipulate the JWT Bearer authentication configuration,
+    ///   represented by the configuration sub section identified by
+    ///   <see cref="JwtBearerAssertionConfig.SectionIdentifier"/>. 
+    /// </summary>
     public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
     {
         const string SelfReferenceIdentifier = "(me)";
@@ -25,10 +33,17 @@ namespace TetraPak.AspNet.Api.Auth
 
         bool IsDevelopment => _hostEnvironment.IsDevelopment();
         
+        /// <summary>
+        ///   Provides access to the Tetra Pak configuration.
+        /// </summary>
         public TetraPakApiAuthConfig Config => _options.Config;
 
-        public ILogger Logger { get; }
-        
+        /// <summary>
+        ///   Gets a logger provider. 
+        /// </summary>
+        public ILogger? Logger { get; }
+
+        /// <inheritdoc />
         public void Configure(JwtBearerOptions options)
         {
             using (Logger?.BeginScope("Configures JWT Bearer Assertion"))
@@ -54,20 +69,20 @@ namespace TetraPak.AspNet.Api.Auth
                     ValidateLifetime = false,
 #else
                     ValidateAudience = true,
-                    ValidateIssuer = !string.IsNullOrWhiteSpace(Config.JwtBearerValidation.Issuer),
-                    ValidateLifetime = Config.JwtBearerValidation.ValidateLifetime
+                    ValidateIssuer = !string.IsNullOrWhiteSpace(Config.JwtBearerAssertion.Issuer),
+                    ValidateLifetime = Config.JwtBearerAssertion.ValidateLifetime
 #endif
                 };
 
                 if (options.TokenValidationParameters.ValidateAudience)
                 {
-                    options.TokenValidationParameters.ValidAudience = resolveAudience(Config.JwtBearerValidation.Audience);
+                    options.TokenValidationParameters.ValidAudience = resolveAudience(Config.JwtBearerAssertion.Audience);
                     Logger?.Information($"Audience={options.TokenValidationParameters.ValidAudience}");
                 }
 
                 if (options.TokenValidationParameters.ValidateIssuer)
                 {
-                    options.TokenValidationParameters.ValidIssuer = Config.JwtBearerValidation.Issuer;
+                    options.TokenValidationParameters.ValidIssuer = Config.JwtBearerAssertion.Issuer;
                     Logger?.Information($"Issuer={options.TokenValidationParameters.ValidIssuer}");
                 }
 
@@ -94,7 +109,7 @@ namespace TetraPak.AspNet.Api.Auth
                     OnAuthenticationFailed = context =>
                     {
                         context.HttpContext.EndDiagnosticsTime(TimerName);
-                        if (Logger.IsEnabled(LogLevel.Debug))
+                        if (Logger?.IsEnabled(LogLevel.Debug) ?? false)
                         {
                             var message = context.Exception is { }
                                 ? $"JWT Bearer assertion failed: {context.Exception.Message}"
@@ -108,7 +123,7 @@ namespace TetraPak.AspNet.Api.Auth
                             context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                             var messageId = context.Request.GetMessageId(Config);
                             var response = IsDevelopment
-                                ? new ApiErrorResponse(context.Exception.Message, messageId)
+                                ? new ApiErrorResponse(context.Exception!.Message, messageId)
                                 {
                                     Description = context.Exception.StackTrace
                                 }
@@ -144,13 +159,14 @@ namespace TetraPak.AspNet.Api.Auth
             };
         }
 
-        string resolveAudience(string audience)
+        string resolveAudience(string? audience)
         {
             return string.IsNullOrWhiteSpace(audience) || SelfReferenceIdentifier.Equals(audience, StringComparison.InvariantCultureIgnoreCase)
                 ? _hostProvider.GetHost()
                 : audience;
         }
-        
+
+        /// <inheritdoc />
         public void Configure(string name, JwtBearerOptions options)
         {
             if (name == JwtBearerDefaults.AuthenticationScheme)
@@ -159,11 +175,27 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
+        /// <summary>
+        ///   Initializes the <see cref="ConfigureJwtBearerOptions"/>.
+        /// </summary>
+        /// <param name="provider">
+        ///   A service locator.
+        /// </param>
+        /// <param name="hostProvider">
+        ///   Provides access to the host name.
+        /// </param>
+        /// <param name="hostEnvironment">
+        ///   The host environment information.
+        /// </param>
+        /// <param name="options">
+        ///   (optional; default=service located instance)<br/>
+        ///   JWT Bearer Assertion options.
+        /// </param>
         public ConfigureJwtBearerOptions(
             IServiceProvider provider, 
             HostProvider hostProvider,
             IWebHostEnvironment hostEnvironment,
-            JwBearerAssertionOptions options = null)
+            JwBearerAssertionOptions? options = null)
         {
             _options = options ?? ActivatorUtilities.CreateInstance<JwBearerAssertionOptions>(provider);
             _hostProvider = hostProvider;

@@ -10,6 +10,9 @@ using TetraPak.Logging;
 namespace TetraPak.AspNet.Api.Auth
 {
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
+    /// <summary>
+    ///   Use this service for easy token exchange.
+    /// </summary>
     public class TetraPakTokenExchangeService : ITokenExchangeService, IMessageIdProvider
     {
         const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
@@ -21,7 +24,10 @@ namespace TetraPak.AspNet.Api.Auth
         /// </summary>
         protected ILogger Logger => _ambientData.Logger;
 
-        protected TetraPakApiAuthConfig AuthConfig =>  (TetraPakApiAuthConfig) _ambientData.AuthConfig;
+        /// <summary>
+        ///   Gets the auth configuration code API.
+        /// </summary>
+        protected TetraPakApiAuthConfig AuthConfig =>  (TetraPakApiAuthConfig) _ambientData.AuthConfig; // obsolete? Currently there doesn't appear to be any point in the "specialized" TetraPakApiAuthConfig class 
 
         /// <inheritdoc />
         public string GetMessageId(bool enforce = false) => _ambientData.GetMessageId();
@@ -61,10 +67,15 @@ namespace TetraPak.AspNet.Api.Auth
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
-                var discovery = await AuthConfig.GetDiscoveryDocumentAsync();
+                var discoOutcome = await AuthConfig.GetDiscoveryDocumentAsync();
+                if (!discoOutcome)
+                    return Outcome<TokenExchangeResponse>.Fail(
+                        new ConfigurationException("Failed to obtain an OIDC discovery document"));
+
+                var disco = discoOutcome.Value;
                 var dictionary = args.ToDictionary();
                 var response = await client.PostAsync(
-                    discovery.TokenEndpoint, 
+                    disco.TokenEndpoint, 
                     new FormUrlEncodedContent(dictionary), 
                     cancellationToken);
 
@@ -118,11 +129,24 @@ namespace TetraPak.AspNet.Api.Auth
             return new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public TetraPakTokenExchangeService(AmbientData ambientData)
+        /// <summary>
+        ///   Initializes the <see cref="TetraPakTokenExchangeService"/>.
+        /// </summary>
+        /// <param name="ambientData">
+        ///   Provides ambient data from the request/response roundtrip.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="ambientData"/> was unassigned.
+        /// </exception>
+        /// <exception cref="ConfigurationException">
+        ///   The <see cref="AmbientData.AuthConfig"/> instance was not of type <see cref="TetraPakApiAuthConfig"/>.
+        /// </exception>
+        public TetraPakTokenExchangeService(AmbientData ambientData) // obsolete? The use of the specialized TetraPakApiAuthConfig seems unnecessary
         {
-            _ambientData = ambientData  ?? throw new ArgumentNullException(nameof(ambientData));
+            _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
             if (_ambientData.AuthConfig is not TetraPakApiAuthConfig)
-                throw new ConfigurationException($"The configuration carried by {nameof(ambientData)} should be {typeof(TetraPakApiAuthConfig)}");
+                throw new ConfigurationException($"The configuration carried by {nameof(ambientData)} "+
+                                                 $"should be of type {typeof(TetraPakApiAuthConfig)}");
         }
     }
 }

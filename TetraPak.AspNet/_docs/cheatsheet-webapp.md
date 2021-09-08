@@ -45,7 +45,7 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
     ```c#
     app.UseRouting();        // <-- necessary
 
-    app.UseAuthentication(); // <-- _after_ routing and _before_ authorization
+    app.UseTetraPakAuthentication(hostEnvironment); // <-- _after_ routing and _before_ authorization
 
     app.UseAuthorization();  // <-- necessary    
     ```

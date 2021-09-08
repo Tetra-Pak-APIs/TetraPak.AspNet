@@ -46,11 +46,10 @@ namespace WebAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseMessageId();
 
-            app.UseTetraPakServicesDiagnostics(); // <-- add this to allow diagnostics, such a profiling headers
+            app.UseTetraPakDiagnostics(env);       // <-- add this to allow diagnostics, such a profiling headers
             
-            app.UseTetraPakJwtAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)
+            app.UseTetraPakApiAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)
             
             app.UseAuthorization();
 

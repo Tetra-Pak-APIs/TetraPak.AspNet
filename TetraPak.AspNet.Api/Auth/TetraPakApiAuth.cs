@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Api.Auth
 {

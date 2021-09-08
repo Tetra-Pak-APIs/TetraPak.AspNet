@@ -121,7 +121,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-// HINT: this is a good place to add: app.UseAuthentication();
+// HINT: this is a good place to add: app.UseTetraPakAuthentication
 
 app.UseAuthorization();
 
@@ -144,7 +144,7 @@ After the routing middleware the app will authorize the actor. We won't go into 
 Incoming access tokens/credentials (depending on the supported authentication schemes) needs to be validated through a middleware that can establish the authenticity of the actor and also build his/her/its identity (name, e-mail, roles and so on). All of that can be achieved either by standard middleware supplied by Microsoft or by using one of the specialized schemes supplied by this SDK. One such scheme is Tetra Pak OIDC (Open ID Connect). You can add authentication with a single line of code:
 
 ```c#
-app.UseAuthentication(); // <-- add this after routing / before authorization
+app.UseTetraPakAuthentication(hostEnvironment); // <-- add this after routing / before authorization
 ```
 
 That looks pretty generic doesn't it? There is no mention of "OIDC", "Tetra Pak" or any other scheme anywhere. The reason for that is that there can be many different authentication schemes in a web app (or API) and the authentication middleware will simply let all of them have a go at validating the actor, using their own internal logic. The authentication schemes are therefore supplied through DI, meaning you set them up in the `ConfigureServices` method, not in the `Configure` method. And that (as you have probably guessed) is exactly what we did when we added `services.AddTetraPakOidcAuthentication()` to that method!
@@ -160,9 +160,15 @@ services.AddTetraPakOidcAuthentication();
 If you are writing a Tetra Pak web API, instead add this line to protect it with an Apigee "sidecar" reverse proxy:
 
 ```c#
-services.AddJwtAuthentication();
+services.AddTetraPakJwtBearerAssertion();
+```
+
+... and add this line to `Startup.Configure()` *after* `app.UseRouting()` and *before* `app.UseAuthorization()`:
+
+```c#
+app.UseTetraPakAuthentication(webHostEnvironment);
 ```
 
 [tetrapak-aspnet-readme]: ../README.md
-[di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
-[di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
+    [di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
+    [di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/

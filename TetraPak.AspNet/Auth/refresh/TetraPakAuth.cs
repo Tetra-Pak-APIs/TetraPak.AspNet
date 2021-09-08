@@ -5,6 +5,9 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
@@ -82,6 +85,25 @@ namespace TetraPak.AspNet.Auth
                 IdToken = idToken,
                 ExpiresInSeconds = expiresInSeconds
             }));
+        }
+
+        /// <summary>
+        ///   Configures Tetra Pak specific auth behavior.
+        /// </summary>
+        /// <param name="app">
+        ///   The application builder object.
+        /// </param>
+        /// <param name="env">
+        ///   Provides information about the hosting environment. 
+        /// </param>
+        public static void UseTetraPakAuthentication(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            if (config.IsMessageIdEnabled)
+            {
+                app.UseTetraPakMessageId();
+            }
+            
         }
     }
 }

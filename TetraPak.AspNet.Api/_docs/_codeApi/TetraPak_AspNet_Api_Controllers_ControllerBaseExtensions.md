@@ -316,7 +316,7 @@ Specifies a (custom) total count value. Use when the value from [outcome](TetraP
 [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
 An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
 #### See Also
-- [TetraPak.AspNet.Api.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.ApiDataResponse-1 'TetraPak.AspNet.Api.ApiDataResponse`1')
+- [TetraPak.AspNet.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse-1 'TetraPak.AspNet.ApiDataResponse`1')
 - [Ok(ControllerBase)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase)')
 - [TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase,System.Object,System.Int32,TetraPak.ReadChunk)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_Microsoft_AspNetCore_Mvc_ControllerBase,System_Object,System_Int32,TetraPak_ReadChunk_ 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase,System.Object,System.Int32,TetraPak.ReadChunk)')
   
@@ -372,7 +372,7 @@ to be included in the response.
 ## ControllerBaseExtensions.Service(ControllerBase, string) Method
 Gets a backend service.  
 ```csharp
-public static TetraPak.AspNet.Api.IBackendService Service(this Microsoft.AspNetCore.Mvc.ControllerBase self, string serviceName=null);
+public static TetraPak.AspNet.Api.IBackendService Service(this Microsoft.AspNetCore.Mvc.ControllerBase self, string serviceName);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string)_self'></a>
@@ -381,7 +381,6 @@ The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.co
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string)_serviceName'></a>
 `serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional; default=[see remarks])<br />  
 Identifies the service.   
   
 #### Returns
@@ -428,54 +427,13 @@ The backend service could not be resolved.
 Please ensure you haven't misspelled it in service configuration.   
 ### Remarks
 Use this method to obtain a backend service with its own custom implementation  
-of the [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection') interface.  
+of the [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints') interface.  
 
 
 
 
   
 When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service_TBackendService_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service&lt;TBackendService&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string).serviceName') is omitted it will instead be resolved from naming convention,  
-based on the controller's type. As an example; calling this method from a controller of type  
-`WeatherServiceController` will assume the requested backend service name is "WeatherService".     
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)'></a>
-## ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(ControllerBase, string) Method
-Gets a backend service with (custom) endpoints.  
-```csharp
-public static TetraPak.AspNet.Api.BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(this Microsoft.AspNetCore.Mvc.ControllerBase self, string serviceName=null)
-    where TEndpoints : TetraPak.AspNet.Api.ServiceEndpointCollection;
-```
-#### Type parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_TEndpoints'></a>
-`TEndpoints`  
-The service endpoints [System.Type](https://docs.microsoft.com/en-us/dotnet/api/System.Type 'System.Type') (must derive from [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection')).  
-  
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_serviceName'></a>
-`serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional; default=[see remarks])<br />  
-Identifies the service.   
-  
-#### Returns
-[TetraPak.AspNet.Api.BackendService&lt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')[TEndpoints](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_TEndpoints 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string).TEndpoints')[&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')  
-A [BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;') object.  
-#### Exceptions
-[TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
-The backend service could not be resolved.  
-Please ensure you haven't misspelled it in service configuration.   
-### Remarks
-Use this method to obtain a backend service that implements an endpoints collection of specified type  
-(derived from [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection')).  
-
-
-
-
-  
-When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string).serviceName') is omitted it will instead be resolved from naming convention,  
 based on the controller's type. As an example; calling this method from a controller of type  
 `WeatherServiceController` will assume the requested backend service name is "WeatherService".     
   

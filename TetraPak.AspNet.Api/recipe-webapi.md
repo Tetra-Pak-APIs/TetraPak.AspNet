@@ -322,10 +322,10 @@ services.AddTetraPakOidcAuthentication(); // <-- add this anywhere in method
 5. In the `Configure` method add this line *after* the `app.UseRouting()` method and *before* the `app.UseAuthorization()` method:
 
 ```c#
-app.UseAuthentication(); // <-- add this after routing / before authorization
+app.UseTetraPakAuthentication(hostEnvironment); // <-- add this after routing / before authorization
 ```
 
-6. Please ensure the line `app.UseAuthorization();` is included *after* `app.UseAuthentication();` (add it otherwise)
+6. Please ensure the line `app.UseAuthorization;` is included *after* `app.UseTetraPakAuthentication` (add it otherwise)
 
 Just to perform a quick sanity check; this is more or less what those two method should look like if you made no other changes (*there might be more or less code added by the project template you used to create the web app*):
 
@@ -350,11 +350,11 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
     app.UseHttpsRedirection();
 
-    app.UseRouting();        // <-- necessary
+    app.UseRouting();                   // <-- necessary
 
-    app.UseAuthentication(); // <-- add this
+    app.UseTetraPakAuthentication(env); // <-- add this
 
-    app.UseAuthorization();  // <-- necessary
+    app.UseAuthorization();             // <-- necessary
 }
 
 ```

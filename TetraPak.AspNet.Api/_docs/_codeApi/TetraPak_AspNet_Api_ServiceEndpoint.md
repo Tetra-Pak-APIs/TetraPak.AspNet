@@ -107,10 +107,10 @@ public string Name { get; set; }
 ## ServiceEndpoint.Parent Property
 Gets the service declaring the endpoint (a [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') object).  
 ```csharp
-protected TetraPak.AspNet.Api.ServiceEndpointCollection? Parent { get; set; }
+protected TetraPak.AspNet.Api.ServiceEndpoints? Parent { get; set; }
 ```
 #### Property Value
-[ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection')
+[ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_StringValue'></a>
 ## ServiceEndpoint.StringValue Property
@@ -253,6 +253,29 @@ Cancellation token for cancellation the operation.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 
 Implements [GetScopeAsync(AuthContext, MultiStringValue?, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync#TetraPak_AspNet_Auth_IServiceAuthConfig_GetScopeAsync_TetraPak_AspNet_AuthContext,TetraPak_MultiStringValue,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync(TetraPak.AspNet.AuthContext,TetraPak.MultiStringValue,System.Nullable{System.Threading.CancellationToken})')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_IsAuthIdentifier(string)'></a>
+## ServiceEndpoint.IsAuthIdentifier(string) Method
+Examines a string and returns a value to indicate whether the value identifies  
+an attribute used for auth configuration. This is to ensure there is no risk of confusing  
+services or endpoints with such attributes.   
+```csharp
+public bool IsAuthIdentifier(string identifier);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_IsAuthIdentifier(string)_identifier'></a>
+`identifier` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The identifier being examined.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [identifier](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_IsAuthIdentifier(string)_identifier 'TetraPak.AspNet.Api.ServiceEndpoint.IsAuthIdentifier(string).identifier') matches an auth configuration attribute; otherwise `false`.   
+            
+
+Implements [IsAuthIdentifier(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier#TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier(System.String)')  
+### Remarks
+Examples of auth identifiers: "`ConfigPath`", "`GrantType`",  
+"`ClientId`", "`ClientSecret`", "`Scope`".  
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_ToString()'></a>
 ## ServiceEndpoint.ToString() Method

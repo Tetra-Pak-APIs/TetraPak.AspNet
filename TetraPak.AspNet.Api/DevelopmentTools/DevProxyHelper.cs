@@ -26,7 +26,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         /// <returns>
         ///   The <paramref name="app"/> instance.
         /// </returns>
-        public static IApplicationBuilder UseLocalDevProxy(this IApplicationBuilder app, 
+        public static IApplicationBuilder UseLocalDevProxy(
+            this IApplicationBuilder app, 
             IWebHostEnvironment env,
             string proxyUrl)
         {

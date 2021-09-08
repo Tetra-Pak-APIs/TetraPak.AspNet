@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Api.DevelopmentTools;
+using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -50,6 +52,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
+        /// <seealso cref="UseTetraPakApiAuthentication"/>
         public static IServiceCollection AddTetraPakJwtBearerAssertion<TCache>(
             this IServiceCollection c,
             JwBearerAssertionOptions options = null)
@@ -100,6 +103,22 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         /// <summary>
+        ///   <para>
+        ///   <b>DEPRECATED!</b>
+        ///   </para>
+        ///   <para>
+        ///   This method was deprecated in SDK v1.1 and is scheduled for removal in future versions.
+        ///   Please use <see cref="UseTetraPakApiAuthentication"/> instead.
+        ///   </para> 
+        /// </summary>
+        /// <seealso cref="AddTetraPakJwtBearerAssertion"/>
+        [Obsolete("This method is obsolete. Please call UseTetraPakAuthentication instead")] // obsolete method (replaced)
+        public static IApplicationBuilder UseTetraPakJwtAuthentication(
+            this IApplicationBuilder app, 
+            IWebHostEnvironment env)
+        => app.UseTetraPakApiAuthentication(env);
+
+        /// <summary>
         ///   Installs JWT authentication middleware
         ///   (and, optionally, a built-in local "development proxy"). Please see remarks. 
         /// </summary>
@@ -107,11 +126,6 @@ namespace TetraPak.AspNet.Api.Auth
         ///   An <see cref="IApplicationBuilder"/> instance.
         /// </param>
         /// <param name="env"></param>
-        /// <param name="enableTetraPakMessageId">
-        ///   (optional; default=<c>true</c>)<br/>
-        ///   Specifies whether to also enforce the Tetra Pak message id functionality.
-        ///   This is akin to calling <see cref="TetraPakApiHelper.UseTetraPakMessageId"/>.
-        /// </param>
         /// <returns>
         ///   An <see cref="IApplicationBuilder"/> instance.
         /// </returns>
@@ -149,22 +163,26 @@ namespace TetraPak.AspNet.Api.Auth
         ///       }
         ///   }
         ///   </code>
+        ///   <para>
         ///   The value for the <c>DevProxy</c> key should be the Apigee proxy name (you probably need to ask for it),
         ///   or the full proxy URL. Please note that the local development proxy will ONLY be enabled when
         ///   your service is running in the "Development" runtime environment, regardless of the your configuration.
         ///   This is to ensure you cannot accidentally deploy it to any other environment.
+        ///   </para>
         /// </remarks>
-        public static IApplicationBuilder UseTetraPakJwtAuthentication(
-            this IApplicationBuilder app, 
-            IWebHostEnvironment env,
-            bool enableTetraPakMessageId = true)
+        /// <seealso cref="AddTetraPakJwtBearerAssertion"/>
+        public static IApplicationBuilder UseTetraPakApiAuthentication(
+            this IApplicationBuilder app,
+            IWebHostEnvironment env)
         {
-            var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
-            var proxyUrl = config?.JwtBearerValidation.DevProxy;
-            if (enableTetraPakMessageId)
-            {
-                app.UseTetraPakMessageId();
-            }
+            app.UseTetraPakAuthentication(env);
+            
+            var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            var proxyUrl = config.JwtBearerAssertion.DevProxy;
+            // if (config.IsMessageIdEnabled) obsolete
+            // {
+            //     app.UseTetraPakMessageId();
+            // }
             if (!string.IsNullOrEmpty(proxyUrl))
             {
                 app.UseLocalDevProxy(env, proxyUrl);

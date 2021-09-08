@@ -95,7 +95,7 @@ Examining a typical `Startup.Configure` implementation for a web app (APIs look 
     app.UseHsts();
     app.UseHttpsRedirection();
     app.UseRouting();
-    app.UseAuthentication();
+    app.UseTetraPakAuthentication(env);
     app.UseAuthorization();
     app.UseEndpoints(endpoints =>
     {
@@ -123,27 +123,27 @@ It's pretty simple to imagine what happens to a request just by looking at this 
 <a name="middleware-routing"></a>
 4. `app.UseRouting()`
    
-   Adds a point in the Middleware pipeline where the request URL is examined and a decision is made how to route it to the correct `Controller` endpoint. This Middleware assumes another piece of Middleware is later added: `app.UseEndpoints()`. Both of these steps are necessary for an MVC web app. If you where to write an app that relies on plai HTML you could actually leave those out (and write a ton of code yourself).
+   Adds a point in the Middleware pipeline where the request URL is examined and a decision is made how to route it to the correct `Controller` endpoint. This Middleware assumes another piece of Middleware is later added: `app.UseEndpoints()`. Both of these steps are necessary for an MVC web app. If you where to write an app that relies on plain HTML you could actually leave those out (and write a ton of code yourself).
 
 <a name="middleware-step5-authentication"></a>
 5. `app.UseAuthentication()`
    
-   This Middleware examines the request, looking for any security token that might have been submitted (usually in the well-known "`Authorization`" header). If one is found it will be validated. If one is not found the Middleware mighth automatically redirect the request to some `authority`, forcing the user to authenticate and, perhaps, concent to having his/her data shared with the app (such as name and/or contact information). If a security token does exist but the validation fails, for whatever reason (it mught have expired or it is found to be corrupt in some way) then, again, this Middleware might decide to simply fail (redirecting to the custom error page) *or* redirect the request to the aforementioned Authority for renewed authentication. 
+   This Middleware examines the request, looking for any security token that might have been submitted (usually in the well-known "`Authorization`" header). If one is found it will be validated. If one is not found the Middleware might automatically redirect the request to some `authority`, forcing the user to authenticate and, perhaps, consent to having his/her data shared with the app (such as name and/or contact information). If a security token does exist but the validation fails, for whatever reason (it might have expired or it is found to be corrupt in some way) then, again, this Middleware might decide to simply fail (redirecting to the custom error page) *or* redirect the request to the aforementioned Authority for renewed authentication. 
    
    <a name="middleware-step4-identity"></a>
    To add to the complexity; after a successful authentication this is also the time to construct the actor's *identity*. How this is done might vary but it could be to simply look for an identity token or to call some external *Identity Service* that was configured.
 
-   As you might have guessed; this is a very complex piece of Middleware (actually, it is often a chain of Middleware itself) that can be heavily configured to act correctly in a multitude of security scenarios, invoking the correct Authority, Token Issuer and, potentionally, Identity Service, with the configured details required. Knowing how to set all this up is what usually takes alot of time and requires a good understanding of both the ASP.NET authentication mechanism and of the services acting as the Authority, token issuer and so on. 
+   As you might have guessed; this is a very complex piece of Middleware (actually, it is often a chain of Middleware itself) that can be heavily configured to act correctly in a multitude of security scenarios, invoking the correct Authority, Token Issuer and, potentially, Identity Service, with the configured details required. Knowing how to set all this up is what usually takes a lot of time and requires a good understanding of both the ASP.NET authentication mechanism and of the services acting as the Authority, token issuer and so on. 
 
-   Few coders are proficient in these matterns so time is wasted getting this all to work properly.
+   Few coders are proficient in these matters so time is usually wasted getting this all to work properly.
 
-   This, as you might have guessed, is where this SDK will save you a ton of time. Please read on.
+   > This, as you might have guessed, is where this SDK will save you a ton of time. You can either use the default `app.UseAuthentication`, which will work, or you can instead opt for the `app.UseTetraPakAuthentication` (or `app.UseTetraPakApiAuthentication` for your API) to allow even more powerful authentication assistance. Either way the SDK will take care of most boiler plate configuration for you. Please read on.
 
-6. `app.UseAuthorization()`
+7. `app.UseAuthorization()`
    
-   This Middleware relies on routing information having already been creted (by step 4). Using this information this Middleware can now check to see if the targeted endpoint (a method in a `Controller`) is protected (decorated with the `[Authorize]` attribute). If not, the Middlewre just passes the request on to the next one. If the target endpoint is indeed protected then this Middleware will ensure the request is properly authorized before access is granted, or redirecting it to the configured error response.
+   This Middleware relies on routing information having already been created (by step 4). Using this information this Middleware can now check to see if the targeted endpoint (a method in a `Controller`) is protected (decorated with the `[Authorize]` attribute). If not, the Middleware just passes the request on to the next one. If the target endpoint is indeed protected then this Middleware will ensure the request is properly authorized before access is granted, or redirecting it to the configured error response.
 
-7. `app.UseEndpoints()`
+8. `app.UseEndpoints()`
    
    Like already mentioned (in [step 4](#middleware-routing)) this Middleware will provide the routing rules required for the [routing Middleware](#middleware-routing).
 
@@ -155,7 +155,7 @@ One final piece is missing, however, to see the full auth picture: How to pick a
 
 Like [mentioned earlier](#auth-protocols-and-flows) the Tetra Pak Auth Services supports several [OAuth flows][oauth-flows-nordic-apis] but how do you pick which one to use and how do you configure the *authentication* [Middleware](#middleware-step5-authentication) to use that flow, and how? 
 
-All we do in `Startup.Configure` is this: `app.UseAuthentication()`. That just enables authentication, at the correct time in the Middleware pipeline (which is **after** *Routing* and **before** *Authorization*). But for the Middleware to actually do its job, using the correct *auth flow* and so on, a multitude of details are needed. This includes the URLs for the correct Tetra Pak Auth Services (*Authority*, *Token Issuer*, *User Information Service*, and so on). That, in turn, depends on which *runtime environment* your process is executing from. You also need to provide one or more *authentication schemes*, each representing an auth flow and then provide the necessary configuration for that flow to actually work, including *client id*, possibly a *client secret*, maybe a *callback URL*, and so on. It all depends on which flow you want for the requested (and protected) resource.
+All we do in `Startup.Configure` is this: `app.UseTetraPakAuthentication(hostEnvironment)` (or `app.UseTetraPakApiAuthentication(hostEnvironment)` if your building an API). That just enables authentication, at the correct time in the Middleware pipeline (which is **after** *Routing* and **before** *Authorization*). But for the Middleware to actually do its job, using the correct *auth flow* and so on, a multitude of details are needed. This includes the URLs for the correct Tetra Pak Auth Services (*Authority*, *Token Issuer*, *User Information Service*, and so on). That, in turn, depends on which *runtime environment* your process is executing from. You also need to provide one or more *authentication schemes*, each representing an auth flow and then provide the necessary configuration for that flow to actually work, including *client id*, possibly a *client secret*, maybe a *callback URL*, and so on. It all depends on which flow you want for the requested (and protected) resource.
 
 So, you're left with two tasks: 
 
@@ -377,6 +377,18 @@ After an actor is successfully authenticated his/her/its identity must be constr
 The SDK injects its own way for building this [`ClaimsPrincipal`][md-code-api-ClaimsPrincipal], however, through the [`TetraPakClaimsTransformation`][md-code-api-TetraPakClaimsTransformation] class. This class implements the (ASP.NET) [`IClaimsTransformation`](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.IClaimsTransformation?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0) contract and is automatically injected into the DI container by the methods you use for setting up authentication, such as [`IServiceCollection.AddTetraPakOidcAuthentication`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_TetraPakAuth.md#tetrapakauthaddtetrapakoidcauthenticationiservicecollection-method) (for web apps) or [`IServiceCollection.AddJwtAuthentication`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#tetrapakapiauthaddjwtauthenticationiservicecollection-jwbearerassertionoptions-method) (for web APIs).
 
 You *can* inject this Tetra Pak specific claims transformation explicitly by calling [`IServiceCollection.AddTetraPakClaimsTransformation`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#tetrapakclaimstransformationhelperaddtetrapakclaimstransformationiservicecollection-method) (for web apps) or [`IServiceCollection.AddTetraPakApiClaimsTransformation`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformationHelper.md#tetrapakapiclaimstransformationhelperaddtetrapakapiclaimstransformationiservicecollection-method) (for web APIs). The API-flavoured version overrides the default implementation for claims transformation to support the token exchange flow, which might be necessary when it interrogates the Tetra Pak Auth Services for user information (claims).
+
+## Message id
+
+As a developer you need as much information as possible when diagnosing an issue, possibly reported by one of your own consumers. Generally you'll need to understand where in your code the issue surfaced (stack trace) and what the lead up to it. Depending on the situation you might also need to see the state of various entities in your code when the problem arose. If you can reproduce the scenario while debugging your code (locally) with a powerful IDE you are probably close to understanding and resolving the problem.
+
+But getting to all these details is a problem for anyone writing apps. You do not want to risk sharing too much information with unknown consumers/users. Also, apps that reveal a "wall" of technical information makes for a pretty bad user experience (unless your consumer is also a developer). So, you will probably want to allow your app to keep running while informing your consumer that whatever he/she tried to do didn't happen. Maybe something like this: "Something unexpected happened. Please try again later". On the other hand, you need a way to record as much as possible so you dump state and the stacktrace to your logs. 
+
+This approach will allow for diagnosing and understanding the problem a considerable time after it happened. The problem, of course, is that logs grow and become monsters of information. As hundreds or thousands of clients makes hundreds or thousands of requests, maybe every second, how do you associate an issue in your logs with a specific request/response round trip? Unless you can do this you are left with the overwhelming task if making sense of your logs and try trace an issue backwards to figure out what lead up to the problem.
+
+One simple strategy to do so is to "tag" every request/response round trip with a unique identity - a "message id" - and ensure this information is also included in every log entry. With that you could simply filter the log output in whatever tool you prefer to work with logs to quickly extract the troublesome request/response.
+
+The TetraPak.AspNet SDK have this 
 
 ## Planned Features
 
