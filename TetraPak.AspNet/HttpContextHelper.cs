@@ -11,6 +11,8 @@ using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
+#nullable enable
+
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -355,5 +357,17 @@ namespace TetraPak.AspNet
                 return content.StartsWith('[') && content.EndsWith(']');
             }
         }
+        
+        /// <summary>
+        ///   Examines the resolved endpoint of the context (if any) and returns a value indicating whether
+        ///   it is protected (decorated with 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="HttpContext"/>.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if an endpoint is resolved and protected. 
+        /// </returns>
+        public static bool IsEndpointProtected(this HttpContext self) => self.GetEndpoint().IsAuthorizationRequired();
     }
 }

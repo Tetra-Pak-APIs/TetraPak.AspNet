@@ -72,6 +72,8 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
     }
     ```
 
+    > Just stating the `DevProxy` name is the preferred- and most resilient method of enabling the `DevProxy` but you can also specify the full URL if needed. 
+
 ## Add Tetra Pak authentication to Startup.cs
 
 9. In your web app project; open the `Startup.cs` file

@@ -31,15 +31,21 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
-            const string TimerName = "dev-proxy"; 
-            
+            const string TimerName = "dev-proxy";
+
+            var messageId = context.Request.GetMessageId(AuthConfig);
+            if (!context.GetEndpoint().IsAuthorizationRequired())
+            {
+                Logger.Debug("Local development proxy bails out. Endpoint does not require authorization", messageId);
+                return true;
+            }
+                
             var ambientData = context.RequestServices.GetService<AmbientData>();
             if (ambientData is null)
                 return false;
 
             // note: enforcing picking the access token from HTTP standard authorization header ...
             var tokenOutcome = await ambientData.GetAccessTokenAsync(true);
-            var messageId = context.Request.GetMessageId(AuthConfig);
             if (!tokenOutcome)
             {
                 Logger.Warning("Failed to resolve an access token", messageId);

@@ -312,8 +312,8 @@ namespace TetraPak.AspNet.Api
         ///   A collection of issues found.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <returns></returns>
         protected virtual Outcome<HttpResponseMessage> OnServiceConfigurationError(

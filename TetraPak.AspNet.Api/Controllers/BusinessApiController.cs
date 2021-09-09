@@ -42,9 +42,7 @@ namespace TetraPak.AspNet.Api.Controllers
             Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
         }
 
-        /// <summary>
-        ///   Gets a message id for the request. 
-        /// </summary>
+        /// <inheritdoc cref="ControllerBaseExtensions.GetMessageId"/>
         public string MessageId => HttpContext.Request.GetMessageId(Config);
 
         internal TetraPakApiAuthConfig GetConfig() => Config;

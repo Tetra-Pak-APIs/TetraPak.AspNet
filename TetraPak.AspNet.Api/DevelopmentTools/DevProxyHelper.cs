@@ -46,12 +46,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             var proxyMiddleware = new LocalDevProxyMiddleware(ambientData, proxyUrl);
             app.Use(async (context, next) =>
             {
-                var isSuccessful = await proxyMiddleware.InvokeAsync(context);
-                if (!isSuccessful)
-                {
-                    logger.Warning("Local development proxy failed to produce a JWT Bearer");
-                    return;
-                }
+                await proxyMiddleware.InvokeAsync(context);
                 await next();
             });
             logger.Warning("Local development proxy middleware was injected");            

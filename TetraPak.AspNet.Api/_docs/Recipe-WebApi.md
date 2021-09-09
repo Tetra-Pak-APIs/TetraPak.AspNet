@@ -1,86 +1,141 @@
 # Recipe: Building a Tetra Pak Web App
 
-This document will walk you through creating a small ASP.NET Core/5+ web app and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing web app as well. 
+This document will walk you through creating a small ASP.NET Core/5+ web API and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing API as well. 
 
-The web app will constist of a single view (web page) that will greet the user with his/her name and identity. The page will also present the access token issued by Tetra Pak. 
+The API will consist of a single "hello" controller with two endpoints: One `hello/version` endpoint that will return the API's version number and a default (`/hello`) endpoint that will simply return a "*Hello World*" greeting. The first (`hello/version`) endpoint will allow access to anonymous users while the default endpoint (`/hello`) requires authorization.
 
->*If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-readme]. If you already know everything and just need the fast-track to integrating your existing web app then there is also a neat [cheat sheet][tetra-pak-aspnet-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small [troubleshooting document][tetra-pak-aspnet-issues] that might help you out*
+>*If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-api-readme]. If you already know everything and just need the fast-track to integrating your existing web app then there is also a neat [cheat sheet][tetra-pak-aspnet-api-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small ["use cases" document][tetra-pak-aspnet-use-cases] that might help you out*
 
 ### Disclaimer
 
 This recipe assumes you know how to code C# in your preferred IDE (integrated development environment) whether it is [Visual Studio][ide-vs], [VS Code][ide-vscode], [Rider][ide-rider], [Eclipse][ide-eclipse] etc. We will not cover the nitty gritty of each step required to create a new project, add/restore Nuget packages and so on. You are expected to know these things.
 
-In "real" projects you would probably prefer to base all views on one or more common [(Razor) layouts][aspnet-layout] for UI consistency and less workload. Likewise, your view model design would very likely involve more mature design patters to support separation of concern principles, such as abstractions and/or inheritance. However, in order to keep the recipe as clean and simple as possible we will create a single (non-templated) view and a single view model class. Yes, it's bad design but we're stressing clarity over design purity here.
+### Creating a web API (ASP.NET Core / ASP.NET 5+)
 
-This recipe also do not include proper error handling, such as redirecting a failed authorization to some nice error page or such. If anything goes wrong you will see a very "raw" error message in your browser.
+For sake of convenience the project will be called "TetraPakHelloApiRecipe".
 
-Finally, the recipe is not concerned with any type of styling or such.
+Create a ASP.NET Web API project, name it "`TetraPakHelloApiRecipe`". Please pick a suitable project template. 
 
-To summarize: It won't be pretty but, hopefully, it will be clear and simple to understand instead! :-)
+> If your IDE project templates present you with the option to add "Authentication" in some way, please select "No authentication" (might be called something different but you get the point). We will add auth manually later in this recipe as it's pretty simple anyway.
 
-### Creating a web app (ASP.NET Core / ASP.NET 5+)
+For the sake of this recipe we will assume the default controller is called `HelloController`. If the project scaffolded some default controller for you: just rename it and remove all the code (or delete it and create the one we need in its place).
 
-For sake of convenience the project will be called "TetraPakWebApp".
-
-Create a ASP.NET Web App project, name it "`TetraPakWebApp`". Please pick a suitable project template if possible that scaffolds at least one controller and view. If your IDE doesn't support that then don't worry, the recipe will outline those for you. For the sake of this recipe we will assume the default view controller is called "`HomeController`" and that is has a corresponding view, called "`Home`". 
-
-Furthermore, create a sub folder called "`Models`" (if one wasn't created for you) and add a C# class file called "`ViewModel.cs`" to it. 
-
-This is what the folder/file structure should look like as a minimum (your IDE's project template might have added more files - that's ok). If the files and folders wasn't created by your IDE then please create them like this:
+This is what the folder/file structure should look like as a minimum (your IDE's project template might have added more files and folders - that's ok). If these files and folders wasn't created by your IDE then please create them:
 
 ```
-+-- TetraPakWebApp
++-- TetraPakApi
     |
     +-- Controllers
     |   |
-    |   +-- HomeController.cs
-    |
-    +-- Models
-    |   |
-    |   +-- ViewModel.cs
-    |
-    +-- Views
-    |   |
-    |   +-- Home
-    |       |
-    |       +-- Index.cshtml
+    |   +-- HelloController.cs
     |
     +-- appsettings.js
     +-- Program.cs
     +-- Startup.cs
 ```
 
-Before we start coding you first need to add the SDK's Nuget package [TetraPak.AspNet][nuget-tetrapak-app] as there will be one or two extension methods in our code that requires it. The way you do this varies from one IDE to another so we won't cover that in detail.
+Before we start coding you first need to add the SDK's Nuget package [TetraPak.AspNet.Api][nuget-tetrapak-api] as there will be one or two extension methods in our code that requires it. The way you do this varies from one IDE to another so we won't cover that in detail.
 
-Now, lets look at the contents of each file, starting with the `HomeController` and work our way down:
+Now, lets look at the contents of each file, starting with the `HelloController` and work our way down:
 
 ```c#
-// ./Controllers/HomeController.cs
+// ./Controllers/HelloController.cs
 
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using TetraPak.AspNet;
-using TetraPakWebApp.Models;
+using Microsoft.Extensions.Logging;
+using TetraPak;
+using TetraPak.AspNet.Api.Controllers;
+using TetraPak.Logging;
 
-namespace TetraPakWebApp.Controllers
+namespace TetraPakApi_recipe.Controllers
 {
-    public class HomeController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    [Authorize]
+    public class HelloController : ControllerBase
     {
-        [Authorize]
-        public async Task<IActionResult> Index()
+        readonly ILogger<HelloController> _logger;
+
+        [HttpGet]
+        public Task<ActionResult> Get()
         {
-            var accessToken = await this.GetAccessTokenAsync();
-            return View(new ViewModel(
-                "Tetra Pak Demo",
-                User.Identity, 
-                accessToken));
+            logRequest();
+            var hello = new { Message = "Hello World!" };
+            return this.RespondAsync(Outcome<object>.Success(hello));
+        }
+
+        [AllowAnonymous]
+        [HttpGet, Route("version")]
+        public Task<ActionResult> GetVersion()
+        {
+            logRequest();
+            var data = new { Version = typeof(Startup).Assembly.GetName().Version?.ToString() ?? "(unknown)" };
+            return this.RespondAsync(Outcome<object>.Success(data));
+        }
+
+        void logRequest([CallerMemberName] string endpoint = null)
+        {
+            _logger.Trace($"{User.FirstName()} {User.LastName()} called {endpoint}");
+        }
+
+        public HelloController(ILogger<HelloController> logger)
+        {
+            _logger = logger;
         }
     }
 }
 ```
 
-The controller consists of a single endpoint - `Index()` - which is decorated by the [Authorize][aspnet-authorize-attribute] attribute, forcing the user to the authorized before access to this endpoint is granted. 
+The controller is decorated with the `[Authorize]` attribute, meaning all endpoints will require an authenticated user to authorize the request.
+
+To allow logging the controller constructor (ctor) accepts a logger provider (`ILogger<HelloController>`) which is stored in a private `readonly` field: `_logger`. Please note that this logger provider is automatically injected by ASP.NET's dependency injection mechanism as the controller gets instantiated. The controller declares a convenient private method - `logRequest()` - that will simply trace the actors identity (first and last name) along with the endpoint method name.
+
+> This is just to show some convenient extension methods for logging and getting the actor's identity (first and last name). If you actually want a good trace of all requests, including the request URL, headers and, possibly, body, there are better methods to do so but that's beyond the scope of this recipe.
+
+The default endpoint is just decorated with the `[HttpGet]` attribute, making it the default endpoint for this controller: `/hello`. Let's look at its content:
+
+```c#
+[HttpGet]
+public Task<ActionResult> Get()
+{
+    logRequest();
+    var hello = new { Message = "Hello World!" };
+    return this.RespondAsync(Outcome<object>.Success(hello));
+}
+```
+
+The `logRequest()` has already been explained so lets instead examine how the response is being constructed: We're constructing an anonymous object in the `hello` variable. The object contains a single value - "Hello World!" - in the `Message` property. If we where to just return this value as-is the response would simply be its JSON serialized form: 
+
+```json
+{
+  "message": "Hello World!"
+}
+```
+
+That might be fins but we're striving a bit higher than that for this recipe in that we want it to be a "business API", which means it should be a reusable "general purpose" API - not just an API. What that means is that whoever is writing clients of this API might have been writing other clients for other Tetra Pak APIs before and are accustomed to the standardized response format of Tetra Pak APIs, which looks like this:
+
+```json
+{
+  "meta": {
+    "total": (total number of items available),
+    "count": (number of items in response),
+    "messageId": "(unique request/response id for traceability)"
+  },
+  "data": [
+    (data as a list)
+  ]
+}
+```
+
+This format is the bare minimum of what to expect from a Tetra Pak API. Please note that the requested data is *always* returned as a list, even if there is just one item. This approach allows for much better code-reuse and makes investing in code components for consuming standardized Tetra Pak APIs a very good idea. There are alot of crappy APIs out there that are inconsistent in their replies and naming conventions, making it almost impossible to write boilerplate code components for client developers. Obviously, you don't want to develop another bad API so let's stick with the [Tetra Pak recommendations][tetra-pak-dev-portal-api-guidelines]. The is what you do when you send the response back using the `RespondAsync` extension method for `ControllerBase`.   
+
+
+
+
+consists of a single endpoint - `Index()` - which is decorated by the [Authorize][aspnet-authorize-attribute] attribute, forcing the user to the authorized before access to this endpoint is granted. 
 
 >*Please note that by the time the app reaches this point the user has already been successfully authorized by Tetra Pak. This all happens in the "request/response middleware" which is not yet set up (we'll get to that shortly). Should authorization fail for some reason you will instead see a raw error message.*
 
@@ -360,9 +415,9 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 That's it! Try running your app locally ([please ensure you have registered the correct Callback URL](#register-your-app-in-developer-portal)). If you run into trouble, please look into the [Troubleshooting document][tetra-pak-aspnet-issues].
 
 
-[tetra-pak-aspnet-readme]: ./README.md
-[tetra-pak-aspnet-cheat-sheet]: ./cheatsheet-webapp.md
-[tetra-pak-aspnet-issues]: ./troubleshooting.md
+[tetra-pak-aspnet-api-readme]: ../README.md
+[tetra-pak-aspnet-api-cheat-sheet]: ./cheatsheet-webapi.md
+[tetra-pak-aspnet-use-cases]: ../../UseCases.md
 [tetra-pak-aspnet-issues-no-browser]: ./troubleshooting.md#no-browser
 [tetra-pak-aspnet-issues-invalid-redirect-uri]: ./troubleshooting.md#invalid-redirect-uri
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
@@ -382,6 +437,7 @@ That's it! Try running your app locally ([please ensure you have registered the 
 [tetra-pak-dev-portal]: https://developer.tetrapak.com
 [tetra-pak-dev-portal-appreg-consumer-key]: https://developer.tetrapak.com/products/getting-started/manage-your-app#consumer-key
 [tetra-pak-dev-portal-appreg-callback]: https://developer.tetrapak.com/products/getting-started/manage-your-app#callback-url
+[tetra-pak-dev-portal-api-guidelines]: https://developer.tetrapak.com/products/api-design
 [hsts]: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 [aspnet-layout]: https://docs.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-5.0
 [aspnet-authorize-attribute]: https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-5.0

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
@@ -16,9 +17,10 @@ namespace TetraPak.AspNet.Api.Auth
         {
             using (logger?.BeginScope($"Looking for authorization in header: {config.AuthorizationHeader}"))
             {
+                var messageId = context.Request.GetMessageId(config);
                 if (!config.IsCustomAuthorizationHeader)
                 {
-                    logger.Debug("Default authorization header is in use");
+                    logger.Debug("Default authorization header is in use", messageId);
                     token = null;
                     return false;
                 }
@@ -33,22 +35,22 @@ namespace TetraPak.AspNet.Api.Auth
                 if (!logger?.IsEnabled(LogLevel.Debug) ?? false)
                     return isTokenAvailable;
             
-                logger.Debug($"Received message: {context.Request.Path.Value}");
+                logger.Debug($"Received message: {context.Request.Path.Value}", messageId);
                 if (!isTokenAvailable)
                 {
-                    logger.Debug("No authorization found");
+                    logger.Debug("No authorization found", messageId);
                     return false;
                 }
 
                 if (isJwtToken)
                 {
-                    logger.Debug($"Received JWT: \n{jwt.ToDebugString()}");
-                    logger.Debug($"Environment: {config.Environment}");
-                    logger.Debug($"Discovery document URL: {options.MetadataAddress}");
+                    logger.Debug($"Received JWT: \n{jwt.ToDebugString()}", messageId);
+                    logger.Debug($"Environment: {config.Environment}", messageId);
+                    logger.Debug($"Discovery document URL: {options.MetadataAddress}", messageId);
                     return true;
                 }
             
-                logger.Debug($"Received token: \n{authorization}");
+                logger.Debug($"Received token: \n{authorization}", messageId);
                 return true;
             }
         }

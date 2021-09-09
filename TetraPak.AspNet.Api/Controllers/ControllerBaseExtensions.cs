@@ -11,6 +11,8 @@ using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api.Controllers
 {
     /// <summary>
@@ -18,7 +20,10 @@ namespace TetraPak.AspNet.Api.Controllers
     /// </summary>
     public static class ControllerBaseExtensions
     {
-        /// <inheritdoc cref="BusinessApiController.MessageId"/>
+        /// <summary>
+        ///   Gets a unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
         public static string GetMessageId(this ControllerBase self)
         {
             if (self is BusinessApiController apiController)
@@ -48,19 +53,44 @@ namespace TetraPak.AspNet.Api.Controllers
             return self.HttpContext.Request.GetAccessTokenAsync(config);
         }
 
-        /// <inheritdoc cref="ControllerBase.Ok()"/>
+        /// <summary>
+        ///   Creates an <see cref="OkObjectResult"/> object that produces an Status 200 OK response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended object.
+        /// </param>
+        /// <param name="data">
+        ///   The data to be sent back in response (<c>null</c> is allowed). 
+        /// </param>
+        /// <param name="totalCount">
+        ///   (optional)<br/>
+        ///   The total number of items available from service.
+        /// </param>
+        /// <param name="chunk">
+        ///   (optional)<br/>
+        ///   A <see cref="ReadChunk"/> object specifying the data requested.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="OkObjectResult"/> object.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="data"/> was unassigned.
+        /// </exception>
         public static OkObjectResult Ok(
             this ControllerBase self, 
-            object value, 
+            object? data, 
             int totalCount = -1, 
-            ReadChunk chunk = null)
+            ReadChunk? chunk = null)
         {
-            if (value.GetType().IsGenericBase(typeof(ApiDataResponse<>))) 
-                return new OkObjectResult(value);
-            
             var messageId = self.GetMessageId();
-            if (!value.IsCollection(out _, out var items, out var count))
-                return new OkObjectResult(new ApiDataResponse<object>(new[] {value}, messageId: messageId));
+            if (data is null)
+                return new OkObjectResult(new ApiDataResponse<object>(Array.Empty<object>(), messageId: messageId));
+            
+            if (data.GetType().IsGenericBase(typeof(ApiDataResponse<>))) 
+                return new OkObjectResult(data);
+            
+            if (!data.IsCollection(out _, out var items, out var count))
+                return new OkObjectResult(new ApiDataResponse<object>(new[] {data}, messageId: messageId));
             
             totalCount = totalCount < 0 ? count : totalCount;
             var array = items.EnumerableToArray();
@@ -80,12 +110,24 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <param name="outcome">
         ///   The outcome object to be reflected.
         /// </param>
+        /// <param name="totalCount">
+        ///   (optional)<br/>
+        ///   The total number of items available from service.
+        /// </param>
+        /// <param name="chunk">
+        ///   (optional)<br/>
+        ///   A <see cref="ReadChunk"/> object specifying the data requested.
+        /// </param>
         /// <param name="responseDelegate">
         ///   (optional)<br/>
         ///   A delegate tobe called for custom (successful) <see cref="ActionResult"/> construction.
         /// </param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T">
+        ///   The <see cref="Type"/> of data carried by the <paramref name="outcome"/>.
+        /// </typeparam>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
         /// <remarks>
         ///   <para>
         ///   If the <paramref name="outcome"/> is unsuccessful the <see cref="Error(ControllerBase,Exception)"/>
@@ -106,7 +148,9 @@ namespace TetraPak.AspNet.Api.Controllers
         public static async Task<ActionResult> RespondAsync<T>(
             this ControllerBase self,
             Outcome<T> outcome,
-            ResponseDelegate<T> responseDelegate = null)
+            int totalCount = -1,
+            ReadChunk? chunk = null, 
+            ResponseDelegate<T>? responseDelegate = null)
         {
             if (!outcome)
                 return self.Error(outcome.Exception);
@@ -116,7 +160,9 @@ namespace TetraPak.AspNet.Api.Controllers
                 try
                 {
                     var delegateOutcome = await responseDelegate(outcome.Value);
-                    return !delegateOutcome ? self.Error(delegateOutcome.Exception) : self.Ok(delegateOutcome.Value);
+                    return !delegateOutcome 
+                        ? self.Error(delegateOutcome.Exception) 
+                        : await RespondAsync(self, delegateOutcome);
                 }
                 catch (Exception ex)
                 {
@@ -124,14 +170,19 @@ namespace TetraPak.AspNet.Api.Controllers
                 }
             }
 
-            if (outcome.Value is not HttpResponseMessage responseMessage) 
-                return Ok(self, outcome.Value);
-            
-            var stringValue = await responseMessage.Content.ReadAsStringAsync();
-            var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
-            return Ok(self, entityOutcome
-                ? entityOutcome.Value
-                : stringValue);
+            if (outcome.Value is HttpResponseMessage responseMessage)
+            {
+                var stringValue = await responseMessage.Content.ReadAsStringAsync();
+                var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
+                return Ok(self, 
+                    entityOutcome
+                        ? entityOutcome.Value
+                        : stringValue,
+                    totalCount, 
+                    chunk);
+            }
+
+            return Ok(self, outcome.Value, totalCount, chunk);
         }
 
         /// <summary>
@@ -194,7 +245,7 @@ namespace TetraPak.AspNet.Api.Controllers
         public static ActionResult ErrorExpectedQueryParameter(
             this ControllerBase self, 
             string queryParameterName, 
-            string example = null)
+            string? example = null)
         {
             var body = !string.IsNullOrWhiteSpace(example) 
                 ? new {messages = new [] { $"Expected query parameter: '{queryParameterName}' (example: {example})" }} 
@@ -335,7 +386,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static TBackendService Service<TBackendService>(
             this ControllerBase self, 
-            string serviceName = null) 
+            string? serviceName = null) 
             where TBackendService : IBackendService
         {
             var outcome = TetraPakServiceFactory.GetService<TBackendService>(self, serviceName);
@@ -383,7 +434,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(
             this ControllerBase self, 
-            string serviceName = null) 
+            string? serviceName = null) 
             where TEndpoints : ServiceEndpointCollection
         {
             var outcome = TetraPakServiceFactory.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
@@ -420,7 +471,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   based on the controller's type. As an example; calling this method from a controller of type
         ///   <c>WeatherServiceController</c> will assume the requested backend service name is "WeatherService".   
         /// </remarks>
-        public static IBackendService Service(this ControllerBase self, string serviceName = null)
+        public static IBackendService Service(this ControllerBase self, string? serviceName = null)
         {
             var outcome = TetraPakServiceFactory.GetService(self, serviceName);
             if (outcome)
@@ -442,18 +493,18 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   The message to be logged.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
-        public static void LogTrace(this ControllerBase self, string message, string messageId = null)
+        public static void LogTrace(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiAuthConfig(out var config))
                 return;
             
-            config.Logger.Trace(message, messageId);
+            config?.Logger.Trace(message, messageId);
         }
 
         /// <summary>
@@ -466,18 +517,18 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   The message to be logged.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
-        public static void LogDebug(this ControllerBase self, string message, string messageId = null)
+        public static void LogDebug(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiAuthConfig(out var config))
                 return;
             
-            config.Logger.Debug(message, messageId);
+            config?.Logger.Debug(message, messageId);
         }
 
         /// <summary>
@@ -490,18 +541,18 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   The message to be logged.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
-        public static void LogInformation(this ControllerBase self, string message, string messageId = null)
+        public static void LogInformation(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiAuthConfig(out var config))
                 return;
             
-            config.Logger.Information(message, messageId);
+            config?.Logger.Information(message, messageId);
         }
 
         /// <summary>
@@ -514,18 +565,18 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   The message to be logged.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
-        public static void LogWarning(this ControllerBase self, string message, string messageId = null)
+        public static void LogWarning(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiAuthConfig(out var config))
                 return;
             
-            config.Logger.Warning(message, messageId);
+            config?.Logger.Warning(message, messageId);
         }
 
         /// <summary>
@@ -541,18 +592,22 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   The message to be logged.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
-        public static void LogError(this ControllerBase self, Exception exception, string message = null, string messageId = null)
+        public static void LogError(
+            this ControllerBase self,
+            Exception exception, 
+            string? message = null, 
+            string? messageId = null)
         {
             if (!self.TryGetTetraPakApiAuthConfig(out var config))
                 return;
             
-            config.Logger.Error(exception, message, messageId);
+            config?.Logger.Error(exception, message, messageId);
         }
 
         /// <summary>
@@ -568,7 +623,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   <c>true</c> if the Tetra Pak (API) configuration object could be obtained; otherwise <c>false</c>.
         /// </returns>
         /// <seealso cref="GetTetraPakApiAuthConfig"/>
-        public static bool TryGetTetraPakApiAuthConfig(this ControllerBase self, out TetraPakApiAuthConfig config)
+        public static bool TryGetTetraPakApiAuthConfig(this ControllerBase self, out TetraPakApiAuthConfig? config)
         {
             config = self.HttpContext.RequestServices.GetService<TetraPakApiAuthConfig>();
             return config is {};
@@ -588,7 +643,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <exception cref="ConfigurationException">
         ///   The Tetra Pak (API) configuration object could not be obtained
         /// </exception>
-        public static TetraPakApiAuthConfig GetTetraPakApiAuthConfig(this ControllerBase self)
+        public static TetraPakApiAuthConfig? GetTetraPakApiAuthConfig(this ControllerBase self)
         {
             if (self.TryGetTetraPakApiAuthConfig(out var config))
                 return config;
