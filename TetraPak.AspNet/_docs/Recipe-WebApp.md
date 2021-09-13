@@ -1,10 +1,10 @@
-# Recipe: Building a Tetra Pak Web App
+# Recipe: Create a Tetra Pak Web App
 
 This document will walk you through creating a small ASP.NET Core/5+ web app and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing web app as well. 
 
 The web app will constist of a single view (web page) that will greet the user with his/her name and identity. The page will also present the access token issued by Tetra Pak. 
 
->*If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-readme]. If you already know everything and just need the fast-track to integrating your existing web app then there is also a neat [cheat sheet][tetra-pak-aspnet-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small [troubleshooting document][tetra-pak-aspnet-issues] that might help you out*
+>*If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-readme]. If you already know everything and just need the fast-track to integrating your existing web app then there is also a neat [cheat sheet][tetra-pak-aspnet-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small [troubleshooting document][tetra-pak-aspnet-scenarios] that might help you out*
 
 ### Disclaimer
 
@@ -252,7 +252,7 @@ Go ahead and run your app to make sure the code works. A browser window should n
 <a id="#save-local-url"></a>
 Either way, please make note of, or copy, the host name and port (eg. "https://localhost:8080"). This will be useful shortly.
 
->*If nothing at all happens then please check out these [troubleshooting tips][tetra-pak-aspnet-issues-no-browser]*
+>*If nothing at all happens then please check out these [troubleshooting tips][tetra-pak-aspnet-scenarios-no-browser]*
 
 So, with a basic web app done, let's move on to the interesting part: Integrating your Web App with Tetra Pak Auth Services. This involves two steps:
 
@@ -357,14 +357,14 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ```
 
-That's it! Try running your app locally ([please ensure you have registered the correct Callback URL](#register-your-app-in-developer-portal)). If you run into trouble, please look into the [Troubleshooting document][tetra-pak-aspnet-issues].
+That's it! Try running your app locally ([please ensure you have registered the correct Callback URL](#register-your-app-in-developer-portal)). If you run into trouble, please look into the [Troubleshooting document][tetra-pak-aspnet-scenarios].
 
 
-[tetra-pak-aspnet-readme]: ./README.md
+[tetra-pak-aspnet-readme]: ../README.md
 [tetra-pak-aspnet-cheat-sheet]: ./cheatsheet-webapp.md
-[tetra-pak-aspnet-issues]: ./troubleshooting.md
-[tetra-pak-aspnet-issues-no-browser]: ./troubleshooting.md#no-browser
-[tetra-pak-aspnet-issues-invalid-redirect-uri]: ./troubleshooting.md#invalid-redirect-uri
+[tetra-pak-aspnet-scenarios]: ../../Scenarios.md
+[tetra-pak-aspnet-scenarios-no-browser]: ../../Scenarios.md#issue-no-browser-window-opens-when-i-run-my-web-app
+[tetra-pak-aspnet-scenarios-invalid-redirect-uri]: ../../Scenarios.md#error-400---invalid-redirect_uri
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
 [github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api

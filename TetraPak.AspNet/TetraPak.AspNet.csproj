@@ -49,12 +49,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="TetraPak.Common" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="_docs\_codeApi" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
     </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />

@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo.WebAPI", "demo.WebAPI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.AspNet.Api", "TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj", "{1D1C0D4C-BF00-46DA-B054-59B4B804BE2F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_others_projects", "_others_projects", "{795C2A87-C568-4443-911E-EC3FA1CE342B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{B1F612BB-3830-4DA4-8A58-019FFD4324C0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nugetproj", "aligncsproj\nugetproj.csproj", "{B58D08B4-29F7-4A0D-8866-B7DB87E7388C}"
@@ -29,7 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{708865EB-B127-43BB-A7CF-D06EB4039404}"
 ProjectSection(SolutionItems) = preProject
 	README.md = README.md
-	UseCases.md = UseCases.md
+	Scenarios.md = Scenarios.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.BackendServiceAPI", "demo.BackendServiceAPI\demo.BackendServiceAPI.csproj", "{C6D820E1-1F41-4235-9466-C86AAB308E4F}"
@@ -43,6 +41,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_buildScripts", "_buildScripts", "{0CD66FF2-50BF-48E2-94EF-61C5B540A5B9}"
 ProjectSection(SolutionItems) = preProject
 	_buildScripts\copyFiles.py = _buildScripts\copyFiles.py
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_graphics", "_graphics", "{8EDB3808-EC40-479F-8DA4-B42733EFEDCE}"
+ProjectSection(SolutionItems) = preProject
+	_graphics\copy_client_id.png = _graphics\copy_client_id.png
+	_graphics\api-mgmt-app-registration.png = _graphics\api-mgmt-app-registration.png
+	_graphics\api-mgmt-pattern.png = _graphics\api-mgmt-pattern.png
 EndProjectSection
 EndProject
 Global

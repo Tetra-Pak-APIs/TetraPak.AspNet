@@ -6,7 +6,7 @@
 > - *[Web API recipe][tetra-pak-aspnet-api-recipe]: Build a small integrated web app*
 > - *[Web API Cheat Sheet][tetra-pak-aspnet-api-cheat-sheet]: Check list to quickly integrate an existing Web App*
 > 
-> *Also, if you have already started integrating your web solution but are facing issues then you might find this [troubleshooting guide][tetra-pak-aspnet-use-cases] useful.*  
+> *Also, if you have already started integrating your web solution but are facing issues then you might find this [troubleshooting guide][tetra-pak-aspnet-scenarios] useful.*  
  
 The TetraPak.AspNet SDK is provided as a way to get more productive when writing web based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, logging and so on. There are also some useful tools that should help you out to develop and test your solutions.
 
@@ -382,13 +382,14 @@ You *can* inject this Tetra Pak specific claims transformation explicitly by cal
 
 As a developer you need as much information as possible when diagnosing an issue, possibly reported by one of your own consumers. Generally you'll need to understand where in your code the issue surfaced (stack trace) and what the lead up to it. Depending on the situation you might also need to see the state of various entities in your code when the problem arose. If you can reproduce the scenario while debugging your code (locally) with a powerful IDE you are probably close to understanding and resolving the problem.
 
-But getting to all these details is a problem for anyone writing apps. You do not want to risk sharing too much information with unknown consumers/users. Also, apps that reveal a "wall" of technical information makes for a pretty bad user experience (unless your consumer is also a developer). So, you will probably want to allow your app to keep running while informing your consumer that whatever he/she tried to do didn't happen. Maybe something like this: "Something unexpected happened. Please try again later". On the other hand, you need a way to record as much as possible so you dump state and the stacktrace to your logs. 
+But getting to all these details is a problem for anyone writing apps. You do not want to risk sharing too much information with unknown consumers/users. Also, apps that reveal a "wall" of technical information makes for a pretty bad user experience (unless your consumer is also a developer). So, you will probably want to allow your app to keep running while informing your consumer that whatever he/she tried to do unfortunately couldn't happen. Maybe something like this: "Something unexpected happened. Please try again later". On the other hand, you need a way to record as much data as possible so you dump state and the stacktrace to your logs. 
 
-This approach will allow for diagnosing and understanding the problem a considerable time after it happened. The problem, of course, is that logs grow and become monsters of information. As hundreds or thousands of clients makes hundreds or thousands of requests, maybe every second, how do you associate an issue in your logs with a specific request/response round trip? Unless you can do this you are left with the overwhelming task if making sense of your logs and try trace an issue backwards to figure out what lead up to the problem.
+This approach will allow for diagnosing and understanding the problem a considerable time after it happened. The problem, of course, is that logs grow and become monsters of data. As hundreds or thousands of clients makes hundreds or thousands of requests, maybe every second, how do you associate an issue in your logs with a specific request/response round trip? Unless you can do this you are left with the overwhelming task if making sense of your logs and try tracing an issue backwards to figure out what lead up to the problem.
 
 One simple strategy to do so is to "tag" every request/response round trip with a unique identity - a "message id" - and ensure this information is also included in every log entry. With that you could simply filter the log output in whatever tool you prefer to work with logs to quickly extract the troublesome request/response.
 
 The TetraPak.AspNet SDK have this 
+-- TODO -- explain how message id is being transported through a request / response header
 
 ## Planned Features
 
@@ -397,7 +398,7 @@ The TetraPak.AspNet SDK have this
 
 [tetra-pak-aspnet]: ./TetraPak.AspNet/README.md
 [tetra-pak-aspnet_dependency-injection]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#startup
-[tetra-pak-aspnet-use-cases]: ./UseCases.md
+[tetra-pak-aspnet-scenarios]: ./Scenarios.md
 [tetra-pak-aspnet-recipe]: ./TetraPak.AspNet/_docs/Recipe-WebApp.md
 [tetra-pak-aspnet-cheat-sheet]: ./TetraPak.AspNet/_docs/cheatsheet-webapp.md
 [tetra-pak-aspnet-api]: ./TetraPak.AspNet.Api/README.md

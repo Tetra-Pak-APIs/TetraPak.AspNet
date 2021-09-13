@@ -28,16 +28,6 @@ A service locator.
 A delegate instance used for custom configuration behavior.  
   
   
-### Fields
-<a name='TetraPak_AspNet_TetraPakAuthConfig_SectionJwtBearerValidationIdentifier'></a>
-## TetraPakAuthConfig.SectionJwtBearerValidationIdentifier Field
-The name of the value in configuration.   
-```csharp
-protected const string SectionJwtBearerValidationIdentifier = ValidateJwtBearer;
-```
-#### Field Value
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
-  
 ### Properties
 <a name='TetraPak_AspNet_TetraPakAuthConfig_AmbientData'></a>
 ## TetraPakAuthConfig.AmbientData Property

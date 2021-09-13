@@ -47,7 +47,7 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
 
     > CAUTION!
     > 
-    > If you add the client secret to the appsettings you must ensure the appsettings file never gets distributed anywhere outside your team. This means the file must not be uploaded to your code repository, for example. For more information [please read more here][tetra-pak-use-cases-secrets]
+    > If you add the client secret to the appsettings you must ensure the appsettings file never gets distributed anywhere outside your team. This means the file must not be uploaded to your code repository, for example. For more information [please read more here][tetra-pak-aspnet-scenarios-secrets]
 
 10. Add a sub section to configure your [JWT Bearer Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion] (ensuring only the sidecar can make requests to your protected endpoints). The sub section needs to include the expected audience:
 
@@ -99,7 +99,7 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
 [tetra-pak-aspnet-api-readme]: ../README.md
 [tetra-pak-aspnet-api-recipe]: ./Recipe-WebApi.md
 [tetra-pak-aspnet-api-jwt-bearer-assertion]: ../README.md#the-sidecar-jwt-bearer-assertion-pattern
-[tetra-pak-use-cases-secrets]: ../../UseCases.md#configuring-secrets
+[tetra-pak-aspnet-scenarios-secrets]: ../../Scenarios.md#configuring-secrets
 
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet

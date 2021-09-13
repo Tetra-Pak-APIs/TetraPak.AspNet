@@ -196,6 +196,23 @@ affecting the request.
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A (single) [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') value.  
   
+<a name='TetraPak_AspNet_HttpContextHelper_IsEndpointProtected(Microsoft_AspNetCore_Http_HttpContext)'></a>
+## HttpContextHelper.IsEndpointProtected(HttpContext) Method
+Examines the resolved endpoint of the context (if any) and returns a value indicating whether  
+it is protected (decorated with   
+```csharp
+public static bool IsEndpointProtected(this Microsoft.AspNetCore.Http.HttpContext self);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_IsEndpointProtected(Microsoft_AspNetCore_Http_HttpContext)_self'></a>
+`self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
+The extended [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if an endpoint is resolved and protected.   
+            
+  
 <a name='TetraPak_AspNet_HttpContextHelper_RespondAsync(Microsoft_AspNetCore_Http_HttpContext_System_Net_HttpStatusCode_object_System_Threading_CancellationToken)'></a>
 ## HttpContextHelper.RespondAsync(HttpContext, HttpStatusCode, object, CancellationToken) Method
 Writes a HTTP response.  

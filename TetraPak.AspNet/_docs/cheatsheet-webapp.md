@@ -27,8 +27,10 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
 7. In the `appsettings.json`; add section `"TetraPak"` and paste in the consumer key as `"ClientId"`:
 
     ```json
-    "TetraPak": {
-        "ClientId": "(paste consumer key here)"
+    {
+       "TetraPak": {
+          "ClientId": "(paste consumer key here)"
+       }
     }
     ```
 
@@ -51,9 +53,9 @@ This is the fast-track to get your web app integrated with Tetra Pak Auth Servic
     ```
 
 
-[tetra-pak-aspnet-readme]: ./README.md
-[tetra-pak-aspnet-troubleshooting]: ./troubleshooting.md
-[tetra-pak-aspnet-recipe]: ./recipe-webapp.md
+[tetra-pak-aspnet-readme]: ../README.md
+[tetra-pak-aspnet-scenarios]: ../../Scenarios.md
+[tetra-pak-aspnet-recipe]: ./Recipe-WebApp.md
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
 [github-tetrapak-api]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet.Api
