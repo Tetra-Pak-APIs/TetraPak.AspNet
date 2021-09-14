@@ -8,36 +8,150 @@ To resolve the identity of the caller the first endpoint (`/hello`) requires act
 
 >If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-api-readme]. If you already know everything and just need the fast-track to integrating your existing API then there is also a neat [cheat sheet][tetra-pak-aspnet-api-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small ["scenarios" document][tetra-pak-aspnet-scenarios] that might help you out.
 
-### Disclaimer
+## Ingredients
+
+To complete this recipe you will need:
+
+- Access to the [Tetra Pak Development Portal][tetra-pak-dev-test-portal]. Please ensure your computer have access to the Tetra Pak network, directly or though a VPN
+- A development environment (IDE). You can use whichever tool you prefer, such as [Visual Studio][ide-vs], [VS Code][ide-vscode], [Rider][ide-rider], or whatever tool you like. Those mentioned have good .NET support but you can use whatever you like
+- An *Apigee resource*. This is a Tetra Pak employee with the proper access to Tetra Pak's API Management system (Apigee). This is needed to get some configuration done.
+- A tool to make request to your API, for testing. We till use [Postman][postman] for this but you can use a different tool if you prefer.
+
+## Disclaimer
 
 This recipe assumes you know how to write C# code with your preferred IDE (Integrated Development Environment) be it [Visual Studio][ide-vs], [VS Code][ide-vscode], [Rider][ide-rider], [Eclipse][ide-eclipse] etc. We will not cover the exact how-to of each step required, such as creating a new project, add/restore Nuget packages and so on. As these details differs from one IDE to the next you are expected to know how to do that.
 
-### Creating a web API (ASP.NET Core / ASP.NET 5+)
+## Overview 
+
+Before we start the detailed walk-through, let's first talk about the steps required to create and integrate a Tetra Pak API. There are, unfortunately, a few steps where you need a favor from Tetra Pak, so we'll get that started before we start coding.
+
+- **Register the API with Tetra Pak**
+  
+  Before we can integrate the API with TPAS we need to first register it as an "app" with Tetra Pak. In this step we'll browse over to the [Tetra Pak Development Portal][tetra-pak-dev-test-portal] and see how that is done. We will need some information, such as the *client id*, from this step. 
+
+- **Create a *sidecar***
+  
+  Your API will be managed and protected by its [*sidecar*][sidecar] so we need one set up for us. At the time of this writing this step requires the help of an "Apigee resource".
+
+- **Register a client with Tetra Pak**
+
+  To try out the API we need a registered "app", set up to be a trusted client of our new API. This is also done from the [Tetra Pak Development Portal][tetra-pak-dev-test-portal] but, alas, we also need the help from an "Apigee resource" to configure the *client* to be "trusted" by the API.
+
+- **Create the API project**
+  
+  Your preferred development tools (IDE) will (probably) offer some sort of [project scaffolding](https://en.wikipedia.org/wiki/Scaffold_(programming)) where you pick a suitable project template, choosing authorization mechanism, maybe add some Git integration, and so on. The way this is done differs, quite a lot, from one IDE to another so there will only be some general guidance for this. You're expected to know your tool!
+
+- **Add SDK Nuget package**
+  
+  This step is where you add the SDK support and whouls be very straight-forward but, again, there will be almost no detailed guidance as this is also done differently depending on your preferred IDE.
+
+- **Write the business logic**
+  
+  We'll write the controller and the two endpoints here. In a real-life project you would probably start writing the business logic *after* having integrated your API with TPAS but for sake of "flow" we'll do it before the integration step coming up next.
+
+- **Integrate with Tetra Pak Auth Services**
+  
+  This is where we write the (few lines of) code and add the necessary configuration to integrate with TPAS and set your API up to be running behind its [*sidecar*][sidecar]. We'll need the *client id* from the previous step to complete this step.
+
+- **Test**
+  
+  With two app registrations (API and test client) available, the business logic and TPAS integration done, we're now ready to try out the API.
+
+So, with the plan firmly set in our mind, let's get going...
+
+## Register the API with Tetra Pak
+
+For any app to integrate with the Tetra Pak Auth Services it needs to be recognized by Tetra Pak. This is done by simply registering the app, with a name and unique "consumer key" (a.k.a. "client id" or "API key"). You do this in the Tetra Pak Developer Portal like so:
+
+1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-test-portal]
+
+>*This instruction assumes you are starting out with a DEV (Development) environment. For PROD (Production) please use the [Production development portal][tetra-pak-dev-portal].*
+
+2. Log in
+   
+3. Click the "Apps" menu item at the top of the page
+   
+4. Click the "Add app" command (upper left part of page)
+   
+5. Give your app a name and supply a short description of it
+   
+6. Specify the Callback URL (from [this step](#save-local-url)). The default callback path for this SDK is `/auth-callback`. So, for example, if your local host is `https://localhost:8080` then the Callback URL should be `https://localhost:8080/auth-callback`
+
+   > *Please note that this value can be edited later if you return to your app registration and select the "Edit" tab (will be visible once you save your app registration). If you are unsure at this time which port you'll be using locally then just change this value later, when you know the full callback URL. [For more information please go here][tetra-pak-dev-portal-appreg-callback].*
+
+7. In a "real" web app you would probably want to consume one or more API products. For this recipe that is not the case. However, please double check that the "`Enterprise Application Security`" service is already selected, or select it otherwise. This service is critical for integrating with the Tetra Pak Auth Services. You might have to scroll down to see it
+
+8. Click "ADD APP" (bottom of the web page)
+   
+9. You are now presented with your app overview page, where all your app registrations are listed. Please select the one you just created by clicking it. This should present the App details
+    
+10.  From the App details click the "copy" icon next to the "Consumer Key" (you will need this value later; [Integrating your Web App](#integrating-your-app-to-authenticate-with-tetra-pak)) so please paste it somewhere, or repeat this step to copy it when needed
+
+![Copy consumer key (client id)](../../_graphics/copy_client_id.png)
+
+## Create a *sidecar*
+
+All Tetra Pak APIs must be managed and, therefore, must be running "behind" a sidecar (managed reverse proxy). Getting one set up is unfortunately (at the time of this writing) not something you can do yourself. Instead, your project should have one assigned "Apigee resource" that you need to turn to to get this done. Usually, it's a fairly quick process but you need to interact and get this information back:
+
+1. If you plan to consume other services (APIs) from your API, you need to mention this requirement. This will affect how your sidecar gets configured. This is not needed for this recipe (see the [next API recipe][tetra-pak-aspnet-api-recipe-2] for an example of an API that consumes another API)
+   
+2. Ask the *Apigee resource* to add the ability for a "Developer Proxy". We'll get back to this shortly. Just read on. 
+   
+3. You will have to agree on an "*audience*" for the [JWT Bearer Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion] flow to work. This is simply a name (or "*identifier*") to be used by your [*sidecar*][sidecar]. Negotiate a suitable audience identifier for your API with the *Apigee resource*.
+   
+4. When you get the `sidecar name` and `audience`, note them down for later.
+  
+## Register a client with Tetra Pak
+
+At the end of this recipe you'll want to test your API. For that we will use [Postman][postman] - a popular tool for API testing and development. But before we can test the API we need a registered client for it.
+
+1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-test-portal]
+    
+   >*This instruction assumes you are starting out with a DEV (Development) environment. For PROD (Production) please use the [Production development portal][tetra-pak-dev-portal].*
+
+2. Log in
+   
+3. Click the "Apps" menu item at the top of the page 
+   
+4. Click the "Add app" command (upper left part of page) 
+   
+5. Give your client app a name and supply a short description of it (such as "Test client for Anna's API recipe")
+   
+6. Unlike with the API you can leave the `Callback URL` as is. You will need it later, when you're testing the API with Postman however, so please note it down (or get back to the client app later when you need this value)
+
+7. Ask your "Apigee resource" to configure your client to consume the API app you created in the [earlier step](#register-the-api-with-tetra-pak) 
+
+
+## Create the API project
 
 For sake of convenience the project will be called "TetraPakHelloApiRecipe".
 
-Create a ASP.NET Web API project, name it "`TetraPakHelloApiRecipe`". Please pick a suitable project template. 
+1. Create a ASP.NET Web API project, name it "`TetraPakHelloApiRecipe`". Please pick a suitable project template. 
+   
+   > If your IDE project templates present you with the option to add "Auth" or "Authentication" in some way, please opt out. We will add authentication manually later in this recipe as it's pretty simple anyway.
+   > Also, the project template wizard (if your IDE supports one) might offer a "type" of web appliction, such as MVC Razor or API and so on. If possible select the API option.
 
-> If your IDE project templates present you with the option to add "Auth" or "Authentication" in some way, please opt out. We will add authentication manually later in this recipe as it's pretty simple anyway.
-> Also, the project template wizard (if your IDE supports one) might offer a "type" of web appliction, such as MVC Razor or API and so on. If possible select the API option.
+2. The recipe assumes the default controller is called `HelloController`. If the project scaffolded some default controller for you; just rename it and remove all the code, or delete the class file and create an empty `HelloController` instead class under the "Controllers" folder (create the folder if necessary).
 
-The recipe assumes the default controller is called `HelloController`. If the project scaffolded some default controller for you; just rename it and remove all the code, or delete the class file and create an empty `HelloController` instead class under the "Controllers" folder (create the folder if it wasn't created for you).
+   This is what the folder/file structure should look like as a minimum (your IDE's project template might have added more files and folders - that's ok). If these files and folders wasn't created by your IDE then please create them:
 
-This is what the folder/file structure should look like as a minimum (your IDE's project template might have added more files and folders - that's ok). If these files and folders wasn't created by your IDE then please create them:
+    ```
+    +-- TetraPakApi
+        |
+        +-- Controllers
+        |   |
+        |   +-- HelloController.cs
+        |
+        +-- appsettings.js
+        +-- Program.cs
+        +-- Startup.cs
+    ```
 
-```
-+-- TetraPakApi
-    |
-    +-- Controllers
-    |   |
-    |   +-- HelloController.cs
-    |
-    +-- appsettings.js
-    +-- Program.cs
-    +-- Startup.cs
-```
+## Add SDK Nuget package
 
 Before we start coding you first need to add the SDK's Nuget package [TetraPak.AspNet.Api][nuget-tetrapak-api] as there will be one or two extension methods in our code that requires it. The way you add Nuget packages to you project differs from one IDE to another so we won't cover that in detail. Add the [TetraPak.AspNet.Api][nuget-tetrapak-api] now.
+
+## Write the business logic
 
 Lets look at the contents of each file, starting with the `HelloController` class and work our way down:
 
@@ -66,7 +180,8 @@ namespace TetraPakHelloApiRecipe.Controllers
         public Task<ActionResult> Get()
         {
             logRequest();
-            var hello = new { Message = "Hello World!" };
+            var actorName = User?.FirstName() ?? "stranger";
+            var hello = new { Message = $"Hello {actorName}!" };
             return this.RespondAsync(Outcome<object>.Success(hello));
         }
 
@@ -92,9 +207,9 @@ namespace TetraPakHelloApiRecipe.Controllers
 }
 ```
 
-The controller is decorated with the `[Authorize]` attribute, meaning all endpoints will require an authenticated user to authorize the request.
+The controller is decorated with the `[Authorize]` attribute, meaning all endpoints will require the actor to be authenticated.
 
-To allow logging the controller constructor (ctor) accepts a logger provider (`ILogger<HelloController>`) which is stored in a private `readonly` field: `_logger`. Please note that this logger provider is automatically injected by ASP.NET's dependency injection mechanism as the controller gets instantiated. The controller declares a convenient private method - `logRequest()` - that will simply trace the actors identity (first and last name) along with the endpoint method name.
+To allow logging the controller constructor (ctor) accepts a logger provider (`ILogger<HelloController>`) which is stored in a private `readonly` field -  `_logger`. Please note that this logger provider is automatically injected by ASP.NET's dependency injection mechanism as the controller gets instantiated. The controller declares a convenient private method - `logRequest()` - that will simply trace the actors identity (first and last name) along with the endpoint method name.
 
 > This is just to show some convenient extension methods for logging and getting the actor's identity (first and last name). If you actually want a good trace of all requests, including the request URL, headers and, possibly, body, there are better methods to do so but that's beyond the scope of this recipe.
 
@@ -105,28 +220,29 @@ The default endpoint is just decorated with the `[HttpGet]` attribute, making it
 public Task<ActionResult> Get()
 {
     logRequest();
-    var hello = new { Message = "Hello World!" };
+    var actorName = User?.FirstName() ?? "stranger";
+    var hello = new { Message = $"Hello {actorName}!" };
     return this.RespondAsync(Outcome<object>.Success(hello));
 }
 ```
 
-The `logRequest()` has already been explained so lets instead examine how the response is being constructed: We're instantiating an anonymous object, to the `hello` variable, that contains a single value - "Hello World!" - in its `Message` property. If we where to just return this value as-is the response would simply be its JSON serialized form: 
+The `logRequest()` has already been explained so lets instead examine how the response is being constructed: We're instantiating an anonymous object, to the `hello` variable, that contains a single value - "Hello Anna!" (assuming the actor's name is "Anna") - in its `Message` attribute. If we where to just return this value as-is the response would simply be its JSON serialized form : 
 
 ```json
 {
-  "message": "Hello World!"
+  "message": "Hello Anna!"
 }
 ```
 
-That might be fine but we're striving a bit higher than that. We want this API not to be just "any API". We're instead aiming to make this a ***Tetra Pak business API***! 
+That might be fine but we're striving a bit higher than that. As [mentioned in the "Writing APIs section" of README][tetra-pak-aspnet-api-readme-jwt-writing-apis] we want this API to be consistent in its response format and we also want to adhere to Tetra Pak's API guidelines, encouraging our clients to invest in code components when consuming different Tetra Pak APIs. In short; this is going to be a Tetra Pak business API! 
 
 ### Tetra Pak business API 
 
-What that means is it should be a reusable "general purpose" API. To make an API "reusable" means your clients should find it worthwhile to invest in reusable code components to make request and handle the responses, successful ones as well as failed ones. For that to happen you need to make sure your clients doesn't have to write complex messy code with endless if-else clauses everywhere, do deal with exceptions and inconsistencies. This means everything from naming conventions to format. If a certain type of resource is called "Message", for instance, in one endpoint then you should take care to call it the same thing everywhere else it's being referenced or consumed. 
+What that means is it should be a reusable "general purpose" API. To make an API "reusable" means your clients should find it worthwhile to invest in reusable code components to make request and handle the responses, successful ones as well as failed ones. For that to happen you need to make sure your clients doesn't have to write [complex messy code with endless if-else clauses everywhere][tetra-pak-aspnet-api-readme-jwt-writing-apis], dealing with exceptions and inconsistencies. Everything, from naming conventions to format, should be as consistent as possible. If a certain type of resource is called "Message", for instance, in one endpoint then you should take care to call it the same thing everywhere else in your API(s). 
 
-Failing to design an API that is consistent in conventions and format will mean it is going to ne costly write code for. Not only will it (likely) mean writing a lot of code to deal with all the inconsistencies. It will also make little sense investing in writing code components to be reused when consuming a different API, as those other APIs will be different anyway. 
+Failing to design a "business grade" API, consistent in conventions and format, will mean it is going to be costly to develop clients for it. 
 
-On the other hand, if you follow Tetra Pak's guidelines you have a very high chance of creating a successful API as your clients might already have invested in such code components in previous projects that also consume Tetra Pak business APIs. As they are now about to consume your API, and you stick to the same design principles, conventions and formats, that client can likely focus on adding code just to deal with the differences, which should be few indeed.
+On the other hand, if you follow Tetra Pak's guidelines you have a very high chance of creating a successful API as your clients might already have invested in such code components in previous projects that also consume Tetra Pak business APIs. As they are now about to consume your new shiny API, and you stick to the same design principles, conventions, and formats, that client can likely focus on adding code just to deal with the differences, which should be few indeed.
 
 You can read more about [Tetra Pak's API guidelines here][tetra-pak-dev-portal-api-guidelines], but to summarize, this is how your response should be formatted:
 
@@ -141,9 +257,17 @@ You can read more about [Tetra Pak's API guidelines here][tetra-pak-dev-portal-a
 }
 ```
  
-This format is the bare minimum of what to expect from a Tetra Pak API. Please note that the requested data is *always* returned as a list, even if there is just one item. This approach allows for much better code reuse and makes investing in code components for consuming standardized Tetra Pak APIs a very good idea. 
+This format is the bare minimum of what to expect from a Tetra Pak API. Please note that the requested data is *always* returned as a *JSON list* - even if there is just one item! This approach allows for much better code reuse and makes investing in code components for consuming standardized Tetra Pak APIs simple and cheap, and therefore a very good idea!  
 
-The good news is; by using this SDK you can automatically adhere to the recommended Tetra Pak response format! Simply send your data back using the `RespondAsync` extension method for `ControllerBase` and your good to go.
+So, to make it easy for you to use the recommended Tetra Pak response format, this SDK provides a few convenient classes and extension methods you can rely on when constructing you response: 
+
+- The `RespondAsync` method
+- The `Outcome<T>` class 
+
+
+
+
+resoins you can automatically adhere to the recommended Tetra Pak response format! Simply send your data back using the `RespondAsync` extension method for `ControllerBase` and your good to go.
 
 With this your API should build and run. Run the API from your IDE and note the address it binds to, such as this example: `https://localhost:5001`. (Please note the port might be different in your case. If so; note it and use that instead as we move forward). 
 
@@ -175,41 +299,6 @@ So, to summarize, this is what is left on our TODO:
 1. Register your API as an "app" (app registration) with Tetra Pak Auth Services. This is done in the Tetra Pak Developer Portal.
 2. Ask to have a sidecar set up for your API. 
 3. Configure your API to integrate with Tetra Pak. This will enable the necessary auth scheme.
-
-### Register your App in Developer portal
-
-For any app to integrate with the Tetra Pak Auth Services it needs to be recognized by Tetra Pak. This is done by simply registering the app, with a name and unique "consumer key" (a.k.a. "client id" or "API key"). You do this in the Tetra Pak Developer Portal like so:
-
-1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-test-portal]
-
-
->*This instruction assumes you are starting out with a DEV (Development) environment. For PROD (Production) please use the [Production development portal][tetra-pak-dev-portal].*
-
-
-2. Log in
-3. Click the "Apps" menu item at the top of the page
-4. Click the "Add app" command (upper left part of page)
-5. Give your app a name and supply a short description of it
-6. Specify the Callback URL (from [this step](#save-local-url)). The default callback path for this SDK is `/auth-callback`. So, for example, if your local host is `https://localhost:8080` then the Callback URL should be `https://localhost:8080/auth-callback`
-
-   > *Please note that this value can be edited later if you return to your app registration and select the "Edit" tab (will be visible once you save your app registration). If you are unsure at this time which port you'll be using locally then just change this value later, when you know the full callback URL. [For more information please go here][tetra-pak-dev-portal-appreg-callback].*
-
-7. In a "real" web app you would probably want to consume one or more API products. For this recipe that is not the case. However, please double check that the "`Enterprise Application Security`" service is already selected, or select it otherwise. This service is critical for integrating with the Tetra Pak Auth Services. You might have to scroll down to see it
-
-8. Scroll down to the end of the page and click "ADD APP"
-9. You are now taken to your app overview page, where all your app registrations are listed. Please select the one you just created by clicking it. This should present the App details
-10.  From the App details click the "copy" icon next to the "Consumer Key" (you will need this value in the next phase; [Integrating your Web App](#integrating-your-app-to-authenticate-with-tetra-pak)) so please paste it somewhere, or repeat this step to copy it when needed
-
-![Copy consumer key (client id)](../../_graphics/copy_client_id.png)
-
-### Ask for a sidecar
-
-All Tetra Pak APIs must be managed and, therefore, must be running "behind" a sidecar (managed reverse proxy). Getting one set up is unfortunately (at the time of this writing) not something you can do yourself. Instead, your project should have one assigned "Apigee resource" that you need to turn to to get this done. Usually, it's a fairly quick process but you need to interact and get this information back:
-
-1. If you plan to consume other services (APIs) from your API, you need to mention this requirement. This will affect how your sidecar gets configured. This is not needed for this recipe (see the [next API recipe][tetra-pak-aspnet-api-recipe-2] for that)
-2.Ask the "Apigee person" to add the ability for a "Developer Proxy". We'll get back to this shortly. Just read on. 
-3. You will have to agree on an "audience" for the [JWT Bearer Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion] flow to work. Negotiate a suitable audience identifier for your proxy.
-4. When you get the `sidecar name` and `audience`, note them down for later.
 
 ### Integrating your app to authenticate with Tetra Pak
 
@@ -279,6 +368,7 @@ That's it! Try running your API locally. If you run into trouble, please look in
 
 [tetra-pak-aspnet-api-readme]: ../README.md
 [tetra-pak-aspnet-api-readme-jwt-bearer-assertion]: ../README.md#the-sidecar-jwt-bearer-assertion-pattern
+[tetra-pak-aspnet-api-readme-jwt-writing-apis]: ../README.md#writing-apis
 [tetra-pak-aspnet-api-cheat-sheet]: ./cheatsheet-webapi.md
 [tetra-pak-aspnet-api-recipe-2]: ./Recipe2-WebApi.md
 [tetra-pak-aspnet-api-jwt-bearer-assertion]: ../README.md#the-sidecar-jwt-bearer-assertion-pattern
@@ -311,3 +401,5 @@ That's it! Try running your API locally. If you run into trouble, please look in
 [ide-vscode]: https://code.visualstudio.com/
 [ide-rider]: https://www.jetbrains.com/rider/
 [ide-eclipse]: https://www.eclipse.org/ide/
+[sidecar]: https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar
+[postman]: https://www.postman.com/

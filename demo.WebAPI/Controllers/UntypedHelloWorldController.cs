@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
 
@@ -19,7 +20,7 @@ namespace WebAPI.Controllers
             if (string.IsNullOrEmpty(svc))
                 return ControllerBaseExtensions.Ok(this, new 
                 { 
-                    message = "Hello World!", 
+                    message = $"Hello {User?.FirstName() ?? "stranger"}!", 
                     remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+
                               "credentials, consuming a downstream service",
                     userId = userIdentity?.Name ?? "(unresolved)" 

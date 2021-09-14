@@ -26,8 +26,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
         ILogger Logger => _ambientData.Logger;
 
-        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig; 
-        
+        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {

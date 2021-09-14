@@ -35,21 +35,22 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var accessToken = await this.GetAccessTokenAsync();
-            if (!accessToken)
+            var actorAccessToken = await this.GetAccessTokenAsync();
+            if (!actorAccessToken)
                 return this.UnauthorizedError(new Exception("No valid access token found"));
 
             if (!this.TryGetTetraPakApiAuthConfig(out var authConfig))
-                return this.InternalServerError(new Exception("Service is incorrectly configured"));
+                return this.InternalServerError(new ConfigurationException("Service is incorrectly configured"));
 
-            var credentials = new BasicAuthCredentials(authConfig.ClientId, authConfig.ClientSecret);
+            var credentials = new BasicAuthCredentials(authConfig!.ClientId, authConfig.ClientSecret);
             var ct = new CancellationToken();
-            var tx = await _tokenExchangeService.ExchangeAccessTokenAsync(credentials, accessToken, ct);
-            if (!tx)
+            var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(credentials, actorAccessToken, ct);
+            if (!txOutcome)
                 return this.InternalServerError(new Exception("Service is incorrectly configured"));
 
+            var myAccessToken = txOutcome.Value.AccessToken;
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tx.Value.AccessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", myAccessToken);
             var response = await client.GetAsync("https://api-dev.tetrapak.com/samples/helloworld", ct);
             return await this.RespondAsync(await response.ToOutcomeAsync()); 
         }

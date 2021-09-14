@@ -55,7 +55,7 @@
       <Folder Include="_docs\_codeApi" />
     </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" />
+        <!--Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" /-->
     </Target>
 
 </Project>
