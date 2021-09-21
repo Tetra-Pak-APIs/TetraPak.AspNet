@@ -1,6 +1,6 @@
 # Recipe: Create a Tetra Pak API
 
-This document will walk you through creating a small API and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing API as well. 
+This document will walk you through creating a small [terminus API][md-terms-terminus] and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing API as well. 
 
 >If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-api-readme]. If you already know everything and just need the fast-track to integrating your existing API then there is also a neat [cheat sheet][tetra-pak-aspnet-api-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small ["scenarios" document][tetra-pak-aspnet-scenarios] that might help you out.
 
@@ -379,9 +379,9 @@ With configuration done we now need two lines of code to the `Startup` class to 
   public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
   ```
 
+With this you have now integrated your API with Tetra Pak Auth Services and your are now ready to deploy your API to its host. 
 
-
-
+Probably, however, you would like to be able to run your 
 
 This is all you need to configure to successfully integrate the API with Tetra Pak Auth Services. If you are ready to deploy the API to its hosting service (to Azure or some similar hosting environment), this would be enough. 
 
@@ -443,8 +443,7 @@ With a sidecar set up and a local dev proxy enabled you should now be able to te
 
 
 
-That's it! Try running your API locally. If you run into trouble, please look into the [scenarios document][tetra-pak-aspnet-scenarios].
-
+That's it! Try running your API locally. If you run into trouble, please consult the [scenarios document][tetra-pak-aspnet-scenarios].
 
 [tetra-pak-aspnet-api-readme]: ../README.md
 [tetra-pak-aspnet-api-readme-jwt-bearer-assertion]: ../README.md#the-sidecar-jwt-bearer-assertion-pattern
@@ -488,3 +487,4 @@ That's it! Try running your API locally. If you run into trouble, please look in
 [md-ControllerBaseExtensions]: ./_codeApi/TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md
 [md-Outcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_codeApi/TetraPak_Outcome_T_.md
 [md-setting-localhost-port]: ../../Scenarios.md#setting-the-localhost-port
+[md-terms-terminus]: ../../TermsAndConcepts.md#terminus-api

@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{708865EB
 ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	Scenarios.md = Scenarios.md
+	TermsAndConcepts.md = TermsAndConcepts.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.BackendServiceAPI", "demo.BackendServiceAPI\demo.BackendServiceAPI.csproj", "{C6D820E1-1F41-4235-9466-C86AAB308E4F}"
