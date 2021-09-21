@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -21,9 +24,18 @@ namespace TetraPak.AspNet.Api.Auth
         public static void AddTetraPakApiClaimsTransformation(this IServiceCollection c)
         {
             c.AddHttpContextAccessor();
-            c.TryAddTransient<AmbientData>();
+            c.TryAddScoped<AmbientData>();
             c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
-            c.TryAddTransient<IClaimsTransformation, TetraPakApiClaimsTransformation>();
+            try
+            {
+                c.AddScoped<IClaimsTransformation, TetraPakApiClaimsTransformation>();
+            }
+            catch (Exception ex)
+            {
+                var p = c.BuildServiceProvider();
+                var logger = p.GetService<ILogger<TetraPakApiClaimsTransformation>>();
+                logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakApiClaimsTransformation)}) with service collection");
+            }
             c.AddTetraPakTokenExchangeService();
             c.AddTetraPakUserInformation();
         }

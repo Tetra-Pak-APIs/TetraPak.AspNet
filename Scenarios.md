@@ -86,6 +86,20 @@ public void ConfigureServices(IServiceCollection services)
 
 This should cover your needs to integrate the Tetra Pak ASP.NET SDK with whatever secure storage service you prefer. The SDK might be updated in future versions, however, to offer other methods if needed.
 
+## Setting the localhost port
+
+It is sometimes necessary to specify a TCP port to run and debug your web project locally. This can be because the scaffolded port is already in use on your machine or because you need to adapt to some other requirement.
+
+With ASP.NET Core/5+ You can specify how your host binds to addresses (including the port) by editing your project's launch configuration file. This file can be found under your project's `Prperties` sub folder and it's called `launchSettings.json`. If you need a better understanding for how this file is used and structured then [here's a great tutorial](https://dotnettutorials.net/lesson/asp-net-core-launchsettings-json-file/).
+
+The file has a sub section called "`profiles`", which typically contains two launch profiles: "`IIS Express`" and "`(project name)`". To complicate things a wee bit different rules are used depending on the value of each profile's "`commandName`" value. Profiles running `commandName` = "`IISExpress`" takes its settings from the root section "`iisSettings`" and its sub section "`iisExpress`", whereas profiles running `commandName` = "`Project`" takes its settings directly from that same profile configuration section. 
+
+Look for the "`applicationUrl`" setting to see which addresses that profile will attempt binding to. Typically, a "Kestrel" based launch profile is configured for `"applicationUrl": "http://localhost:5000"` whereas the `iisSettings:iisExpress` configuration uses `"applicationUrl": "http://localhost:9256"` (port may vay over time).
+
+You can change the port and also add more addresses. One typical requirement might be to run SSL (TLS), even locally, so you could add that using a different port, like in this example: `"applicationUrl": "https://localhost:5001;http://localhost:5000"`.
+
+Depending on how you start/debug your project, whether from Visual Studio, VS Code, Rider or even the command line, different profiles will be used. Starting your app from the command line, for example, will usually pick the launch profile with `"commandName": "Project"` (running the Kestrel web server) whereas your IDE might default to the profile with `"commandName": "IISExpress"` (running IISExpress web server). Within your IDE you can select which launch profile to use however.
+
 ## Debugging
 
 -- TODO --

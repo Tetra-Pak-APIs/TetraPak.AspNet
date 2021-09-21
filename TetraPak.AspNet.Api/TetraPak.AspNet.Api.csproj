@@ -2,31 +2,34 @@
 
     <PropertyGroup>
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <Title>Tetra Pak Api library </Title>
         <LangVersion>9</LangVersion>
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>1.0.1</PackageVersion>
-        <Title>Tetra Pak Api library </Title>
+        <PackageVersion>1.0.2-local</PackageVersion>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageLicenseFile>license.txt</PackageLicenseFile>
+        <PackageReleaseNotes>Some configuration (appsettings) keys have changed:
+            - "Auth-TetraPak" key was changed to just "TetraPak"
+            - "DevSidecar" was changed to "DevProxy"
+        </PackageReleaseNotes>
+        <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <Authors>Tetra Pak</Authors>
         <Description>A common library for Tetra Pak API development</Description>
         <Copyright>Tetra Pak</Copyright>
         <RepositoryType>Git</RepositoryType>
-        <PackageReleaseNotes>Some configuration (appsettings) keys have changed: 
-        - "Auth-TetraPak" key was changed to just "TetraPak"
-        - "DevSidecar" was changed to "DevProxy"
-        </PackageReleaseNotes>
-        <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
-        <AssemblyVersion>1.0.1</AssemblyVersion>
-        <FileVersion>1.0.1</FileVersion>
+        <AssemblyVersion>1.0.2</AssemblyVersion>
+        <FileVersion>1.0.2</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DocumentationFile>bin\Release\TetraPak.AspNet.xml</DocumentationFile>
         <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
         <DefaultDocumentationGeneratedPages>Namespaces, Types</DefaultDocumentationGeneratedPages>
-        <!--DefaultDocumentationLogLevel>Trace</DefaultDocumentationLogLevel-->
+        <_DefaultDocumentationLogLevel>Debug</_DefaultDocumentationLogLevel>
+        <DefaultDocumentationFolder>$(ProjectDir)_docs/_codeApi</DefaultDocumentationFolder>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -52,7 +55,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TetraPak.AspNet" Version="1.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TetraPak.AspNet\TetraPak.AspNet.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../_nuget/icon.png" Pack="true" PackagePath="/" />
+    <None Include="../_nuget/license.txt" Pack="true" PackagePath="/" />
+    <None Include="readme.md" Pack="true" PackagePath="/" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!--Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" /-->

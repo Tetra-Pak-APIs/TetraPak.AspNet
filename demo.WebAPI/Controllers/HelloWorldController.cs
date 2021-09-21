@@ -35,6 +35,8 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
+            var nisse = User.FirstName(); 
+            
             var actorAccessToken = await this.GetAccessTokenAsync();
             if (!actorAccessToken)
                 return this.UnauthorizedError(new Exception("No valid access token found"));

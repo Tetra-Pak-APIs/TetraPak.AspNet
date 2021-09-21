@@ -153,7 +153,6 @@ namespace TetraPak.AspNet.Api
         }
         
         public ServiceAuthConfig(
-            // AmbientData ambientData, obsolete
             IServiceProvider serviceProvider,
             IServiceAuthConfig parentConfig,
             string sectionIdentifier = ServicesConfigName) 

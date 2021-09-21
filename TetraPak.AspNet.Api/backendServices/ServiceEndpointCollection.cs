@@ -35,20 +35,41 @@ namespace TetraPak.AspNet.Api
         readonly Dictionary<string, ServiceEndpoint> _endpoints = new();
         List<Exception>? _issues;
 
+        /// <summary>
+        ///   Gets a value indicating that the endpoints (configuration) is valid (no unresolved issues where found).
+        /// </summary>
+        /// <seealso cref="GetIssues"/>
         public bool IsValid => _issues is null;
 
+        /// <summary>
+        ///   Gets a collection of unresolved issues found for the endpoints. 
+        /// </summary>
+        /// <returns>
+        ///   A collection of <see cref="Exception"/>, or <c>null</c>.
+        /// </returns>
+        /// <seealso cref="IsValid"/>
         public IEnumerable<Exception>? GetIssues() => _issues;
         
+        /// <summary>
+        ///   Gets the service auth configuration.
+        /// </summary>
         public IServiceAuthConfig ServiceAuthConfig { get; private set; }
 
+        /// <inheritdoc />
         public IConfiguration Configuration => ServiceAuthConfig.Configuration;
 
+        /// <inheritdoc />
         public AmbientData AmbientData => ServiceAuthConfig.AmbientData;
 
+        /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => ServiceAuthConfig;
 
         internal TetraPakAuthConfig AuthConfig => ((ServiceAuthConfig) ServiceAuthConfig).AuthConfig;
         
+        /// <summary>
+        ///   Gets or sets the grant type (a.k.a. OAuth "flow") used at this configuration level.
+        /// </summary>
+        /// <exception cref="ConfigurationException"></exception>
         [StateDump]
         public virtual GrantType GrantType
         {
@@ -71,6 +92,9 @@ namespace TetraPak.AspNet.Api
             set => _grantType = value;
         }
 
+        /// <summary>
+        ///   Gets or sets a configured client id at this configuration level.
+        /// </summary>
         [StateDump]
         public virtual string? ClientId
         {
@@ -85,6 +109,9 @@ namespace TetraPak.AspNet.Api
             set => _clientId = value?.Trim() ?? null!;
         }
 
+        /// <summary>
+        ///   Gets or sets a configured client secret at this configuration level.
+        /// </summary>
         [StateDump]
         public virtual string? ClientSecret
         {
@@ -99,6 +126,10 @@ namespace TetraPak.AspNet.Api
             set => _clientSecret = value?.Trim() ?? null!;
         }
 
+        /// <summary>
+        ///   Gets or sets a scope of identity claims, a this configuration level,
+        ///   to be requested while authenticating the identity. When omitted a default scope will be used.
+        /// </summary>
         [StateDump]
         public virtual MultiStringValue Scope
         {
@@ -148,7 +179,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Section[key];
+        public string GetConfiguredValue(string key) => Section![key];
 
         /// <summary>
         ///   The default host address.
@@ -179,6 +210,7 @@ namespace TetraPak.AspNet.Api
         
         internal bool IsDelegated => AuthConfig.IsDelegated;
 
+        /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {
             foreach (var (key, value) in _endpoints)
@@ -202,6 +234,12 @@ namespace TetraPak.AspNet.Api
         public ServiceEndpoint GetEndpoint([CallerMemberName] string propertyName = null!) =>
             getServiceEndpoint(propertyName);
         
+        /// <summary>
+        ///   Gets a named <see cref="ServiceEndpoint"/>.
+        /// </summary>
+        /// <param name="endpointName">
+        ///   The name of the requested <see cref="ServiceEndpoint"/>.
+        /// </param>
         public ServiceEndpoint this[string endpointName] => getServiceEndpoint(endpointName);
 
         ServiceEndpoint getServiceEndpoint(string endpointName)
@@ -249,7 +287,7 @@ namespace TetraPak.AspNet.Api
         void initializeEndpoints()
         {
             var type = GetType();
-            var children = Section.GetChildren();
+            var children = Section!.GetChildren();
             foreach (var child in children)
             {
                 var name = child.Key;
@@ -320,6 +358,16 @@ namespace TetraPak.AspNet.Api
             return new ServiceEndpoint(path).WithIdentity(section.Key, this).WithConfig(section);
         }
 
+        /// <summary>
+        ///   Called during object initialization (from ctor) to initialize all endpoints from the
+        ///   service's configuration (<paramref name="serviceAuthConfig"/>).
+        /// </summary>
+        /// <param name="serviceAuthConfig">
+        ///   Provides access to the service configuration.
+        /// </param>
+        /// <param name="sectionIdentifier">
+        ///   Identifies the service configuration section.
+        /// </param>
         protected virtual void OnInitializeEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
         {
             ServiceAuthConfig = serviceAuthConfig;
@@ -333,9 +381,16 @@ namespace TetraPak.AspNet.Api
         }
         
 #pragma warning disable 8618
-        public ServiceEndpointCollection(
-            IServiceAuthConfig serviceAuthConfig, 
-            string sectionIdentifier = "Endpoints")
+        /// <summary>
+        ///   Initializes the <see cref="ServiceEndpointCollection"/>.
+        /// </summary>
+        /// <param name="serviceAuthConfig">
+        ///   Provides access to the service configuration.
+        /// </param>
+        /// <param name="sectionIdentifier">
+        ///   Identifies the service configuration section.
+        /// </param>
+        public ServiceEndpointCollection(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier = "Endpoints")
         : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, sectionIdentifier)
         {
             initialize(serviceAuthConfig, sectionIdentifier);

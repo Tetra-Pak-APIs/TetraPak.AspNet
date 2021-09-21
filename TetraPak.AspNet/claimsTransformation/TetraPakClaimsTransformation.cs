@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Identity;
+using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet
@@ -37,6 +38,7 @@ namespace TetraPak.AspNet
         static readonly IDictionary<string, string> s_claimsMap = makeClaimsMap();
         readonly TetraPakUserInformation _userInformation;
         readonly IClientCredentialsProvider _clientCredentialsProvider;
+        readonly ITimeLimitedRepositories _cache;
 
         /// <summary>
         ///   Gets a logger provider.
@@ -68,18 +70,27 @@ namespace TetraPak.AspNet
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
             Logger.TraceAsync(AuthConfig);
+            Outcome<CachedClaimsPrincipal> cachedOutcome;
+
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))
             {
+                cachedOutcome = await tryGetCachedPrincipalAsync(principal);
+                if (cachedOutcome)
+                {
+                    Logger.Debug($"Claims Principal with id '{cachedOutcome.Value.Id}' was already resolved (cached)");
+                    return cachedOutcome.Value.Principal;
+                }
+
                 var _ = new CancellationToken();
                 switch (AuthConfig.IdentitySource)
                 {
                     case TetraPakIdentitySource.IdToken:
-                        Logger?.Debug("Source = Id Token");
+                        Logger.Debug("Source = Id Token");
                         var idTokenOutcome = await OnGetIdTokenAsync(_);
                         if (idTokenOutcome)
                             return mapFromIdToken(idTokenOutcome.Value);
 
-                        AuthConfig.Logger.Warning("Could not populate identity from id token. No id token was available");
+                        Logger.Warning("Could not populate identity from id token. No id token was available");
                         break;
             
                     case TetraPakIdentitySource.RemoteService:
@@ -87,7 +98,7 @@ namespace TetraPak.AspNet
                         if (accessTokenOutcome)
                             return await mapFromApiAsync(accessTokenOutcome.Value);
                         
-                        AuthConfig.Logger.Warning("Could not populate identity from API. No access token was available");
+                        Logger.Warning("Could not populate identity from API. No access token was available");
                         break;
             
                     default:
@@ -151,7 +162,43 @@ namespace TetraPak.AspNet
                         : new Claim(toKey, claimValue);
                 });
                 identity.AddClaims(claims);
-                return clone;
+                return await cachePrincipalAsync(cachedOutcome.Value.Id, clone);
+            }
+        }
+
+        async Task<ClaimsPrincipal> cachePrincipalAsync(string id, ClaimsPrincipal claimsPrincipal)
+        {
+            if (_cache is null)
+                return claimsPrincipal;
+
+            await _cache.AddAsync(CacheRepositories.ClaimsPrincipals, id, claimsPrincipal);
+            return claimsPrincipal;
+        }
+
+        async Task<Outcome<CachedClaimsPrincipal>> tryGetCachedPrincipalAsync(ClaimsPrincipal principal)
+        {
+            if (_cache is null)
+                return Outcome<CachedClaimsPrincipal>.Fail();
+
+            if (!principal.TryResolveIdClaim(out var id,  new[] {"sub"}))
+                return Outcome<CachedClaimsPrincipal>.Fail();
+
+            var cachedOutcome = await _cache.GetAsync<ClaimsPrincipal>(CacheRepositories.ClaimsPrincipals, id);
+            return cachedOutcome
+                ? Outcome<CachedClaimsPrincipal>.Success(new CachedClaimsPrincipal(id, cachedOutcome.Value))
+                : Outcome<CachedClaimsPrincipal>.Fail(new CachedClaimsPrincipal(id, null)); 
+        }
+
+        class CachedClaimsPrincipal
+        {
+            public string Id { get; set; }
+
+            public ClaimsPrincipal Principal { get; }
+            
+            public CachedClaimsPrincipal(string id, ClaimsPrincipal principal)
+            {
+                Id = id;
+                Principal = principal;
             }
         }
 
@@ -213,7 +260,6 @@ namespace TetraPak.AspNet
             return dictionary;
         }
 
-
         /// <summary>
         ///   Initializes the <see cref="TetraPakClaimsTransformation"/> instance.
         /// </summary>
@@ -221,14 +267,21 @@ namespace TetraPak.AspNet
         ///   Used internally to obtain user information.
         /// </param>
         /// <param name="clientCredentialsProvider">
+        ///   (optional)<br/>
         ///   Used internally to obtain client credentials.
+        /// </param>
+        /// <param name="cache">
+        ///   (optional)<br/>
+        ///   Used internally to cache already resolved claims principals.   
         /// </param>
         public TetraPakClaimsTransformation(
             TetraPakUserInformation userInformation,
-            IClientCredentialsProvider clientCredentialsProvider = null)
+            IClientCredentialsProvider clientCredentialsProvider = null,
+            ITimeLimitedRepositories cache = null)
         {
             _userInformation = userInformation;
             _clientCredentialsProvider = clientCredentialsProvider;
+            _cache = cache;
         }
     }
 }

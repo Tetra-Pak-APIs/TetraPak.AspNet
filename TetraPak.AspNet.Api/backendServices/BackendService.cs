@@ -45,17 +45,18 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets logging provider.  
         /// </summary>
-        protected ILogger? Logger => Endpoints?.Logger;
+        protected ILogger? Logger => Endpoints.Logger;
 
         /// <inheritdoc />
-        public AmbientData AmbientData => Endpoints!.AmbientData;
+        public AmbientData AmbientData => Endpoints.AmbientData;
 
+        /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => AuthConfig;
 
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig => Endpoints!.AuthConfig;
+        protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
 
         /// <inheritdoc />
         public IConfiguration Configuration => AuthConfig.Configuration;
@@ -65,19 +66,29 @@ namespace TetraPak.AspNet.Api
         
         /// <inheritdoc />
         [StateDump]
-        public GrantType GrantType => Endpoints!.GrantType;
+        public GrantType GrantType => Endpoints.GrantType;
 
+        /// <summary>
+        ///   Gets a configured client id at this configuration level.
+        /// </summary>
         [StateDump]
-        public string? ClientId => Endpoints?.ClientId;
+        public string? ClientId => Endpoints.ClientId;
 
+        /// <summary>
+        ///   Gets a configured client secret at this configuration level.
+        /// </summary>
         [StateDump]
-        public string? ClientSecret => Endpoints?.ClientSecret;
+        public string? ClientSecret => Endpoints.ClientSecret;
 
+        /// <summary>
+        ///   Gets a scope of identity claims, a this configuration level,
+        ///   to be requested while authenticating the identity. When omitted a default scope will be used.
+        /// </summary>
         [StateDump]
-        public MultiStringValue? Scope => Endpoints?.Scope;
+        public MultiStringValue? Scope => Endpoints.Scope;
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Endpoints!.GetConfiguredValue(key);
+        public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(
@@ -89,16 +100,27 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext,
             CancellationToken? cancellationToken = null) => Endpoints!.GetClientSecretAsync(authContext, cancellationToken);
 
+        /// <summary>
+        ///   Gets a scope to be requested for authorization.
+        /// </summary>
+        /// <param name="authContext">
+        ///   Details the auth context in which the (confidential) client secrets are requested.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Cancellation token for cancellation the operation.
+        /// </param>
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints!.GetScopeAsync(authContext, null, cancellationToken);
+            CancellationToken? cancellationToken = null)
+            => Endpoints.GetScopeAsync(authContext, null, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext, 
             MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
-            => Endpoints!.GetScopeAsync(authContext, useDefault, cancellationToken);
+            => Endpoints.GetScopeAsync(authContext, useDefault, cancellationToken);
         
         
         /// <inheritdoc />

@@ -29,7 +29,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (self is BusinessApiController apiController)
                 return apiController.MessageId;
 
-            return self.HttpContext.Request.GetMessageId(null);
+            return self.HttpContext.Request.GetMessageId(null!);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace TetraPak.AspNet.Api.Controllers
                         "Cannot get access token. Failed when trying to obtain a "+
                         $" configuration ({typeof(TetraPakApiAuthConfig)})")));
                 
-            return self.HttpContext.Request.GetAccessTokenAsync(config);
+            return self.HttpContext.Request.GetAccessTokenAsync(config!);
         }
 
         /// <summary>
@@ -129,6 +129,13 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
         /// <remarks>
+        ///   <para>
+        ///   This method automatically resolves whether the outcome is a success or failure and constructs
+        ///   a well-formed response, as per Tetra Pak API recommendations, from it. Relying on this method
+        ///   for constructing responses will relieve you from having to write the corresponding boiler plate
+        ///   code yourself. Also, should Tetra Pak recommendations change you can simply upgrade the SDK
+        ///   tp stay current. 
+        ///   </para>
         ///   <para>
         ///   If the <paramref name="outcome"/> is unsuccessful the <see cref="Error(ControllerBase,Exception)"/>
         ///   method will automatically be invoked.

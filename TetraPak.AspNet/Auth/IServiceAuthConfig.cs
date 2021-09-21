@@ -45,7 +45,7 @@ namespace TetraPak.AspNet.Auth
         Task<Outcome<string>> GetClientSecretAsync(AuthContext authContext, CancellationToken? cancellationToken = null);
 
         /// <summary>
-        ///   Gets a scope to be requested for authorization.
+        ///   Gets a scope to be requested for authorization while, optionally, specifying a default scope.
         /// </summary>
         /// <param name="authContext">
         ///   Details the auth context in which the (confidential) client secrets are requested.

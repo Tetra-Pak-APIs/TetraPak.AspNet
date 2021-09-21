@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.diagnostics;
-using TetraPak.AspNet.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
@@ -53,7 +47,7 @@ namespace TetraPak.AspNet.Api
 
         public static IServiceCollection AddTetraPakServiceEndpoints(this IServiceCollection c)
         {
-            c.TryAddTransient<AmbientData>();
+            c.TryAddScoped<AmbientData>();
             c.TryAddTransient<ServiceInvalidEndpoint>();
             return c;
         }

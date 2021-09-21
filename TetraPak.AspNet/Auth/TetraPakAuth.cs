@@ -57,9 +57,12 @@ namespace TetraPak.AspNet.Auth
         public static void AddTetraPakOidcAuthentication<TCache>(this IServiceCollection services)
         where TCache : class, ITimeLimitedRepositories
         {
+            // todo This method is HUGE. Consider refactoring to break it down! 
+            services.TryAddScoped<AmbientData>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<TetraPakAuthConfig>();
-            services.AddTetraPakClaimsTransformation();
-            services.AddTetraPakUserInformation();
+            // services.AddTetraPakClaimsTransformation();
+            // services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
@@ -74,6 +77,9 @@ namespace TetraPak.AspNet.Auth
                 logger.Error(new ConfigurationException($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
                 return;
             }
+
+            services.AddTetraPakClaimsTransformation();
+            services.AddTetraPakUserInformation();
 
             services.AddAuthentication(options =>
                 {
