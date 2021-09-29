@@ -10,6 +10,10 @@ We use the term "`actor`" for *the acting party that initiated a request*. This 
 
 See also: [Identity](#identity)
 
+## API
+
+-- TODO --
+
 ## API key
 
 See: [Client ID](#client-id)
@@ -18,7 +22,21 @@ See: [Client ID](#client-id)
 
 A Tetra Pak resource with access to- and know-how of the [API management system](#api-management-system). A typical API development project is (currently) assumed to have one such resource assigned to it. This might change in the future as the 
 
-## API management system
+## API management
+
+The process of publishing, maintaining, designing, documenting, analyzing and protecting APIs, usually implemented by an organization that owns and maintains those APIs. Such organizations usually rely on ["API management" systems](#api-management-system) to offer a pleasant API experience for its consumers while maintaining security and building insight for continous improvements.
+
+Managing a growing suite of APIs creates the need for data consumers to explore and discover them. This can be achieved through some form av "portal", such as the [Tetra Pak Developer Portal][dev-portal], where [API products](#product) can be found, along with information about the product, how to get access to it and how to consume it.
+
+### API management patterns
+
+One or more security patterns, designed to provide a very high level of security while allowing for good performance in APIs. 
+
+Tetra Pak implements multiple security patterns for its (reusable) [business APIs](#business-api), all built on the foundation of [API sidecars](#sidecar). One such security pattern is the [JWT bearer assertion](#jwt-bearer-assertion) pattern.
+
+### API management system
+
+a.k.a. "API management platform"
 
 -- TODO --
 
@@ -206,19 +224,64 @@ See also: [Authentication](#authentication)
 
 ## JWT Bearer Assertion
 
-An [auth scheme](#authentication-scheme). -- TODO --
+A security pattern (or "[auth scheme](#authentication-scheme)") based on the use of a [JWT bearer](#bearer-token) that gets issued to a [sidecar](#sidecar) by [TPAS](#tpas), authorizing the [sidecar](#sidecar) to consume its [API](#api) 
 
-## ASP.NET middleware
+![API management pattern](_graphics/api-mgmt-pattern.png)
 
-A function or object to be called by the ASP.NET runtime to manage every request/response round trip. The concept is simimal to the [chain of responsibility design pattern](https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) and each *middleware* is responsible for calling the next one in the "chain".
+Looking at the above diagram we can follow the full request/response rondtrip, which includes the *JWT bearer assertion* security mechanism:
 
-A middleware gets full access to the request/response context and can terminate the request (sending a customized response back) if it desires to do so.
+- User makes request via her client (`Client X`)
+- (`a`) `Client X` is granted authorization (authenticating the `User` in the process). [TPAS](#tpas) issues an access token (`1`) and sends it back at the end of the auth process.
+- (`b`) `Client X` sends request to the API [sidecar](#sidecar). This is the start of the *JWT bearar assertion* sub flow.
+  
+  \>>> start of JWT bearer assertion sub flow >>>
 
-The ASP.NET Core/5+ design is based on the *middleware* concept, depending on the *middleware* "chain" to be configured correctly by the `Configure` method declared by the startup class (usually called `Startup`).
+- (`c`) [sidecar](#sidecar) asserts the access token (1) and requests authorization to consume its API (`API 1`). [TPAS](#tpas) accepts the request and issues a [JWT bearer](#bearer-token) (2) for [sidecar](#sidecar).
+- (`d`) [sidecar](#sidecar) passes the request to its api, passing the [JWT bearer](#bearer-token) (2) with the request.
+- (`e`) `API 1` asserts the [JWT bearer](#bearer-token) (2) token. This is done by obtaining the public keys, from [TPAS](#tpas), used to sign the [JWT bearer](#bearer-token). The [JWT bearer](#bearer-token) is found to be genuine (and not expired) so it is accepted.
+
+  <<< end of JWT bearer assertion sub flow <<<
+
+- (`f` through `j`) As `API 1` needs data from `API 2` it first requests and gets authorization to consume `API 2`. This is achieved with the [token exchange flow](#token-exchange-oauth-flow) (`f`). The same pattern then gets repeated (see `b` through `e`)
+
+## Middleware (ASP.NET)
+
+A delegate to be called by the ASP.NET runtime to manage every request/response round trip. The concept is similar to the [chain of responsibility design pattern](https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) and each *middleware* is responsible for calling the next one in the "chain".
+
+A middleware gets full access to the request/response context (request URL, headers, body and any adata added by other *middleware*) and can terminate the request, if needed, sending a customized response back to the client.
+
+The ASP.NET Core/5+ web technology design is based on the *middleware* concept, depending on the *middleware* "chain" to be configured correctly by the `Configure` method declared by the startup class (usually called `Startup`).
+
+This diagram shows an example of how the ASP.NET host creates a request/response context and then simply sends it to the *middleware chain*. In the example, the last *middleware* resolves which controller and method to invoke, sending the correct parameters (if any). As the controller sends its response the middleware chain again gets called, backwards:
+
+![ASP.NET middleware chain](_graphics/aspnet-middleware.png)
+
+You can inject your own middleware by simply calling the `Use()` extension method, like in this example:
+
+```csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    // custom middleware
+    app.Use((context, next) =>
+    {
+        context.Request.Headers.Add("my-header", "Hello World!");
+        return next();  // <-- calls next middleware
+    });
+    app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseTetraPakApiAuthentication(env);
+    app.UseAuthorization();
+    app.UseEndpoints(builder => { builder.MapControllers(); });
+}
+```
+
+*The example simply adds a pointless extra header (`"my-header"`) to the request and sets its value to `"Hello World!"`.*
 
 ## OAuth 2
 
 -- TODO --
+
+[](#middleware-aspnet)
 
 ## Opaque token
 
@@ -240,6 +303,10 @@ See also: [API product](#product), [Developer portal](#developer-portal)
 
 See: [Business API](#business-api)
 
+## Reverse proxy
+
+-- TODO --
+
 ## Risk surface
 
 In security theory a *risk surface* describes the propability of misuse, usually for seurity tokens. A risk surface can have several dimensions, depending on the security context. For example, the risk surface for a [bearer token](#bearer-token) can be expressed by its lifetime (expiration date/time), [audience](#audience) and, possibly also, [scope](#scope). 
@@ -260,9 +327,11 @@ Seealso: [Audience](#audience), [Bearer token](#bearer-token), [Scope](#scope)
 
 ## Sidecar
 
-A service that can support another service, providing typical (cross-cutting) features as well as monitoring the traffic and protecting the "real" service from attacks or other harmful requests.
+An [API](#api) that supports another [API](#api), resolving typical (cross-cutting) issues and features as well as monitoring the traffic and protecting the "real" [API](#api) from attacks or other harmful requests.
 
-For more insight, please check out [this article](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar).
+The *sidecar* is implemented as a [reverse proxy](#reverse-proxy), usually hosted by the [API management system](#api-management-system). The *sidecar* can implement any security pattern (policy) needed by the API owner.
+
+See also: [this article](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar), [JWT bearer assertion security pattern](#jwt-bearer-assertion)
 
 ## Terminus (API)
 

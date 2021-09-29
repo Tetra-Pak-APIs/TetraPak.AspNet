@@ -119,7 +119,7 @@ So, with the plan firmly set in our mind, let's do this...
 
 All Tetra Pak APIs must be *managed*, meaning they must be running "behind" a [sidecar][md-terms-sidecar] (a managed reverse proxy). Getting a [sidecar][md-terms-sidecar] set up and configured is unfortunately (at the time of this writing) not something you can do yourself. Instead, your project should have one assigned [API manager][md-terms-api-manager] that you need to turn to to get this done. Usually, it's a fairly quick process but you need to reach out to get this done and then wait for these tasks to be completed. In doing so you need to get this information back:
 
-1. You will have to agree on an [audience][md-terms-audience] for the [JWT Bearer Assertion flow][tetra-pak-aspnet-api-jwt-bearer-assertion] to work. This is simply a name (or "*identifier*") to be used by your [sidecar][md-terms-sidecar]. Negotiate a suitable [audience][md-terms-audience] identifier for your [API manager][md-terms-api-manager].
+1. You will have to agree on an [audience][md-terms-audience] for the [JWT Bearer Assertion flow][md-terms-jwt-bearer-assertion] to work. This is simply a name (or "*identifier*") to be used by your [sidecar][md-terms-sidecar]. Negotiate a suitable [audience][md-terms-audience] identifier for your [API manager][md-terms-api-manager].
    
 2. If you plan to consume other services (APIs) from your API, you need to mention this requirement to your [API manager][md-terms-api-manager]. This will affect how your sidecar gets configured. For this recipe this is not needed (see the [next API recipe][tetra-pak-aspnet-api-recipe-2] for an example of an API that consumes other Tetra Pak services).
    
@@ -324,14 +324,14 @@ You can read more about [Tetra Pak's API guidelines here][tetra-pak-dev-portal-a
  
 This format is the bare minimum of what to expect from a [reusable Tetra Pak API][md-terms-business-api]. Please note that the requested data is *always* returned as a *JSON list* - even if there is just one item! This approach allows for much better code reuse and makes investing in code components for consuming standardized Tetra Pak APIs simple and cheap - and therefore a very good idea! 
 
-Keeping to one consistent response form would of course need some (reusable) boilerplate code on your part. Nothing fancy but this SDK already provides a few convenient classes and extension methods you can rely on for this: 
+Keeping to one consistent response form would of course need some (reusable) boilerplate code on your part. Nothing fancy but this SDK already provides some convenient classes and extension methods you can rely on for this: 
 
 - The [`Outcome<T>`][md-Outcome-T] and [`EnumOutcome<T>`][md-EnumOutcome-T] classes 
 - The [`RespondAsync`][md-RespondAsync] method
 
 The [`Outcome<T>`][md-Outcome-T] class is declared in the base [TetraPak.Common][nuget-tetrapak-common] Nuget package and is heavily used by this SDK to reflect "outcome" and is especially convenient for reflecting *asynchonous* outcome! 
 
-[`RespondAsync`][md-RespondAsync] is an extension method (declared by the [ControllerBaseExtensions][md-ControllerBaseExtensions] class) that accepts an [`Outcome<T>`][md-Outcome-T] object. The method will automatically resolve whether the outcome is a *success* or *failure* and then construct a well-formed response from it, as per [Tetra Pak API guidelines][tetra-pak-dev-portal-api-guidelines]. Relying on this method for responding is a convenient way to adhere to Tetra Pak formatting recommendations now and in the future. 
+[`RespondAsync`][md-RespondAsync] is an extension method (declared by the [ControllerBaseExtensions][md-ControllerBaseExtensions] class) that accepts an [`Outcome<T>`][md-Outcome-T] object. The method will automatically resolve whether the outcome is a success or failure and then construct a well-formed response from it, as per [Tetra Pak API guidelines][tetra-pak-dev-portal-api-guidelines]. Relying on this method for responding is a convenient way to adhere to Tetra Pak formatting recommendations, now and in the future. 
 
 ### Run the API
 
@@ -354,7 +354,7 @@ Now browse to that address and the "version" endpoint: `https://localhost:5001/h
 }
 ```
 
-> \* *The port element -* `5001` *- of the URL might vary. This is controlled from your project's [launch settings][md-setting-localhost-port].*
+> \* *The port element -* `5001` *- of the URL might vary. This is controlled from your project's [launch settings][md-setting-localhost-port] when you run the code on your desktop.*
 
 But what about the other (default) endpoint? You can try it out by just calling the `/hello` endpoint, like in this example: [`https://localhost:5001/hello`](https://localhost:5001/hello).
 
@@ -362,17 +362,17 @@ This will fail miserably and you will see a very "techy" response, including a s
 
 ## Integrating with Tetra Pak Auth Services
 
-We are now done with the "business logic" of our API and now it's time to integrate the API with [TPAS][md-terms-tpas], which is quite simple. We will set up the needed [authentication scheme][md-terms-authentication-scheme] - in this case the [Sidecar JWT Bearer Assertion][tetra-pak-aspnet-api-readme-jwt-bearer-assertion] scheme. We won't go into detail how that pattern actually works (follow the link for those details) but, long story short, it ensures all requests are made through your API's [sidecar][md-terms-sidecar] (proxy). Yup, that's right, your API must be protected by a reverse proxy that acts as its [sidecar][md-terms-sidecar]. The proxy will help protect from malicious use, overuse (a.k.a. "throttling") and other typical less-than-optimal scenarios you will face when hosting a new API.
+We are now done with the "business logic" of our little API so now it's time to integrate it with [TPAS][md-terms-tpas], which is quite simple. We will set up the needed [authentication scheme][md-terms-authentication-scheme] - in this case the [Sidecar JWT Bearer Assertion][md-terms-jwt-bearer-assertion] scheme. We won't go into detail how that pattern actually works (follow the link for those details) but, long story short, it ensures all *protected* requests are made through your API's [sidecar][md-terms-sidecar]. Yup, that's right, your API *must* be protected by a reverse proxy that acts as its [sidecar][md-terms-sidecar]. The proxy will help protect from overuse (a.k.a. "throttling"), malicious use (attacks), and other typical disagreeable scenarios you might face when hosting a new API.
 
 To summarize, this is what is left on our to-do:
   
 - Add some configuraton to the `appsettings.json` configuration file. We need the details from when you registered the API, earlier, or we'll use the pre-configured app registration instead.
    
-- Add two lines of code to the `Startup` class, to enable Tetra Pak Sidecar [JWT Bearer Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion] and Tetra Pak authentication
+- Add two lines of code to the `Startup` class, to enable Tetra Pak Sidecar [JWT Bearer Assertion][md-terms-jwt-bearer-assertion] and Tetra Pak authentication
 
 Let's begin with the configuration:
 
-1. Open the `appsettings.json` file in an editor and add section `"TetraPak"` and a sub section to configure your [JWT Bearer Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion] (ensuring only the sidecar can make requests to your protected endpoints). The sub section, for configuring [JWT Bearer Assertion][md-terms-jwt-bearer-assertion] needs to include the expected audience:
+1. Open the `appsettings.json` file in an editor and add section `"TetraPak"` and a sub section to configure your [JWT Bearer Assertion][md-terms-jwt-bearer-assertion] (ensuring only the sidecar can make requests to your protected endpoints). The sub section, for configuring [JWT Bearer Assertion][md-terms-jwt-bearer-assertion] needs to include the expected audience:
 
     ```json
     {
@@ -384,9 +384,9 @@ Let's begin with the configuration:
     }
     ```
 
-  > For [audience][md-terms-audience] you can use the pre-configured value "`demo_hello_api`". However, if registered your own app (and requested a [sidecar][md-terms-sidecar] for it) you need to get the `audience` value from your "Tetra Pak Developer Portal".
+  > For [audience][md-terms-audience] you can use the pre-configured value "`demo_hello_api`". However, if youe registered your own app earlier (and requested a [sidecar][md-terms-sidecar] for it) you need to get the `audience` value from your [API manager][md-terms-api-manager].
 
-With configuration done we now need two lines of code to the `Startup` class to set up [JWT Bearar Assertion][tetra-pak-aspnet-api-jwt-bearer-assertion]. Let's do that now ...
+With configuration done we now need two lines of code to the `Startup` class to set up [JWT Bearer Assertion][md-terms-jwt-bearer-assertion]. Let's do that now ...
 
 2. Open the `Startup.cs` file
 
@@ -395,7 +395,7 @@ With configuration done we now need two lines of code to the `Startup` class to 
   ```csharp
   services.AddTetraPakJwtBearerAssertion();
   ```
-  This will inject the necessary middleware to your API for Tetra Pak flavoured [JWT Bearer Assertion][tetra-pak-aspnet-api-readme-jwt-bearer-assertion]
+  This will inject the necessary middleware to your API for Tetra Pak flavoured [JWT Bearer Assertion][md-terms-jwt-bearer-assertion]
 
 4. Add this line to the `Configure` method:
 
@@ -403,7 +403,7 @@ With configuration done we now need two lines of code to the `Startup` class to 
   app.UseTetraPakApiAuthentication(env);
   ```
 
-  This line *must* be injected ***after*** the `app.UseRouting()` middleware and ***before*** the `app.UseAuthorization()` middleware.
+  This line must be injected ***after*** the `app.UseRouting()` middleware and ***before*** the `app.UseAuthorization()` middleware.
   
   > Please note that the `UseTetraPakApiAuthentication` method expects an `IWebHostEnvironment` (the `env` parameter). If your `Configure` method wasn't scaffolded to accept an `IWebHostEnvironment` parameter then just add it and the ASP.NET DI mechanism will inject it for you:
   >
@@ -412,37 +412,36 @@ With configuration done we now need two lines of code to the `Startup` class to 
   > public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
   > ```
 
-With this you have now integrated your API with Tetra Pak Auth Services and your are ready to deploy your API to its host. 
+With this you have now integrated your API with [Tetra Pak Auth Services][md-terms-tpas] and your are ready to test it. 
 
 Bu there's a problem ...
 
-If you just toss the code together, deploy it to the host somewhere, and then run it and all works then - fine - but that's not how reality works, is it? 
+Are you the type of developer that can just code up a complex API and just deploy it to its host? Then congratulations, you are a very rare (and probably extremely well paid) breed. That, however, is not how most of us work. 
 
-No, it's not.
+In the real world we will face issues and we'll want ways to understand what happens when *happy flows* breaks and stuff goes south. For this you will want to rely on all the sweet debygging and analyzing tools supported by your IDE! 
 
-In the real world you will face issues and you'll want ways to understand what happens when the *happy flows* breaks and stuff goes south. For this you will want to rely on all the sweet tools offered by your IDE! 
+Once your code runs on its (remote) host you are basically left with *poor man's debugging*, relying on whatever data you remembered to dump to the logs. Sure, some IDEs, such as [Visual Studio][ide-vs], offer the ability to attach the debugger to the remote process but anyone that has ever tried it can testify this makes for a pretty miserable experience. Remote debugging is very *laggy* which makes it difficult to mentally follow the flow as you step through your code.
 
-Once your code runs on its (remote) host you are basically left with *poor man's debugging*, relying on whatever data you remembered to dump to the logging system. Sure, some IDEs, such as [Visual Studio][ide-vs], does offer the ability to attach the debugger to the remote process but anyone that has ever tried that can testify this makes for a pretty miserable time. Remote debugging is very *laggy* which makes it difficult to mentally follow the flow as you step through your code, at the pace of an old slug, crawling over huge blocks of slimy stone. 
+Instead, you will want to be able to debug your API code *"on your desktop"* (locally). This is where you are most productive and can quickly step through the code to understand what happens. So, *ideally*, you would now want to be able to just run your API on [`https://localhost:5001`](https://localhost:5001) (again, port *may* vary) and do what you're used to when debugging your code. 
 
-Instead, you will want to be able to debug your API code locally ("*on the desktop*"). This is where you are most productive and can quickly step through the code and understand what happens.
-
-You would now want to be able to just press F5 (or whatever is used by your IDE to start a debug session) to run your API on on [`https://localhost:5001`](https://localhost:5001) (again, port *may* vary) and do what you always do. 
-
-The problem is we have now configured the API to ***only work when it is protected by its [sidecar][md-terms-sidecar]***. That [sidecar][md-terms-sidecar], however, is deployed to a remote host somewhere and cannot, under any circumstance, monitor and direct traffic to your desktop! 
+The problem is we have just configured the API to ***only work when it is protected by its [sidecar][md-terms-sidecar]***. That [sidecar][md-terms-sidecar] is run by the [API management system][md-terms-api-management-system] on a remote host somewhere and cannot, under any circumstance, monitor and direct traffic to or from your desktop! 
 
 What we could do, of course, is to add some "extra" `if`s and `else`s to remove the [sidecar][md-terms-sidecar] requirement from your API when the code detects it is being deployed to your local desktop. 
 
-You *could*, for example, add compiler flags to only configure the `Startup` class for the [Sidecar JWT Bearer Assertion][md-terms-jwt-bearer-assertion] scheme and more compiler flags to get rid of the `[Authorize]` attribute from all protected controller endpoint methods. 
+You *could*, for example, add compiler flags to only configure the `Startup` class for the [Sidecar JWT Bearer Assertion][md-terms-jwt-bearer-assertion] scheme and then more compiler flags to get rid of the `[Authorize]` attribute from all protected controller endpoint methods.
 
-You *could* maybe do it in some other way but this would be a very bad idea. Not only would it mean stripping away the [TPAS][md-terms-tpas] integration, which we rely on to get the [actor's][md-terms-actor] identity. It is also a risky business to introduce compiler flags in your code just to allow local debugging. Overall, this approach would mean you'd test and debug code locally which would be very different from the code you plan to deploy; always a stinky prospect. Also, you will introduce a *not-negligable* risk of deploying the *wrong* code to the host, causing bugs and general misery for everyone involved, with loss of time, money, and trust from stakeholders.
+You *could* maybe do it in some other way but this would be a very bad idea. Not only would it mean stripping away the [TPAS][md-terms-tpas] integration, which we rely on to get the [actor's][md-terms-actor] identity. It is also a risky business to introduce compiler flags in your code just to allow local debugging. Overall, this approach would mean you'd test and debug code locally which would be very different from the code you plan to deploy. That is a very wobbly concept, to say the least. Also, you will introduce a *not-negligable* risk (&lt;-- understatement) of deploying the *wrong* code to the host, causing bugs and general misery for everyone involved, with loss of time, money, and trust from important stakeholder as a consequence.
 
 ## The development proxy
 
-So, if we can't fake it to allow running and debugging the API on the desktop, and we also can't rely on the necessary [sidecar][md-terms-sidecar], then what? 
+So, if we can't fake it to allow running and debugging the [API][md-terms-api] *on the desktop*, and we also can't rely on the necessary [sidecar][md-terms-sidecar], then what? Are we stuck?!
 
-Fear not young padawan! The Tetra Pak SDK has got your back!
 
-The SDK supports a local (desktop) "development proxy" tool that you can simply activate by adding the "DevProxy" key and the name of the actual sidecar (from [step 4 in the "Create a sidecar"](#create-a-sidecar) section earlier). Now, add the "DevProxy" to the "JwtBearerAssertion" sub section:
+![Kedi master Yoda](../../_graphics/yoda.png)
+
+*Fear not young padawan! The Tetra Pak SDK is here to help with some neat Jedi magic!*
+
+The SDK supports a local (desktop) "development proxy" tool that you can simply activate by adding the `"DevProxy"` key and the name of the actual sidecar (from [step 4 in the "Create a sidecar"](#create-a-sidecar) section earlier). Now, add the `"DevProxy"` to the `"JwtBearerAssertion"` sub section:
 
 ```json
 {
@@ -455,9 +454,9 @@ The SDK supports a local (desktop) "development proxy" tool that you can simply 
 }
 ```
 
-Just stating the `DevProxy` name is the preferred and most resilient method of enabling the `DevProxy` but you can also specify the full URL if needed.
+Just stating actual [sidecar's][md-terms-sidecar] name is the preferred and most resilient method of enabling the `DevProxy` but you can also specify the full URL if needed.
 
-Again, if you prefer using the pre-configured [api app registration][md-terms-client] the name of the [sidecar][md-terms-sidecar] is the same as the audience: "`demo_hello_api`". Use this configuration:
+Either way, you will need to consult your [API manager][md-terms-api-manager] to get the name of your [sidecar][md-terms-sidecar]. But, again, if you prefer using the pre-configured [sidecar][md-terms-sidecar] it is called: "`demo_hello_api`". If so, use this configuration:
 
 ```json
 {
@@ -472,17 +471,17 @@ Again, if you prefer using the pre-configured [api app registration][md-terms-cl
 
 If you opted to create your own [app registration][md-terms-client], however, then you'll need to get the name of the proxy from your [API manager][md-terms-api-manager].
 
-**CAUTION!**
-
-To avoid deployment mistakes the (desktop) `DevProxy` will only work when you are running your API *locally*, meaning when all the bound host addresses contain the pattern "`://localhost`".
+> **IMPORTANT!**
+>
+> To avoid deployment mistakes the (desktop) `DevProxy` will ***only*** work when you are running your API *locally*, meaning when all the bound host addresses contain the pattern "`://localhost`".
 
 ## Register a client with Tetra Pak
 
-At the end of this recipe you'll want to test your API. For that we will use [Postman][postman] - a popular tool for API testing and development. But before we can test the API we need a registered client for it.
+We are almost done! What remains now is to test your API. For that we will use [Postman][postman] - a popular tool for API testing and development. But before we can test the API we need a registered client for it.
 
 1. Open a browser and navigate to the [Tetra Pak developer portal][tetra-pak-dev-test-portal]
     
-    > This instruction assumes you are starting out with a DEV (Development) environment. For PROD (Production) please use the [Production development portal][tetra-pak-dev-portal].
+    > This instruction assumes you are starting out with a [DEV (Development) environment][md-terms-runtime-environment]. For the PROD (Production) [environment][md-terms-runtime-environment] please use the [Production development portal][tetra-pak-dev-portal].
 
 2. Log in
    
@@ -492,13 +491,13 @@ At the end of this recipe you'll want to test your API. For that we will use [Po
    
 5. Give your client app a name and supply a short description of it (such as "Test client for Anna's API recipe")
    
-6. Unlike with the API you can leave the [Callback URL][md-terms-callback-url] as-is. You will need it later, when you're testing the API with Postman, so please note it down (or get back to the client app later when you need this value) 
+6. Unlike with the API you can leave the [Callback URL][md-terms-callback-url] as-is. You will need it later, when you are testing the API with [Postman][postman], so please note it down (or get back to the client app later when you need this value) 
    
-7. Copy the "Consumer Key" (a.k.a. [client id][md-terms-client-id]), to be used in the next, and final, section.
+7. Copy the "`Consumer Key`" (a.k.a. [client id][md-terms-client-id]), to be used in the next, final, section.
 
 ## Test the API
  
-With a sidecar available and a local dev proxy enabled you should now be able to test the protected `/hello` endpoint. To test this you need a tool that allows for authenticating with Tetra Pak and then make the request using the security token of that authorization. We'll use [Postman](https://www.postman.com) for this.
+With a [sidecar][md-terms-sidecar] available and a local [DevProxy][md-terms-dev-proxy] enabled you should now be able to test the protected `/hello` endpoint. To test this you need a tool that allows for authenticating with Tetra Pak and then make the request using the security token of that authorization. We'll use [Postman](https://www.postman.com) for this.
 
 1. Install and start [Postman](https://www.postman.com/downloads/).
    
@@ -508,7 +507,7 @@ With a sidecar available and a local dev proxy enabled you should now be able to
    
 ### Setting up authorization
 
-We now need to set up the authorization comfiguration so that you can obtain an access token to be sent to your new API. Well, actually, the request (and token) will actually be sent to your new API's [sidecar][md-terms-sidecar] who will mint a JWT token to be sent along with the request to your new API, as per the [Sidecar JWT Bearer Assertion][md-terms-jwt-bearer-assertion] authorization [scheme][md-terms-authentication-scheme].
+We now need to set up the authorization comfiguration so that you can obtain an access token to be sent to your new [API][md-terms-api]. Well, actually, the request (and token) are of course sent to your new API's [sidecar][md-terms-sidecar] who will mint a JWT token to be sent along with the request to your new API, as per the [Sidecar JWT Bearer Assertion][md-terms-jwt-bearer-assertion] authorization [scheme][md-terms-authentication-scheme].
 
 Here's how you configure [Postman](https://www.postman.com/downloads/) to authenticate:
 
@@ -518,7 +517,9 @@ Here's how you configure [Postman](https://www.postman.com/downloads/) to authen
    
 6. Set "Access Token URL" to: https://api-dev.tetrapak.com/oauth2/token
  
-7. Set the "Client ID" to the ("Consumer Key") value you copied from step 7 in the [previous section](#register-a-client-with-tetra-pak)
+7. Set the "[Client ID][md-terms-client-id]" to the ("Consumer Key") value you copied from step 7 in the [previous section](#register-a-client-with-tetra-pak)
+
+   > [Postman][postman] might warn about adding the [Client ID][md-terms-client-id] as a string literal like this, suggesting instead that your should create a [Postman][postman] variable and reference it instead. If you're not sure what that is all about then just ignore it.
    
 8. From the "Client Authentication" drop down list, select "Send client credentials in body"
 
@@ -541,7 +542,6 @@ That's it! Try running your API locally. If you run into trouble, please consult
 [tetra-pak-aspnet-api-readme-jwt-writing-apis]: ../README.md#writing-apis
 [tetra-pak-aspnet-api-cheat-sheet]: ./cheatsheet-webapi.md
 [tetra-pak-aspnet-api-recipe-2]: ./Recipe2-WebApi.md
-[tetra-pak-aspnet-api-jwt-bearer-assertion]: ../README.md#the-sidecar-jwt-bearer-assertion-pattern
 [tetra-pak-aspnet-scenarios]: ../../Scenarios.md
 [tetra-pak-aspnet-scenarios-no-browser]: ../../Scenarios.md#issue-no-browser-window-opens-when-i-run-my-web-app
 [tetra-pak-aspnet-scenarios-invalid-redirect-uri]: ../../Scenarios.md#error-400---invalid-redirect_uri
@@ -583,7 +583,9 @@ That's it! Try running your API locally. If you run into trouble, please consult
 [md-setting-localhost-port]: ../../Scenarios.md#setting-the-localhost-port
 [md-terms]: ../../TermsAndConcepts.md
 [md-terms-actor]: ../../TermsAndConcepts.md#actor
+[md-terms-api]: ../../TermsAndConcepts.md#api
 [md-terms-api-key]: ../../TermsAndConcepts.md#api-key
+[md-terms-api-management-system]: ../../TermsAndConcepts.md#api-management-system
 [md-terms-api-manager]: ../../TermsAndConcepts.md#api-manager
 [md-terms-app-registration]: ../../TermsAndConcepts.md#app-registration
 [md-terms-audience]: ../../TermsAndConcepts.md#audience

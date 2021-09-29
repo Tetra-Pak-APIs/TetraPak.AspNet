@@ -76,7 +76,7 @@ This task can take alot of time, depending on the developer's background and kno
 
 ### The anatomy of an ASP.NET request 
 
-When an *actor* (a user or service) makes a request for some resource in your web project (such as a web view or through an SPI endpoint), ASP.NET will channel that request through a "[chain of responsibility][design-pattern-chain-of-responsibility]". Each "responsibility" (a.k.a. "command") is a small piece of code that will be called to participate in managing the request. This small piece of code is provided with two things: The "request context" (a [`HttpContext`][http-context]) and a pointer to the next small piece of code to be called afterwards. Microsoft calls these small-pieces-of-code "*Middleware*", so let's use that term from now on.
+When an [actor][md-terms-actor] (a user or service) makes a request for some resource in your web project (such as a web view or through an [API][md-terms-api] endpoint), ASP.NET will channel that request through a "[chain of responsibility][design-pattern-chain-of-responsibility]". Each "responsibility" (a.k.a. "command") is a small piece of code that will be called to participate in managing the request. This small piece of code is provided with two items: The "request context" (a [`HttpContext`][http-context]) and a pointer to the next small piece of code to be called afterwards. Microsoft calls these small-pieces-of-code [*middleware*][md-terms-middleware-asp-net], so let's use that term from now on.
 
 > Please [go here][doc-webapp-overview-middleware] for a small example of what a simple Middleware can look like.
 
@@ -442,3 +442,6 @@ The TetraPak.AspNet SDK have this
 [http-context]: https://docs.microsoft.com/en-us/dotnet/api/system.web.httpcontext?view=netframework-4.8
 [di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
 [di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
+
+[md-terms-actor]: ./TermsAndConcepts.md#actor
+[md-terms-api]: ./TermsAndConcepts.md#api
