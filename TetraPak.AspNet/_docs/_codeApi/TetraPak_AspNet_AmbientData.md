@@ -13,25 +13,20 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IMessageIdProvider](TetraPak_AspNet_IMessageIdProvider.md 'TetraPak.AspNet.IMessageIdProvider'), [IAccessTokenProvider](TetraPak_AspNet_Auth_IAccessTokenProvider.md 'TetraPak.AspNet.Auth.IAccessTokenProvider'), [IIdentityTokenProvider](TetraPak_AspNet_Auth_IIdentityTokenProvider.md 'TetraPak.AspNet.Auth.IIdentityTokenProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_Caching_ITimeLimitedRepositories)'></a>
-## AmbientData.AmbientData(TetraPakAuthConfig, IHttpContextAccessor, ITimeLimitedRepositories) Constructor
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)'></a>
+## AmbientData.AmbientData(TetraPakAuthConfig, IHttpContextAccessor) Constructor
 Initializes the [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData') instance.  
 ```csharp
-public AmbientData(TetraPak.AspNet.TetraPakAuthConfig authConfig, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor, TetraPak.Caching.ITimeLimitedRepositories cache=null);
+public AmbientData(TetraPak.AspNet.TetraPakAuthConfig authConfig, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_Caching_ITimeLimitedRepositories)_authConfig'></a>
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_authConfig'></a>
 `authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
 The Tetra Pak auth configuration.  
   
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_Caching_ITimeLimitedRepositories)_httpContextAccessor'></a>
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_httpContextAccessor'></a>
 `httpContextAccessor` [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor')  
 A [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor') that is required for many of the ambient data operations.  
-  
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_Caching_ITimeLimitedRepositories)_cache'></a>
-`cache` [TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')  
-(optional)<br/>  
-A caching mechanism for public availability through the [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData') instance.  
   
   
 ### Properties
@@ -44,20 +39,11 @@ public TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; }
 #### Property Value
 [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')
   
-<a name='TetraPak_AspNet_AmbientData_Cache'></a>
-## AmbientData.Cache Property
-Gets a ambient cache.  
-```csharp
-public TetraPak.Caching.ITimeLimitedRepositories Cache { get; }
-```
-#### Property Value
-[TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')
-  
 <a name='TetraPak_AspNet_AmbientData_HttpContext'></a>
 ## AmbientData.HttpContext Property
 Gets the current [HttpContext](TetraPak_AspNet_AmbientData.md#TetraPak_AspNet_AmbientData_HttpContext 'TetraPak.AspNet.AmbientData.HttpContext') instance.  
 ```csharp
-public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
+public Microsoft.AspNetCore.Http.HttpContext? HttpContext { get; }
 ```
 #### Property Value
 [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')
@@ -66,7 +52,7 @@ public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
 ## AmbientData.Logger Property
 Gets a logging provider.  
 ```csharp
-public Microsoft.Extensions.Logging.ILogger Logger { get; }
+public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
@@ -75,7 +61,7 @@ public Microsoft.Extensions.Logging.ILogger Logger { get; }
 ## AmbientData.this[string] Property
 Indexer to get or set an ambient value.  
 ```csharp
-public object this[string key] { get; set; }
+public object? this[string key] { get; set; }
 ```
 #### Parameters
 <a name='TetraPak_AspNet_AmbientData_this_string__key'></a>
@@ -123,7 +109,7 @@ Implements [GetIdTokenAsync()](TetraPak_AspNet_Auth_IIdentityTokenProvider.md#Te
 ## AmbientData.GetMessageId(bool) Method
 Retrieves a request message id if available.   
 ```csharp
-public string GetMessageId(bool enforce=false);
+public string? GetMessageId(bool enforce=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_AmbientData_GetMessageId(bool)_enforce'></a>
@@ -193,18 +179,18 @@ public bool IsApiEndpoint();
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
   
-<a name='TetraPak_AspNet_AmbientData_SetValue(string_object)'></a>
-## AmbientData.SetValue(string, object) Method
+<a name='TetraPak_AspNet_AmbientData_SetValue(string_object_)'></a>
+## AmbientData.SetValue(string, object?) Method
 Sets an ambient value.  
 ```csharp
-public void SetValue(string key, object value);
+public void SetValue(string key, object? value);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_AmbientData_SetValue(string_object)_key'></a>
+<a name='TetraPak_AspNet_AmbientData_SetValue(string_object_)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the value to be added.  
   
-<a name='TetraPak_AspNet_AmbientData_SetValue(string_object)_value'></a>
+<a name='TetraPak_AspNet_AmbientData_SetValue(string_object_)_value'></a>
 `value` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
 The value to be added.  
   

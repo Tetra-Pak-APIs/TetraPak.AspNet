@@ -8,17 +8,21 @@ public class TetraPakUserInformation
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakUserInformation  
 ### Constructors
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_AmbientData)'></a>
-## TetraPakUserInformation.TetraPakUserInformation(AmbientData) Constructor
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)'></a>
+## TetraPakUserInformation.TetraPakUserInformation(TetraPakAuthConfig) Constructor
 Initializes the [TetraPakUserInformation](TetraPak_AspNet_Identity_TetraPakUserInformation.md 'TetraPak.AspNet.Identity.TetraPakUserInformation') object.  
 ```csharp
-public TetraPakUserInformation(TetraPak.AspNet.AmbientData ambientData);
+public TetraPakUserInformation(TetraPak.AspNet.TetraPakAuthConfig authConfig);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_AmbientData)_ambientData'></a>
-`ambientData` [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData')  
-Provides ambient data and configuration.  
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
+`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+The Tetra Pak integration configuration.  
   
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+[authConfig](TetraPak_AspNet_Identity_TetraPakUserInformation.md#TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)_authConfig 'TetraPak.AspNet.Identity.TetraPakUserInformation.TetraPakUserInformation(TetraPak.AspNet.TetraPakAuthConfig).authConfig') was unassigned.  
+            
   
 ### Properties
 <a name='TetraPak_AspNet_Identity_TetraPakUserInformation_AmbientData'></a>

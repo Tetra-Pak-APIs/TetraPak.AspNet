@@ -180,7 +180,7 @@ namespace TetraPak.AspNet.Api.Auth
             var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
             var proxyUrl = config.JwtBearerAssertion.DevProxy;
             // if (config.IsMessageIdEnabled) obsolete
-            // {
+            // {    
             //     app.UseTetraPakMessageId();
             // }
             if (!string.IsNullOrEmpty(proxyUrl))

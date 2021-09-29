@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
-using TetraPak.Caching;
+using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet
 {
@@ -52,7 +56,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the current <see cref="HttpContext"/> instance.
         /// </summary>
-        public HttpContext HttpContext => _httpContextAccessor.HttpContext; 
+        public HttpContext? HttpContext => _httpContextAccessor.HttpContext; 
 
         /// <summary>
         ///   Gets an auth config value. 
@@ -62,24 +66,23 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger Logger => AuthConfig.Logger;
-
-        /// <summary>
-        ///   Gets a ambient cache.
-        /// </summary>
-        public ITimeLimitedRepositories Cache { get; } // obsolete?
+        public ILogger? Logger => AuthConfig.Logger;
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) 
+        public string? GetMessageId(bool enforce = false) 
             => _httpContextAccessor.HttpContext?.Request.GetMessageId(AuthConfig, enforce);
 
         /// <inheritdoc />
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
-            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(AuthConfig, forceStandardHeader);
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
+            => HttpContext is { }
+                ? HttpContext.GetAccessTokenAsync(AuthConfig, forceStandardHeader)
+                : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found in request")));
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetIdTokenAsync() 
-            => _httpContextAccessor.HttpContext.GetIdentityTokenAsync(AuthConfig);
+            => HttpContext is { }
+                ? HttpContext.GetIdentityTokenAsync(AuthConfig)
+                : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Identity token not found in request")));
 
         /// <summary>
         ///   Returns a value indicating whether the routed endpoint is an API endpoint (not a view).
@@ -103,8 +106,11 @@ namespace TetraPak.AspNet
         /// <param name="value">
         ///   The value to be added.
         /// </param>
-        public void SetValue(string key, object value)
+        public void SetValue(string key, object? value)
         {
+            if (HttpContext is null)
+                return;
+            
             HttpContext.Items[key] = value;
         }
 
@@ -114,7 +120,7 @@ namespace TetraPak.AspNet
         /// <param name="key">
         ///   Identifies the value.
         /// </param>
-        public object this[string key]
+        public object? this[string key]
         {
             get => GetValue(key);
             set => SetValue(key, value);
@@ -134,7 +140,7 @@ namespace TetraPak.AspNet
         ///   The requested value if present; otherwise <paramref name="useDefault"/> when specified,
         ///   otherwise <c>null</c>.
         /// </returns>
-        public object GetValue(string key, object useDefault = null) => GetValue<object>(key, useDefault);
+        public object GetValue(string key, object useDefault = null!) => GetValue<object>(key, useDefault);
 
         /// <summary>
         ///   Gets an ambient value of a specified type.
@@ -153,7 +159,10 @@ namespace TetraPak.AspNet
         ///   The requested value if present; otherwise <paramref name="useDefault"/> when specified,
         ///   otherwise <c>default(T)</c>.
         /// </returns>
-        public T GetValue<T>(string key, T useDefault = default) => HttpContext.GetValue(key, useDefault);
+        public T GetValue<T>(string key, T useDefault = default!) =>
+            HttpContext is { }
+                ? HttpContext.GetValue(key, useDefault)
+                : useDefault;
 
         /// <summary>
         ///   Initializes the <see cref="AmbientData"/> instance.
@@ -164,18 +173,48 @@ namespace TetraPak.AspNet
         /// <param name="httpContextAccessor">
         ///   A <see cref="IHttpContextAccessor"/> that is required for many of the ambient data operations.
         /// </param>
-        /// <param name="cache">
-        ///   (optional)<br/>
-        ///   A caching mechanism for public availability through the <see cref="AmbientData"/> instance.
-        /// </param>
         public AmbientData(
             TetraPakAuthConfig authConfig,
-            IHttpContextAccessor httpContextAccessor,
-            ITimeLimitedRepositories cache = null)
+            IHttpContextAccessor httpContextAccessor)
         {
             AuthConfig = authConfig;
             _httpContextAccessor = httpContextAccessor;
-            Cache = cache;
+        }
+    }
+
+    /// <summary>
+    ///   Declares convenient methods for dealing with <see cref="AmbientData"/> as a service.
+    /// </summary>
+    public static class AmbientDataServiceHelper
+    {
+        static readonly object s_syncRoot = new object();
+        static bool s_isServiceConfigured;
+
+        /// <summary>
+        ///   Registers <see cref="AmbientData"/> as a scoped service.
+        /// </summary>
+        /// <param name="services">
+        ///   The service collection.
+        /// </param>
+        public static void AddAmbientData(this IServiceCollection services)
+        {
+            lock (s_syncRoot)
+            {
+                if (s_isServiceConfigured)
+                    return;
+
+                try
+                {
+                    services.AddSingleton<AmbientData>();
+                    s_isServiceConfigured = true;
+                }
+                catch (Exception ex)
+                {
+                    var p = services.BuildServiceProvider();
+                    var logger = p.GetService<ILogger<AmbientData>>();
+                    logger.Error(ex, $"Failed to register service: {typeof(AmbientData)}");
+                }
+            }
         }
     }
 }

@@ -12,7 +12,7 @@
 | Interfaces | |
 | :--- | :--- |
 | [IAccessTokenProvider](TetraPak_AspNet_Auth_IAccessTokenProvider.md 'TetraPak.AspNet.Auth.IAccessTokenProvider') | Implementors of this class are capable of providing an access token from a request context. <br/> |
-| [IClientConfigProvider](TetraPak_AspNet_Auth_IClientConfigProvider.md 'TetraPak.AspNet.Auth.IClientConfigProvider') | Classes implementing this interface can be relied on to provide the app with a client id and client secret. <br/> |
+| [IClientConfigDelegate](TetraPak_AspNet_Auth_IClientConfigDelegate.md 'TetraPak.AspNet.Auth.IClientConfigDelegate') | Classes implementing this interface can be relied on to provide the app with (custom) configuration. <br/> |
 | [IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider') | Implementors of this contract can be used for obtaining client credentials,<br/>typically for token exchange, or similar flows where such credentials are needed.<br/> |
 | [IIdentityTokenProvider](TetraPak_AspNet_Auth_IIdentityTokenProvider.md 'TetraPak.AspNet.Auth.IIdentityTokenProvider') | Implementors of this class are capable of providing a identity token from a request context.<br/> |
 | [IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig') | Classes implementing this contract can provide information needed for authorization purposes. <br/> |

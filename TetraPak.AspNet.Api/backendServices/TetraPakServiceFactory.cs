@@ -47,7 +47,7 @@ namespace TetraPak.AspNet.Api
 
         public static IServiceCollection AddTetraPakServiceEndpoints(this IServiceCollection c)
         {
-            c.TryAddScoped<AmbientData>();
+            c.AddAmbientData();
             c.TryAddTransient<ServiceInvalidEndpoint>();
             return c;
         }

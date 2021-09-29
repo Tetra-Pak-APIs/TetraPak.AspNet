@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TetraPak.Caching;
 using TetraPak.Logging;
 
 #nullable enable
@@ -18,16 +19,16 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakClientCredentialsService : IClientCredentialsService
     {
-        readonly AmbientData _ambientData;
+        readonly TetraPakAuthConfig _authConfig;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
-
-        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
 
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger? Logger => _ambientData.Logger;
+        protected ILogger? Logger => _authConfig.Logger;
+
+        ITimeLimitedRepositories? Cache => _authConfig.Cache;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
@@ -55,7 +56,7 @@ namespace TetraPak.AspNet.Api.Auth
                     formsValues.Add("scope", scope.Items.ConcatCollection(" "));
                 }
                 var response = await client.PostAsync(
-                    AuthConfig.TokenIssuerUrl,
+                    _authConfig.TokenIssuerUrl,
                     new FormUrlEncodedContent(formsValues),
                     cancellationToken);
 
@@ -92,13 +93,13 @@ namespace TetraPak.AspNet.Api.Auth
                 if (Logger is null)
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
 
-                var messageId = _ambientData.GetMessageId(true);
+                var messageId = _authConfig.AmbientData.GetMessageId(true);
                 var message = new StringBuilder();
                 message.AppendLine("Client credentials failure (state dump to follow if DEBUG log level is enabled)");
                 
                 if (Logger.IsEnabled(LogLevel.Debug))
                 {
-                    var options = new StateDumpOptions(AuthConfig)
+                    var options = new StateDumpOptions(_authConfig)
                         .WithIgnored(
                             nameof(TetraPakApiAuthConfig.GrantType),
                             nameof(TetraPakAuthConfig.ClientId),
@@ -108,7 +109,7 @@ namespace TetraPak.AspNet.Api.Auth
                             nameof(TetraPakAuthConfig.CallbackPath))
                         .WithTargetLogger(Logger);
                     var dump = new StateDump().WithStackTrace();
-                    dump.Add(AuthConfig, "AuthConfig", options);
+                    dump.Add(_authConfig, "AuthConfig", options);
                     options = new StateDumpOptions(clientCredentials).WithTargetLogger(Logger);
                     dump.Add(clientCredentials, "Credentials", options);
                     message.AppendLine(dump.ToString());
@@ -130,10 +131,10 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         protected virtual async Task<Outcome<ClientCredentialsResponse>> OnGetCachedResponse(Credentials credentials)
         {
-            if (_ambientData.Cache is null)
+            if (Cache is null)
                 return Outcome<ClientCredentialsResponse>.Fail(new Exception("No cached token"));
 
-            var cachedOutcome = await _ambientData.Cache.GetAsync<ClientCredentialsResponse>(
+            var cachedOutcome = await Cache.GetAsync<ClientCredentialsResponse>(
                 CacheRepository, 
                 credentials.Identity,
                 out var remainingLifeSpan);
@@ -158,10 +159,10 @@ namespace TetraPak.AspNet.Api.Auth
         protected virtual async Task OnCacheResponseAsync(Credentials credentials,
             ClientCredentialsResponse response)
         {
-            if (_ambientData.Cache is null) 
+            if (Cache is null) 
                 return;
 
-            await _ambientData.Cache.AddOrUpdateAsync(
+            await Cache.AddOrUpdateAsync(
                 CacheRepository,
                 credentials.Identity,
                 response, 
@@ -178,16 +179,16 @@ namespace TetraPak.AspNet.Api.Auth
 
         protected virtual Credentials OnGetCredentials()
         {
-            if (string.IsNullOrWhiteSpace(AuthConfig.ClientId))
+            if (string.IsNullOrWhiteSpace(_authConfig.ClientId))
                 throw new InvalidOperationException(
                     $"Cannot create client credentials. Please specify '{nameof(TetraPakAuthConfig.ClientId)}' in configuration");
                 
-            return new BasicAuthCredentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
+            return new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret);
         }
 
-        public TetraPakClientCredentialsService(AmbientData ambientData)
+        public TetraPakClientCredentialsService(TetraPakAuthConfig authConfig)
         {
-            _ambientData = ambientData;
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
         }
     }
 }

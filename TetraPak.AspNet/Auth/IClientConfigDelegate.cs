@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>
-    ///   Classes implementing this interface can be relied on to provide the app with a client id and client secret. 
+    ///   Classes implementing this interface can be relied on to provide the app with (custom) configuration. 
     /// </summary>
-    public interface IClientConfigProvider
+    public interface IClientConfigDelegate
     {
         /// <summary>
-        ///   Gets (confidential) client secrets (client id and, optionally, client secret).
+        ///   Gets client credentials (client id and, optionally, client secret).
         /// </summary>
         /// <param name="authContext">
-        ///   Details the auth context in which the (confidential) client secrets are requested.
+        ///   Details the auth context in which the client credentials are requested.
         /// </param>
         /// <param name="cancellationToken">
         ///   (optional)<br/>
@@ -25,7 +25,9 @@ namespace TetraPak.AspNet.Auth
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="Credentials"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<Credentials>> GetClientSecretsAsync(AuthContext authContext, CancellationToken? cancellationToken);
+        Task<Outcome<Credentials>> GetClientCredentialsAsync(
+            AuthContext authContext, 
+            CancellationToken? cancellationToken);
 
         /// <summary>
         ///   Gets a scope to be used for the configured client.
@@ -42,6 +44,5 @@ namespace TetraPak.AspNet.Auth
         ///   a <see cref="MultiStringValue"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken);
-
     }
 }

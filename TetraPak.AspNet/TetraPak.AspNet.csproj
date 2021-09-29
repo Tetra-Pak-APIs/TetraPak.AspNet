@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>1.0.2-local</PackageVersion>
+        <PackageVersion>1.0.6-local</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -57,12 +57,12 @@
       <Folder Include="_docs\_codeApi" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
-    </ItemGroup>
-    <ItemGroup>
         <None Include="../_nuget/icon.png" Pack="true" PackagePath="/" />
         <None Include="../_nuget/license.txt" Pack="true" PackagePath="/" />
         <None Include="readme.md" Pack="true" PackagePath="/" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
     </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <!--Exec Command="python $(SolutionDir)_buildScripts/copyFiles.py -move -clean -name *.md -from $(ProjectDir)bin/Release -to $(ProjectDir)_docs/_codeApi" Condition="$(ConfigurationName)=='Release'" /-->

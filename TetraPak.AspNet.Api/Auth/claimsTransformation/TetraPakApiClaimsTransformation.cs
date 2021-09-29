@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Identity;
+using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -27,6 +28,8 @@ namespace TetraPak.AspNet.Api.Auth
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
         readonly ITokenExchangeService _tokenExchangeService;
+
+        ITimeLimitedRepositories Cache => AuthConfig.Cache;
         
         /// <inheritdoc />
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
@@ -44,23 +47,23 @@ namespace TetraPak.AspNet.Api.Auth
                     return cachedOutcome;
                 
                 // exchange token for 
-                var ccOutcome = await OnGetClientCredentials();
+                var ccOutcome = await GetClientCredentials();
                 if (!ccOutcome)
                     return Outcome<ActorToken>.Fail(ccOutcome.Exception);
 
-                var credentials = new BasicAuthCredentials(ccOutcome.Value.Identity, ccOutcome.Value.Secret);
+                var credentials = new BasicAuthCredentials(ccOutcome.Value!.Identity, ccOutcome.Value.Secret);
 
                 var bearerToken = accessTokenOutcome.Value as BearerToken;
                 var isBearerToken = bearerToken is { };
                 var subjectToken = isBearerToken
                     ? bearerToken.Value
-                    : accessTokenOutcome.Value.ToString();
+                    : accessTokenOutcome.Value!.ToString();
                 var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(
                     credentials, 
                     subjectToken, 
                     cancellationToken);
 
-                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value.AccessToken, out var actorToken))
+                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value!.AccessToken, out var actorToken))
                     throw txOutcome.Exception;
 
                 var exchangedToken = isBearerToken
@@ -81,17 +84,17 @@ namespace TetraPak.AspNet.Api.Auth
 
         async Task<Outcome<ActorToken>> getCachedIdentityTokenAsync(ActorToken accessToken)
         {
-            if (AmbientData.Cache is null)
+            if (Cache is null)
                 return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
 
-            return await AmbientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
+            return await Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
         }
 
         async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
         {
-            if (AmbientData.Cache is { })
+            if (Cache is { })
             {
-                await AmbientData.Cache.AddOrUpdateAsync(
+                await Cache.AddOrUpdateAsync(
                     CacheRepository, 
                     accessToken,
                     exchangedToken);
@@ -101,6 +104,9 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Initializes the <see cref="TetraPakApiClaimsTransformation"/> instance.
         /// </summary>
+        /// <param name="authConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
         /// <param name="userInformation">
         ///   Used internally to obtain user information.
         /// </param>
@@ -112,10 +118,11 @@ namespace TetraPak.AspNet.Api.Auth
         ///   Used internally to obtain client credentials.
         /// </param>
         public TetraPakApiClaimsTransformation(
+            TetraPakAuthConfig authConfig,
             TetraPakUserInformation userInformation, 
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(userInformation, clientCredentialsProvider)
+        : base(authConfig, userInformation, clientCredentialsProvider)
         {
             _tokenExchangeService = tokenExchangeService;
         }

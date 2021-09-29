@@ -15,24 +15,27 @@ using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
+#nullable enable
+
+
 namespace TetraPak.AspNet.Api.DevelopmentTools
 {
-    class LocalDevProxyMiddleware
+    class DevProxyMiddleware
     {
         const string CacheRepository = CacheRepositories.Tokens.DevProxy;
         
-        readonly AmbientData _ambientData;
         readonly string _url;
+        readonly TetraPakAuthConfig _authConfig;
 
-        ILogger Logger => _ambientData.Logger;
-
-        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
+        ITimeLimitedRepositories? Cache => _authConfig.Cache;
+        
+        ILogger? Logger => _authConfig.Logger;
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
             const string TimerName = "dev-proxy";
 
-            var messageId = context.Request.GetMessageId(AuthConfig);
+            var messageId = context.Request.GetMessageId(_authConfig);
             if (!context.GetEndpoint().IsAuthorizationRequired())
             {
                 Logger.Debug("Local development proxy bails out. Endpoint does not require authorization", messageId);
@@ -51,31 +54,31 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return false;
             }
 
-            var accessToken = tokenOutcome.Value;
+            var accessToken = tokenOutcome.Value!;
             if (accessToken.IsJwt)
             {
                 // access token is already a JWT; skip exchanging it ...
                 Logger.Debug("Local development proxy bails out. Token was already JWT token");
-                context.Request.Headers[AuthConfig.AuthorizationHeader] = accessToken.ToString();
+                context.Request.Headers[_authConfig.AuthorizationHeader] = accessToken.ToString();
                 return true;
             }
 
-            BearerToken bearer;
+            BearerToken jwtBearer;
             context.StartDiagnosticsTime(TimerName);
-            var cacheOutcome = await tryGetCachedToken(accessToken);
-            if (cacheOutcome)
+            var cachedJwtOutcome = await tryGetCachedJwt(accessToken);
+            if (cachedJwtOutcome)
             {
-                bearer = cacheOutcome.Value.Identity.ToBearerToken();
-                context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
+                jwtBearer = cachedJwtOutcome.Value!.Identity.ToBearerToken();
+                context.Request.Headers[_authConfig.AuthorizationHeader] = jwtBearer.ToString();
                 context.EndDiagnosticsTime(TimerName);
                 return true;
             }
 
-            var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value.Identity, messageId);
-            object description = null;
+            var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value!.Identity, messageId);
+            object? description = null;
             if (!jwtBearerOutcome)
             {
-                string descriptionJson = null;
+                string? descriptionJson = null;
                 if (jwtBearerOutcome.Exception is HttpException httpException)
                 {
                     var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
@@ -111,44 +114,47 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return false;
             }
 
-            bearer = jwtBearerOutcome.Value.Identity.ToBearerToken();
-            context.Request.Headers[AuthConfig.AuthorizationHeader] = bearer.ToString();
+            jwtBearer = jwtBearerOutcome.Value!.Identity.ToBearerToken();
+            context.Request.Headers[_authConfig.AuthorizationHeader] = jwtBearer.ToString();
             await cacheToken(accessToken, jwtBearerOutcome.Value);
             context.EndDiagnosticsTime(TimerName);
  
             return true;
         }
 
-        async Task<Outcome<ActorToken>> tryGetCachedToken(Credentials accessToken)
+        async Task<Outcome<ActorToken>> tryGetCachedJwt(Credentials accessToken)
         {
-            if (_ambientData.Cache is null)
+            if (Cache is null)
                 return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
                 
-            return await _ambientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken.Identity);
+            return await Cache.GetAsync<ActorToken>(CacheRepository, accessToken.Identity);
         }
 
         async Task cacheToken(Credentials accessToken, ActorToken jwtBearerToken)
         {
-            if (_ambientData.Cache is null)
+            if (Cache is null)
                 return;
 
             var expires = jwtBearerToken.ToJwtSecurityToken().Expires();
             var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
-            await _ambientData.Cache?.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, customLifeSpan: lifespan);
+            await Cache.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, customLifeSpan: lifespan);
         }
 
         async void configureTokenCache()
         {
-            var options = await _ambientData.Cache.GetRepositoryOptionsAsync(CacheRepository, false);
+            if (Cache is null)
+                return;
+            
+            var options = await Cache.GetRepositoryOptionsAsync(CacheRepository, false);
             if (options is {})
                 return;
             
             var defaultOptions = SimpleTimeLimitedRepositoryOptions.Zero;
             defaultOptions.LifeSpan = TimeSpan.FromSeconds(10);
-            await _ambientData.Cache.ConfigureAsync(CacheRepository, defaultOptions);
+            await Cache.ConfigureAsync(CacheRepository, defaultOptions);
         }
 
-        async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken, string messageId)
+        async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken, string? messageId)
         {
             try
             {
@@ -193,15 +199,17 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public LocalDevProxyMiddleware(AmbientData ambientData, string url)
+        public DevProxyMiddleware(TetraPakAuthConfig authConfig, string url)
         {
-            _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;
             configureTokenCache();
         }
 
+#pragma warning disable 8618
+        // this class is only initiated from JSON deserialization 
         class ProxyResponseBody
         {
             [JsonPropertyName("assertion")]
@@ -210,5 +218,6 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             [JsonPropertyName("grant_type")]
             public string GrantType { get; set; }
         }
+#pragma warning restore 8618
     }
 }

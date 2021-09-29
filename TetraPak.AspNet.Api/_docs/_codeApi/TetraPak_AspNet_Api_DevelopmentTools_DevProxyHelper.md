@@ -1,6 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api.DevelopmentTools](TetraPak_AspNet_Api_DevelopmentTools.md 'TetraPak.AspNet.Api.DevelopmentTools')
 ## DevProxyHelper Class
+Provides helper methods for using a local (desktop) development proxy (sidecar).  
 ```csharp
 public static class DevProxyHelper
 ```

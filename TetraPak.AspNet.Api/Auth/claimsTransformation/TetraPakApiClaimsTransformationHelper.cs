@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api.Auth
         public static void AddTetraPakApiClaimsTransformation(this IServiceCollection c)
         {
             c.AddHttpContextAccessor();
-            c.TryAddScoped<AmbientData>();
+            c.AddAmbientData();
             c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
             try
             {

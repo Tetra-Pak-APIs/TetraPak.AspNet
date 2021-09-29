@@ -45,7 +45,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets the current <see cref="HttpContext"/> instance.
         /// </summary>
-        public HttpContext HttpContext => AmbientData.HttpContext;
+        public HttpContext? HttpContext => AmbientData.HttpContext;
         
         /// <summary>
         ///   Gets the name of the service endpoint URL (as specified in the configuration).
@@ -61,7 +61,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger Logger => AmbientData.Logger;
+        public ILogger? Logger => AmbientData.Logger;
 
         public IConfiguration Configuration { get; private set; }
 
@@ -69,7 +69,7 @@ namespace TetraPak.AspNet.Api
         [StateDump]
         public GrantType GrantType
         {
-            get => _grantType is null or GrantType.Inherited ? Parent.GrantType : _grantType.Value;
+            get => _grantType is null or GrantType.Inherited ? Parent!.GrantType : _grantType.Value;
             set => _grantType = value;
         }
         
@@ -173,7 +173,7 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public bool Equals(ServiceEndpoint? other)
         {
-            return !(other is null) && string.Equals(StringValue, other.StringValue);
+            return other is { } && string.Equals(StringValue, other.StringValue);
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator ==(ServiceEndpoint left, ServiceEndpoint? right)
+        public static bool operator ==(ServiceEndpoint? left, ServiceEndpoint? right)
         {
             return left?.Equals(right) ?? right is null;
         }
@@ -212,7 +212,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator !=(ServiceEndpoint left, ServiceEndpoint? right)
+        public static bool operator !=(ServiceEndpoint? left, ServiceEndpoint? right)
         {
             return !left?.Equals(right) ?? right is { };
         }
@@ -248,7 +248,7 @@ namespace TetraPak.AspNet.Api
             return this;
         }
         
-        static GrantType parseGrantType(string stringValue, GrantType useDefault) 
+        static GrantType parseGrantType(string? stringValue, GrantType useDefault) 
         {
             if (string.IsNullOrWhiteSpace(stringValue))
                 return useDefault;

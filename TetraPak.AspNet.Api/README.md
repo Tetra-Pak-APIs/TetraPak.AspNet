@@ -85,7 +85,7 @@ Of course, each of the APIs also needs to be recognized by TPAS. Some of them wi
 
 ### How API traffic is managed
 
-Now that we know the terms involbved with API management; how is this management actually working? As some client makes a request to an API (via its [*sidecar*][sidecar]); how can TPAS manage it, and ensure no unauthorized requests are successfully made by "rouge" clients?
+Now that we know the terms involved with API management; how is this management actually working? As some client makes a request to an API (via its [*sidecar*][sidecar]); how can TPAS manage it, and ensure no unauthorized requests are successfully made by "rouge" clients?
 
 ![API Management](../_graphics/api-mgmt-pattern.png)
 

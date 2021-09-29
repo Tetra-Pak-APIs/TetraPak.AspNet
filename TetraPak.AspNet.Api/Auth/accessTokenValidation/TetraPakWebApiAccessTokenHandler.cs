@@ -45,13 +45,13 @@ namespace TetraPak.AspNet.Api.Auth
                 var isBearerToken = bearerToken is { };
                 var subjectToken = isBearerToken
                     ? bearerToken.Value
-                    : accessTokenOutcome.Value.ToString();
+                    : accessTokenOutcome.Value!.ToString();
                 var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(
                     credentials, 
                     subjectToken, 
                     cancellationToken);
 
-                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value.AccessToken, out var actorToken))
+                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value!.AccessToken, out var actorToken))
                     return Outcome<ActorToken>.Fail(txOutcome.Exception);
 
                 var exchangedToken = isBearerToken

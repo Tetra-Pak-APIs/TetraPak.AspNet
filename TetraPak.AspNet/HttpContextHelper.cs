@@ -83,7 +83,7 @@ namespace TetraPak.AspNet
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(
             this HttpContext self, 
-            TetraPakAuthConfig authConfig, 
+            TetraPakAuthConfig? authConfig, 
             bool forceStandardHeader = false)
         {
             var headerKey = AmbientData.Keys.AccessToken;
@@ -111,19 +111,52 @@ namespace TetraPak.AspNet
         ///   otherwise <c>null</c>.
         /// </returns>
         /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext,TetraPak.AspNet.TetraPakAuthConfig)"/>
-        /// <see cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPak.AspNet.TetraPakAuthConfig)"/>
         public static ActorToken GetIdentityToken(this HttpRequest self, TetraPakAuthConfig authConfig) 
             => self.HttpContext.GetIdentityToken(authConfig);
 
-        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakAuthConfig authConfig)
+        /// <summary>
+        ///   Returns the request identity token, or <c>null</c> if unavailable.
+        /// </summary>
+        /// <param name="self">
+        ///   The request <see cref="HttpContext"/> object.
+        /// </param>
+        /// <param name="authConfig">
+        ///   (optional)<br/>
+        ///   The Tetra Pak integration configuration object. When passed the method will look
+        ///   for the identity token in the header specified by <see cref="TetraPakAuthConfig.AuthorizationHeader"/>.
+        ///   If not the identity token is assumed to be carried by the header named as <see cref="AmbientData.Keys.IdToken"/>.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActorToken"/> object representing the request's identity token if one can be obtained;
+        ///   otherwise <c>null</c>.
+        /// </returns>
+        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPak.AspNet.TetraPakAuthConfig)"/>
+        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakAuthConfig? authConfig = null)
         {
             var task = GetIdentityTokenAsync(self, authConfig);
             return task.ConfigureAwait(false).GetAwaiter().GetResult();
         }
         
-        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this HttpContext self, TetraPakAuthConfig authConfig)
+        /// <summary>
+        ///   Asynchronously returns the request identity token, or <c>null</c> if unavailable.
+        /// </summary>
+        /// <param name="self">
+        ///   The request <see cref="HttpContext"/> object.
+        /// </param>
+        /// <param name="authConfig">
+        ///   (optional)<br/>
+        ///   The Tetra Pak integration configuration object. When passed the method will look
+        ///   for the identity token in the header specified by <see cref="TetraPakAuthConfig.AuthorizationHeader"/>.
+        ///   If not the identity token is assumed to be carried by the header named as <see cref="AmbientData.Keys.IdToken"/>.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActorToken"/> object representing the request's identity token if one can be obtained;
+        ///   otherwise <c>null</c>.
+        /// </returns>
+        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this HttpContext self, TetraPakAuthConfig? authConfig = null)
         {
-            if (self.Items.TryGetValue(AmbientData.Keys.IdToken, out var obj) && obj is string s && ActorToken.TryParse(s, out var actorToken))
+            if (self.Items.TryGetValue(AmbientData.Keys.IdToken, out var obj) && obj is string s 
+                    && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
             
             var headerIdent = authConfig?.AuthorizationHeader ?? AmbientData.Keys.IdToken;
@@ -186,7 +219,7 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   A (single) <see cref="string"/> value.
         /// </returns>
-        public static string GetSingleValue(
+        public static string? GetSingleValue(
             this IHeaderDictionary dictionary,
             string key,
             string useDefault,
@@ -222,9 +255,9 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   A unique <see cref="string"/> value. 
         /// </returns>
-        public static string GetMessageId(
+        public static string? GetMessageId(
             this HttpRequest request,
-            TetraPakAuthConfig authConfig,
+            TetraPakAuthConfig? authConfig,
             bool enforce = false)
         {
             var key = authConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;
@@ -263,10 +296,42 @@ namespace TetraPak.AspNet
             return useDefault;
         }
 
+        /// <summary>
+        ///   Sets a value to the <see cref="HttpContext"/>.
+        /// </summary>
+        /// <param name="self"> 
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="key">
+        ///   Identifies the value to be set.
+        /// </param>
+        /// <param name="value">
+        ///   The value to be set.
+        /// </param>
         public static void SetValue(this HttpContext self, string key, object value) => self.Items[key] = value; 
 
-        public static T GetValue<T>(this HttpContext self, string key, T useDefault = default)
-            => self.Items.TryGetValue(key, out var obj) && obj is T tValue ? tValue : useDefault; 
+        /// <summary>
+        ///   Gets a value from <see cref="HttpContext"/>.
+        /// </summary>
+        /// <param name="self">
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="key">
+        ///   Identifies the requested value.
+        /// </param>
+        /// <param name="useDefault">
+        ///   (optional)<br/>
+        ///   A default value to be returned if the requested value is not carried by <paramref name="self"/>. 
+        /// </param>
+        /// <typeparam name="T">
+        ///   The type of value requested.
+        /// </typeparam>
+        /// <returns>
+        ///   The requested value if carried by the <see cref="HttpContext"/>;
+        ///   otherwise the <paramref name="useDefault"/> value.
+        /// </returns>
+        public static T GetValue<T>(this HttpContext self, string key, T? useDefault = default)
+            => self.Items.TryGetValue(key, out var obj) && obj is T tValue ? tValue : useDefault!; 
 
         /// <summary>
         ///   Writes a HTTP response.
@@ -287,11 +352,11 @@ namespace TetraPak.AspNet
         /// </param>
         public static Task RespondAsync(this HttpContext context, 
             HttpStatusCode statusCode, 
-            object content = null,
+            object? content = null,
             CancellationToken cancellationToken = default)
         {
-            string contentType = null;
-            string stringContent;
+            string? contentType = null;
+            string? stringContent;
             if (content is string stringValue)
             {
                 stringContent = stringValue;
@@ -328,8 +393,8 @@ namespace TetraPak.AspNet
         /// </param>
         public static async Task RespondAsync(this HttpContext context,
             HttpStatusCode statusCode, 
-            string content = null,
-            string contentType = null, 
+            string? content = null,
+            string? contentType = null, 
             CancellationToken cancellationToken = default)
         {
             context.Response.StatusCode = (int) statusCode;

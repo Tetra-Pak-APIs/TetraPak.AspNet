@@ -7,7 +7,7 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>1.0.2-local</PackageVersion>
+        <PackageVersion>1.0.6-local</PackageVersion>
         <PackageIcon>icon.png</PackageIcon>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
         <PackageReleaseNotes>Some configuration (appsettings) keys have changed:

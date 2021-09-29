@@ -401,7 +401,7 @@ namespace TetraPak.AspNet.Api
         {
             protected override void OnInitializeEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier)
             {
-                SetSection(ParentConfiguration);
+                SetSection(ParentConfiguration as IConfigurationSection);
                 base.OnInitializeEndpoints(serviceAuthConfig, sectionIdentifier);
             }
 

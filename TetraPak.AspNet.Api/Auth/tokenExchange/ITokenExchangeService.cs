@@ -33,9 +33,9 @@ namespace TetraPak.AspNet.Api.Auth
             ActorToken accessToken, 
             CancellationToken cancellationToken);
 
-        Task<Outcome<TokenExchangeResponse>> ExchangeAsync(
-            TokenExchangeArgs args, 
-            CancellationToken cancellationToken);
+        // Task<Outcome<TokenExchangeResponse>> ExchangeAsync( obsolete
+        //     TokenExchangeArgs args, 
+        //     CancellationToken cancellationToken);
 
         /// <summary>
         ///   Creates a <see cref="AuthenticationHeaderValue"/> from a <see cref="TokenExchangeResponse"/>. 

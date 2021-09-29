@@ -7,6 +7,23 @@ public class AuthContext
 ```
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; AuthContext  
+### Constructors
+<a name='TetraPak_AspNet_AuthContext_AuthContext(TetraPak_AspNet_Auth_GrantType_TetraPak_AspNet_Auth_IServiceAuthConfig)'></a>
+## AuthContext.AuthContext(GrantType, IServiceAuthConfig) Constructor
+Initializes the [AuthContext](TetraPak_AspNet_AuthContext.md 'TetraPak.AspNet.AuthContext').  
+```csharp
+public AuthContext(TetraPak.AspNet.Auth.GrantType grantType, TetraPak.AspNet.Auth.IServiceAuthConfig authConfig);
+```
+#### Parameters
+<a name='TetraPak_AspNet_AuthContext_AuthContext(TetraPak_AspNet_Auth_GrantType_TetraPak_AspNet_Auth_IServiceAuthConfig)_grantType'></a>
+`grantType` [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')  
+Initializes [GrantType](TetraPak_AspNet_AuthContext.md#TetraPak_AspNet_AuthContext_GrantType 'TetraPak.AspNet.AuthContext.GrantType').  
+  
+<a name='TetraPak_AspNet_AuthContext_AuthContext(TetraPak_AspNet_Auth_GrantType_TetraPak_AspNet_Auth_IServiceAuthConfig)_authConfig'></a>
+`authConfig` [IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig')  
+Initializes [AuthConfig](TetraPak_AspNet_AuthContext.md#TetraPak_AspNet_AuthContext_AuthConfig 'TetraPak.AspNet.AuthContext.AuthConfig').   
+  
+  
 ### Properties
 <a name='TetraPak_AspNet_AuthContext_AuthConfig'></a>
 ## AuthContext.AuthConfig Property

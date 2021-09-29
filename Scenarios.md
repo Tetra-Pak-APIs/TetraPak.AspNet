@@ -100,11 +100,107 @@ You can change the port and also add more addresses. One typical requirement mig
 
 Depending on how you start/debug your project, whether from Visual Studio, VS Code, Rider or even the command line, different profiles will be used. Starting your app from the command line, for example, will usually pick the launch profile with `"commandName": "Project"` (running the Kestrel web server) whereas your IDE might default to the profile with `"commandName": "IISExpress"` (running IISExpress web server). Within your IDE you can select which launch profile to use however.
 
+## Controlling the runtime environment
+
+When you run your code locally, the code targets one of many possible runtime environment, such as:
+
+- Production
+- Staging
+- Development
+
+As you might have already seen, the ASP.NET configuration system supports a mechanism where you can deplpy different configuration depending on the targeted runtime environment. The `appsettings.json` file, found in your project root, is the "base" configuration, used for all runtime environments (including `Production`) but you can easiyly override or add additional configuration that will only be used when you target the `Development` runtime environment, by adding a second appsettings file: `appsettings.Development.json`. If you need to target more runtime environments you can do so by adding more launch profiles and `appsettings.{name of environment}.json` files as well.
+
+The launch profiles are configured in the `launchSettings.json` file, found under the sub folder `Properties` in your project. Typically it looks something like this:
+
+```json
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:53419",
+      "sslPort": 44380
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "MyAPI": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+```
+
+The launch profiles are found in the sub section "profiles" and there is usually two: "`IIS Express`" and "`{name of your project}`" ("`MyAPI`" in this example). Within each launch profile sub section is another sub section called "`environmentVariables`" where you can create or override your machine's environment variables and, as I'm sure you've guessed by now, the runtime environment is controlled by the "`"ASPNETCORE_ENVIRONMENT"`" variable, and is typically set to "`Dwevelopment`".
+
+You can easily add more launch profiles, such as "`Migration`"m by just adding another sub section to the list of "`profiles`":
+
+```json
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:53419",
+      "sslPort": 44380
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "MyAPI": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "MyAPI:Staging": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Staging"
+      }
+    }
+
+  }
+}
+```
+
+For that to make sense you might also want the corresponding `appsettings.Staging.json` file, to add or ovwerride configuration to be used specifically for this runtime environment.
+
+Please note that the `launchSettings.json` file is ***only*** used when running your code locally. It will be ignored, for example, if you deploy the code to an Azure app service. The `appsettings` files, however, are honoured by that same app service. You control the targeted runtime environment by assigning the same environment variable (in Azure) but you do that using other tools tham the `launchSettings.json` file.
+
 ## Debugging
 
 -- TODO --
 
-### Getting state (for diagnostics)
+## Getting state (for diagnostics)
 
 -- TODO -- Extension method: `AmbientData.GetState`
 

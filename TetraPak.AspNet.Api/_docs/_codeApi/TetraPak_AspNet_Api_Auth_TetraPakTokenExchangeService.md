@@ -12,20 +12,20 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [ITokenExchangeService](TetraPak_AspNet_Api_Auth_ITokenExchangeService.md 'TetraPak.AspNet.Api.Auth.ITokenExchangeService'), [TetraPak.AspNet.IMessageIdProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IMessageIdProvider 'TetraPak.AspNet.IMessageIdProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_AmbientData)'></a>
-## TetraPakTokenExchangeService.TetraPakTokenExchangeService(AmbientData) Constructor
+<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)'></a>
+## TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPakAuthConfig) Constructor
 Initializes the [TetraPakTokenExchangeService](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService').  
 ```csharp
-public TetraPakTokenExchangeService(TetraPak.AspNet.AmbientData ambientData);
+public TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakAuthConfig authConfig);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_AmbientData)_ambientData'></a>
-`ambientData` [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')  
-Provides ambient data from the request/response roundtrip.  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
+`authConfig` [TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')  
+The Tetra Pak integration configuration.  
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[ambientData](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md#TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_AmbientData)_ambientData 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPak.AspNet.AmbientData).ambientData') was unassigned.  
+[authConfig](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md#TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)_authConfig 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakAuthConfig).authConfig') was unassigned.  
             
 [TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
 The [TetraPak.AspNet.AmbientData.AuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData.AuthConfig 'TetraPak.AspNet.AmbientData.AuthConfig') instance was not of type [TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig').  
@@ -35,16 +35,16 @@ The [TetraPak.AspNet.AmbientData.AuthConfig](https://docs.microsoft.com/en-us/do
 ## TetraPakTokenExchangeService.AuthConfig Property
 Gets the auth configuration code API.  
 ```csharp
-protected TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig AuthConfig { get; }
+protected TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; }
 ```
 #### Property Value
-[TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')
+[TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_Logger'></a>
 ## TetraPakTokenExchangeService.Logger Property
 Gets a logging provider.  
 ```csharp
-protected Microsoft.Extensions.Logging.ILogger Logger { get; }
+protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
@@ -82,7 +82,7 @@ Implements [ExchangeAccessTokenAsync(Credentials, ActorToken, CancellationToken)
 ## TetraPakTokenExchangeService.GetMessageId(bool) Method
 Retrieves a request message id if available.   
 ```csharp
-public string GetMessageId(bool enforce=false);
+public string? GetMessageId(bool enforce=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_GetMessageId(bool)_enforce'></a>

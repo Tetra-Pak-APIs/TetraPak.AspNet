@@ -13,6 +13,7 @@ using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Caching;
 using TetraPak.Logging;
+using TetraPak.SecretsManagement;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 #nullable enable
@@ -75,7 +76,7 @@ namespace TetraPak.AspNet
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument? s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
-        readonly IServiceProvider _provider;
+        readonly IServiceProvider _serviceProvider;
 
         // ReSharper disable UnusedMember.Global
         
@@ -94,9 +95,14 @@ namespace TetraPak.AspNet
         /// </summary>
         protected ITetraPakAuthConfigDelegate? ConfigDelegate { get; }
 
+        /// <summary>
+        ///   Gets a time limited repository to be used for caching (if available).
+        /// </summary>
+        public ITimeLimitedRepositories? Cache => _serviceProvider.GetService<ITimeLimitedRepositories>();
+
         /// <inheritdoc />
         [JsonIgnore]
-        public AmbientData AmbientData => _provider.GetRequiredService<AmbientData>();
+        public AmbientData AmbientData => _serviceProvider.GetRequiredService<AmbientData>();
 
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
@@ -122,9 +128,9 @@ namespace TetraPak.AspNet
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         [StateDump]
-        public string? AuthorizationHeader
+        public string AuthorizationHeader
         {
-            get => GetFromFieldThenSection(HeaderNames.Authorization); 
+            get => GetFromFieldThenSection(HeaderNames.Authorization)!; 
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -339,7 +345,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetClientIdAsync(new AuthContext(GrantType, this)).Result;
-                return outcome ? outcome.Value : throw new ConfigurationException("Client id could not be resolved");
+                return outcome ? outcome.Value! : throw new ConfigurationException("Client id could not be resolved");
             }
             set => _clientId = value;
         }
@@ -370,7 +376,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
-                return outcome ? outcome.Value : throw new ConfigurationException("Scope could not be resolved");
+                return outcome ? outcome.Value! : throw new ConfigurationException("Scope could not be resolved");
             }
             set => _clientSecret = value;
         }
@@ -416,9 +422,9 @@ namespace TetraPak.AspNet
                     : Outcome<string>.Fail(new ConfigurationException("Client id could not be resolved"));
             }
             
-            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
+            var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
             return outcome
-                ? Outcome<string>.Success(outcome.Value.Identity)
+                ? Outcome<string>.Success(outcome.Value!.Identity)
                 : throw outcome.Exception;
         }
 
@@ -444,9 +450,9 @@ namespace TetraPak.AspNet
                     : Outcome<string>.Fail(new ConfigurationException("Client secret could not be resolved"));
             }
             
-            var outcome = await ConfigDelegate.GetClientSecretsAsync(authContext, cancellationToken);
+            var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
             return outcome
-                ? Outcome<string>.Success(outcome.Value.Secret)
+                ? Outcome<string>.Success(outcome.Value!.Secret)
                 : throw outcome.Exception;
         }
 
@@ -554,7 +560,7 @@ namespace TetraPak.AspNet
 
             var discoOutcome = await GetDiscoveryDocumentAsync();
             return discoOutcome
-                ? discoOutcome.Value.AuthorizationEndpoint
+                ? discoOutcome.Value!.AuthorizationEndpoint
                 : null;
         }
 
@@ -573,7 +579,7 @@ namespace TetraPak.AspNet
 
             var discoOutcome = await GetDiscoveryDocumentAsync();
             return discoOutcome
-                ? discoOutcome.Value.TokenEndpoint
+                ? discoOutcome.Value!.TokenEndpoint
                 : null;
         }
 
@@ -592,7 +598,7 @@ namespace TetraPak.AspNet
 
             var discoOutcome = await GetDiscoveryDocumentAsync();
             return discoOutcome
-                ? discoOutcome.Value.UserInformationEndpoint
+                ? discoOutcome.Value!.UserInformationEndpoint
                 : null;
         }
 
@@ -743,7 +749,7 @@ namespace TetraPak.AspNet
                             return done(null);
                         }
 
-                        var discoveryDocument = outcome.Value;
+                        var discoveryDocument = outcome.Value!;
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
@@ -807,7 +813,7 @@ namespace TetraPak.AspNet
         
         RuntimeEnvironment resolveRuntimeEnvironment() => OnResolveRuntimeEnvironment(Section!["Environment"]);
 
-        TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.RemoteService)
+        TetraPakIdentitySource parseIdentitySource(TetraPakIdentitySource useDefault = TetraPakIdentitySource.IdToken)
         {
             var s = Section![KeyIdentitySource];
             if (s is null)
@@ -841,55 +847,29 @@ namespace TetraPak.AspNet
             return new MultiStringValue(scope.ToArray());
         }
         
-        // protected void InitializeProperties(IConfiguration configuration) // obsolete?
-        // {
-        //     var properties = GetType().GetProperties();
-        //     foreach (var property in properties.Where(i => i.CanWrite))
-        //     {
-        //         var value = configuration[property.Name];
-        //         if (value is null)
-        //             continue;
-        //
-        //         OnSetProperty(property, value);
-        //     }
-        // }
-        //
-        // protected virtual void OnSetProperty(PropertyInfo property, object value) 
-        // {
-        //     if (property.PropertyType == typeof(string))
-        //     {
-        //         property.SetValue(this, value);
-        //         return;
-        //     }
-        //     
-        //     var obj = Convert.ChangeType(value, property.PropertyType);
-        //     property.SetValue(this, obj);
-        // }
-
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 
         /// </summary>
-        /// <param name="provider">
+        /// <param name="serviceProvider">
         ///   A service locator.
         /// </param>
-        /// <param name="configDelegate">
-        ///   (optional)<br/>
-        ///   A delegate instance used for custom configuration behavior.
-        /// </param>
-        public TetraPakAuthConfig(
-            IServiceProvider provider,
-            ITetraPakAuthConfigDelegate? configDelegate = null) 
+        public TetraPakAuthConfig(IServiceProvider serviceProvider) 
         : base(
-            provider.GetRequiredService<IConfiguration>(), 
-            provider.GetService<ILogger<TetraPakAuthConfig>>(), 
+            serviceProvider.GetRequiredService<IConfiguration>(), 
+            serviceProvider.GetService<ILogger<TetraPakAuthConfig>>(), 
             DefaultSectionIdentifier)
         {
             SectionIdentifier = DefaultSectionIdentifier;
-            _provider = provider;
-            Configuration = provider.GetRequiredService<IConfiguration>();
-            ConfigDelegate = configDelegate;
+            _serviceProvider = serviceProvider;
+            Configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            ConfigDelegate = _serviceProvider.GetService<ITetraPakAuthConfigDelegate>();// configDelegate;
+            if (ConfigDelegate is null)
+            {
+                var secretsProvider = _serviceProvider.GetService<ISecretsProvider>();
+                ConfigDelegate = new TetraPakAuthConfigDelegate(this, secretsProvider);
+            }
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
-            var logger = provider.GetService<ILogger<TetraPakAuthConfig>>();
+            var logger = serviceProvider.GetService<ILogger<TetraPakAuthConfig>>();
             JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();

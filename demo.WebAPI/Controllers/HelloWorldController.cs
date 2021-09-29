@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var nisse = User.FirstName(); 
+            var nisse = User.Name(); 
             
             var actorAccessToken = await this.GetAccessTokenAsync();
             if (!actorAccessToken)

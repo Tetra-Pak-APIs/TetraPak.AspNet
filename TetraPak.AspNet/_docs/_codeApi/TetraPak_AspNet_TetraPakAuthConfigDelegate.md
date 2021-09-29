@@ -3,27 +3,49 @@
 ## TetraPakAuthConfigDelegate Class
 A partial implementation of the [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate') contract.  
 ```csharp
-public abstract class TetraPakAuthConfigDelegate :
+public class TetraPakAuthConfigDelegate :
 TetraPak.AspNet.ITetraPakAuthConfigDelegate,
-TetraPak.AspNet.Auth.IClientConfigProvider
+TetraPak.AspNet.Auth.IClientConfigDelegate
 ```
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakAuthConfigDelegate  
 
-Implements [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate'), [IClientConfigProvider](TetraPak_AspNet_Auth_IClientConfigProvider.md 'TetraPak.AspNet.Auth.IClientConfigProvider')  
-### Methods
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientSecretsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
-## TetraPakAuthConfigDelegate.GetClientSecretsAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
-Gets (confidential) client secrets (client id and, optionally, client secret).  
+Implements [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate'), [IClientConfigDelegate](TetraPak_AspNet_Auth_IClientConfigDelegate.md 'TetraPak.AspNet.Auth.IClientConfigDelegate')  
+### Constructors
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)'></a>
+## TetraPakAuthConfigDelegate.TetraPakAuthConfigDelegate(IConfiguration, ISecretsProvider?) Constructor
+Initializes the [TetraPakAuthConfigDelegate](TetraPak_AspNet_TetraPakAuthConfigDelegate.md 'TetraPak.AspNet.TetraPakAuthConfigDelegate').  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> GetClientSecretsAsync(TetraPak.AspNet.AuthContext authContext, System.Nullable<System.Threading.CancellationToken> cancellationToken);
+public TetraPakAuthConfigDelegate(Microsoft.Extensions.Configuration.IConfiguration configuration, TetraPak.SecretsManagement.ISecretsProvider? secretsProvider=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientSecretsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_authContext'></a>
-`authContext` [AuthContext](TetraPak_AspNet_AuthContext.md 'TetraPak.AspNet.AuthContext')  
-Details the auth context in which the (confidential) client secrets are requested.  
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_configuration'></a>
+`configuration` [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration')  
+The configuration code API.  
   
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientSecretsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_secretsProvider'></a>
+`secretsProvider` [TetraPak.SecretsManagement.ISecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ISecretsProvider 'TetraPak.SecretsManagement.ISecretsProvider')  
+(optional)<br/>  
+A provider of secrets.   
+  
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+[configuration](TetraPak_AspNet_TetraPakAuthConfigDelegate.md#TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_configuration 'TetraPak.AspNet.TetraPakAuthConfigDelegate.TetraPakAuthConfigDelegate(Microsoft.Extensions.Configuration.IConfiguration, TetraPak.SecretsManagement.ISecretsProvider?).configuration') was unassigned (`null`).  
+            
+  
+### Methods
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
+## TetraPakAuthConfigDelegate.GetClientCredentialsAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
+Gets client credentials (client id and, optionally, client secret).  
+```csharp
+public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> GetClientCredentialsAsync(TetraPak.AspNet.AuthContext authContext, System.Nullable<System.Threading.CancellationToken> cancellationToken);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_authContext'></a>
+`authContext` [AuthContext](TetraPak_AspNet_AuthContext.md 'TetraPak.AspNet.AuthContext')  
+Details the auth context in which the client credentials are requested.  
+  
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
 `cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 (optional)<br/>  
 Enables operation cancellation.  
@@ -33,7 +55,7 @@ Enables operation cancellation.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [GetClientSecretsAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IClientConfigProvider.md#TetraPak_AspNet_Auth_IClientConfigProvider_GetClientSecretsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IClientConfigProvider.GetClientSecretsAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [GetClientCredentialsAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IClientConfigDelegate.md#TetraPak_AspNet_Auth_IClientConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IClientConfigDelegate.GetClientCredentialsAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   
 <a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## TetraPakAuthConfigDelegate.GetScopeAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
@@ -56,16 +78,16 @@ Enables operation cancellation.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [GetScopeAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IClientConfigProvider.md#TetraPak_AspNet_Auth_IClientConfigProvider_GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IClientConfigProvider.GetScopeAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [GetScopeAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IClientConfigDelegate.md#TetraPak_AspNet_Auth_IClientConfigDelegate_GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IClientConfigDelegate.GetScopeAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_OnGetClientSecretsAsync(TetraPak_AspNet_AuthContext)'></a>
-## TetraPakAuthConfigDelegate.OnGetClientSecretsAsync(AuthContext) Method
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_OnGetClientCredentialsAsync(TetraPak_AspNet_AuthContext)'></a>
+## TetraPakAuthConfigDelegate.OnGetClientCredentialsAsync(AuthContext) Method
 Called to obtain the client secrets for a specified "path".   
 ```csharp
-protected abstract System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> OnGetClientSecretsAsync(TetraPak.AspNet.AuthContext authContext);
+protected virtual System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> OnGetClientCredentialsAsync(TetraPak.AspNet.AuthContext authContext);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_OnGetClientSecretsAsync(TetraPak_AspNet_AuthContext)_authContext'></a>
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_OnGetClientCredentialsAsync(TetraPak_AspNet_AuthContext)_authContext'></a>
 `authContext` [AuthContext](TetraPak_AspNet_AuthContext.md 'TetraPak.AspNet.AuthContext')  
 Details the auth context in which the (confidential) client secrets are requested.  
   
@@ -73,6 +95,10 @@ Details the auth context in which the (confidential) client secrets are requeste
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+### Remarks
+This implementation will use a configured [TetraPak.SecretsManagement.ISecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ISecretsProvider 'TetraPak.SecretsManagement.ISecretsProvider') service when available  
+to obtain both client id and client secret. If a client id cannot be found it will  
+try resolve the client id from the configuration instead.  
   
 <a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_OnGetScopeAsync(TetraPak_AspNet_AuthContext)'></a>
 ## TetraPakAuthConfigDelegate.OnGetScopeAsync(AuthContext) Method

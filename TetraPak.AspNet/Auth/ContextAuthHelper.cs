@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
@@ -37,6 +38,11 @@ namespace TetraPak.AspNet.Auth
             
             logger.Debug($"Received token: \n{authorization}");
             return true;
+        }
+
+        public static bool IsClientSecretRequired(this GrantType grantType)
+        {
+            return grantType is GrantType.CC or GrantType.TX;
         }
     }
 }

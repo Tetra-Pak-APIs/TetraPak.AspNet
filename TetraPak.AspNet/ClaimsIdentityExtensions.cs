@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 #nullable enable
@@ -10,6 +11,72 @@ namespace TetraPak.AspNet
     /// </summary>
     public static class ClaimsIdentityExtensions
     {
+        /// <summary>
+        ///   Gets the user name, if present.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ClaimsIdentity"/> instance.
+        /// </param>
+        /// <param name="trimStringQualifiers">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to trim the claim from any string qualifiers.
+        /// </param>
+        /// <returns>
+        ///   The first name claim when supported.
+        /// </returns>
+        public static string? Name(this ClaimsIdentity self, bool trimStringQualifiers = true)
+            => claimValue(self.Claims, ClaimTypes.Name, "sub", trimStringQualifiers); 
+        
+        /// <summary>
+        ///   Gets the user name, if present.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ClaimsPrincipal"/> instance.
+        /// </param>
+        /// <param name="trimStringQualifiers">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to trim the claim from any string qualifiers.
+        /// </param>
+        /// <returns>
+        ///   The first name claim when supported.
+        /// </returns>
+        public static string? Name(this ClaimsPrincipal? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.Name, "sub", trimStringQualifiers); 
+        
+        /// <summary>
+        ///   Gets the user name, if present
+        ///   (this is the equivalence to calling <see cref="Name(System.Security.Claims.ClaimsIdentity,bool)"/>).
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ClaimsIdentity"/> instance.
+        /// </param>
+        /// <param name="trimStringQualifiers">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to trim the claim from any string qualifiers.
+        /// </param>
+        /// <returns>
+        ///   The first name claim when supported.
+        /// </returns>
+        public static string? Id(this ClaimsIdentity self, bool trimStringQualifiers = true)
+            => self.Name(trimStringQualifiers); 
+        
+        /// <summary>
+        ///   Gets the user name, if present
+        ///   (this is the equivalence to calling <see cref="Name(System.Security.Claims.ClaimsIdentity,bool)"/>).
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ClaimsPrincipal"/> instance.
+        /// </param>
+        /// <param name="trimStringQualifiers">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to trim the claim from any string qualifiers.
+        /// </param>
+        /// <returns>
+        ///   The first name claim when supported.
+        /// </returns>
+        public static string? Id(this ClaimsPrincipal? self, bool trimStringQualifiers = true)
+            => self.Name(trimStringQualifiers); 
+        
         /// <summary>
         ///   Gets the first name claim, if present.
         /// </summary>
@@ -23,8 +90,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The first name claim when supported.
         /// </returns>
-        public static string? FirstName(this ClaimsIdentity self, bool trimStringQualifiers = true)
-            => claimValue(self, ClaimTypes.GivenName, "given_name", trimStringQualifiers);
+        public static string? FirstName(this ClaimsIdentity? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.GivenName, "given_name", trimStringQualifiers);
        
         /// <summary>
         ///   Gets the first name claim, if present.
@@ -39,8 +106,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The first name claim when supported.
         /// </returns>
-        public static string? FirstName(this ClaimsPrincipal self, bool trimStringQualifiers = true)
-            => claimValue(self.Identity as ClaimsIdentity, ClaimTypes.GivenName, "given_name", trimStringQualifiers);
+        public static string? FirstName(this ClaimsPrincipal? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.GivenName, "given_name", trimStringQualifiers);
        
         /// <summary>
         ///   Gets the last name claim, if present.
@@ -55,8 +122,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The last name claim when supported.
         /// </returns>
-        public static string? LastName(this ClaimsIdentity self, bool trimStringQualifiers = true)
-            => claimValue(self, ClaimTypes.Surname, "family_name", trimStringQualifiers);
+        public static string? LastName(this ClaimsIdentity? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.Surname, "family_name", trimStringQualifiers);
 
         /// <summary>
         ///   Gets the last name claim, if present.
@@ -71,8 +138,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The last name claim when supported.
         /// </returns>
-        public static string? LastName(this ClaimsPrincipal self, bool trimStringQualifiers = true)
-            => claimValue(self.Identity as ClaimsIdentity, ClaimTypes.Surname, "family_name", trimStringQualifiers);
+        public static string? LastName(this ClaimsPrincipal? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.Surname, "family_name", trimStringQualifiers);
 
         /// <summary>
         ///   Gets the email claim, if present.
@@ -87,28 +154,37 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   The email claim when supported.
         /// </returns>
-        public static string Email(this ClaimsIdentity self, bool trimStringQualifiers = true)
-            => claimValue(self, ClaimTypes.Email, trimStringQualifiers);
+        public static string? Email(this ClaimsIdentity? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.Email, null, trimStringQualifiers);
 
-        static string claimValue(ClaimsIdentity identity, string key, bool trimStringQualifiers = true)
-        {
-            var value = identity.Claims.FirstOrDefault(i => i.Type == key)?.Value;
-            
-            if (string.IsNullOrWhiteSpace(value))
-                return value;
+        /// <summary>
+        ///   Gets the email claim, if present.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ClaimsPrincipal"/>.
+        /// </param>
+        /// <param name="trimStringQualifiers">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to trim the claim from any string qualifiers.
+        /// </param>
+        /// <returns>
+        ///   The email claim when supported.
+        /// </returns>
+        public static string? Email(this ClaimsPrincipal? self, bool trimStringQualifiers = true)
+            => claimValue(self?.Claims, ClaimTypes.Email, null, trimStringQualifiers: trimStringQualifiers);
 
-            return trimStringQualifiers
-                ? value.Trim('\"')
-                : value;
-        }
-        
-        static string? claimValue(ClaimsIdentity? identity, string key, string fallbackKey, bool trimStringQualifiers = true)
+        static string? claimValue(
+            IEnumerable<Claim>? claims, 
+            string key, 
+            string? fallbackKey, 
+            bool trimStringQualifiers = true)
         {
-            if (identity is null)
+            if (claims is null)
                 return null;
             
-            var value = identity.Claims.FirstOrDefault(i 
-                => i.Type == key || i.Type == fallbackKey)?.Value;
+            var value = fallbackKey is {} 
+                ? claims.FirstOrDefault(i => i.Type == key || i.Type == fallbackKey)?.Value
+                : claims.FirstOrDefault(i => i.Type == key)?.Value;
             
             if (string.IsNullOrWhiteSpace(value))
                 return value;

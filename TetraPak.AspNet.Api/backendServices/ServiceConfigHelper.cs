@@ -12,6 +12,9 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
+    /// <summary>
+    ///   Convenient helper methods for working with the configuration of backend services.   
+    /// </summary>
     public static class ServiceConfigHelper
     {
         // public static Uri GetUri(this ServiceEndpoints self, string path)  obsolete
@@ -72,7 +75,7 @@ namespace TetraPak.AspNet.Api
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
-            return Outcome<HttpResponseMessage>.Fail(responseMessage, new Exception(errorResponse.Title));
+            return Outcome<HttpResponseMessage>.Fail(new Exception(errorResponse.Title), responseMessage);
         }
         
         public static Outcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
@@ -109,7 +112,7 @@ namespace TetraPak.AspNet.Api
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
-            return Outcome<HttpResponseMessage>.Fail(responseMessage, new Exception(errorResponse.Title));
+            return Outcome<HttpResponseMessage>.Fail(new Exception(errorResponse.Title), responseMessage);
         }
 
         public static string RequestToString(string method, string path, string? queryParameters)

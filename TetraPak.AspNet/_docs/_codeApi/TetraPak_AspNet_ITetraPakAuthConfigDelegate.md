@@ -5,13 +5,13 @@ Classes implementing this contract can be passed as a delegate to customize seve
 of Tetra Pak related configuration.   
 ```csharp
 public interface ITetraPakAuthConfigDelegate :
-TetraPak.AspNet.Auth.IClientConfigProvider
+TetraPak.AspNet.Auth.IClientConfigDelegate
 ```
 
 Derived  
 &#8627; [TetraPakAuthConfigDelegate](TetraPak_AspNet_TetraPakAuthConfigDelegate.md 'TetraPak.AspNet.TetraPakAuthConfigDelegate')  
 
-Implements [IClientConfigProvider](TetraPak_AspNet_Auth_IClientConfigProvider.md 'TetraPak.AspNet.Auth.IClientConfigProvider')  
+Implements [IClientConfigDelegate](TetraPak_AspNet_Auth_IClientConfigDelegate.md 'TetraPak.AspNet.Auth.IClientConfigDelegate')  
 ### Methods
 <a name='TetraPak_AspNet_ITetraPakAuthConfigDelegate_ResolveConfiguredEnvironment(string)'></a>
 ## ITetraPakAuthConfigDelegate.ResolveConfiguredEnvironment(string) Method

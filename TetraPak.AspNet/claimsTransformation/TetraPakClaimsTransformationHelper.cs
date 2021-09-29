@@ -31,7 +31,7 @@ namespace TetraPak.AspNet
                 logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakClaimsTransformation)}) with service collection");
             }
             c.AddHttpContextAccessor();
-            c.TryAddScoped<AmbientData>();
+            c.AddAmbientData();
             c.TryAddSingleton<TetraPakAuthConfig>();
         }
 

@@ -83,7 +83,7 @@ Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspN
 ## ServiceEndpoint.HttpContext Property
 Gets the current [HttpContext](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_HttpContext 'TetraPak.AspNet.Api.ServiceEndpoint.HttpContext') instance.  
 ```csharp
-public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
+public Microsoft.AspNetCore.Http.HttpContext? HttpContext { get; }
 ```
 #### Property Value
 [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')
@@ -92,7 +92,7 @@ public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
 ## ServiceEndpoint.Logger Property
 Gets a logging provider.  
 ```csharp
-public Microsoft.Extensions.Logging.ILogger Logger { get; }
+public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
@@ -268,17 +268,17 @@ public override string? ToString();
 A string that represents the current object.
   
 ### Operators
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
-## ServiceEndpoint.operator ==(ServiceEndpoint, ServiceEndpoint?) Operator
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
+## ServiceEndpoint.operator ==(ServiceEndpoint?, ServiceEndpoint?) Operator
 Comparison operator overload.  
 ```csharp
-public static bool operator ==(TetraPak.AspNet.Api.ServiceEndpoint left, TetraPak.AspNet.Api.ServiceEndpoint? right);
+public static bool operator ==(TetraPak.AspNet.Api.ServiceEndpoint? left, TetraPak.AspNet.Api.ServiceEndpoint? right);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
 `left` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
 `right` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
 #### Returns
@@ -317,17 +317,17 @@ A [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.
 [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
 The [stringValue](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_op_ImplicitTetraPak_AspNet_Api_ServiceEndpoint(string)_stringValue 'TetraPak.AspNet.Api.ServiceEndpoint.op_Implicit TetraPak.AspNet.Api.ServiceEndpoint(string).stringValue') string representation was incorrectly formed.  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
-## ServiceEndpoint.operator !=(ServiceEndpoint, ServiceEndpoint?) Operator
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
+## ServiceEndpoint.operator !=(ServiceEndpoint?, ServiceEndpoint?) Operator
 Comparison operator overload.  
 ```csharp
-public static bool operator !=(TetraPak.AspNet.Api.ServiceEndpoint left, TetraPak.AspNet.Api.ServiceEndpoint? right);
+public static bool operator !=(TetraPak.AspNet.Api.ServiceEndpoint? left, TetraPak.AspNet.Api.ServiceEndpoint? right);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
 `left` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
 `right` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
 #### Returns

@@ -18,11 +18,14 @@
         <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="5.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.4" />
-        <PackageReference Include="TetraPak.AspNet.Api" Version="1.0.2-local" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Remove="appsettings - Copy.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj" />
     </ItemGroup>
 
 </Project>

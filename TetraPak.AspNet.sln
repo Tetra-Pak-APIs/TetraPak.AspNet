@@ -49,6 +49,7 @@ ProjectSection(SolutionItems) = preProject
 	_graphics\api-mgmt-pattern.png = _graphics\api-mgmt-pattern.png
 	_graphics\copy_callback_url.png = _graphics\copy_callback_url.png
 	_graphics\postman-credentials-in-body.png = _graphics\postman-credentials-in-body.png
+	_graphics\flow_integrate_api_1.png = _graphics\flow_integrate_api_1.png
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_nuget", "_nuget", "{3BCE58DC-D24F-4E0F-878F-8419EC431D80}"

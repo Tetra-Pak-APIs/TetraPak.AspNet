@@ -7,13 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Identity;
 using TetraPak.Caching;
 using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet
 {
@@ -37,33 +38,24 @@ namespace TetraPak.AspNet
         static readonly AsyncLocal<OAuthTokenResponse> s_tokenResponse = new();
         static readonly IDictionary<string, string> s_claimsMap = makeClaimsMap();
         readonly TetraPakUserInformation _userInformation;
-        readonly IClientCredentialsProvider _clientCredentialsProvider;
-        readonly ITimeLimitedRepositories _cache;
+        readonly IClientCredentialsProvider? _clientCredentialsProvider;
 
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger Logger => AuthConfig.Logger;
-
-        /// <summary>
-        ///   Gets an ambient data provider.
-        /// </summary>
-        protected AmbientData AmbientData => _userInformation.AmbientData;
+        protected ILogger? Logger => AuthConfig.Logger;
 
         /// <summary>
         ///   Gets the Tetra Pak configuration object. 
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
+        protected TetraPakAuthConfig AuthConfig { get; }
 
-        /// <summary>
-        ///   Gets the current <see cref="HttpContext"/> instance.
-        /// </summary>
-        protected HttpContext HttpContext => AmbientData.HttpContext;
+        ITimeLimitedRepositories? Cache => AuthConfig.Cache;
 
-        internal static OAuthTokenResponse TokenResponse
+        internal static OAuthTokenResponse? TokenResponse
         {
             get => s_tokenResponse.Value;
-            set => s_tokenResponse.Value = value;
+            set => s_tokenResponse.Value = value!;
         }
 
         /// <inheritdoc />
@@ -77,7 +69,7 @@ namespace TetraPak.AspNet
                 cachedOutcome = await tryGetCachedPrincipalAsync(principal);
                 if (cachedOutcome)
                 {
-                    Logger.Debug($"Claims Principal with id '{cachedOutcome.Value.Id}' was already resolved (cached)");
+                    Logger.Debug($"Claims Principal with id '{cachedOutcome.Value!.Id}' was already resolved (cached)");
                     return cachedOutcome.Value.Principal;
                 }
 
@@ -88,7 +80,7 @@ namespace TetraPak.AspNet
                         Logger.Debug("Source = Id Token");
                         var idTokenOutcome = await OnGetIdTokenAsync(_);
                         if (idTokenOutcome)
-                            return mapFromIdToken(idTokenOutcome.Value);
+                            return mapFromIdToken(idTokenOutcome.Value!);
 
                         Logger.Warning("Could not populate identity from id token. No id token was available");
                         break;
@@ -112,8 +104,7 @@ namespace TetraPak.AspNet
             ClaimsPrincipal mapFromIdToken(ActorToken token)
             {
                 var clone = principal.Clone();
-                var identity = (ClaimsIdentity) clone.Identity;
-                if (identity is null)
+                if (clone.Identity is not ClaimsIdentity identity)
                     return clone;
                 
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token.Identity);
@@ -148,12 +139,11 @@ namespace TetraPak.AspNet
                 }
 
                 var clone = principal.Clone();
-                var identity = (ClaimsIdentity) clone.Identity;
-                if (identity is null)
+                if (clone.Identity is not ClaimsIdentity identity)
                     return clone;
 
                 identity.BootstrapContext = "(api)";
-                var claims = userInfoOutcome.Value.ToDictionary().MapTo(pair =>
+                var claims = userInfoOutcome.Value!.ToDictionary().MapTo(pair =>
                 {
                     var (key, value) = pair;
                     var claimValue = value ?? string.Empty;
@@ -162,31 +152,32 @@ namespace TetraPak.AspNet
                         : new Claim(toKey, claimValue);
                 });
                 identity.AddClaims(claims);
-                return await cachePrincipalAsync(cachedOutcome.Value.Id, clone);
+                return await cachePrincipalAsync(cachedOutcome.Value, clone);
             }
         }
 
-        async Task<ClaimsPrincipal> cachePrincipalAsync(string id, ClaimsPrincipal claimsPrincipal)
+        async Task<ClaimsPrincipal> cachePrincipalAsync(CachedClaimsPrincipal? cachedClaimsPrincipal, ClaimsPrincipal claimsPrincipal)
         {
-            if (_cache is null)
+            var cachedId = cachedClaimsPrincipal?.Id; 
+            if (Cache is null || cachedId is null)
                 return claimsPrincipal;
 
-            await _cache.AddAsync(CacheRepositories.ClaimsPrincipals, id, claimsPrincipal);
+            await Cache.AddAsync(CacheRepositories.ClaimsPrincipals, cachedId, claimsPrincipal);
             return claimsPrincipal;
         }
 
         async Task<Outcome<CachedClaimsPrincipal>> tryGetCachedPrincipalAsync(ClaimsPrincipal principal)
         {
-            if (_cache is null)
-                return Outcome<CachedClaimsPrincipal>.Fail();
-
             if (!principal.TryResolveIdClaim(out var id,  new[] {"sub"}))
                 return Outcome<CachedClaimsPrincipal>.Fail();
 
-            var cachedOutcome = await _cache.GetAsync<ClaimsPrincipal>(CacheRepositories.ClaimsPrincipals, id);
+            if (Cache is null)
+                return Outcome<CachedClaimsPrincipal>.Fail(new CachedClaimsPrincipal(id, null!));
+
+            var cachedOutcome = await Cache.GetAsync<ClaimsPrincipal>(CacheRepositories.ClaimsPrincipals, id);
             return cachedOutcome
-                ? Outcome<CachedClaimsPrincipal>.Success(new CachedClaimsPrincipal(id, cachedOutcome.Value))
-                : Outcome<CachedClaimsPrincipal>.Fail(new CachedClaimsPrincipal(id, null)); 
+                ? Outcome<CachedClaimsPrincipal>.Success(new CachedClaimsPrincipal(id, cachedOutcome.Value!))
+                : Outcome<CachedClaimsPrincipal>.Fail(new CachedClaimsPrincipal(id, null!)); 
         }
 
         class CachedClaimsPrincipal
@@ -213,7 +204,7 @@ namespace TetraPak.AspNet
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         protected virtual async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken) 
-            => await AmbientData.GetAccessTokenAsync();
+            => await AuthConfig.AmbientData.GetAccessTokenAsync();
 
         /// <summary>
         ///   Invoked from <see cref="TransformAsync"/> to acquire an identity token.
@@ -226,26 +217,30 @@ namespace TetraPak.AspNet
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         protected virtual async Task<Outcome<ActorToken>> OnGetIdTokenAsync(CancellationToken cancellationToken)
-            => await AmbientData.GetIdTokenAsync();
+            => await AuthConfig.AmbientData.GetIdTokenAsync();
         
         /// <summary>
-        ///   Call this method to obtain client credentials.
+        ///   Obtains and returns the client credentials, either from the Tetra Pak integration configuration
+        ///   (<see cref="TetraPakAuthConfig"/> or from an injected delegate (<see cref="IClientCredentialsProvider"/>).
         /// </summary>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="Credentials"/> object or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        protected virtual async Task<Outcome<Credentials>> OnGetClientCredentials()
+        protected async Task<Outcome<Credentials>> GetClientCredentials()
         {
             if (_clientCredentialsProvider is { })
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
-            // if (AuthConfig.ClientId is null) obsolete
-            //     return Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
-            
-            return AuthConfig.ClientSecret is { } 
-                ? Outcome<Credentials>.Success(new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret)) 
-                : Outcome<Credentials>.Fail(new InvalidOperationException("Failed obtaining client id from configuration"));
+            if (string.IsNullOrWhiteSpace(AuthConfig.ClientId))
+                return Outcome<Credentials>.Fail(
+                    new ConfigurationException("Could not obtain client id from configuration"));
+
+            return string.IsNullOrWhiteSpace(AuthConfig.ClientSecret)
+                ? Outcome<Credentials>.Fail(
+                    new ConfigurationException("Could not obtain client secret from configuration"))
+                : Outcome<Credentials>.Success(
+                    new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret));
         }
 
         static IDictionary<string,string> makeClaimsMap()
@@ -263,6 +258,9 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes the <see cref="TetraPakClaimsTransformation"/> instance.
         /// </summary>
+        /// <param name="authConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
         /// <param name="userInformation">
         ///   Used internally to obtain user information.
         /// </param>
@@ -270,18 +268,14 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   Used internally to obtain client credentials.
         /// </param>
-        /// <param name="cache">
-        ///   (optional)<br/>
-        ///   Used internally to cache already resolved claims principals.   
-        /// </param>
         public TetraPakClaimsTransformation(
+            TetraPakAuthConfig authConfig,
             TetraPakUserInformation userInformation,
-            IClientCredentialsProvider clientCredentialsProvider = null,
-            ITimeLimitedRepositories cache = null)
+            IClientCredentialsProvider? clientCredentialsProvider = null)
         {
+            AuthConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             _userInformation = userInformation;
             _clientCredentialsProvider = clientCredentialsProvider;
-            _cache = cache;
         }
     }
 }

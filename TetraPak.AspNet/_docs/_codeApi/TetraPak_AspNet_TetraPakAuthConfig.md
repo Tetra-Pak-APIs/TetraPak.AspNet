@@ -11,21 +11,16 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig')  
 ### Constructors
-<a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider_TetraPak_AspNet_ITetraPakAuthConfigDelegate_)'></a>
-## TetraPakAuthConfig.TetraPakAuthConfig(IServiceProvider, ITetraPakAuthConfigDelegate?) Constructor
+<a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider)'></a>
+## TetraPakAuthConfig.TetraPakAuthConfig(IServiceProvider) Constructor
 Initializes a Tetra Pak authorization configuration instance.   
 ```csharp
-public TetraPakAuthConfig(System.IServiceProvider provider, TetraPak.AspNet.ITetraPakAuthConfigDelegate? configDelegate=null);
+public TetraPakAuthConfig(System.IServiceProvider serviceProvider);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider_TetraPak_AspNet_ITetraPakAuthConfigDelegate_)_provider'></a>
-`provider` [System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')  
+<a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider)_serviceProvider'></a>
+`serviceProvider` [System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')  
 A service locator.  
-  
-<a name='TetraPak_AspNet_TetraPakAuthConfig_TetraPakAuthConfig(System_IServiceProvider_TetraPak_AspNet_ITetraPakAuthConfigDelegate_)_configDelegate'></a>
-`configDelegate` [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate')  
-(optional)<br/>  
-A delegate instance used for custom configuration behavior.  
   
   
 ### Properties
@@ -63,7 +58,7 @@ public string AuthorityUrl { get; }
 Gets or sets the name of the header used to obtain the token to be used for authorizing the actor.  
 The default value is [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization')).  
 ```csharp
-public string? AuthorizationHeader { get; set; }
+public string AuthorizationHeader { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -72,6 +67,15 @@ public string? AuthorizationHeader { get; set; }
 An invalid/empty value was assigned.  
 #### See Also
 - [IsCustomAuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_IsCustomAuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.IsCustomAuthorizationHeader')
+  
+<a name='TetraPak_AspNet_TetraPakAuthConfig_Cache'></a>
+## TetraPakAuthConfig.Cache Property
+Gets a time limited repository to be used for caching (if available).  
+```csharp
+public TetraPak.Caching.ITimeLimitedRepositories? Cache { get; }
+```
+#### Property Value
+[TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')
   
 <a name='TetraPak_AspNet_TetraPakAuthConfig_Caching'></a>
 ## TetraPakAuthConfig.Caching Property

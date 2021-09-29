@@ -5,7 +5,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TetraPak.Caching;
 using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -17,20 +20,20 @@ namespace TetraPak.AspNet.Api.Auth
     {
         const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
 
-        readonly AmbientData _ambientData;
-
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger Logger => _ambientData.Logger;
+        protected ILogger? Logger => AuthConfig.Logger;
 
         /// <summary>
         ///   Gets the auth configuration code API.
         /// </summary>
-        protected TetraPakApiAuthConfig AuthConfig =>  (TetraPakApiAuthConfig) _ambientData.AuthConfig; // obsolete? Currently there doesn't appear to be any point in the "specialized" TetraPakApiAuthConfig class 
+        protected TetraPakAuthConfig AuthConfig { get; }
+
+        ITimeLimitedRepositories? Cache => AuthConfig.Cache;
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) => _ambientData.GetMessageId();
+        public string? GetMessageId(bool enforce = false) => AuthConfig.AmbientData.GetMessageId();
 
         /// <inheritdoc />
         public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
@@ -38,19 +41,17 @@ namespace TetraPak.AspNet.Api.Auth
             ActorToken accessToken,
             CancellationToken cancellationToken)
         {
-            var cachedOutcome = await getCached(credentials);
-            if (cachedOutcome)
-                return cachedOutcome;
-
+            // todo Consider simplifying this. It started out with the assumption that "exchangeAsync" would ... 
+            //      need to be used by several methods but it's only used by this one so no real reason
+            //      splitting this method into two and using a special TokenExchangeArgs class to tokenize the parameters
             var args = new TokenExchangeArgs(
                 credentials, 
                 accessToken, 
                 "urn:ietf:params:oauth:token-type:id_token");
-            return await ExchangeAsync(args, cancellationToken);
+            return await exchangeAsync(args, cancellationToken);
         }
 
-        /// <inheritdoc />
-        public async Task<Outcome<TokenExchangeResponse>> ExchangeAsync(
+        async Task<Outcome<TokenExchangeResponse>> exchangeAsync(
             TokenExchangeArgs args, 
             CancellationToken cancellationToken)
         {
@@ -72,10 +73,10 @@ namespace TetraPak.AspNet.Api.Auth
                     return Outcome<TokenExchangeResponse>.Fail(
                         new ConfigurationException("Failed to obtain an OIDC discovery document"));
 
-                var disco = discoOutcome.Value;
+                var discoveryDocument = discoOutcome.Value;
                 var dictionary = args.ToDictionary();
                 var response = await client.PostAsync(
-                    disco.TokenEndpoint, 
+                    discoveryDocument!.TokenEndpoint, 
                     new FormUrlEncodedContent(dictionary), 
                     cancellationToken);
 
@@ -95,8 +96,8 @@ namespace TetraPak.AspNet.Api.Auth
                     await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream,
                         cancellationToken: cancellationToken);
 
-                await cache(args.Credentials, responseBody);
-                return Outcome<TokenExchangeResponse>.Success(responseBody);
+                await cache(args.Credentials, responseBody!);
+                return Outcome<TokenExchangeResponse>.Success(responseBody!);
             }
             catch (Exception ex)
             {
@@ -106,20 +107,20 @@ namespace TetraPak.AspNet.Api.Auth
 
         async Task<Outcome<TokenExchangeResponse>> getCached(Credentials credentials)
         {
-            if (_ambientData.Cache is null)
+            if (Cache is null)
                 return Outcome<TokenExchangeResponse>.Fail(new Exception($"Caching is not supported"));
                 
             var key = credentials.Identity;
-            return await _ambientData?.Cache?.GetAsync<TokenExchangeResponse>(CacheRepository, key);
+            return await Cache.GetAsync<TokenExchangeResponse>(CacheRepository, key);
         }
 
         async Task cache(Credentials credentials, TokenExchangeResponse response)
         {
-            if (_ambientData.Cache is null)
+            if (Cache is null)
                 return;
 
             var lifespan = response.GetLifespan();
-            await _ambientData.Cache.AddAsync(CacheRepository, credentials.Identity, response, customLifeSpan: lifespan);
+            await Cache.AddAsync(CacheRepository, credentials.Identity, response, lifespan);
         }
 
         /// <inheritdoc />
@@ -132,21 +133,18 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Initializes the <see cref="TetraPakTokenExchangeService"/>.
         /// </summary>
-        /// <param name="ambientData">
-        ///   Provides ambient data from the request/response roundtrip.
+        /// <param name="authConfig">
+        ///   The Tetra Pak integration configuration.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="ambientData"/> was unassigned.
+        ///   <paramref name="authConfig"/> was unassigned.
         /// </exception>
         /// <exception cref="ConfigurationException">
         ///   The <see cref="AmbientData.AuthConfig"/> instance was not of type <see cref="TetraPakApiAuthConfig"/>.
         /// </exception>
-        public TetraPakTokenExchangeService(AmbientData ambientData) // obsolete? The use of the specialized TetraPakApiAuthConfig seems unnecessary
+        public TetraPakTokenExchangeService(TetraPakAuthConfig authConfig)
         {
-            _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
-            if (_ambientData.AuthConfig is not TetraPakApiAuthConfig)
-                throw new ConfigurationException($"The configuration carried by {nameof(ambientData)} "+
-                                                 $"should be of type {typeof(TetraPakApiAuthConfig)}");
+            AuthConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
         }
     }
 }

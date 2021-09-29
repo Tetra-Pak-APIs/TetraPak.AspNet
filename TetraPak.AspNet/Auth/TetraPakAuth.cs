@@ -57,8 +57,8 @@ namespace TetraPak.AspNet.Auth
         public static void AddTetraPakOidcAuthentication<TCache>(this IServiceCollection services)
         where TCache : class, ITimeLimitedRepositories
         {
-            // todo This method is HUGE. Consider refactoring to break it down! 
-            services.TryAddScoped<AmbientData>();
+            // todo This method is HUGE. Consider refactoring to break it down!
+            services.AddAmbientData();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddSingleton<TetraPakAuthConfig>();
             // services.AddTetraPakClaimsTransformation();

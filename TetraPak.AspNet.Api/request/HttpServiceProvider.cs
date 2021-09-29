@@ -22,10 +22,11 @@ namespace TetraPak.AspNet.Api
     {
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
         readonly IHttpContextAccessor _httpContextAccessor;
-        readonly AmbientData _ambientData;
+        // readonly AmbientData _ambientData; obsolete
         readonly HttpClientOptions _singletonClientOptions;
         HttpClient _singletonClient;
-        
+        readonly TetraPakAuthConfig _authConfig;
+
         /// <summary>
         ///   Gets a <see cref="ITokenExchangeService"/> for acquiring a token to be used
         ///   with clients consuming services.  
@@ -39,11 +40,11 @@ namespace TetraPak.AspNet.Api
         protected IClientCredentialsService ClientCredentialsService { get; }
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) => _ambientData.GetMessageId();
+        public string GetMessageId(bool enforce = false) => _authConfig.AmbientData.GetMessageId();
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
-            => _ambientData.GetAccessTokenAsync(forceStandardHeader);
+            => _authConfig.AmbientData.GetAccessTokenAsync(forceStandardHeader);
 
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
             => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
@@ -51,7 +52,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger Logger => _ambientData.Logger;
+        protected ILogger Logger => _authConfig.Logger;
 
         public HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions);
         
@@ -278,15 +279,16 @@ namespace TetraPak.AspNet.Api
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsService clientCredentialsService,
             IHttpContextAccessor httpContextAccessor,
-            AmbientData ambientData,
+            TetraPakAuthConfig authConfig,
+            // AmbientData ambientData, obsolete
             Func<HttpClientOptions,HttpClient> singletonClientFactory = null, 
             HttpClientOptions singletonClientOptions = null)
         {
             TokenExchangeService = tokenExchangeService ?? throw new ArgumentNullException(nameof(tokenExchangeService));
             ClientCredentialsService = clientCredentialsService;
+            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             _singletonClientFactory = singletonClientFactory ?? (_ => new HttpClient());
             _httpContextAccessor = httpContextAccessor;
-            _ambientData = ambientData;
             _singletonClientOptions = singletonClientOptions;
         }
     }
