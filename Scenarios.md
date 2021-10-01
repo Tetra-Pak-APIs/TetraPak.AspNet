@@ -1,6 +1,6 @@
-# TetraPak.AspNet SDK - Use Cases
+# TetraPak.AspNet SDK - Scenarios
 
-Here are a several typical use cases, including issues, you will likely face and suggestions for what to do:
+This document presents typical ASP.NET related scenarios, including issues, you will likely face and suggestions for what to do:
 
 <a id="api-key-invalid"></a>
 ## Error `401 - API key invalid`
@@ -39,52 +39,125 @@ If you are debugging your web app (locally) from your IDE and no browser window 
 
 ## Getting the actor's identity
 
-Obtaining the authenticated actor's identity is a feature built in to ASP.NET already. This can be easily done via your controller's `User` property. This property's value is a [`ClaimsPrincipal`](https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0) that supports a collection of 'claims'. You can either examine those claims or you can use the [`ClaimsPrincipal.Identity`] property, which will return an [`IIdentity`]. 
+Obtaining the [identity][cat-identity] of the authenticated [actor][cat-actor] is a feature built in to ASP.NET. This can be easily done via your controller's `User` property. This property's value is a [`ClaimsPrincipal`](https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0) that supports a collection of 'claims'. You can either examine those claims or you can use the [`ClaimsPrincipal.Identity`] property, which will return an [`IIdentity`][dotnet-iidentity].
 
-## Getting the token
+The [TetraPak.AspNet][nuget-tetrapak-app] SDK also offers some convenient extension methods for obtaining typical identity-related [claims][cat-claim], like in this example:
 
-Sometimes it is necessary for your code, in your Web App or Web API, to obtain the incoming access token or identity token. 
-
-## Configuring secrets
-
-Configuring your Tetra Paj integration is easily done by simply adding a "`TetraPak`" configuration section in your `appsettings.json` file (or one of the runtime environment versions, such as `appsettings.Development.json`). 
-
-Those files, however, have a tendency to find their way into your code repository unless you take the extra precaution to include them in your `.gitignore` file. Depending on your IDE of choice this might (or might not) be handled by the project template you pick when you create your web project. Either way, placing confidential information into unencrypted text files is not a very good idea. You should instead rely on the various "secure storage" options available to you. 
-
-We will not dive into how to pick a secure storage or how to work with them; that is a topic beyond the scope of this document. But the SDK offers a simple way to include confidential information in configuration without adding it into unencrypted configuration files, by use of the `ITetraPakAuthConfigDelegate` interface.
-
-By implementing this contract and configuring the DI framework to use it you get full control over how secrets are obtained. The interface supports several method, to provide fine delegation control, but only one is needed for obtaining secrets: `ITetraPakAuthConfigDelegate.OnGetClientSecretsAsync`. For convenience the SDK offers a basic implementation of this interface - `TetraPakAuthConfigDelegate`. This is an `abstract` class that does *not* provide an implementation for the `OnGetClientSecretsAsync` method. This example is just to give you an idea:
-
-```c#
-public class MyAuthConfigDelegate : TetraPakAuthConfigDelegate
+```csharp
+[ApiController]
+[Route("[controller]")]
+[Authorize]
+public class MyController : ControllerBase
 {
-    protected override async Task<Outcome<Credentials>> OnGetClientSecretsAsync(AuthContext authContext)
+    [HttpGet]
+    public async Task<ActionResult> Get()
     {
-        if (!TryGetConfiguredValue(nameof(TetraPakAuthConfig.ClientId), authContext, out var clientId, true))
-            return Outcome<Credentials>.Fail(new Exception("Client Id was not found"));
-
-        var secret = await _mySecretVault.GetSecretAsync(); // _mySecretVault represents some code API for a "secret vault"
-        if (secret is null)
-            return Outcome<Credentials>.Fail(new Exception("Client Secret was not found"));
-        
-        return Outcome<Credentials>.Success(new Credentials(clientId, clientSecret))
+        var userId = User.Id(); // also works: User.Name()
+        var userFirstName = User.FirstName();
+        var userLastName = User.LastName();
+        var userEmail = User.Email();
+        :
     }
 }
 ```
 
-With this, all you need do is to declare the class as the implementation of the `ITetraPakAuthConfigDelegate` interface in the `Startup.ConfigureServices` method: 
+
+
+## Getting the token
+
+Sometimes it is necessary for your code, in your Web App or Web API, to obtain the incoming access token or identity token. This can be easily done using the `GetAccessToken()` extension method, like in this example:
 
 ```c#
-public void ConfigureServices(IServiceCollection services)
+[ApiController]
+[Route("[controller]")]
+[Authorize]
+public class MyController : ControllerBase
 {
-    services.AddControllers();
-    // add auth config delegate before the Tetra Pak auth integration:
-    services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>(); 
-    services.AddTetraPakOidcAuthentication();
+    [HttpGet]
+    public async Task<ActionResult> Get()
+    {
+        var accessTokenOutcome = await this.GetAccessTokenAsync();
+        var accessToken = accessTokenOutcome
+            ? accessTokenOutcome.Value
+            : null;
+        :
+    }
 }
 ```
 
-This should cover your needs to integrate the Tetra Pak ASP.NET SDK with whatever secure storage service you prefer. The SDK might be updated in future versions, however, to offer other methods if needed.
+See also: [`GetAccessTokenAsync` extension method][md-code-GetAccessTokenAsync]
+
+## Configuring secrets
+
+Configuring your Tetra Pak integration is easily done by simply adding a "`TetraPak`" configuration section in your `appsettings.json` file (or one of the runtime environment versions, such as `appsettings.Development.json`):
+
+```json
+{
+  "TetraPak": {
+    "ClientId": "-my-client-id-",
+    "ClientSecret": "-m4-c7i3nt-s3cr3t"
+  }
+}
+```
+
+Those files, however, have a tendency to find their way into your code repository unless you take the extra precaution to include them in your `.gitignore` file. Depending on your IDE of choice this might (or might not) be handled by the project template you pick when you create your web project. Either way, placing confidential information into unencrypted text files is a risky affair, at best. You should instead rely on the various "secure storage" options available to you. 
+
+We will not dive into how to choose or interact with a secure storage; that is different topic. Assuming you know how to integrate with secure storage services the SDK offers a simple way for you to provide secrets, when needed, without storing them in unencrypted files, by use of the [`ITetraPakSecretsProvider`][code-ITetraPakSecretsProvider] interface.
+
+This is a very simple example implementation of the [`ITetraPakSecretsProvider`][code-ITetraPakSecretsProvider]:
+
+```c#
+// a simple secrets provider implementation:
+public class MySecretsProvider : ITetraPakSecretsProvider
+{
+    public async Task<Outcome<string>> GetSecretStringAsync(DynamicPath path)
+    {
+        if (path == Secrets.ClientIdUri)
+            return getClientIdAsync(path);
+        
+        if (path == Secrets.ClientIdUri)
+            return getClientSecretAsync(path);
+        
+        return Outcome<string>.Fail(
+                  new ArgumentOutOfRangeException(nameof(path)));
+    }
+
+    Outcome<string> getClientIdAsync(DynamicPath path)
+    {
+        /*
+          in reality you might have a need to obtain different 
+          client ids here, and do so from a secure persistent 
+          store somewhere, such as an Azure Key Vault
+        */
+        return Outcome<string>.Success("-my-client-id-");
+    }
+
+    Outcome<string> getClientSecretAsync(DynamicPath path)
+    {
+        /*
+          in reality you might have a need to obtain different 
+          client secrets here, and do so from a secure persistent 
+          store somewhere, such as an Azure Key Vault
+        */
+        return Outcome<string>.Success("-m4-c713nt-Z3cr3t==");
+    }
+}
+```
+
+You then configure your secrets provider as a DI service in the `Startup.ConfigureServices` method:
+
+```c#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        : 
+        services.AddControllers();
+        services.AddSingleton<ITetraPakSecretsProvider,MySecretsProvider>();
+        :
+    }
+}        
+```
 
 ## Setting the localhost port
 
@@ -147,7 +220,7 @@ The launch profiles are configured in the `launchSettings.json` file, found unde
 
 The launch profiles are found in the sub section "profiles" and there is usually two: "`IIS Express`" and "`{name of your project}`" ("`MyAPI`" in this example). Within each launch profile sub section is another sub section called "`environmentVariables`" where you can create or override your machine's environment variables and, as I'm sure you've guessed by now, the runtime environment is controlled by the "`"ASPNETCORE_ENVIRONMENT"`" variable, and is typically set to "`Dwevelopment`".
 
-You can easily add more launch profiles, such as "`Migration`"m by just adding another sub section to the list of "`profiles`":
+You can easily add more launch profiles, such as "`Migration`", by just adding another sub section to the list of "`profiles`":
 
 ```json
 {
@@ -225,3 +298,17 @@ Please note that the `launchSettings.json` file is ***only*** used when running 
 [aspnet-authorize-attribute]: https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-5.0
 [aspnet-razor]: https://docs.microsoft.com/en-us/aspnet/web-pages/overview/getting-started/introducing-razor-syntax-c
 
+[dotnet-iidentity]: https://docs.microsoft.com/en-us/dotnet/api/system.security.principal.iidentity
+
+[md-code-GetAccessTokenAsync]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_ControllerExtensions.md#controllerextensionsgetaccesstokenasynccontroller-method
+
+[code-ITetraPakSecretsProvider]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_SecretsManagement_ITetraPakSecretsProvider.md
+
+[code-TetraPakAuthConfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfig.md
+
+[code-TetraPakAuthConfigDelegate]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfigDelegate.md 
+
+[cat-actor]: ./CAT.md#actor
+[cat-claim]: ./CAT.md#claim
+[cat-client-credentials]: ./CAT.md#client-credentials
+[cat-identity]: ./CAT.md#identity

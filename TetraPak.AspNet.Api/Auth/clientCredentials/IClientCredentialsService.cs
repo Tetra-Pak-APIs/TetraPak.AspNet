@@ -14,6 +14,7 @@ namespace TetraPak.AspNet.Api.Auth
         ///   Requests a token using the OAuth Client Credentials grant.   
         /// </summary>
         /// <param name="cancellationToken">
+        ///   (optional)<br/>
         ///   A cancellation token.
         /// </param>
         /// <param name="clientCredentials">
@@ -32,7 +33,8 @@ namespace TetraPak.AspNet.Api.Auth
         ///   An <see cref="Outcome{T}"/> instance indicating success/failure, and the requested token
         ///   when successful; otherwise an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(CancellationToken cancellationToken,
+        Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
+            CancellationToken? cancellationToken = null,
             Credentials clientCredentials = null,
             MultiStringValue scope = null, 
             bool allowCached = true);

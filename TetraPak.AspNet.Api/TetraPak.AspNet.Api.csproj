@@ -29,7 +29,7 @@
         <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
         <DefaultDocumentationGeneratedPages>Namespaces, Types</DefaultDocumentationGeneratedPages>
         <_DefaultDocumentationLogLevel>Debug</_DefaultDocumentationLogLevel>
-        <DefaultDocumentationFolder>$(ProjectDir)_docs/_codeApi</DefaultDocumentationFolder>
+        <DefaultDocumentationFolder>$(ProjectDir)_docs/_code</DefaultDocumentationFolder>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug | Production' ">
@@ -48,7 +48,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.16" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="_docs\_codeApi" />
+    <Folder Include="_docs\_code" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DefaultDocumentation" Version="0.7.7">

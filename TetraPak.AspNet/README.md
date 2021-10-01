@@ -83,7 +83,7 @@ The SDK currently supports integration with Tetra Pak's Auth Services using the 
 [di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
 [middleware]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0
 [aspnet-core-configuration]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0
-[tetra-pak-dev-dev-portal]: https://developer-dev.tetrapak.com
+[tetra-pak-dev-dev-portal]: https://developer-test.tetrapak.com
 [tetra-pak-dev-portal]: https://developer.tetrapak.com
 [tetra-pak-dev-portal-appreg-consumer-key]: https://developer.tetrapak.com/products/getting-started/manage-your-app#consumer-key
 [tetra-pak-dev-portal-appreg-callback]: https://developer.tetrapak.com/products/getting-started/manage-your-app#callback-url

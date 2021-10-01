@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_docs", "_docs", "{708865EB
 ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	Scenarios.md = Scenarios.md
-	TermsAndConcepts.md = TermsAndConcepts.md
+	CAT.md = CAT.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.BackendServiceAPI", "demo.BackendServiceAPI\demo.BackendServiceAPI.csproj", "{C6D820E1-1F41-4235-9466-C86AAB308E4F}"
@@ -50,6 +50,7 @@ ProjectSection(SolutionItems) = preProject
 	_graphics\copy_callback_url.png = _graphics\copy_callback_url.png
 	_graphics\postman-credentials-in-body.png = _graphics\postman-credentials-in-body.png
 	_graphics\flow_integrate_api_1.png = _graphics\flow_integrate_api_1.png
+	_graphics\flow_integrate_api_2.png = _graphics\flow_integrate_api_2.png
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_nuget", "_nuget", "{3BCE58DC-D24F-4E0F-878F-8419EC431D80}"

@@ -12,26 +12,18 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate'), [IClientConfigDelegate](TetraPak_AspNet_Auth_IClientConfigDelegate.md 'TetraPak.AspNet.Auth.IClientConfigDelegate')  
 ### Constructors
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)'></a>
-## TetraPakAuthConfigDelegate.TetraPakAuthConfigDelegate(IConfiguration, ISecretsProvider?) Constructor
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(TetraPak_SecretsManagement_ITetraPakSecretsProvider_)'></a>
+## TetraPakAuthConfigDelegate.TetraPakAuthConfigDelegate(ITetraPakSecretsProvider?) Constructor
 Initializes the [TetraPakAuthConfigDelegate](TetraPak_AspNet_TetraPakAuthConfigDelegate.md 'TetraPak.AspNet.TetraPakAuthConfigDelegate').  
 ```csharp
-public TetraPakAuthConfigDelegate(Microsoft.Extensions.Configuration.IConfiguration configuration, TetraPak.SecretsManagement.ISecretsProvider? secretsProvider=null);
+public TetraPakAuthConfigDelegate(TetraPak.SecretsManagement.ITetraPakSecretsProvider? secretsProvider=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_configuration'></a>
-`configuration` [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration')  
-The configuration code API.  
-  
-<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_secretsProvider'></a>
-`secretsProvider` [TetraPak.SecretsManagement.ISecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ISecretsProvider 'TetraPak.SecretsManagement.ISecretsProvider')  
+<a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(TetraPak_SecretsManagement_ITetraPakSecretsProvider_)_secretsProvider'></a>
+`secretsProvider` [TetraPak.SecretsManagement.ITetraPakSecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ITetraPakSecretsProvider 'TetraPak.SecretsManagement.ITetraPakSecretsProvider')  
 (optional)<br/>  
 A provider of secrets.   
   
-#### Exceptions
-[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[configuration](TetraPak_AspNet_TetraPakAuthConfigDelegate.md#TetraPak_AspNet_TetraPakAuthConfigDelegate_TetraPakAuthConfigDelegate(Microsoft_Extensions_Configuration_IConfiguration_TetraPak_SecretsManagement_ISecretsProvider_)_configuration 'TetraPak.AspNet.TetraPakAuthConfigDelegate.TetraPakAuthConfigDelegate(Microsoft.Extensions.Configuration.IConfiguration, TetraPak.SecretsManagement.ISecretsProvider?).configuration') was unassigned (`null`).  
-            
   
 ### Methods
 <a name='TetraPak_AspNet_TetraPakAuthConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
@@ -96,7 +88,7 @@ Details the auth context in which the (confidential) client secrets are requeste
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 ### Remarks
-This implementation will use a configured [TetraPak.SecretsManagement.ISecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ISecretsProvider 'TetraPak.SecretsManagement.ISecretsProvider') service when available  
+This implementation will use a configured [TetraPak.SecretsManagement.ITetraPakSecretsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.SecretsManagement.ITetraPakSecretsProvider 'TetraPak.SecretsManagement.ITetraPakSecretsProvider') service when available  
 to obtain both client id and client secret. If a client id cannot be found it will  
 try resolve the client id from the configuration instead.  
   

@@ -42,7 +42,7 @@ namespace TetraPak.AspNet
 
         public static IServiceCollection AddTetraPakAuthConfigServices<TDelegate,TSecretsProvider>(this IServiceCollection self) 
             where TDelegate : class, ITetraPakAuthConfigDelegate 
-            where TSecretsProvider : class, ISecretsProvider
+            where TSecretsProvider : class, ITetraPakSecretsProvider
         {
             lock (s_syncRoot)
             {

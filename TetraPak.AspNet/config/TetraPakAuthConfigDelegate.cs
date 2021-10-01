@@ -14,8 +14,8 @@ namespace TetraPak.AspNet
     /// </summary>
     public class TetraPakAuthConfigDelegate : ITetraPakAuthConfigDelegate
     {
-        readonly ISecretsProvider? _secretsProvider;
-        readonly IServiceAuthConfig _authConfig;
+        readonly ITetraPakSecretsProvider? _secretsProvider;
+        IServiceAuthConfig? _authConfig;
 
         /// <inheritdoc />
         public virtual RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue) 
@@ -29,6 +29,12 @@ namespace TetraPak.AspNet
         public Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken)
              => OnGetScopeAsync(authContext);
 
+        internal TetraPakAuthConfigDelegate WithTetraPakConfig(IServiceAuthConfig serviceAuthConfig)
+        {
+            _authConfig = serviceAuthConfig;
+            return this;
+        } 
+
         /// <summary>
         ///   Called to obtain the client secrets for a specified "path". 
         /// </summary>
@@ -41,16 +47,24 @@ namespace TetraPak.AspNet
         /// </returns>
         /// <remarks>
         ///   <para>
-        ///   This implementation will use a configured <see cref="ISecretsProvider"/> service when available
+        ///   This implementation will use a configured <see cref="ITetraPakSecretsProvider"/> service when available
         ///   to obtain both client id and client secret. If a client id cannot be found it will
         ///   try resolve the client id from the configuration instead.
         ///   </para>
         /// </remarks>
         protected virtual Task<Outcome<Credentials>> OnGetClientCredentialsAsync(AuthContext authContext)
         {
+            validateConfigIsInitialized();
             return _secretsProvider is { }
                 ? getClientCredentialsFromSecretsProvider(authContext)
                 : getClientCredentialsFromConfiguration(authContext.GrantType);
+        }
+
+        void validateConfigIsInitialized()
+        {
+            if (_authConfig is null)
+                throw new InvalidOperationException(
+                    $"{this} was not initialized (missing a {typeof(IServiceAuthConfig)} instance");
         }
 
         async Task<Outcome<Credentials>> getClientCredentialsFromSecretsProvider(AuthContext authContext)
@@ -194,19 +208,12 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes the <see cref="TetraPakAuthConfigDelegate"/>.
         /// </summary>
-        /// <param name="tetraPakConfig">
-        ///   The Tetra Pak configuration code API.
-        /// </param>
         /// <param name="secretsProvider">
         ///   (optional)<br/>
         ///   A provider of secrets. 
         /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///   <paramref name="tetraPakConfig"/> was unassigned (<c>null</c>).
-        /// </exception>
-        public TetraPakAuthConfigDelegate(IServiceAuthConfig tetraPakConfig, ISecretsProvider? secretsProvider = default)
+        public TetraPakAuthConfigDelegate(ITetraPakSecretsProvider? secretsProvider = default)
         {
-            _authConfig = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
             _secretsProvider = secretsProvider;
         }
     }

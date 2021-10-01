@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -32,18 +33,31 @@ namespace TetraPak.AspNet.Api.Auth
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
-            CancellationToken cancellationToken,
+            CancellationToken? cancellationToken = null,
             Credentials? clientCredentials = null,
             MultiStringValue? scope = null, 
             bool allowCached = true)
         {
             try
             {
-                clientCredentials ??= OnGetCredentials();
+                var useCancellation = cancellationToken ?? new CancellationToken();
+                if (clientCredentials is null)
+                {
+                    var ccOutcome = await OnGetCredentialsAsync();
+                    if (!ccOutcome)
+                        return Outcome<ClientCredentialsResponse>.Fail(ccOutcome.Exception);
+
+                    clientCredentials = ccOutcome.Value!;
+                }
+
                 var basicAuthCredentials = validateBasicAuthCredentials(clientCredentials);
                 var cachedOutcome = await OnGetCachedResponse(basicAuthCredentials);
-                if (cachedOutcome && cachedOutcome.Value.ExpiresIn.Subtract(TimeSpan.FromSeconds(2)) > TimeSpan.Zero)
-                    return cachedOutcome;
+                if (cachedOutcome)
+                {
+                    var cachedResponse = cachedOutcome.Value!;
+                    if (cachedResponse.ExpiresIn.Subtract(TimeSpan.FromSeconds(2)) > TimeSpan.Zero)
+                        return cachedOutcome;
+                }
                 
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
@@ -55,27 +69,31 @@ namespace TetraPak.AspNet.Api.Auth
                 {
                     formsValues.Add("scope", scope.Items.ConcatCollection(" "));
                 }
+
+                var keyValues = formsValues.Select(kvp 
+                    => new KeyValuePair<string?, string?>(kvp.Key, kvp.Value));
                 var response = await client.PostAsync(
                     _authConfig.TokenIssuerUrl,
-                    new FormUrlEncodedContent(formsValues),
-                    cancellationToken);
+                    new FormUrlEncodedContent(keyValues),
+                    useCancellation);
 
                 if (!response.IsSuccessStatusCode)
                     return loggedFailedOutcome(response);
 
 #if NET5_0_OR_GREATER
-                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                var stream = await response.Content.ReadAsStreamAsync(useCancellation);
 #else
                 var stream = await response.Content.ReadAsStreamAsync();
 #endif
                 var responseBody =
-                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponseBody>(stream,
-                        cancellationToken: cancellationToken);
+                    await JsonSerializer.DeserializeAsync<ClientCredentialsResponseBody>(
+                        stream,
+                        cancellationToken: useCancellation);
 
                 var outcome = ClientCredentialsResponse.TryParse(responseBody);
                 if (outcome)
                 {
-                    await OnCacheResponseAsync(basicAuthCredentials, outcome.Value);
+                    await OnCacheResponseAsync(basicAuthCredentials, outcome.Value!);
                 }
 
                 return outcome;
@@ -140,7 +158,7 @@ namespace TetraPak.AspNet.Api.Auth
                 out var remainingLifeSpan);
 
             return cachedOutcome
-                ? Outcome<ClientCredentialsResponse>.Success(cachedOutcome.Value.Clone(remainingLifeSpan))
+                ? Outcome<ClientCredentialsResponse>.Success(cachedOutcome.Value!.Clone(remainingLifeSpan))
                 : cachedOutcome;
         }
 
@@ -177,15 +195,29 @@ namespace TetraPak.AspNet.Api.Auth
             return new BasicAuthCredentials(credentials.Identity, credentials.Secret);
         }
 
-        protected virtual Credentials OnGetCredentials()
+        /// <summary>
+        ///   This virtual asynchronous method is automatically invoked when <see cref="AcquireTokenAsync"/>
+        ///   needs client credentials. 
+        /// </summary>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="Credentials"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        protected virtual Task<Outcome<Credentials>> OnGetCredentialsAsync()
         {
             if (string.IsNullOrWhiteSpace(_authConfig.ClientId))
-                throw new InvalidOperationException(
-                    $"Cannot create client credentials. Please specify '{nameof(TetraPakAuthConfig.ClientId)}' in configuration");
-                
-            return new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret);
+                return Task.FromResult(Outcome<Credentials>.Fail(
+                    new ConfigurationException("Client credentials have not been provisioned")));
+
+            return Task.FromResult(Outcome<Credentials>.Success(
+                new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret)));
         }
 
+        /// <summary>
+        ///   
+        /// </summary>
+        /// <param name="authConfig"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TetraPakClientCredentialsService(TetraPakAuthConfig authConfig)
         {
             _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));

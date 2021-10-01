@@ -862,11 +862,15 @@ namespace TetraPak.AspNet
             SectionIdentifier = DefaultSectionIdentifier;
             _serviceProvider = serviceProvider;
             Configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            ConfigDelegate = _serviceProvider.GetService<ITetraPakAuthConfigDelegate>();// configDelegate;
-            if (ConfigDelegate is null)
+            ConfigDelegate = _serviceProvider.GetService<ITetraPakAuthConfigDelegate>();
+            if (ConfigDelegate is TetraPakAuthConfigDelegate tetraPakAuthConfigDelegate)
             {
-                var secretsProvider = _serviceProvider.GetService<ISecretsProvider>();
-                ConfigDelegate = new TetraPakAuthConfigDelegate(this, secretsProvider);
+                tetraPakAuthConfigDelegate.WithTetraPakConfig(this);
+            }
+            else
+            {
+                var secretsProvider = _serviceProvider.GetService<ITetraPakSecretsProvider>();
+                ConfigDelegate = new TetraPakAuthConfigDelegate(secretsProvider).WithTetraPakConfig(this);
             }
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
             var logger = serviceProvider.GetService<ILogger<TetraPakAuthConfig>>();

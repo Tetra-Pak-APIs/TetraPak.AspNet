@@ -9,6 +9,7 @@ using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.Logging;
+using TetraPak.SecretsManagement;
 
 namespace WebAPI
 {
@@ -22,6 +23,7 @@ namespace WebAPI
         {
             services.AddControllers();
 
+            services.AddSingleton<ITetraPakSecretsProvider, MySecretsProvider>();
             services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>();
             services.AddTetraPakJwtBearerAssertion();    // <-- add this for JWT bearer assertion
             services.AddTetraPakServices();              // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services

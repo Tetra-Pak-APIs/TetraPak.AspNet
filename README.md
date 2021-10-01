@@ -76,7 +76,7 @@ This task can take alot of time, depending on the developer's background and kno
 
 ### The anatomy of an ASP.NET request 
 
-When an [actor][md-terms-actor] (a user or service) makes a request for some resource in your web project (such as a web view or through an [API][md-terms-api] endpoint), ASP.NET will channel that request through a "[chain of responsibility][design-pattern-chain-of-responsibility]". Each "responsibility" (a.k.a. "command") is a small piece of code that will be called to participate in managing the request. This small piece of code is provided with two items: The "request context" (a [`HttpContext`][http-context]) and a pointer to the next small piece of code to be called afterwards. Microsoft calls these small-pieces-of-code [*middleware*][md-terms-middleware-asp-net], so let's use that term from now on.
+When an [actor][cat-actor] (a user or service) makes a request for some resource in your web project (such as a web view or through an [API][cat-api] endpoint), ASP.NET will channel that request through a "[chain of responsibility][design-pattern-chain-of-responsibility]". Each "responsibility" (a.k.a. "command") is a small piece of code that will be called to participate in managing the request. This small piece of code is provided with two items: The "request context" (a [`HttpContext`][http-context]) and a pointer to the next small piece of code to be called afterwards. Microsoft calls these small-pieces-of-code [*middleware*][cat-middleware-asp-net], so let's use that term from now on.
 
 > Please [go here][doc-webapp-overview-middleware] for a small example of what a simple Middleware can look like.
 
@@ -374,9 +374,9 @@ The SDK will parse the value to a `RuntimeEnvironment` (enum) value.
 
 After an actor is successfully authenticated his/her/its identity must be constructed. In its simplest form the identity can be just a "username" or UPN (Unique Principal Name) but often you also want details such as a users first and last name, email and so on. These details is generally called "claims" and the actor's identity (including its claims) are provided through your controller's `User` property (provided by the current [`HttpContext`][md-code-api-httpcontext]). The value you get back is an [`ClaimsPrincipal`][md-code-api-claimsprincipal] object.
 
-The SDK injects its own way for building this [`ClaimsPrincipal`][md-code-api-ClaimsPrincipal], however, through the [`TetraPakClaimsTransformation`][md-code-api-TetraPakClaimsTransformation] class. This class implements the (ASP.NET) [`IClaimsTransformation`](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.IClaimsTransformation?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0) contract and is automatically injected into the DI container by the methods you use for setting up authentication, such as [`IServiceCollection.AddTetraPakOidcAuthentication`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_Auth_TetraPakAuth.md#tetrapakauthaddtetrapakoidcauthenticationiservicecollection-method) (for web apps) or [`IServiceCollection.AddJwtAuthentication`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#tetrapakapiauthaddjwtauthenticationiservicecollection-jwbearerassertionoptions-method) (for web APIs).
+The SDK injects its own way for building this [`ClaimsPrincipal`][md-code-api-ClaimsPrincipal], however, through the [`TetraPakClaimsTransformation`][md-code-api-TetraPakClaimsTransformation] class. This class implements the (ASP.NET) [`IClaimsTransformation`](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.IClaimsTransformation?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0) contract and is automatically injected into the DI container by the methods you use for setting up authentication, such as [`IServiceCollection.AddTetraPakOidcAuthentication`](./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_Auth_TetraPakAuth.md#tetrapakauthaddtetrapakoidcauthenticationiservicecollection-method) (for web apps) or [`IServiceCollection.AddJwtAuthentication`](./TetraPak.AspNet.Api/_docs/_code/TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#tetrapakapiauthaddjwtauthenticationiservicecollection-jwbearerassertionoptions-method) (for web APIs).
 
-You *can* inject this Tetra Pak specific claims transformation explicitly by calling [`IServiceCollection.AddTetraPakClaimsTransformation`](./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#tetrapakclaimstransformationhelperaddtetrapakclaimstransformationiservicecollection-method) (for web apps) or [`IServiceCollection.AddTetraPakApiClaimsTransformation`](./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformationHelper.md#tetrapakapiclaimstransformationhelperaddtetrapakapiclaimstransformationiservicecollection-method) (for web APIs). The API-flavoured version overrides the default implementation for claims transformation to support the token exchange flow, which might be necessary when it interrogates the Tetra Pak Auth Services for user information (claims).
+You *can* inject this Tetra Pak specific claims transformation explicitly by calling [`IServiceCollection.AddTetraPakClaimsTransformation`](./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#tetrapakclaimstransformationhelperaddtetrapakclaimstransformationiservicecollection-method) (for web apps) or [`IServiceCollection.AddTetraPakApiClaimsTransformation`](./TetraPak.AspNet.Api/_docs/_code/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformationHelper.md#tetrapakapiclaimstransformationhelperaddtetrapakapiclaimstransformationiservicecollection-method) (for web APIs). The API-flavoured version overrides the default implementation for claims transformation to support the token exchange flow, which might be necessary when it interrogates the Tetra Pak Auth Services for user information (claims).
 
 ## Message id
 
@@ -405,13 +405,13 @@ The TetraPak.AspNet SDK have this
 [tetra-pak-aspnet-api-recipe]: ./TetraPak.AspNet.Api/recipe-webapi.md
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
 [doc-webapp-overview-middleware]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#middleware
-[md-code-api-tetrapakauthconfig]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakAuthConfig.md
+[md-code-api-tetrapakauthconfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfig.md
 [md-code-api-runtimeenvironment]: --TODO-- (link to TetraPak.Common GitHub documentation)
-[md-code-api-discoverydocument]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md
-[md-code-api-TetraPakClaimsTransformation]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakClaimsTransformation.md
-[md-code-api-tetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_codeApi/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformation.md
-[md-code-api-addtetrapakclaimstransformation]: ./TetraPak.AspNet/_docs/_codeApi/TetraPak_AspNet_TetraPakWebClientClaimsTransformationHelper.md#tetrapakwebclientclaimstransformationhelperaddtetrapakuserinformationiservicecollection-method
-[md-code-api-addtetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_codeApi/
+[md-code-api-discoverydocument]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md
+[md-code-api-TetraPakClaimsTransformation]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakClaimsTransformation.md
+[md-code-api-tetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_code/TetraPak_AspNet_Api_Auth_TetraPakApiClaimsTransformation.md
+[md-code-api-addtetrapakclaimstransformation]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakWebClientClaimsTransformationHelper.md#tetrapakwebclientclaimstransformationhelperaddtetrapakuserinformationiservicecollection-method
+[md-code-api-addtetrapakapiclaimstransformation]: ./TetraPak.AspNet.Api/_docs/_code/
 
 [md-code-api-httpcontext]: https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase.HttpContext?view=aspnetcore-5.0&viewFallbackFrom=netcore-5.0
 [md-code-api-ClaimsPrincipal]: https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
@@ -443,5 +443,6 @@ The TetraPak.AspNet SDK have this
 [di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
 [di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
 
-[md-terms-actor]: ./TermsAndConcepts.md#actor
-[md-terms-api]: ./TermsAndConcepts.md#api
+[cat-actor]: ./CAT.md#actor
+[cat-api]: ./CAT.md#api
+[cat-middleware-aspnet]: ./CAT.md#middleware-aspnet
