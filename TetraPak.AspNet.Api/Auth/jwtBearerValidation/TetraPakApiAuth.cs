@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Api.DevelopmentTools;
 using TetraPak.AspNet.Auth;
 using TetraPak.Caching;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -24,24 +27,33 @@ namespace TetraPak.AspNet.Api.Auth
         /// <param name="c">
         ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
         /// </param>
+        /// <param name="defaultScheme">
+        ///   (optional; default="Bearer")<br/>
+        ///   Specifies the default authentication scheme.  
+        /// </param>
         /// <param name="options">
         ///   Options governing how/what to validate JWT bearer tokens. 
         /// </param>
         /// <returns>
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
-        public static IServiceCollection AddTetraPakJwtBearerAssertion(
+        public static AuthenticationBuilder AddTetraPakJwtBearerAssertion(
             this IServiceCollection c,
-            JwBearerAssertionOptions options = null)
+            string? defaultScheme = null, 
+            JwBearerAssertionOptions? options = null)
         {
-            return c.AddTetraPakJwtBearerAssertion<SimpleCache>(options);
+            return c.AddTetraPakJwtBearerAssertion<SimpleCache>(defaultScheme, options);
         }
-
+        
         /// <summary>
         ///   Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.
         /// </summary>
         /// <param name="c">
         ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
+        /// </param>
+        /// <param name="defaultScheme">
+        ///   (optional; default="Bearer")<br/>
+        ///   Specifies the default authentication scheme.  
         /// </param>
         /// <param name="options">
         ///   Options governing how/what to validate JWT bearer tokens. 
@@ -53,11 +65,30 @@ namespace TetraPak.AspNet.Api.Auth
         ///   The <see cref="IServiceCollection"/> instance.
         /// </returns>
         /// <seealso cref="UseTetraPakApiAuthentication"/>
-        public static IServiceCollection AddTetraPakJwtBearerAssertion<TCache>(
+        public static AuthenticationBuilder AddTetraPakJwtBearerAssertion<TCache>(
             this IServiceCollection c,
-            JwBearerAssertionOptions options = null)
+            string? defaultScheme = null, 
+            JwBearerAssertionOptions? options = null)
         where TCache : class, ITimeLimitedRepositories
         {
+            defaultScheme ??= JwtBearerDefaults.AuthenticationScheme;
+            return c.AddAuthentication(defaultScheme)
+                    .AddTetraPakJwtBearerAssertion<TCache>(options);
+        }
+
+        public static AuthenticationBuilder AddTetraPakJwtBearerAssertion(
+            this AuthenticationBuilder a,
+            JwBearerAssertionOptions? options = null)
+        {
+            return a.AddTetraPakJwtBearerAssertion<SimpleCache>(options);
+        }
+
+        public static AuthenticationBuilder AddTetraPakJwtBearerAssertion<TCache>(
+            this AuthenticationBuilder a,
+            JwBearerAssertionOptions? options = null)
+            where TCache : class, ITimeLimitedRepositories
+        {
+            var c = a.Services;
             c.TryAddSingleton<HostProvider>();
             c.TryAddSingleton<TetraPakApiAuthConfig>();            
             c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
@@ -65,16 +96,13 @@ namespace TetraPak.AspNet.Api.Auth
             addCachingIfAllowed();
             
             c.AddTetraPakApiClaimsTransformation();
-            c.AddTetraPakUserInformation();
             
             c.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>(
                 p => new ConfigureJwtBearerOptions(p, 
                     p.GetRequiredService<HostProvider>(), 
                     p.GetRequiredService<IWebHostEnvironment>(),
                     options));
-            c.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null);
-            return c;
+            return a.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, _ => {});
             
             void addCachingIfAllowed()
             {
@@ -179,13 +207,10 @@ namespace TetraPak.AspNet.Api.Auth
             
             var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
             var proxyUrl = config.JwtBearerAssertion.DevProxy;
-            // if (config.IsMessageIdEnabled) obsolete
-            // {    
-            //     app.UseTetraPakMessageId();
-            // }
+            var mutedWhen = config.JwtBearerAssertion.DevProxyIsMutedWhen;
             if (!string.IsNullOrEmpty(proxyUrl))
             {
-                app.UseLocalDevProxy(env, proxyUrl);
+                app.UseLocalDevProxy(env, proxyUrl, mutedWhen);
             }
             app.Use((context, func) =>
             {

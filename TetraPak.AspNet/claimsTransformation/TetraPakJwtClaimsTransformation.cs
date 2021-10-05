@@ -6,13 +6,8 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
-using TetraPak.AspNet.Identity;
-using TetraPak.Caching;
 using TetraPak.Logging;
 
 #nullable enable
@@ -34,38 +29,10 @@ namespace TetraPak.AspNet
     ///   }
     ///   </code>
     /// </example>
-    public class TetraPakClaimsTransformation : ITetraPakClaimsTransformation
+    public class TetraPakJwtClaimsTransformation : TetraPakClaimsTransformation
     {
         static readonly AsyncLocal<OAuthTokenResponse> s_tokenResponse = new();
         static readonly IDictionary<string, string> s_claimsMap = makeClaimsMap();
-        
-        protected TetraPakUserInformation UserInformation { get; private set; }
-        
-        protected IClientCredentialsProvider? ClientCredentials { get; private set; }
-
-        public static ServiceScope DefaultServiceScope { get; set; } = ServiceScope.Scoped;
-
-        /// <summary>
-        ///   Gets the current HTTP context.
-        /// </summary>
-        public HttpContext? Context { get; internal set; }
-
-        /// <summary>
-        ///   Gets a logger provider.
-        /// </summary>
-        protected ILogger? Logger => TetraPakConfig.Logger;
-
-        /// <summary>
-        ///   Gets the Tetra Pak configuration object. 
-        /// </summary>
-        protected TetraPakAuthConfig TetraPakConfig { get; private set; }
-
-        /// <summary>
-        ///   Gets the configured identity source (see: <see cref="TetraPakIdentitySource"/>).
-        /// </summary>
-        protected TetraPakIdentitySource IdentitySource { get; set; }
-
-        ITimeLimitedRepositories? Cache => TetraPakConfig.Cache;
 
         internal static OAuthTokenResponse? TokenResponse
         {
@@ -73,23 +40,8 @@ namespace TetraPak.AspNet
             set => s_tokenResponse.Value = value!;
         }
 
-        internal virtual void OnInitialize(IServiceProvider provider)
-        {
-            Context = provider.GetService<IHttpContextAccessor>()?.HttpContext; 
-            TetraPakConfig = provider.GetRequiredService<TetraPakAuthConfig>();
-            IdentitySource = TetraPakConfig.IdentitySource; 
-            UserInformation = provider.GetRequiredService<TetraPakUserInformation>();
-            ClientCredentials = provider.GetService<IClientCredentialsProvider>();
-        }
-
         /// <inheritdoc />
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
-        {
-            var clone = principal.Clone();
-            return OnTransformAsync(clone);
-        }
-        
-        protected virtual async Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal)
+        protected override async Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal)
         {
             Logger.TraceAsync(TetraPakConfig);
             Outcome<CachedClaimsPrincipal> cachedOutcome;
@@ -125,7 +77,7 @@ namespace TetraPak.AspNet
             
                     default:
                         throw new NotSupportedException(
-                            $"Cannot transform claims principal from unsupported source: '{TetraPakConfig.IdentitySource}'");
+                            $"Cannot transform claims principal from unsupported source: '{TetraPakConfig!.IdentitySource}'");
                 }
             }
         
@@ -167,7 +119,7 @@ namespace TetraPak.AspNet
             async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
             {
                 Logger.Trace("Fetches identity from Tetra Pak User Information Service");
-                var userInfoOutcome = await UserInformation.GetUserInformationAsync(accessToken);
+                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken);
                 if (!userInfoOutcome)
                 {
                     Logger.Error(
@@ -232,7 +184,7 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Invoked from <see cref="TransformAsync"/> to acquire an access token.
+        ///   Can be invoked to acquire an access token from the <see cref="TetraPakClaimsTransformation.Context"/>.
         /// </summary>
         /// <param name="cancellationToken">
         ///   A <see cref="CancellationToken"/> object used to allow operation cancellation.
@@ -242,44 +194,7 @@ namespace TetraPak.AspNet
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         protected virtual async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken) 
-            => await TetraPakConfig.AmbientData.GetAccessTokenAsync();
-
-        /// <summary>
-        ///   Invoked from <see cref="TransformAsync"/> to acquire an identity token.
-        /// </summary>
-        /// <param name="cancellationToken">
-        ///   A <see cref="CancellationToken"/> object used to allow operation cancellation.
-        /// </param>
-        /// <returns>
-        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
-        /// </returns>
-        protected virtual async Task<Outcome<ActorToken>> OnGetIdTokenAsync(CancellationToken cancellationToken)
-            => await TetraPakConfig.AmbientData.GetIdTokenAsync();
-        
-        /// <summary>
-        ///   Obtains and returns the client credentials, either from the Tetra Pak integration configuration
-        ///   (<see cref="TetraPakAuthConfig"/> or from an injected delegate (<see cref="IClientCredentialsProvider"/>).
-        /// </summary>
-        /// <returns>
-        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        ///   a <see cref="Credentials"/> object or, on failure, an <see cref="Exception"/>.
-        /// </returns>
-        protected async Task<Outcome<Credentials>> GetClientCredentials()
-        {
-            if (ClientCredentials is { })
-                return await ClientCredentials.GetClientCredentialsAsync();
-
-            if (string.IsNullOrWhiteSpace(TetraPakConfig.ClientId))
-                return Outcome<Credentials>.Fail(
-                    new ConfigurationException("Could not obtain client id from configuration"));
-
-            return string.IsNullOrWhiteSpace(TetraPakConfig.ClientSecret)
-                ? Outcome<Credentials>.Fail(
-                    new ConfigurationException("Could not obtain client secret from configuration"))
-                : Outcome<Credentials>.Success(
-                    new Credentials(TetraPakConfig.ClientId, TetraPakConfig.ClientSecret));
-        }
+            => await TetraPakConfig!.AmbientData.GetAccessTokenAsync();
 
         static IDictionary<string,string> makeClaimsMap()
         {
@@ -292,24 +207,5 @@ namespace TetraPak.AspNet
 
             return dictionary;
         }
-
-        /// <summary>
-        ///   Initializes the <see cref="TetraPakClaimsTransformation"/> instance.
-        /// </summary>
-        /// <param name="authConfig">
-        ///   The Tetra Pak integration configuration.
-        /// </param>
-        /// <param name="userInformation">
-        ///   Used internally to obtain user information.
-        /// </param>
-        /// <param name="clientCredentials">
-        ///   (optional)<br/>
-        ///   Used internally to obtain client credentials.
-        /// </param>
-        public TetraPakClaimsTransformation()
-        {
-        }
     }
-    
-    public class 
 }

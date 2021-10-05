@@ -361,7 +361,7 @@ namespace TetraPak.AspNet.Auth
                         },
                         OnCreatingTicket = context =>
                         {
-                            TetraPakClaimsTransformation.TokenResponse = context.TokenResponse;
+                            TetraPakJwtClaimsTransformation.TokenResponse = context.TokenResponse;
                             traceOAuth(() => $"Ticket created: {context.TokenResponse.AccessToken}");
                             return Task.CompletedTask;
                         },

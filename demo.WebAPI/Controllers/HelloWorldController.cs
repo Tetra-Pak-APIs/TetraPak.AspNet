@@ -9,6 +9,7 @@ using TetraPak;
 using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
+using WebAPI.spike_customAuthScheme;
 
 #nullable enable
 
@@ -63,13 +64,24 @@ namespace WebAPI.Controllers
             return this.RespondAsync(Outcome<object>.Success(data));
         }
 
+        [Authorize(AuthenticationSchemes = AliBabaAuthentication.Scheme)]
+        [HttpGet, Route("thieves")]
+        public Task<ActionResult> GetTreasure()
+        {
+            var data = new { Message = $"Welcome, {User.Name()}, to the marry band of 40 thieves!" };
+            return this.RespondAsync(Outcome<object>.Success(data));
+        }
+
         /// <summary>
         ///   Initializes the controller.
         /// </summary>
+        /// <param name="tetraPakConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
         /// <param name="tokenExchangeService">
         ///   A token exchange service.
         ///   This service becomes available for dependency injection when you call
-        ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion"/> (see <see cref="Startup.ConfigureServices"/>).
+        ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection,string?,TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)"/> (see <see cref="Startup.ConfigureServices"/>).
         /// </param>
         public HelloWorldController(TetraPakAuthConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
         {
@@ -111,7 +123,7 @@ namespace WebAPI.Controllers
 
         }
 
-        async Task<Outcome<ActorToken>> getCachedAccessTokenAsync()
+        Task<Outcome<ActorToken>> getCachedAccessTokenAsync()
         {
             throw new NotImplementedException();
         }

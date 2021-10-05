@@ -10,7 +10,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// <summary>
     ///   Performs automatic claims transformation but ensures the access token used to
     ///   call the user information service gets exchanged (necessary for APIs).
-    ///   (See <see cref="TetraPakClaimsTransformation"/> for more details).
+    ///   (See <see cref="TetraPakJwtClaimsTransformation"/> for more details).
     /// </summary>
     /// <example>
     ///   <code>
@@ -22,7 +22,7 @@ namespace TetraPak.AspNet.Api.Auth
     ///   }
     ///   </code>
     /// </example> 
-    public class TetraPakApiClaimsTransformation : TetraPakClaimsTransformation
+    public class TetraPakJwtApiClaimsTransformation : TetraPakJwtClaimsTransformation
     {
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
@@ -107,7 +107,7 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         /// <summary>
-        ///   Initializes the <see cref="TetraPakApiClaimsTransformation"/> instance.
+        ///   Initializes the <see cref="TetraPakJwtApiClaimsTransformation"/> instance.
         /// </summary>
         /// <param name="authConfig">
         ///   The Tetra Pak integration configuration.
@@ -122,7 +122,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <param name="clientCredentials">
         ///   Used internally to obtain client credentials.
         /// </param>
-        public TetraPakApiClaimsTransformation() 
+        public TetraPakJwtApiClaimsTransformation() 
         {
         }
     }

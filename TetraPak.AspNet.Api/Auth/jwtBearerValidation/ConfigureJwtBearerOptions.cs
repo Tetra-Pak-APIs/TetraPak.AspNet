@@ -50,7 +50,7 @@ namespace TetraPak.AspNet.Api.Auth
             {
                 options.MetadataAddress = Config.DiscoveryDocumentUrl;
                 options.Authority = Config.AuthorityUrl;
-                if (options.Authority is null)
+                if (string.IsNullOrWhiteSpace(options.Authority))
                 {
                     const string DiagnosticsMessage =
                         "Failed to acquire an authority resource locator. Please investigate configuration and assert correct environment";

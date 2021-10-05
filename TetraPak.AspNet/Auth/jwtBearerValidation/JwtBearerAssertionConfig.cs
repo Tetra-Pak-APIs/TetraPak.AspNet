@@ -17,10 +17,20 @@ namespace TetraPak.AspNet.Auth
         string? _issuer;
         bool? _validateLifetime;
         string? _devProxy;
+        string? _authenticationScheme;
+        HttpComparison? _devProxyIsMutedWhen;
         // ReSharper restore NotAccessedField.Local
 
-        // public override string SectionIdentifier => "ValidateJwtBearer"; obsolete (changed)
-        
+        /// <summary>
+        ///   Gets or sets a (custom) name for the JWT bearer assertion scheme.
+        ///   If left unassigned the default will be "Bearer".
+        /// </summary>
+        public string? AuthenticationScheme
+        {
+            get => GetFromFieldThenSection<string>();
+            set => _authenticationScheme = value;
+        }
+
         /// <summary>
         ///   Gets or sets the default configuration section identifier
         ///   recognized by <see cref="JwtBearerAssertionConfig"/>.
@@ -74,6 +84,16 @@ namespace TetraPak.AspNet.Auth
                 return true;
             });
             set => _devProxy = value;
+        }
+        
+        /// <summary>
+        ///   Gets or sets a criteria that (when true) disables the DevProxy during the current
+        ///   request/response round trip. 
+        /// </summary>
+        public HttpComparison? DevProxyIsMutedWhen
+        {
+            get => GetFromFieldThenSection<string>();
+            set => _devProxyIsMutedWhen = value;
         }
 
         /// <summary>

@@ -48,7 +48,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.14" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="DefaultDocumentation" Version="0.7.7">
+      <PackageReference Include="DefaultDocumentation" Version="0.7.9">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

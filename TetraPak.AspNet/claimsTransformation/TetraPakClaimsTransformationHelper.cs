@@ -18,21 +18,41 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Sets up DI correctly for claims transformation.
         /// </summary>
-        public static void AddTetraPakClaimsTransformation(this IServiceCollection c)
+        public static IServiceCollection AddTetraPakClaimsTransformation(this IServiceCollection c)
         {
             try
             {
-                c.AddScoped<IClaimsTransformation,TetraPakClaimsTransformation>();
+                c.AddSingleton<IClaimsTransformation, TetraPakClaimsTransformationDispatcher>();
+                c.AddCustomClaimsTransformation<TetraPakJwtClaimsTransformation>();
+                // c.AddScoped<IDefaultClaimsTransformation, TetraPakClaimsTransformation>();
             }
             catch (Exception ex)
             {
                 var p = c.BuildServiceProvider();
-                var logger = p.GetService<ILogger<TetraPakClaimsTransformation>>();
-                logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakClaimsTransformation)}) with service collection");
+                var logger = p.GetService<ILogger<TetraPakJwtClaimsTransformation>>();
+                logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakJwtClaimsTransformation)}) with service collection");
             }
             c.AddHttpContextAccessor();
             c.AddAmbientData();
             c.TryAddSingleton<TetraPakAuthConfig>();
+            return c;
+        }
+
+        public static IServiceCollection AddCustomClaimsTransformation<T>(
+            this IServiceCollection c, 
+            ServiceScope? serviceScope = null)
+        where T : class, ITetraPakClaimsTransformation
+        {
+            TetraPakClaimsTransformationDispatcher.AddCustomClaimsTransformation<T>(c, serviceScope);
+            return c;
+        }
+
+        public static IServiceCollection AddCustomClaimsTransformation(
+            this IServiceCollection c,
+            ClaimsTransformationFactory factory)
+        {
+            TetraPakClaimsTransformationDispatcher.AddCustomClaimsTransformation(factory);
+            return c;
         }
 
         /// <summary>
@@ -43,17 +63,39 @@ namespace TetraPak.AspNet
             c.TryAddScoped<TetraPakUserInformation>();
         }
 
-        public static bool TryResolveIdClaim(this ClaimsPrincipal self, out string id, string[] fallbackClaimTypes)
+        public static bool TryResolveIdClaim(this ClaimsPrincipal self, out string id, params string[] fallbackClaimTypes)
         {
-            // if (self.Identity?.Name is { }) obsolete
-            // {
-            //     id = self.Identity.Name;
-            //     return true;
-            // }
-
+            var claim = self.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultNameClaimType);
+            if (claim is { })
+            {
+                id = claim.Value;
+                return true;
+            }
             foreach (var type in fallbackClaimTypes)
             {
-                var claim = self.Claims.FirstOrDefault(c => c.Type == type);
+                claim = self.Claims.FirstOrDefault(c => c.Type == type);
+                if (claim is null)
+                    continue;
+                
+                id = claim.Value;
+                return true;
+            }
+
+            id = null;
+            return false;
+        }
+
+        public static bool TryResolveIdClaim(this ClaimsIdentity self, out string id, params string[] fallbackClaimTypes)
+        {
+            var claim = self.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultNameClaimType);
+            if (claim is { })
+            {
+                id = claim.Value;
+                return true;
+            }
+            foreach (var type in fallbackClaimTypes)
+            {
+                claim = self.Claims.FirstOrDefault(c => c.Type == type);
                 if (claim is null)
                     continue;
                 
@@ -66,5 +108,15 @@ namespace TetraPak.AspNet
         }
 
     }
-    
+
+    public enum ServiceScope
+    {
+        Singleton,
+        
+        Scoped,
+        
+        Transient,
+        
+        Unspecified
+    }
 }

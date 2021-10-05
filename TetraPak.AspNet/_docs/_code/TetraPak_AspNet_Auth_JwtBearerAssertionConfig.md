@@ -40,6 +40,16 @@ public string? Audience { get; set; }
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
   
+<a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_AuthenticationScheme'></a>
+## JwtBearerAssertionConfig.AuthenticationScheme Property
+Gets or sets a (custom) name for the JWT bearer assertion scheme.  
+If left unassigned the default will be "Bearer".  
+```csharp
+public string? AuthenticationScheme { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
 <a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_DefaultSectionIdentifier'></a>
 ## JwtBearerAssertionConfig.DefaultSectionIdentifier Property
 Gets or sets the default configuration section identifier  

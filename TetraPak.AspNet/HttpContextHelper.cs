@@ -434,5 +434,35 @@ namespace TetraPak.AspNet
         ///   <c>true</c> if an endpoint is resolved and protected. 
         /// </returns>
         public static bool IsEndpointProtected(this HttpContext self) => self.GetEndpoint().IsAuthorizationRequired();
+
+        public static string? GetItemValue(this HttpRequest request, HttpRequestElement element, string key)
+            => element switch
+            {
+                HttpRequestElement.Header => request.Headers.ContainsKey(key) 
+                    ? request.Headers[key].ToString()
+                    : null,
+                HttpRequestElement.Query => request.Query.ContainsKey(key) 
+                    ? request.Query[key].ToString()
+                    : null,
+                _ => null
+            };
+        
+        
+        public static bool IsMatch(
+            this HttpRequest request,
+            HttpComparison criteria, 
+            StringComparison comparison = StringComparison.InvariantCulture)
+        {
+            return criteria.IsMatch(request, comparison);
+        }
+        
+        public static bool IsMatch(
+            this HttpComparison criteria, 
+            HttpRequest request, 
+            StringComparison comparison = StringComparison.InvariantCulture)
+        {
+            return criteria.IsMatch(request, comparison);
+        }
+
     }
 }

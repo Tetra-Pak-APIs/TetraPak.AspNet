@@ -48,7 +48,7 @@ public string AuthDomain { get; set; }
 ## TetraPakAuthConfig.AuthorityUrl Property
 Gets the resource locator for the authority.  
 ```csharp
-public string AuthorityUrl { get; }
+public string? AuthorityUrl { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

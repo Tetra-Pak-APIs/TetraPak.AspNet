@@ -26,6 +26,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         
         readonly string _url;
         readonly TetraPakAuthConfig _authConfig;
+        readonly HttpComparison? _isMutedWhenCriteria;
 
         ITimeLimitedRepositories? Cache => _authConfig.Cache;
         
@@ -35,6 +36,12 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         {
             const string TimerName = "dev-proxy";
 
+            if (isMuted(context.Request))
+            {
+                Logger.Debug($"Desktop DevProxy is muted by criteria: \"{_isMutedWhenCriteria}\"");
+                return true;
+            }
+                
             var messageId = context.Request.GetMessageId(_authConfig);
             if (!context.GetEndpoint().IsAuthorizationRequired())
             {
@@ -57,7 +64,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             var accessToken = tokenOutcome.Value!;
             if (accessToken.IsJwt)
             {
-                // access token is already a JWT; skip exchanging it ...
+                // access token is already a JWT; no need to get a new one ...
                 Logger.Debug("Local development proxy bails out. Token was already JWT token");
                 context.Request.Headers[_authConfig.AuthorizationHeader] = accessToken.ToString();
                 return true;
@@ -121,6 +128,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
  
             return true;
         }
+
+        bool isMuted(HttpRequest request) => _isMutedWhenCriteria?.IsMatch(request) ?? false;
 
         async Task<Outcome<ActorToken>> tryGetCachedJwt(Credentials accessToken)
         {
@@ -199,12 +208,13 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public DevProxyMiddleware(TetraPakAuthConfig authConfig, string url)
+        public DevProxyMiddleware(TetraPakAuthConfig authConfig, string url, HttpComparison? isMutedWhenCriteria)
         {
             _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;
+            _isMutedWhenCriteria = isMutedWhenCriteria;
             configureTokenCache();
         }
 

@@ -28,13 +28,16 @@ namespace TetraPak.AspNet.Api.Auth
             c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
             try
             {
-                c.AddScoped<IClaimsTransformation, TetraPakApiClaimsTransformation>();
+                c.AddTetraPakUserInformation();
+                c.AddSingleton<IClaimsTransformation, TetraPakClaimsTransformationDispatcher>();
+                c.AddCustomClaimsTransformation<TetraPakJwtClaimsTransformation>();
+                // c.AddScoped<IDefaultClaimsTransformation, TetraPakApiClaimsTransformation>(); obsolete
             }
             catch (Exception ex)
             {
                 var p = c.BuildServiceProvider();
-                var logger = p.GetService<ILogger<TetraPakApiClaimsTransformation>>();
-                logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakApiClaimsTransformation)}) with service collection");
+                var logger = p.GetService<ILogger<TetraPakJwtApiClaimsTransformation>>();
+                logger.Error(ex, $"Failed to register Tetra Pak API Claims Transformation ({typeof(TetraPakJwtApiClaimsTransformation)}) with service collection");
             }
             c.AddTetraPakTokenExchangeService();
             c.AddTetraPakUserInformation();

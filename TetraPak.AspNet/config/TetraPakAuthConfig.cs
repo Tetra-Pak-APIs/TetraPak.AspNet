@@ -43,14 +43,6 @@ namespace TetraPak.AspNet
         const string SourceKeyIdToken = "id_token";
         const string SourceKeyApi = "api";
 
-        // /// <inheritdoc />
-        // public override string SectionIdentifier => DefaultSectionIdentifier; obsolete
-        
-        // /// <summary>
-        // ///   The name of the value in configuration. 
-        // /// </summary>
-        // protected const string SectionJwtBearerValidationIdentifier = "ValidateJwtBearer";
-        
         // NOTE: These fields are referenced through reflection (see GetFromFieldThenSection method) 
         // ReSharper disable NotAccessedField.Local
         bool? _isMessageIdEnabled;
@@ -265,7 +257,7 @@ namespace TetraPak.AspNet
         ///   Gets the resource locator for the authority.
         /// </summary>
         [StateDump]
-        public string AuthorityUrl
+        public string? AuthorityUrl
         {
             get
             {

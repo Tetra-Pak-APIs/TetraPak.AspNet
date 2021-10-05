@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak;
 
-namespace WebAPI
+namespace WebAPI.spike_customAuthScheme
 {
     /// <summary>
     ///   This is just a silly "authentication" handler that ensures the expected "token" is
@@ -27,7 +27,7 @@ namespace WebAPI
 
             var encoded = Request.Headers[AuthHeader].ToString();
             var bac = BasicAuthCredentials.Parse(encoded);
-            if (encoded is null)
+            if (bac is null)
                 return Task.FromResult(AuthenticateResult.Fail("Invalid token"));
             
             if (bac.Secret != ExpectedSecret)
@@ -35,10 +35,10 @@ namespace WebAPI
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,  bac.Identity),
-                new Claim(ClaimTypes.Email, $"{bac.Identity}@allies.mil"),
+                new Claim(ClaimsIdentity.DefaultNameClaimType,  bac.Identity),
+                new Claim(ClaimTypes.Email, $"{bac.Identity}@thieves.org")
             };
-            var claimsIdentity = new ClaimsIdentity(claims, nameof(AliBabaAuthenticationHandler));
+            var claimsIdentity = new ClaimsIdentity(claims, AliBabaAuthentication.Scheme);
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }

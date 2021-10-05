@@ -61,8 +61,6 @@ public class MyController : ControllerBase
 }
 ```
 
-
-
 ## Getting the token
 
 Sometimes it is necessary for your code, in your Web App or Web API, to obtain the incoming access token or identity token. This can be easily done using the `GetAccessToken()` extension method, like in this example:
@@ -181,7 +179,7 @@ When you run your code locally, the code targets one of many possible runtime en
 - Staging
 - Development
 
-As you might have already seen, the ASP.NET configuration system supports a mechanism where you can deplpy different configuration depending on the targeted runtime environment. The `appsettings.json` file, found in your project root, is the "base" configuration, used for all runtime environments (including `Production`) but you can easiyly override or add additional configuration that will only be used when you target the `Development` runtime environment, by adding a second appsettings file: `appsettings.Development.json`. If you need to target more runtime environments you can do so by adding more launch profiles and `appsettings.{name of environment}.json` files as well.
+As you might have already seen, the ASP.NET configuration system supports a mechanism where you can deploy different configuration depending on the targeted runtime environment. The `appsettings.json` file, found in your project root, is the "base" configuration, used for all runtime environments (including `Production`) but you can easily override or add additional configuration that will only be used when you target the `Development` runtime environment, by adding a second appsettings file: `appsettings.Development.json`. If you need to target more runtime environments you can do so by adding more launch profiles and `appsettings.{name of environment}.json` files as well.
 
 The launch profiles are configured in the `launchSettings.json` file, found under the sub folder `Properties` in your project. Typically it looks something like this:
 
@@ -265,9 +263,9 @@ You can easily add more launch profiles, such as "`Migration`", by just adding a
 }
 ```
 
-For that to make sense you might also want the corresponding `appsettings.Staging.json` file, to add or ovwerride configuration to be used specifically for this runtime environment.
+For that to make sense you might also want the corresponding `appsettings.Staging.json` file, to add or override configuration to be used specifically for this runtime environment.
 
-Please note that the `launchSettings.json` file is ***only*** used when running your code locally. It will be ignored, for example, if you deploy the code to an Azure app service. The `appsettings` files, however, are honoured by that same app service. You control the targeted runtime environment by assigning the same environment variable (in Azure) but you do that using other tools tham the `launchSettings.json` file.
+Please note that the `launchSettings.json` file is ***only*** used when running your code locally. It will be ignored, for example, if you deploy the code to an Azure app service. The `appsettings` files, however, are honoured by that same app service. You control the targeted runtime environment by assigning the same environment variable (in Azure) but you do that using other tools than the `launchSettings.json` file.
 
 ## Debugging
 
@@ -275,7 +273,13 @@ Please note that the `launchSettings.json` file is ***only*** used when running 
 
 ## Getting state (for diagnostics)
 
--- TODO -- Extension method: `AmbientData.GetState`
+-- TODO -- 
+Extension method: `AmbientData.GetState`
+
+## Profiling
+
+-- TODO -- 
+Explain how to activate profiling and analyse the output. Also how to create custom profiling  
 
 [github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
 [nuget-tetrapak-app]: https://www.nuget.org/packages/TetraPak.AspNet
