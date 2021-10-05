@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using TetraPak.Caching;
 using TetraPak.Logging;
 
@@ -27,9 +26,9 @@ namespace TetraPak.AspNet.Api.Auth
     {
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
-        readonly ITokenExchangeService _tokenExchangeService;
+        protected ITokenExchangeService TokenExchangeService { get; private set; }
 
-        ITimeLimitedRepositories Cache => AuthConfig.Cache;
+        ITimeLimitedRepositories Cache => TetraPakConfig.Cache;
         
         /// <inheritdoc />
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
@@ -58,7 +57,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var subjectToken = isBearerToken
                     ? bearerToken.Value
                     : accessTokenOutcome.Value!.ToString();
-                var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(
+                var txOutcome = await TokenExchangeService.ExchangeAccessTokenAsync(
                     credentials, 
                     subjectToken, 
                     cancellationToken);
@@ -101,6 +100,12 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
+        internal override void OnInitialize(IServiceProvider provider)
+        {
+            base.OnInitialize(provider);
+            TokenExchangeService = provider.GetRequiredService<ITokenExchangeService>();
+        }
+
         /// <summary>
         ///   Initializes the <see cref="TetraPakApiClaimsTransformation"/> instance.
         /// </summary>
@@ -114,17 +119,11 @@ namespace TetraPak.AspNet.Api.Auth
         ///   User internally to support the token exchange auth flow,
         ///   which is necessary when consuming user information from the Tetra Pak Auth Services. 
         /// </param>
-        /// <param name="clientCredentialsProvider">
+        /// <param name="clientCredentials">
         ///   Used internally to obtain client credentials.
         /// </param>
-        public TetraPakApiClaimsTransformation(
-            TetraPakAuthConfig authConfig,
-            TetraPakUserInformation userInformation, 
-            ITokenExchangeService tokenExchangeService,
-            IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(authConfig, userInformation, clientCredentialsProvider)
+        public TetraPakApiClaimsTransformation() 
         {
-            _tokenExchangeService = tokenExchangeService;
         }
     }
 }
