@@ -22,7 +22,6 @@ namespace TetraPak.AspNet.Api
     {
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
         readonly IHttpContextAccessor _httpContextAccessor;
-        // readonly AmbientData _ambientData; obsolete
         readonly HttpClientOptions _singletonClientOptions;
         HttpClient _singletonClient;
         readonly TetraPakAuthConfig _authConfig;
@@ -280,16 +279,23 @@ namespace TetraPak.AspNet.Api
             IClientCredentialsService clientCredentialsService,
             IHttpContextAccessor httpContextAccessor,
             TetraPakAuthConfig authConfig,
-            // AmbientData ambientData, obsolete
             Func<HttpClientOptions,HttpClient> singletonClientFactory = null, 
             HttpClientOptions singletonClientOptions = null)
         {
             TokenExchangeService = tokenExchangeService ?? throw new ArgumentNullException(nameof(tokenExchangeService));
             ClientCredentialsService = clientCredentialsService;
             _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
-            _singletonClientFactory = singletonClientFactory ?? (_ => new HttpClient());
+            _singletonClientFactory = singletonClientFactory ?? (_ => new SingletonHttpClient());
             _httpContextAccessor = httpContextAccessor;
             _singletonClientOptions = singletonClientOptions;
+        }
+    }
+
+    public class SingletonHttpClient : HttpClient
+    {
+        protected override void Dispose(bool disposing)
+        {
+            // ignore disposing
         }
     }
 

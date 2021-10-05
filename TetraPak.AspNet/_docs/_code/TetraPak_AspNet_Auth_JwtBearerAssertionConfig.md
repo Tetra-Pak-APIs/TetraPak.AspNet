@@ -70,6 +70,16 @@ public string? DevProxy { get; set; }
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
   
+<a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_DevProxyIsMutedWhen'></a>
+## JwtBearerAssertionConfig.DevProxyIsMutedWhen Property
+Gets or sets a criteria that (when true) disables the DevProxy during the current  
+request/response round trip.   
+```csharp
+public TetraPak.AspNet.HttpComparison? DevProxyIsMutedWhen { get; set; }
+```
+#### Property Value
+[HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')
+  
 <a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_Issuer'></a>
 ## JwtBearerAssertionConfig.Issuer Property
 Gets or sets the required JWT issuer ("iss").  

@@ -9,3 +9,11 @@ riderModule.iml
 
 /.vs
 .idea/.idea.TetraPak.AspNet/.idea/workspace.xml
+
+polaris.exe
+
+.polaris-coverity.zip
+
+.synopsys/
+
+polaris.yml

@@ -551,21 +551,6 @@ Enables operation cancellation.
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   
-<a name='TetraPak_AspNet_TetraPakAuthConfig_OnGetField(string)'></a>
-## TetraPakAuthConfig.OnGetField(string) Method
-Obtains a [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo') object for a specified field.  
-```csharp
-protected override System.Reflection.FieldInfo? OnGetField(string fieldName);
-```
-#### Parameters
-<a name='TetraPak_AspNet_TetraPakAuthConfig_OnGetField(string)_fieldName'></a>
-`fieldName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-Identifies the requested field.  
-  
-#### Returns
-[System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo')  
-A [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo') object.  
-  
 <a name='TetraPak_AspNet_TetraPakAuthConfig_OnGetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_)'></a>
 ## TetraPakAuthConfig.OnGetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;) Method
 Gets a auth scope.  

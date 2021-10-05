@@ -12,12 +12,14 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ## TetraPakClaimsTransformationHelper.AddTetraPakClaimsTransformation(IServiceCollection) Method
 Sets up DI correctly for claims transformation.  
 ```csharp
-public static void AddTetraPakClaimsTransformation(this Microsoft.Extensions.DependencyInjection.IServiceCollection c);
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakClaimsTransformation(this Microsoft.Extensions.DependencyInjection.IServiceCollection c);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_AddTetraPakClaimsTransformation(Microsoft_Extensions_DependencyInjection_IServiceCollection)_c'></a>
 `c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
   
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
   
 <a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_AddTetraPakUserInformation(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
 ## TetraPakClaimsTransformationHelper.AddTetraPakUserInformation(IServiceCollection) Method
