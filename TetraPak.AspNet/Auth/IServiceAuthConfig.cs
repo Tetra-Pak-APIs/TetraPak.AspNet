@@ -94,5 +94,23 @@ namespace TetraPak.AspNet.Auth
         ///   Gets a declaring configuration (when this configuration is a sub configuration).
         /// </summary>
         IServiceAuthConfig? ParentConfig { get; }
+                
+        /// <summary>
+        ///   Examines a string and returns a value to indicate whether the value identifies
+        ///   an attribute used for auth configuration. This is to ensure there is no risk of confusing
+        ///   services or endpoints with such attributes. 
+        /// </summary>
+        /// <param name="identifier">
+        ///   The identifier being examined.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if <paramref name="identifier"/> matches an auth configuration attribute; otherwise <c>false</c>. 
+        /// </returns>
+        /// <remarks>
+        ///   Examples of auth identifiers: "<c>ConfigPath</c>", "<c>GrantType</c>",
+        ///   "<c>ClientId</c>", "<c>ClientSecret</c>", "<c>Scope</c>".
+        /// </remarks>
+        bool IsAuthIdentifier(string identifier);
+        
     }
 }

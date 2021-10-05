@@ -2,25 +2,44 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TetraPak;
-using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
-using TetraPak.AspNet.Auth;
+using WebAPI.services;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
-    ///   This is an example of a typed Business API  Gateway controller.
-    ///   It derives from a generic api gateway controller supporting a
-    ///   custom endpoints class (<see cref="HelloWorldEndpointCollection"/>),
-    ///   allowing for type-safe use of those endpoints and intellisense support when consuming the endpoints. 
+    ///   <para>
+    ///   This example shows how a controller can consume configured and typed backend services,
+    ///   allowing for type-safety, intellisense support and a very convenient approach that will
+    ///   have you focus on writing business logic and way less on boilerplate code such as getting your client
+    ///   authorized for backend service consumption.
+    ///   </para>
+    ///   <para>
+    ///   The typed service gets its configuration from the <see cref="IConfiguration"/> framework (appsettings.json),
+    ///   via the sub section <see cref="ServiceAuthConfig.ServicesConfigName"/>.
+    ///   </para>
+    ///   <para>
+    ///   <a href="https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/blob/master/TetraPak.AspNet.Api/README.md#backend-services">
+    ///   Read more here!
+    ///   </a>
+    ///   </para>
+    ///   <para>
+    ///   <i><b>CAUTION!</b><br/>
+    ///   This demo constitutes experimental code APIs that are not yet part of the official SDK.
+    ///   Feel free to try it out and get back to us with feedback<br/>
+    ///   - The API innovation team 2021-09-07</i>  
+    ///   </para> 
     /// </summary>
     [ApiController]
     [Route("TypedHelloWorld")]
     [Authorize]
     public class TypedHelloWorldController : ControllerBase 
     {
+        readonly HelloWorldService _helloWorldService;
+
         [HttpGet]
         public async Task<ActionResult> Get(string svc = null)
         {
@@ -29,7 +48,7 @@ namespace WebAPI.Controllers
             if (string.IsNullOrEmpty(svc))
                 return Ok(new 
                 { 
-                    message = $"Hello {User?.FirstName() ?? "stranger"}!", 
+                    message = "Hello World!", 
                     remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+
                               "credentials, consuming a downstream service",
                     userId = userIdentity?.Name ?? "(unresolved)" 
@@ -41,40 +60,23 @@ namespace WebAPI.Controllers
                     if (!await this.GetAccessTokenAsync())
                         return this.UnauthorizedError(
                             new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
-                        
+
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await this.RespondAsync(await this.Service<HelloWorldService>().Endpoints.HelloWorldWithTokenExchange.GetAsync());
+                    return await this.RespondAsync(await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"].GetAsync());
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
-                    return await this.RespondAsync(await this.Service<HelloWorldService>().Endpoints.HelloWorldWithClientCredentials.GetAsync());
+                    return await this.RespondAsync(await _helloWorldService.Endpoints.HelloWorldWithClientCredentials.GetAsync());
                 
                 default:
                     return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
         }
-    }
-    
-    public class HelloWorldApiController : ApiGatewayController<HelloWorldService>
-    {}
-    
-    public class HelloWorldService : BackendService<HelloWorldService.HelloWorldEndpoints>
-    {
-        public HelloWorldService(HelloWorldEndpoints endpointCollection, IHttpServiceProvider httpServiceProvider) 
-        : base(endpointCollection, httpServiceProvider)
+
+        // ReSharper disable once UnusedParameter.Local
+        public TypedHelloWorldController(HelloWorldService helloWorldService) // <-- just inject the typed backend service
         {
-        }
-        
-        public class HelloWorldEndpoints : ServiceEndpointCollection
-        {
-            public ServiceEndpoint HelloWorldWithTokenExchange => GetEndpoint();
-            
-            public ServiceEndpoint HelloWorldWithClientCredentials => GetEndpoint();
-            
-            public HelloWorldEndpoints(IServiceAuthConfig serviceAuthConfig, string sectionIdentifier = "Endpoints") 
-            : base(serviceAuthConfig, sectionIdentifier)
-            {
-            }
+            _helloWorldService = helloWorldService;
         }
     }
 }

@@ -74,8 +74,8 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<br/>
-        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
@@ -110,8 +110,8 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<br/>
-        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
         /// </param>
         /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
         /// <returns>
@@ -148,8 +148,8 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<br/>
-        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
@@ -184,8 +184,8 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="CancellationToken"/>.
         /// </param>
         /// <param name="messageId">
-        ///   (optional)<br/>
-        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        ///   (optional)<bt/>
+        ///   A unique string value to be used for referencing/diagnostics purposes.
         /// </param>
         /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
         /// <returns>

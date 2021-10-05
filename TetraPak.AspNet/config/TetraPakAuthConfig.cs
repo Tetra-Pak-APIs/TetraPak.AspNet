@@ -70,7 +70,7 @@ namespace TetraPak.AspNet
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
         readonly IServiceProvider _serviceProvider;
 
-        // ReSharper disable UnusedMember.Global
+        protected IServiceProvider ServiceProvider => _serviceProvider;
         
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
@@ -98,6 +98,21 @@ namespace TetraPak.AspNet
 
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
+        
+        public static bool CheckIsAuthIdentifier(string identifier)
+        {
+            return identifier switch
+            {
+                nameof(ConfigPath) => true,
+                nameof(GrantType) => true,
+                nameof(ClientId) => true,
+                nameof(ClientSecret) => true,
+                nameof(Scope) => true,
+                _ => false
+            };
+        }
+
+        public bool IsAuthIdentifier(string identifier) => CheckIsAuthIdentifier(identifier);
         
         /// <inheritdoc />
         protected override FieldInfo? OnGetField(string fieldName)
@@ -837,6 +852,18 @@ namespace TetraPak.AspNet
             }
 
             return new MultiStringValue(scope.ToArray());
+        }
+        
+        protected virtual void OnSetProperty(PropertyInfo property, object value) 
+        {
+            if (property.PropertyType == typeof(string))
+            {
+                property.SetValue(this, value);
+                return;
+            }
+            
+            var obj = Convert.ChangeType(value, property.PropertyType);
+            property.SetValue(this, obj);
         }
         
         /// <summary>

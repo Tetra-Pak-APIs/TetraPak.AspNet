@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   Gets a unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </summary>
         // ReSharper disable once MemberCanBePrivate.Global
-        public static string GetMessageId(this ControllerBase self)
+        public static string? GetMessageId(this ControllerBase self)
         {
             if (self is BusinessApiController apiController)
                 return apiController.MessageId;
@@ -383,7 +383,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   <para>
         ///   Use this method to obtain a backend service with its own custom implementation
-        ///   of the <see cref="ServiceEndpointCollection"/> interface.
+        ///   of the <see cref="ServiceEndpoints"/> interface.
         ///   </para>
         ///   <para>
         ///   When the <paramref name="serviceName"/> is omitted it will instead be resolved from naming convention,
@@ -396,9 +396,9 @@ namespace TetraPak.AspNet.Api.Controllers
             string? serviceName = null) 
             where TBackendService : IBackendService
         {
-            var outcome = TetraPakServiceFactory.GetService<TBackendService>(self, serviceName);
+            var outcome = self.GetService<TBackendService>(serviceName);
             if (outcome)
-                return outcome.Value;
+                return outcome.Value!;
             
             if (string.IsNullOrEmpty(serviceName))
                 throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
@@ -408,53 +408,53 @@ namespace TetraPak.AspNet.Api.Controllers
                 $"for controller {self} ");
         }
 
-        /// <summary>
-        ///   Gets a backend service with (custom) endpoints.
-        /// </summary>
-        /// <param name="self">
-        ///   The extended <see cref="ControllerBase"/> object.
-        /// </param>
-        /// <param name="serviceName">
-        ///   (optional; default=[see remarks])<br/>
-        ///   Identifies the service. 
-        /// </param>
-        /// <typeparam name="TEndpoints">
-        ///   The service endpoints <see cref="Type"/> (must derive from <see cref="ServiceEndpointCollection"/>).
-        /// </typeparam>
-        /// <returns>
-        ///   A <see cref="BackendService{TEndpoints}"/> object.
-        /// </returns>
-        /// <exception cref="ConfigurationException">
-        ///   The backend service could not be resolved.
-        ///   Please ensure you haven't misspelled it in service configuration. 
-        /// </exception>
-        /// <remarks>
-        ///   <para>
-        ///   Use this method to obtain a backend service that implements an endpoints collection of specified type
-        ///   (derived from <see cref="ServiceEndpointCollection"/>).
-        ///   </para>
-        ///   <para>
-        ///   When the <paramref name="serviceName"/> is omitted it will instead be resolved from naming convention,
-        ///   based on the controller's type. As an example; calling this method from a controller of type
-        ///   <c>WeatherServiceController</c> will assume the requested backend service name is "WeatherService".   
-        ///   </para>
-        /// </remarks>
-        public static BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(
-            this ControllerBase self, 
-            string? serviceName = null) 
-            where TEndpoints : ServiceEndpointCollection
-        {
-            var outcome = TetraPakServiceFactory.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
-            if (outcome)
-                return (BackendService<TEndpoints>) outcome.Value;
-
-            if (string.IsNullOrEmpty(serviceName))
-                throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
-            
-            throw new ConfigurationException(
-                "Could not resolve a backend service with endpoints "+
-                $"of type {typeof(TEndpoints)} for controller {self} ");
-        }
+        // /// <summary> obsolete
+        // ///   Gets a backend service with (custom) endpoints.
+        // /// </summary>
+        // /// <param name="self">
+        // ///   The extended <see cref="ControllerBase"/> object.
+        // /// </param>
+        // /// <param name="serviceName">
+        // ///   (optional; default=[see remarks])<br/>
+        // ///   Identifies the service. 
+        // /// </param>
+        // /// <typeparam name="TEndpoints">
+        // ///   The service endpoints <see cref="Type"/> (must derive from <see cref="ServiceEndpointCollection"/>).
+        // /// </typeparam>
+        // /// <returns>
+        // ///   A <see cref="BackendService{TEndpoints}"/> object.
+        // /// </returns>
+        // /// <exception cref="ConfigurationException">
+        // ///   The backend service could not be resolved.
+        // ///   Please ensure you haven't misspelled it in service configuration. 
+        // /// </exception>
+        // /// <remarks>
+        // ///   <para>
+        // ///   Use this method to obtain a backend service that implements an endpoints collection of specified type
+        // ///   (derived from <see cref="ServiceEndpointCollection"/>).
+        // ///   </para>
+        // ///   <para>
+        // ///   When the <paramref name="serviceName"/> is omitted it will instead be resolved from naming convention,
+        // ///   based on the controller's type. As an example; calling this method from a controller of type
+        // ///   <c>WeatherServiceController</c> will assume the requested backend service name is "WeatherService".   
+        // ///   </para>
+        // /// </remarks>
+        // public static BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(
+        //     this ControllerBase self, 
+        //     string? serviceName = null) 
+        //     where TEndpoints : ServiceEndpointCollection
+        // {
+        //     var outcome = TetraPakServiceFactory.GetServiceWithEndpoints<TEndpoints>(self, serviceName);
+        //     if (outcome)
+        //         return (BackendService<TEndpoints>) outcome.Value;
+        //
+        //     if (string.IsNullOrEmpty(serviceName))
+        //         throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
+        //     
+        //     throw new ConfigurationException(
+        //         "Could not resolve a backend service with endpoints "+
+        //         $"of type {typeof(TEndpoints)} for controller {self} ");
+        // }
 
         /// <summary>
         ///   Gets a backend service.
@@ -480,9 +480,10 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static IBackendService Service(this ControllerBase self, string? serviceName = null)
         {
-            var outcome = TetraPakServiceFactory.GetService(self, serviceName);
+            if (string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentNullException(nameof(serviceName));
+            var outcome = TetraPakServiceHelper.GetService(self, serviceName);
             if (outcome)
-                return outcome.Value;
+                return outcome.Value!;
 
             if (string.IsNullOrEmpty(serviceName))
                 throw new ConfigurationException($"Could not resolve a backend service for controller {self}");

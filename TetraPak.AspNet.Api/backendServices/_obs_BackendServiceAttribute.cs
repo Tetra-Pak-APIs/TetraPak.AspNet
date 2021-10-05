@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace TetraPak.AspNet.Api
-{
+namespace TetraPak.AspNet.Api 
+{ 
     [AttributeUsage(AttributeTargets.Class)]
     public class BackendServiceAttribute : Attribute
     {

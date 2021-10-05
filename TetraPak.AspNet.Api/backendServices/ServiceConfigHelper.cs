@@ -12,15 +12,9 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
-    /// <summary>
-    ///   Convenient helper methods for working with the configuration of backend services.   
-    /// </summary>
     public static class ServiceConfigHelper
     {
-        // public static Uri GetUri(this ServiceEndpoints self, string path)  obsolete
-        //     => new Uri($"{self.Host}{self.BasePath}{path}");
-        
-        internal static void SetBackendService(this ServiceEndpointCollection self, IBackendService backendService)
+        internal static void SetBackendService(this ServiceEndpoints self, IBackendService backendService)
         {
             self.BackendService = backendService;
             foreach (var (_, endpoint)  in self)
