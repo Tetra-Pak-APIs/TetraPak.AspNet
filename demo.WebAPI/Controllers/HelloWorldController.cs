@@ -9,6 +9,7 @@ using TetraPak;
 using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
+using WebAPI.Models;
 using WebAPI.spike_customAuthScheme;
 
 #nullable enable
@@ -78,7 +79,14 @@ namespace WebAPI.Controllers
         {
             var data = new { Message = $"Welcome, {User.Name()}, to the AAD endpoint!" };
             return this.RespondAsync(Outcome<object>.Success(data));
-        } 
+        }
+
+        [HttpPost, Route("messages")]
+        public Task<ActionResult> PostMessage([FromBody] MessageModel model)
+        {
+            var data = new { Message = $"{User.Name()} says '{model.Message ?? "?"}'" };
+            return this.RespondAsync(Outcome<object>.Success(data));
+        }
 
         /// <summary>
         ///   Initializes the controller.

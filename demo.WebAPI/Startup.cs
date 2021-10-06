@@ -84,6 +84,11 @@ namespace WebAPI
             app.UseAuthorization();
 
             app.UseEndpoints(builder => { builder.MapControllers(); });
+
+            app.UseCors(builder => 
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod());
             
             var logScope = app.ApplicationServices.CreateScope();
             var logger = logScope.ServiceProvider.GetService<ILogger<Startup>>();

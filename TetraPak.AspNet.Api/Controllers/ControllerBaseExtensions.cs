@@ -100,7 +100,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 totalCount,
                 messageId));
         }
-        
+
         /// <summary>
         ///   Constructs and returns a response from an <see cref="Outcome{T}"/> object (see remarks). 
         /// </summary>

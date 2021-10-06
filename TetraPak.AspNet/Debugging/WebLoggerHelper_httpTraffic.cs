@@ -30,7 +30,7 @@ namespace TetraPak.AspNet.Debugging
         /// </param>
         public static void TraceAsync(this ILogger? logger, HttpWebRequest request, Func<string>? bodyHandler = null)
         {
-            if (logger is null || !logger.IsEnabled(LogLevel.Debug))
+            if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
             
             var sb = new StringBuilder();
@@ -58,6 +58,7 @@ namespace TetraPak.AspNet.Debugging
                     using var stream = request.GetRequestStream();
                     using var reader = new StreamReader(stream);
                     var bodyText = reader.ReadToEnd();
+                    stream.Seek(0, SeekOrigin.Begin);
                     sb.AppendLine();
                     sb.AppendLine(bodyText);
                 }
@@ -80,7 +81,7 @@ namespace TetraPak.AspNet.Debugging
         /// </param>
         public static async Task TraceAsync(this ILogger? logger, HttpRequest request, Func<string>? bodyHandler = null)
         {
-            if (logger is null)
+            if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
             
             var sb = new StringBuilder();
@@ -100,8 +101,7 @@ namespace TetraPak.AspNet.Debugging
                     return;
                 }
 
-                using var reader = new StreamReader(request.Body);
-                var bodyText = await reader.ReadToEndAsync();
+                var bodyText = await request.GetRawBodyStringAsync(Encoding.Default);
                 if (string.IsNullOrEmpty(bodyText))
                     return;
                 
@@ -109,6 +109,35 @@ namespace TetraPak.AspNet.Debugging
                 sb.AppendLine(bodyText);
             }
         }
+        
+        /// <summary>
+        ///   Retrieves the <see cref="HttpRequest"/> body as a <see cref="string"/>.  
+        /// </summary>
+        /// <param name="request">
+        ///   The extended <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="encoding">
+        ///   The character encoding to use. 
+        /// </param>
+        /// <returns>
+        ///   The (raw) textual representation of the request body as a <see cref="string"/>. 
+        /// </returns>
+        public static async Task<string> GetRawBodyStringAsync(this HttpRequest request, Encoding encoding)
+        {
+            var body = "";
+            request.EnableBuffering();
+            if (request.ContentLength is not > 0 || !request.Body.CanSeek) 
+                return body;
+            
+            request.Body.Seek(0, SeekOrigin.Begin);
+            using (var reader = new StreamReader(request.Body, encoding, true, 1024, true))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+            request.Body.Position = 0;
+            return body;
+        }
+
 
         /// <summary>
         ///   Traces a <see cref="HttpResponse"/> in the logs.
@@ -280,8 +309,11 @@ namespace TetraPak.AspNet.Debugging
         
         static void addHeaders(StringBuilder sb, NameValueCollection headers)
         {
-            foreach (string header in headers)
+            foreach (string? header in headers)
             {
+                if (header is null)
+                    continue;
+                
                 var value = headers[header];
                 if (value is null)
                 {
