@@ -68,10 +68,12 @@ namespace TetraPak.AspNet
         int? _refreshThresholdSeconds;
         static  DiscoveryDocument? s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
-        readonly IServiceProvider _serviceProvider;
 
-        protected IServiceProvider ServiceProvider => _serviceProvider;
-        
+        /// <summary>
+        ///   Gets a (DI) service locator.
+        /// </summary>
+        protected IServiceProvider ServiceProvider { get; }
+
         /// <summary>
         ///   Gets configuration for how to validate JWT tokens.  
         /// </summary>
@@ -90,11 +92,11 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets a time limited repository to be used for caching (if available).
         /// </summary>
-        public ITimeLimitedRepositories? Cache => _serviceProvider.GetService<ITimeLimitedRepositories>();
+        public ITimeLimitedRepositories? Cache => ServiceProvider.GetService<ITimeLimitedRepositories>();
 
         /// <inheritdoc />
         [JsonIgnore]
-        public AmbientData AmbientData => _serviceProvider.GetRequiredService<AmbientData>();
+        public AmbientData AmbientData => ServiceProvider.GetRequiredService<AmbientData>();
 
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
@@ -879,16 +881,16 @@ namespace TetraPak.AspNet
             DefaultSectionIdentifier)
         {
             SectionIdentifier = DefaultSectionIdentifier;
-            _serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
             Configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            ConfigDelegate = _serviceProvider.GetService<ITetraPakAuthConfigDelegate>();
+            ConfigDelegate = ServiceProvider.GetService<ITetraPakAuthConfigDelegate>();
             if (ConfigDelegate is TetraPakAuthConfigDelegate tetraPakAuthConfigDelegate)
             {
                 tetraPakAuthConfigDelegate.WithTetraPakConfig(this);
             }
             else
             {
-                var secretsProvider = _serviceProvider.GetService<ITetraPakSecretsProvider>();
+                var secretsProvider = ServiceProvider.GetService<ITetraPakSecretsProvider>();
                 ConfigDelegate = new TetraPakAuthConfigDelegate(secretsProvider).WithTetraPakConfig(this);
             }
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor

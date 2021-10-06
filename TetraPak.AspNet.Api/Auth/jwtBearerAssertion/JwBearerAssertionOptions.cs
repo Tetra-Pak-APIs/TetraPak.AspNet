@@ -13,7 +13,9 @@
         /// <summary>
         ///   Initializes the <see cref="JwBearerAssertionOptions"/>.
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="config">
+        ///   Initializes <see cref="Config"/>.
+        /// </param>
         public JwBearerAssertionOptions(TetraPakApiAuthConfig config)
         {
             Config = config;

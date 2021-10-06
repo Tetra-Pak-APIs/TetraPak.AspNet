@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
                 return this.InternalServerError(new ConfigurationException("Service is incorrectly configured"));
 
             var apiAccessToken = txOutcome.Value!.AccessToken;
-            var client = new HttpClient();
+            using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiAccessToken);
             var response = await client.GetAsync("https://api-dev.tetrapak.com/samples/helloworld", ct);
             return await this.RespondAsync(await response.ToOutcomeAsync()); 
@@ -66,11 +66,19 @@ namespace WebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = AliBabaAuthentication.Scheme)]
         [HttpGet, Route("thieves")]
-        public Task<ActionResult> GetTreasure()
+        public Task<ActionResult> GetThieves()
         {
             var data = new { Message = $"Welcome, {User.Name()}, to the marry band of 40 thieves!" };
             return this.RespondAsync(Outcome<object>.Success(data));
         }
+        
+        [Authorize(AuthenticationSchemes = "obsolete")]
+        [HttpGet, Route("aad")]
+        public Task<ActionResult> GetAad()
+        {
+            var data = new { Message = $"Welcome, {User.Name()}, to the AAD endpoint!" };
+            return this.RespondAsync(Outcome<object>.Success(data));
+        } 
 
         /// <summary>
         ///   Initializes the controller.

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,35 +84,31 @@ namespace TetraPak.AspNet
 
             ClaimsPrincipal mapFromIdToken(ActorToken token)
             {
-                var clone = principal.Clone();
-                foreach (var identity in clone.Identities)
+                // var clone = principal.Clone(); obsolete 
+                foreach (var identity in principal.Identities)
                 {
                     var jwtHandler = new JwtSecurityTokenHandler(); 
                     if (!jwtHandler.CanReadToken(token.Identity))
-                        return clone;
+                        return principal;
                         
                     if (identity is not { AuthenticationType: AuthenticationTypes.Federation } claimsIdentity)
-                        return clone;
+                        return principal;
                     
                 
                     var jwt = jwtHandler.ReadJwtToken(token.Identity);
-                    var claimsDictionary = new Dictionary<string, string>(jwt.Claims.Select(
-                        claim => new KeyValuePair<string, string>(claim.Type, claim.Value)));
-
-                    var mappedClaims = claimsDictionary.MapTo(pair =>
+                    var mappedClaims = new List<Claim>();
+                    foreach (var claim in jwt.Claims)
                     {
-                        var (key, value) = pair;
-                        var claimValue = value ?? string.Empty;
-                        return !s_claimsMap.TryGetValue(key, out var toKey)
-                            ? new Claim(key, claimValue)
-                            : new Claim(toKey, claimValue);
-                    });
-                
+                        mappedClaims.Add(s_claimsMap.TryGetValue(claim.Type, out var toType)
+                            ? new Claim(toType, claim.Value)
+                            : new Claim(claim.Type, claim.Value));
+                    }
+                    
                     claimsIdentity.BootstrapContext = token;
                     claimsIdentity.AddClaims(mappedClaims);
                     claimsIdentity.AddClaim(new Claim(claimsIdentity.NameClaimType, jwt.Subject));
                 }
-                return clone;
+                return principal;
             }
             
             async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
@@ -128,9 +123,9 @@ namespace TetraPak.AspNet
                     return principal;
                 }
 
-                var clone = principal.Clone();
-                if (clone.Identity is not ClaimsIdentity identity)
-                    return clone;
+                // var clone = principal.Clone(); obsolete
+                if (principal.Identity is not ClaimsIdentity identity)
+                    return principal;
 
                 identity.BootstrapContext = "(api)";
                 var claims = userInfoOutcome.Value!.ToDictionary().MapTo(pair =>
@@ -142,7 +137,7 @@ namespace TetraPak.AspNet
                         : new Claim(toKey, claimValue);
                 });
                 identity.AddClaims(claims);
-                return await cachePrincipalAsync(cachedOutcome.Value, clone);
+                return await cachePrincipalAsync(cachedOutcome.Value, principal);
             }
         }
 

@@ -69,7 +69,7 @@ namespace TetraPak.AspNet.Api.Auth
             this IServiceCollection c,
             string? defaultScheme = null, 
             JwBearerAssertionOptions? options = null)
-        where TCache : class, ITimeLimitedRepositories
+            where TCache : class, ITimeLimitedRepositories
         {
             defaultScheme ??= JwtBearerDefaults.AuthenticationScheme;
             return c.AddAuthentication(defaultScheme)

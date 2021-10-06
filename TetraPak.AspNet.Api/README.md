@@ -2,27 +2,31 @@
 
 ## This document
 
-This document provides the big picture of how to use this SDK while creating or consuming APIs, while introducing some important concepts and code APIs. If this is the first few times you are using the SDK then this is a great place to start. But depending on your background you might also consider starting elsewhere:
+This document provides the big picture of how to use this SDK while creating or consuming APIs, while introducing some important concepts and code APIs. If this is the first few times you are using the SDK then this is a good place to start. But depending on your background you might also consider starting elsewhere:
 
 If you are somewhat new to ASP.NET Core/5+ web app development then it might be a good idea first check out the [ASP.NET Core/5+ Project Overview][overview-aspnet-webapp] and then come back here.
 
-If you are a seasoned ASP.NET Core/5+ developer and just want to quickly integrate your web app (or API) with Tetra Pak's Auth Services then you can either just skip ahead to the [cheat cheat][cheat-sheet-tetra-pak-aspnet-api] or try [this recipe][tetra-pak-aspnet-api-recipe] for a step-by-step walk through, with some explanations, on how to build a Tetra Pak API.
+If you are a seasoned ASP.NET Core/5+ developer and just want to quickly integrate your API with [Tetra Pak's Auth Services (TPAS)][cat-tpas] then you can either just skip ahead to the [cheat cheat][cheat-sheet-tetra-pak-aspnet-api] or try [this recipe][recipe-tetra-pak-aspnet] for a step-by-step walk through, with some explanations, on how to build a Tetra Pak API.
 
 Also, if you are already familiar with the SDK but you are facing issues or scenarios you are unsure of how to resolve then it might be a good idea to check out [this document][tetra-pak-aspnet-scenarios] 
 
-However, if you want some more background or need a better understanding; then please continue.
+However, if you want some more background or a general overview then please continue.
 
 ## Overview
 
-The TetraPak.AspNet libraries are provided as a way to get more productive when writing web-based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical C3 (cross-cutting concerns) such as authorization, authentication, logging, debugging, diagnostics, and so on. 
+The [TetraPak.AspNet][github-tetrapak-app] libraries are provided as a way to get more productive when writing web-based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical C3 (cross cutting concerns) such as authorization, authentication, logging, debugging, diagnostics, and so on. 
 
 The [TetraPak.AspNet.Api Nuget package][nuget-tetra-pak-api] is built on top of the [TetraPak.AspNet Nuget package][nuget-tetra-pak-app] to provide tools and solutions for the special needs you face when building an API. This also makes it convenient when you find you are writing a web app but also have a need for an "integrated" API, especially when writing a lot of client side JavaScript that needs to read and write data asynchronously, such as with SPA's (Single Page Applications). Whenever you need to build an API; just add the [TetraPak.AspNet.Api Nuget package][nuget-tetra-pak-api] and you'll have access to the full SDK!
 
 ## Writing APIs 
 
-One very important aspect with Tetra Pak API development is how you:
-- Design URLs paths, formats and conventions for a pleasant client developer experience
-- Need to consider how the API gets managed
+No matter what type of ASP.NET web development you are doing there will be many aspects and mechanisms that are the same. But writing a RESTful API is still quite different from writing a web app! When you write a [(reusable) Tetra Pak business API][cat-business-api] you need to consider:
+
+- URLs path design
+- Formats and conventions for requests and responses
+- API management
+
+If you succeed in these areas you will have produced an API that is a pleasure to work with and that consumers will be attracted to. 
 
 As a developer writing clients for APIs you will likely have experienced the varying quality of APIs. One API might be very well designed, with consistent URL/path design, data formats, and conventions. Other APIs appear as if they had been written by a committee of developers that didn't agree on anything. The result is a very poor experience where the code you write to consume one API endpoint is useless as you move on to consume another, even though they are offered by the same API. As a consequence you need write almost (but not quite) the same code over and over, often with scores of if-else clauses to deal with the inconsistencies and exceptions to (what should have been) rules, like in this example ... 
 
@@ -123,19 +127,25 @@ There is quite alot of asserting and obtaining necessary authorization that need
 
 To do all this you need a good understanding of all the auth flow details and also quite a lot of technical information about the Tetra Pak Auth Services, depending on which runtime environment you are targeting (Development, Migration or Production). 
 
-Writing APIs can be quite involved and require skills and knowledge that covers not only complex auth flows but also the current Tetra Pak security recommendations. This SDK is here to relieve you from most of those problems so you can focus on provinding the good stuff to your consumers. Meanwhile, the Tetra Pak ASP.NET API SDK "*protects what's*" good! ;-)
+Writing APIs can be quite involved and require skills and knowledge that covers not only complex auth flows but also the current Tetra Pak security recommendations. This SDK is here to relieve you from most of those problems so you can focus on providing the good stuff to your consumers. Meanwhile, the Tetra Pak ASP.NET API SDK "*protects what's*" good! ;-)
 
 
+
+[github-tetrapak-app]: https://github.com/Tetra-Pak-APIs/TetraPak.AspNet/tree/master/TetraPak.AspNet
+
+[nuget-tetra-pak-app]: https://www.nuget.org/packages/TetraPak.AspNet
+[nuget-tetra-pak-api]: https://www.nuget.org/packages/TetraPak.AspNet.Api
 
 [overview-aspnet-webapp]: ../TetraPak.AspNet/_docs/aspnet_webapp_overview.md
 [cheat-sheet-tetra-pak-aspnet-api]: ./_docs/cheatsheet-webapi.md
-[recipe-tetra-pak-aspnet-api]: ./_docs/cheatsheet-webapi.md
 [recipe-tetra-pak-aspnet]: ../TetraPak.AspNet/_docs/Recipe-WebApp.md
 [tetra-pak-aspnet-scenarios]: ../Scenarios.md
 [tetra-pak-dev-portal]: https://developer.tetrapak.com
-[nuget-tetra-pak-app]: https://www.nuget.org/packages/TetraPak.AspNet
-[nuget-tetra-pak-api]: https://www.nuget.org/packages/TetraPak.AspNet.Api
+
 [guidelines-tetra-pak]: https://developer.tetrapak.com/products/api-design
 [oauth-code-grant]: https://www.oauth.com/oauth2-servers/server-side-apps/authorization-code/
 [jwt-io]: https://jwt.io/
 [sidecar]: https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar
+
+[cat-business-api]: ../CAT.md#business-api
+[cat-tpas]: ../CAT.md#tetra-pak-auth-services

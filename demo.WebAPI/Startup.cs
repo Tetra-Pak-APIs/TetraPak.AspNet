@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +29,30 @@ namespace WebAPI
             services.AddSingleton<ITetraPakSecretsProvider, MySecretsProvider>();
             services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>();
             services.AddTetraPakJwtBearerAssertion()
-                    .AddAliBabaAuthentication();            // <-- (spike) testing custom auth scheme
+                    .AddJwtBearer("obsolete", options => // <-- spike: test additional (AAD) JWT Bearer auth scheme
+                    {
+                        // options.Audience = "https://ta01qtasdev01.azurewebsites.net";
+                        options.Authority =  "https://api-dev.tetrapak.com/oauth2/v2";
+                        options.SaveToken = true;
+                        options.TokenValidationParameters.ValidateLifetime = false;
+                        options.TokenValidationParameters.ValidAudiences = new []{ "https://ta01qtastst01.azurewebsites.net", "EdgeIDP" };
+                        options.Events = new JwtBearerEvents
+                        {       
+                            OnMessageReceived = context =>
+                            {
+                                return Task.CompletedTask;
+                            },
+                            OnAuthenticationFailed = context =>
+                            {
+                                return Task.CompletedTask;
+                            },
+                            OnTokenValidated = context =>
+                            {
+                                return Task.CompletedTask;
+                            }
+                        };
+                    })
+                    .AddAliBabaAuthentication();            // <-- spike: testing custom auth scheme
             services.AddCustomClaimsTransformation<AliBabaJwtClaimsTransformation>();
             services.AddTetraPakServices();              // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services
 
