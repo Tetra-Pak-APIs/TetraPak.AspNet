@@ -44,10 +44,10 @@ JWT Bearer Assertion options.
 ## ConfigureJwtBearerOptions.Config Property
 Provides access to the Tetra Pak configuration.  
 ```csharp
-public TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig Config { get; }
+public TetraPak.AspNet.Api.Auth.TetraPakApiConfig Config { get; }
 ```
 #### Property Value
-[TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')
+[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')
   
 <a name='TetraPak_AspNet_Api_Auth_ConfigureJwtBearerOptions_Logger'></a>
 ## ConfigureJwtBearerOptions.Logger Property

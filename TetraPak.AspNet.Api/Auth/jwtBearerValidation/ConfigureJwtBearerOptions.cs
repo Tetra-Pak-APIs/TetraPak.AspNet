@@ -36,7 +36,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Provides access to the Tetra Pak configuration.
         /// </summary>
-        public TetraPakApiAuthConfig Config => _options.Config;
+        public TetraPakApiConfig Config => _options.Config;
 
         /// <summary>
         ///   Gets a logger provider. 

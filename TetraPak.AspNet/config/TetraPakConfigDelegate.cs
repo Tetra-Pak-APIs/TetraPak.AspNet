@@ -10,9 +10,9 @@ using TetraPak.SecretsManagement;
 namespace TetraPak.AspNet
 {
     /// <summary>
-    ///   A partial implementation of the <see cref="ITetraPakAuthConfigDelegate"/> contract.
+    ///   A partial implementation of the <see cref="ITetraPakConfigDelegate"/> contract.
     /// </summary>
-    public class TetraPakAuthConfigDelegate : ITetraPakAuthConfigDelegate
+    public class TetraPakConfigDelegate : ITetraPakConfigDelegate
     {
         readonly ITetraPakSecretsProvider? _secretsProvider;
         IServiceAuthConfig? _authConfig;
@@ -29,7 +29,7 @@ namespace TetraPak.AspNet
         public Task<Outcome<MultiStringValue>> GetScopeAsync(AuthContext authContext, CancellationToken? cancellationToken)
              => OnGetScopeAsync(authContext);
 
-        internal TetraPakAuthConfigDelegate WithTetraPakConfig(IServiceAuthConfig serviceAuthConfig)
+        internal TetraPakConfigDelegate WithTetraPakConfig(IServiceAuthConfig serviceAuthConfig)
         {
             _authConfig = serviceAuthConfig;
             return this;
@@ -98,16 +98,16 @@ namespace TetraPak.AspNet
 
         Task<Outcome<Credentials>> getClientCredentialsFromConfiguration(GrantType grantType)
         {
-            var clientId = _authConfig.GetConfiguredValue(nameof(TetraPakAuthConfig.ClientId));
+            var clientId = _authConfig.GetConfiguredValue(nameof(TetraPakConfig.ClientId));
             if (string.IsNullOrWhiteSpace(clientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
-                    new ConfigurationException($"{nameof(TetraPakAuthConfig.ClientId)} value is missing "+
+                    new ConfigurationException($"{nameof(TetraPakConfig.ClientId)} value is missing "+
                                                "(or empty) in Tetra Pak configuration")));
             
-            var clientSecret = _authConfig.GetConfiguredValue(nameof(TetraPakAuthConfig.ClientSecret));
+            var clientSecret = _authConfig.GetConfiguredValue(nameof(TetraPakConfig.ClientSecret));
             if (string.IsNullOrWhiteSpace(clientSecret) && grantType.IsClientSecretRequired())
                 return Task.FromResult(Outcome<Credentials>.Fail(
-                    new ConfigurationException($"{nameof(TetraPakAuthConfig.ClientSecret)} value is missing "+
+                    new ConfigurationException($"{nameof(TetraPakConfig.ClientSecret)} value is missing "+
                                                "(or empty) in Tetra Pak configuration")));
 
             return Task.FromResult(Outcome<Credentials>.Success(new Credentials(clientId, clientSecret)));
@@ -151,7 +151,7 @@ namespace TetraPak.AspNet
         {
             return configuredValue is { } 
                 ? Enum.Parse<RuntimeEnvironment>(configuredValue) 
-                : TetraPakAuthConfig.ResolveRuntimeEnvironment(configuredValue);
+                : TetraPakConfig.ResolveRuntimeEnvironment(configuredValue);
         }
         
         /// <summary>
@@ -206,13 +206,13 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Initializes the <see cref="TetraPakAuthConfigDelegate"/>.
+        ///   Initializes the <see cref="TetraPakConfigDelegate"/>.
         /// </summary>
         /// <param name="secretsProvider">
         ///   (optional)<br/>
         ///   A provider of secrets. 
         /// </param>
-        public TetraPakAuthConfigDelegate(ITetraPakSecretsProvider? secretsProvider = default)
+        public TetraPakConfigDelegate(ITetraPakSecretsProvider? secretsProvider = default)
         {
             _secretsProvider = secretsProvider;
         }

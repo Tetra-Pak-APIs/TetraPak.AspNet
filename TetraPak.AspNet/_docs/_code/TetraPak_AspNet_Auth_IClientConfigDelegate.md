@@ -7,8 +7,8 @@ public interface IClientConfigDelegate
 ```
 
 Derived  
-&#8627; [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate')  
-&#8627; [TetraPakAuthConfigDelegate](TetraPak_AspNet_TetraPakAuthConfigDelegate.md 'TetraPak.AspNet.TetraPakAuthConfigDelegate')  
+&#8627; [ITetraPakConfigDelegate](TetraPak_AspNet_ITetraPakConfigDelegate.md 'TetraPak.AspNet.ITetraPakConfigDelegate')  
+&#8627; [TetraPakConfigDelegate](TetraPak_AspNet_TetraPakConfigDelegate.md 'TetraPak.AspNet.TetraPakConfigDelegate')  
 ### Methods
 <a name='TetraPak_AspNet_Auth_IClientConfigDelegate_GetClientCredentialsAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## IClientConfigDelegate.GetClientCredentialsAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method

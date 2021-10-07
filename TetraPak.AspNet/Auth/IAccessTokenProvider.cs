@@ -14,7 +14,7 @@ namespace TetraPak.AspNet.Auth
         /// </summary>
         /// <param name="forceStandardHeader">
         ///   (optional; default=<c>false</c>)<br/>
-        ///   When set the configured (see <see cref="TetraPakAuthConfig.AuthorizationHeader"/>) authorization
+        ///   When set the configured (see <see cref="TetraPakConfig.AuthorizationHeader"/>) authorization
         ///   header is ignored in favour of the HTTP standard <see cref="HeaderNames.Authorization"/> header. 
         /// </param>
         /// <returns>

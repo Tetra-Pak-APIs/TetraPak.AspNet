@@ -12,33 +12,33 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [ITokenExchangeService](TetraPak_AspNet_Api_Auth_ITokenExchangeService.md 'TetraPak.AspNet.Api.Auth.ITokenExchangeService'), [TetraPak.AspNet.IMessageIdProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IMessageIdProvider 'TetraPak.AspNet.IMessageIdProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPakAuthConfig) Constructor
+<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakConfig)'></a>
+## TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPakConfig) Constructor
 Initializes the [TetraPakTokenExchangeService](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService').  
 ```csharp
-public TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[authConfig](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md#TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakAuthConfig)_authConfig 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakAuthConfig).authConfig') was unassigned.  
+[config](TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService.md#TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_TetraPakTokenExchangeService(TetraPak_AspNet_TetraPakConfig)_config 'TetraPak.AspNet.Api.Auth.TetraPakTokenExchangeService.TetraPakTokenExchangeService(TetraPak.AspNet.TetraPakConfig).config') was unassigned.  
             
 [TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
-The [TetraPak.AspNet.AmbientData.AuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData.AuthConfig 'TetraPak.AspNet.AmbientData.AuthConfig') instance was not of type [TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig').  
+The [TetraPak.AspNet.AmbientData.Config](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData.Config 'TetraPak.AspNet.AmbientData.Config') instance was not of type [TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig').  
   
 ### Properties
-<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_AuthConfig'></a>
-## TetraPakTokenExchangeService.AuthConfig Property
+<a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_Config'></a>
+## TetraPakTokenExchangeService.Config Property
 Gets the auth configuration code API.  
 ```csharp
-protected TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; }
+protected TetraPak.AspNet.TetraPakConfig Config { get; }
 ```
 #### Property Value
-[TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')
+[TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakTokenExchangeService_Logger'></a>
 ## TetraPakTokenExchangeService.Logger Property

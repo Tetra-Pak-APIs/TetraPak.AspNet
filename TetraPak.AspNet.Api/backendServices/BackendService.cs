@@ -50,21 +50,21 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public AmbientData AmbientData => Endpoints.AmbientData;
 
-        public IServiceAuthConfig ParentConfig => AuthConfig;
+        public IServiceAuthConfig ParentConfig => Config;
 
         /// <inheritdoc />
-        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
+        public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
         
         /// <summary>
         ///   Gets the Tetra Pak configuration.
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig => Endpoints.AuthConfig;
+        protected TetraPakConfig Config => Endpoints.Config;
 
         /// <inheritdoc />
-        public IConfiguration Configuration => AuthConfig.Configuration;
+        public IConfiguration Configuration => Config.Configuration;
 
         /// <inheritdoc />
-        public ConfigPath? ConfigPath => AuthConfig.ConfigPath;
+        public ConfigPath? ConfigPath => Config.ConfigPath;
         
         /// <inheritdoc />
         [StateDump]
@@ -125,7 +125,7 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null)
         {
             var ct = cancellationToken ?? CancellationToken.None;
-            var accessTokenOutcome  = await HttpServiceProvider.GetAccessTokenAsync(AuthConfig);
+            var accessTokenOutcome  = await HttpServiceProvider.GetAccessTokenAsync(Config);
             if (accessTokenOutcome)
             {
                 clientOptions.Authorization = new BearerToken(accessTokenOutcome.Value.Identity);

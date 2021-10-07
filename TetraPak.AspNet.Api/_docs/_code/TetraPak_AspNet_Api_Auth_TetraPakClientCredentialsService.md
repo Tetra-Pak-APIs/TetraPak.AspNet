@@ -11,14 +11,14 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IClientCredentialsService](TetraPak_AspNet_Api_Auth_IClientCredentialsService.md 'TetraPak.AspNet.Api.Auth.IClientCredentialsService')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsService_TetraPakClientCredentialsService(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## TetraPakClientCredentialsService.TetraPakClientCredentialsService(TetraPakAuthConfig) Constructor
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsService_TetraPakClientCredentialsService(TetraPak_AspNet_TetraPakConfig)'></a>
+## TetraPakClientCredentialsService.TetraPakClientCredentialsService(TetraPakConfig) Constructor
 ```csharp
-public TetraPakClientCredentialsService(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public TetraPakClientCredentialsService(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsService_TetraPakClientCredentialsService(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsService_TetraPakClientCredentialsService(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  

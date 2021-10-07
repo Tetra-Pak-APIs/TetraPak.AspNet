@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## TetraPakClaimsTransformation Class
-A basic (abstract) implementation of the [TetraPak.AspNet.ITetraPakClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ITetraPakClaimsTransformation 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.  
+A basic (abstract) implementation of the [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.  
 ```csharp
 public abstract class TetraPakClaimsTransformation :
 TetraPak.AspNet.ITetraPakClaimsTransformation
@@ -12,7 +12,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 Derived  
 &#8627; [TetraPakJwtClaimsTransformation](TetraPak_AspNet_TetraPakJwtClaimsTransformation.md 'TetraPak.AspNet.TetraPakJwtClaimsTransformation')  
 
-Implements [TetraPak.AspNet.ITetraPakClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ITetraPakClaimsTransformation 'TetraPak.AspNet.ITetraPakClaimsTransformation')  
+Implements [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation')  
 ### Properties
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_Cache'></a>
 ## TetraPakClaimsTransformation.Cache Property
@@ -44,13 +44,13 @@ protected Microsoft.AspNetCore.Http.HttpContext? Context { get; set; }
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_DefaultServiceScope'></a>
 ## TetraPakClaimsTransformation.DefaultServiceScope Property
 Gets or sets the global (static) default service scope to be used for all  
-[TetraPak.AspNet.ITetraPakClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ITetraPakClaimsTransformation 'TetraPak.AspNet.ITetraPakClaimsTransformation') delegates as they are being registered  
+[ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') delegates as they are being registered  
 with the dependency injection service locator.  
 ```csharp
 public static TetraPak.AspNet.ServiceScope DefaultServiceScope { get; set; }
 ```
 #### Property Value
-[TetraPak.AspNet.ServiceScope](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServiceScope 'TetraPak.AspNet.ServiceScope')
+[ServiceScope](TetraPak_AspNet_ServiceScope.md 'TetraPak.AspNet.ServiceScope')
   
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_IdentitySource'></a>
 ## TetraPakClaimsTransformation.IdentitySource Property
@@ -74,10 +74,10 @@ protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ## TetraPakClaimsTransformation.TetraPakConfig Property
 Gets the Tetra Pak configuration object.   
 ```csharp
-protected TetraPak.AspNet.TetraPakAuthConfig? TetraPakConfig { get; set; }
+protected TetraPak.AspNet.TetraPakConfig? TetraPakConfig { get; set; }
 ```
 #### Property Value
-[TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_UserInformation'></a>
 ## TetraPakClaimsTransformation.UserInformation Property
@@ -92,7 +92,7 @@ protected TetraPak.AspNet.Identity.TetraPakUserInformation? UserInformation { ge
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_GetClientCredentials()'></a>
 ## TetraPakClaimsTransformation.GetClientCredentials() Method
 Obtains and returns the client credentials, either from the Tetra Pak integration configuration  
-([TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') or from an injected delegate ([IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider')).  
+([TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') or from an injected delegate ([IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider')).  
 ```csharp
 protected System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> GetClientCredentials();
 ```
@@ -122,14 +122,33 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 (Must be overridden)<br/>  
 Invoked, internally, to decorate the context [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal').  
 Please note that the [principal](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal)_principal 'TetraPak.AspNet.TetraPakClaimsTransformation.OnTransformAsync(System.Security.Claims.ClaimsPrincipal).principal') is a cloned instance of the  
-[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') attached to [Context](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_Context 'TetraPak.AspNet.TetraPakClaimsTransformation.Context')
+[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') attached to [Context](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_Context 'TetraPak.AspNet.TetraPakClaimsTransformation.Context').  
 ```csharp
 protected abstract System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> OnTransformAsync(System.Security.Claims.ClaimsPrincipal principal);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal)_principal'></a>
 `principal` [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')  
+The (incoming) [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal').  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+A [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') object.  
+  
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal)'></a>
+## TetraPakClaimsTransformation.TransformAsync(ClaimsPrincipal) Method
+Provides a central transformation point to change the specified principal.   
+```csharp
+public System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> TransformAsync(System.Security.Claims.ClaimsPrincipal principal);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal)_principal'></a>
+`principal` [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')  
+The [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') to transform.  
+  
+#### Returns
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+The transformed principal.  
+
+Implements [TransformAsync(ClaimsPrincipal)](TetraPak_AspNet_ITetraPakClaimsTransformation.md#TetraPak_AspNet_ITetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal) 'TetraPak.AspNet.ITetraPakClaimsTransformation.TransformAsync(System.Security.Claims.ClaimsPrincipal)')  
   

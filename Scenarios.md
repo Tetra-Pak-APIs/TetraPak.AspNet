@@ -267,6 +267,76 @@ For that to make sense you might also want the corresponding `appsettings.Stagin
 
 Please note that the `launchSettings.json` file is ***only*** used when running your code locally. It will be ignored, for example, if you deploy the code to an Azure app service. The `appsettings` files, however, are honoured by that same app service. You control the targeted runtime environment by assigning the same environment variable (in Azure) but you do that using other tools than the `launchSettings.json` file.
 
+## Multiple auth schemes
+
+If you are writing a new API you will, very likely, be able to rely on the offered default authentication scheme (which is called "`Bearer`"), by just adding "Tetra Pak JWT Assertion" to you `Startup.ConfigureServices` method:
+
+```c#
+services.AddTetraPakJwtBearerAssertion();
+```
+
+However, if you are adjusting an existing API and/or need supporting some other auth scheme for some reason this can be done quite easily. These are the items you must do or consider:
+
+- (must) Configure auth schemes in `Startup.ConfigureServices` with unique schema names
+- (must) Specify auth schema names for all protected resources (controllers/endpoint methods)
+- (consider) Adding a custom claims transformer
+- (consider) Muting the DevProxy (for legacy auth schemes)
+
+### Configure auth schemes with unique names
+
+Let's assume you have an API where you already are doing JWT Bearer assertion from a different authority, such as Azure AD for example, that looks like this (in `Startup.ConfigureServices`):
+
+```c#
+services.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => 
+    {
+        options.Authority = "https://myAppServiceAt.azurewebsites.net"; 
+        options.Authority = "https://api.tetrapak.com/oauth2/v2";
+        // (more options here)
+    });
+```
+
+To have this "legacy" auth scheme function in parallel with the (default) "Tetra Pak JWT Bearer Assertion" scheme just add them both but replace the default scheme name for the "legacy" scheme, like so:
+
+```c#
+services.AddTetraPakJwtBearerAssertion()   // <-- this is the default auth scheme
+        .AddJwtBearer("legacy", options => // <-- this is now the "legacy" auth scheme 
+        {
+            options.Authority = "https://myAppServiceAt.azurewebsites.net"; 
+            options.Authority = "https://api.tetrapak.com/oauth2/v2";
+            // (more options here)
+        });  
+```
+
+### Specify auth scheme names for protected resources
+
+> If you arrived here via a link from a different document please see: [Multiple auth schemes](#multiple-auth-schemes)
+
+All your protected resources should be decorated with the `[Authorize]` attribute. What that means is they will be protected by the *default* auth scheme which is now the "Tetra Pak JWT Bearer Assertion" scheme. To allow both the (new) default and your "legacy" auth scheme you now have to specify the accepted auth schemes with a comma-separated string, like so:
+
+```c#
+[Authorize(AuthenticationSchemes = "Bearer,legacy")]
+```
+
+## Custom claims transformation
+
+> For more background see: [Claims transformation][cat-claims-transformation]
+
+The *claims transformation* process happens automatically after a successful authentication, during a request. The *claims transformer* (delegate) implements the `IClaimsTransformation` interface, which must be configured with the (DI) service locator (`IServiceCollection`). This is done by ASP.NET but you can replace it with a custom implementation if needed. When you add the default "Tetra Pak JWT Bearer Assertion" auth scheme in `Startup.ConfigureServices` the SDK will also replace the default *claims transformer* with a custom "Tetra Pak" *claims transformer*. This *claims transformer* is actually a "dispatcher" that allows for multiple *claims transformers* to work in parallel, one after the other, building the complete [identity][cat-identity] for a request/response roundtrip.
+
+To add a custom *claims transformer*, just create a new class that implements the `ITetraPakClaimsTransformation` interface and add it to the built in "dispatcher" using the `IServiceCollection.AddTetraPakCustomClaimsTransformation<T>` extension method, like in this example:
+
+```c#
+
+```
+
+-- TODO --
+
+## Muting the DevProxy
+
+> For more background see: [Development proxy][cat-dev-proxy]
+
+-- TODO --
+
 ## Debugging
 
 -- TODO --
@@ -308,11 +378,13 @@ Explain how to activate profiling and analyse the output. Also how to create cus
 
 [code-ITetraPakSecretsProvider]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_SecretsManagement_ITetraPakSecretsProvider.md
 
-[code-TetraPakAuthConfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfig.md
+[code-TetraPakConfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakConfig.md
 
-[code-TetraPakAuthConfigDelegate]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfigDelegate.md 
+[code-TetraPakConfigDelegate]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakConfigDelegate.md 
 
 [cat-actor]: ./CAT.md#actor
 [cat-claim]: ./CAT.md#claim
+[cat-claims-transformation]: ./CAT.md#claims-transformation
 [cat-client-credentials]: ./CAT.md#client-credentials
+[cat-dev-proxy]: ./CAT.md#development-proxy
 [cat-identity]: ./CAT.md#identity

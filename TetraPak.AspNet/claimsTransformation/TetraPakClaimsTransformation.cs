@@ -39,6 +39,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the current HTTP context.
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         protected HttpContext? Context { get; private set; }
 
         /// <summary>
@@ -49,12 +50,12 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the Tetra Pak configuration object. 
         /// </summary>
-        protected TetraPakAuthConfig? TetraPakConfig { get; private set; }
+        protected TetraPakConfig? TetraPakConfig { get; private set; }
 
         /// <summary>
         ///   Gets the configured identity source (see: <see cref="TetraPakIdentitySource"/>).
         /// </summary>
-        protected TetraPakIdentitySource IdentitySource { get; set; }
+        protected TetraPakIdentitySource IdentitySource { get; private set; }
 
         /// <summary>
         ///   Gets the supported cache service (if any). 
@@ -83,7 +84,7 @@ namespace TetraPak.AspNet
         
         /// <summary>
         ///   Obtains and returns the client credentials, either from the Tetra Pak integration configuration
-        ///   (<see cref="TetraPakAuthConfig"/> or from an injected delegate (<see cref="IClientCredentialsProvider"/>).
+        ///   (<see cref="AspNet.TetraPakConfig"/> or from an injected delegate (<see cref="IClientCredentialsProvider"/>).
         /// </summary>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
@@ -109,21 +110,24 @@ namespace TetraPak.AspNet
         ///   (Must be overridden)<br/>
         ///   Invoked, internally, to decorate the context <see cref="ClaimsPrincipal"/>.
         ///   Please note that the <paramref name="principal"/> is a cloned instance of the
-        ///   <see cref="ClaimsPrincipal"/> attached to <see cref="Context"/>
-        ///   
+        ///   <see cref="ClaimsPrincipal"/> attached to <see cref="Context"/>.
         /// </summary>
-        /// <param name="principal"></param>
-        /// <returns></returns>
+        /// <param name="principal">
+        ///   The (incoming) <see cref="ClaimsPrincipal"/>.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ClaimsPrincipal"/> object.
+        /// </returns>
         protected abstract Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal);
         
         internal virtual void OnInitialize(IServiceProvider provider)
         {
-            Context = provider.GetService<IHttpContextAccessor>()?.HttpContext; 
-            TetraPakConfig = provider.GetRequiredService<TetraPakAuthConfig>();
+            var httpAccessor = provider.GetService<IHttpContextAccessor>();  
+            Context = httpAccessor?.HttpContext; 
+            TetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
             IdentitySource = TetraPakConfig.IdentitySource; 
             UserInformation = provider.GetRequiredService<TetraPakUserInformation>();
             ClientCredentials = provider.GetService<IClientCredentialsProvider>();
         }
-
     }
 }

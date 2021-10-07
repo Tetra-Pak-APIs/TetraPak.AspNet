@@ -27,10 +27,10 @@ namespace TetraPak.AspNet
         ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        public static ActorToken GetAccessToken(this HttpRequest self, TetraPakAuthConfig authConfig) 
-            => self.HttpContext.GetAccessToken(authConfig);
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
+        public static ActorToken GetAccessToken(this HttpRequest self, TetraPakConfig config) 
+            => self.HttpContext.GetAccessToken(config);
 
         /// <summary>
         ///   Returns the request access token, or <c>null</c> if unavailable. 
@@ -39,11 +39,11 @@ namespace TetraPak.AspNet
         ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig, bool)"/>
-        public static ActorToken GetAccessToken(this HttpContext self, TetraPakAuthConfig authConfig)
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig, bool)"/>
+        public static ActorToken GetAccessToken(this HttpContext self, TetraPakConfig config)
         {
-            var task = GetAccessTokenAsync(self, authConfig);
+            var task = GetAccessTokenAsync(self, config);
             return task.ConfigureAwait(false).GetAwaiter().GetResult();
         }
         
@@ -55,10 +55,10 @@ namespace TetraPak.AspNet
         ///   holds the access token in its <see cref="Outcome{T}.Value"/> property. On failure the outcome 
         ///   declares the problem via its <see cref="Outcome.Exception"/> property. 
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig, bool)"/>
-        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self, TetraPakAuthConfig authConfig)
-            => self.HttpContext.GetAccessTokenAsync(authConfig);
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig, bool)"/>
+        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self, TetraPakConfig config)
+            => self.HttpContext.GetAccessTokenAsync(config);
 
         /// <summary>
         ///   Tries obtaining an access token from the request. 
@@ -66,12 +66,12 @@ namespace TetraPak.AspNet
         /// <param name="self">
         ///   The <see cref="HttpContext"/>.
         /// </param>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   A Tetra Pak configuration object.
         /// </param>
         /// <param name="forceStandardHeader">
         ///   (optional; default=<c>false</c>)<br/>
-        ///   When set the configured (see <see cref="TetraPakAuthConfig.AuthorizationHeader"/>) authorization
+        ///   When set the configured (see <see cref="TetraPakConfig.AuthorizationHeader"/>) authorization
         ///   header is ignored in favour of the HTTP standard <see cref="HeaderNames.Authorization"/> header. 
         /// </param>
         /// <returns>
@@ -79,26 +79,29 @@ namespace TetraPak.AspNet
         ///   holds the access token in its <see cref="Outcome{T}.Value"/> property. On failure the outcome 
         ///   declares the problem via its <see cref="Outcome.Exception"/> property. 
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakAuthConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakAuthConfig)"/>
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(
-            this HttpContext self, 
-            TetraPakAuthConfig? authConfig, 
+            this HttpContext? self, 
+            TetraPakConfig? config, 
             bool forceStandardHeader = false)
         {
+            if (self is null)
+                return Task.FromResult(Outcome<ActorToken>.Fail(new Exception($"No HTTP context available")));
+            
             var headerKey = AmbientData.Keys.AccessToken;
             if (self.Items.TryGetValue(headerKey, out var o) && o is string s && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            headerKey = forceStandardHeader || authConfig?.AuthorizationHeader is null
+            headerKey = forceStandardHeader || config?.AuthorizationHeader is null
                 ? HeaderNames.Authorization
-                : authConfig.AuthorizationHeader;
+                : config.AuthorizationHeader;
             s = self.Request.Headers[headerKey].FirstOrDefault();
             if (s is {} && ActorToken.TryParse(s, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            var messageId = self.Request.GetMessageId(authConfig);
-            authConfig?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'", messageId);
+            var messageId = self.Request.GetMessageId(config);
+            config?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'", messageId);
             
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found")));
         }
@@ -110,9 +113,9 @@ namespace TetraPak.AspNet
         ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext,TetraPak.AspNet.TetraPakAuthConfig)"/>
-        public static ActorToken GetIdentityToken(this HttpRequest self, TetraPakAuthConfig authConfig) 
-            => self.HttpContext.GetIdentityToken(authConfig);
+        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext,TetraPakConfig)"/>
+        public static ActorToken GetIdentityToken(this HttpRequest self, TetraPakConfig config) 
+            => self.HttpContext.GetIdentityToken(config);
 
         /// <summary>
         ///   Returns the request identity token, or <c>null</c> if unavailable.
@@ -120,20 +123,20 @@ namespace TetraPak.AspNet
         /// <param name="self">
         ///   The request <see cref="HttpContext"/> object.
         /// </param>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   (optional)<br/>
         ///   The Tetra Pak integration configuration object. When passed the method will look
-        ///   for the identity token in the header specified by <see cref="TetraPakAuthConfig.AuthorizationHeader"/>.
+        ///   for the identity token in the header specified by <see cref="TetraPakConfig.AuthorizationHeader"/>.
         ///   If not the identity token is assumed to be carried by the header named as <see cref="AmbientData.Keys.IdToken"/>.
         /// </param>
         /// <returns>
         ///   An <see cref="ActorToken"/> object representing the request's identity token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPak.AspNet.TetraPakAuthConfig)"/>
-        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakAuthConfig? authConfig = null)
+        /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPakConfig)"/>
+        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakConfig? config = null)
         {
-            var task = GetIdentityTokenAsync(self, authConfig);
+            var task = GetIdentityTokenAsync(self, config);
             return task.ConfigureAwait(false).GetAwaiter().GetResult();
         }
         
@@ -146,43 +149,58 @@ namespace TetraPak.AspNet
         /// <param name="authConfig">
         ///   (optional)<br/>
         ///   The Tetra Pak integration configuration object. When passed the method will look
-        ///   for the identity token in the header specified by <see cref="TetraPakAuthConfig.AuthorizationHeader"/>.
+        ///   for the identity token in the header specified by <see cref="TetraPakConfig.AuthorizationHeader"/>.
         ///   If not the identity token is assumed to be carried by the header named as <see cref="AmbientData.Keys.IdToken"/>.
         /// </param>
         /// <returns>
         ///   An <see cref="ActorToken"/> object representing the request's identity token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this HttpContext self, TetraPakAuthConfig? authConfig = null)
+        public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this HttpContext self, TetraPakConfig? authConfig = null)
         {
             if (self.Items.TryGetValue(AmbientData.Keys.IdToken, out var obj) && obj is string s 
                     && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
             
             var headerIdent = authConfig?.AuthorizationHeader ?? AmbientData.Keys.IdToken;
-            s = self.Request.Headers[headerIdent].FirstOrDefault();
+            s = self.Request.Headers[headerIdent].ToString();
             if (s is {} && ActorToken.TryParse(s, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Id token not found")));
         }
         
-        public static async Task<EnumOutcome<ActorToken>> GetActorTokensAsync(this HttpContext self, TetraPakAuthConfig authConfig)
+        /// <summary>
+        ///   Gets all tokens from an <see cref="HttpContext"/>.
+        /// </summary>
+        /// <param name="self">
+        ///   The <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="config">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
+        /// <returns>
+        ///   
+        /// </returns>
+        public static async Task<EnumOutcome<ActorToken>> GetActorTokensAsync(this HttpContext? self, TetraPakConfig config)
         {
+            if (self is null)
+                return EnumOutcome<ActorToken>.Fail(new Exception("No HTTP context available"));
+                
             var values = self.Request.Headers[HeaderNames.Authorization];
             if (!values.Any())
             {
                 // the context is still in auth flow; use different mechanism ...
                 var tokenList = new List<ActorToken>();
-                var accessTokenOutcome = await self.GetAccessTokenAsync(authConfig);
+                var accessTokenOutcome = await self.GetAccessTokenAsync(config);
                 if (accessTokenOutcome)
                 {
-                    tokenList.Add(accessTokenOutcome.Value);
+                    tokenList.Add(accessTokenOutcome.Value!);
                 }
-                var idTokenOutcome = await self.GetIdentityTokenAsync(authConfig);
+                var idTokenOutcome = await self.GetIdentityTokenAsync(config);
                 if (idTokenOutcome)
                 {
-                    tokenList.Add(idTokenOutcome.Value);
+                    tokenList.Add(idTokenOutcome.Value!);
                 }
                 return tokenList.Any()
                     ? EnumOutcome<ActorToken>.Success(tokenList.ToArray())
@@ -257,7 +275,7 @@ namespace TetraPak.AspNet
         /// </returns>
         public static string? GetMessageId(
             this HttpRequest request,
-            TetraPakAuthConfig? authConfig,
+            TetraPakConfig? authConfig,
             bool enforce = false)
         {
             var key = authConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;

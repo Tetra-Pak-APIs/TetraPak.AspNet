@@ -21,5 +21,5 @@ public static void AddTetraPakApiClaimsTransformation(this Microsoft.Extensions.
 ### Remarks
 The difference between claims transformation in an API is that token exchange services  
 must be available for fetching identity from a user information endpoint  
-(when [TetraPak.AspNet.TetraPakAuthConfig.IdentitySource](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig.IdentitySource 'TetraPak.AspNet.TetraPakAuthConfig.IdentitySource') = [TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService 'TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService')).  
+(when [TetraPak.AspNet.TetraPakConfig.IdentitySource](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig.IdentitySource 'TetraPak.AspNet.TetraPakConfig.IdentitySource') = [TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService 'TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService')).  
   

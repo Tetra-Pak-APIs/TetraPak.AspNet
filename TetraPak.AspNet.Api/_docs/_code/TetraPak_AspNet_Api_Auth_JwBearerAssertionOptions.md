@@ -8,15 +8,16 @@ public class JwBearerAssertionOptions
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; JwBearerAssertionOptions  
 ### Constructors
-<a name='TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_JwBearerAssertionOptions(TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig)'></a>
-## JwBearerAssertionOptions.JwBearerAssertionOptions(TetraPakApiAuthConfig) Constructor
+<a name='TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_JwBearerAssertionOptions(TetraPak_AspNet_Api_Auth_TetraPakApiConfig)'></a>
+## JwBearerAssertionOptions.JwBearerAssertionOptions(TetraPakApiConfig) Constructor
 Initializes the [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions').  
 ```csharp
-public JwBearerAssertionOptions(TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig config);
+public JwBearerAssertionOptions(TetraPak.AspNet.Api.Auth.TetraPakApiConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_JwBearerAssertionOptions(TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig)_config'></a>
-`config` [TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')  
+<a name='TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_JwBearerAssertionOptions(TetraPak_AspNet_Api_Auth_TetraPakApiConfig)_config'></a>
+`config` [TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')  
+Initializes [Config](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md#TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_Config 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions.Config').  
   
   
 ### Properties
@@ -24,8 +25,8 @@ public JwBearerAssertionOptions(TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig c
 ## JwBearerAssertionOptions.Config Property
 Provides access to the Tetra Pak configuration.  
 ```csharp
-public TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig Config { get; }
+public TetraPak.AspNet.Api.Auth.TetraPakApiConfig Config { get; }
 ```
 #### Property Value
-[TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')
+[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')
   

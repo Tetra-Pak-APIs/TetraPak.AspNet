@@ -44,4 +44,4 @@ public TetraPak.AspNet.Auth.GrantType GrantType { get; }
 [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
   
 #### See Also
-- [ConfigDelegate](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_ConfigDelegate 'TetraPak.AspNet.TetraPakAuthConfig.ConfigDelegate')
+- [ConfigDelegate](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_ConfigDelegate 'TetraPak.AspNet.TetraPakConfig.ConfigDelegate')

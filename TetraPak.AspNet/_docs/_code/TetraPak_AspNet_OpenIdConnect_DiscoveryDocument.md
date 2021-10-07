@@ -194,15 +194,15 @@ Initializes the [IdTokenSigningAlgValuesSupported](TetraPak_AspNet_OpenIdConnect
 #### Returns
 [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument')  
   
-<a name='TetraPak_AspNet_OpenIdConnect_DiscoveryDocument_GetDefault(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## DiscoveryDocument.GetDefault(TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_OpenIdConnect_DiscoveryDocument_GetDefault(TetraPak_AspNet_TetraPakConfig)'></a>
+## DiscoveryDocument.GetDefault(TetraPakConfig) Method
 Creates and returns a default [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
 ```csharp
-public static TetraPak.AspNet.OpenIdConnect.DiscoveryDocument GetDefault(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static TetraPak.AspNet.OpenIdConnect.DiscoveryDocument GetDefault(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_OpenIdConnect_DiscoveryDocument_GetDefault(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_OpenIdConnect_DiscoveryDocument_GetDefault(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
 #### Returns
@@ -227,7 +227,7 @@ a [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraP
 #### Exceptions
 [System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
 Required configuration was not provided; such as [MasterSourceUrl](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_MasterSourceUrl 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.MasterSourceUrl')  
-or [AuthConfig](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_AuthConfig 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.AuthConfig').  
+or [Config](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Config 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.Config').  
 #### See Also
 - [ReadDocumentPolicy](TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md 'TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy')
   

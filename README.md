@@ -211,10 +211,10 @@ Protecting your secrets is a topic in itself and we will have to get back to tha
 Assuming you now have a *client id* (and *secret*) you need to configure your app to use them for your integration with Tetra Pak. This can easily be done through:
 
 - The `appsettings.json` file
-- The `TetraPakAuthConfig` class
-- Implementing the `ITetraPakAuthConfigDelegate` interface
+- The `TetraPakConfig` class
+- Implementing the `ITetraPakConfigDelegate` interface
 
-Most Tetra Pak integration information can be supplied through the standard `IConfiguration` framework of ASP.NET. The SDK, however, makes this easier still by supplying you with the `TetraPakAuthConfig` class. To take advantage of this class just ensure all your configuration is added to a "`TetraPak`" section in your ``appsettings.json` file(s), like in this very simple example:
+Most Tetra Pak integration information can be supplied through the standard `IConfiguration` framework of ASP.NET. The SDK, however, makes this easier still by supplying you with the `TetraPakConfig` class. To take advantage of this class just ensure all your configuration is added to a "`TetraPak`" section in your ``appsettings.json` file(s), like in this very simple example:
 
 ```json
 {
@@ -234,24 +234,24 @@ Most Tetra Pak integration information can be supplied through the standard `ICo
 
 Again; this example is here for clarity. Adding a client secret to an unencrypted `json` file is very risky. It might be somewhat ok for stuff you intend to run in your "sandbox" environment, mostly for proof-of-concept purposes, and that is guaranteed never to consume any actual business related information. Also, you should probably ensure the `appsetting.json` file(s) are included in your `.gitignore` file, to keep the information within your dev team only.
 
-We will get back to how to protect secrets later so let's move on to how you can use the configuration through the `TetraPakAuthConfig` class.
+We will get back to how to protect secrets later so let's move on to how you can use the configuration through the `TetraPakConfig` class.
 
-Whenever you inject Tetra Pak integration into your `Startup.ConfigureServices`, by adding `services.AddTetraPakOidcAuthentication()`, for example, the services also ensures the `TetraPakAuthConfig` class becomes available through service locaction and constructor injection. This means all you need to do to easily get to your Tetra Pak configuration is to simply add a parameter to any of your conrtroller's constructors, like so:
+Whenever you inject Tetra Pak integration into your `Startup.ConfigureServices`, by adding `services.AddTetraPakOidcAuthentication()`, for example, the services also ensures the `TetraPakConfig` class becomes available through service locaction and constructor injection. This means all you need to do to easily get to your Tetra Pak configuration is to simply add a parameter to any of your conrtroller's constructors, like so:
 
 ```c#
 public class HelloWordlController : Controller
 {
-   readonly TetraPakAuthConfig authConfig;
+   readonly TetraPakConfig _tetraPakConfig;
 
    [Authorize]
    public IActionResult Index()
    {
-      return View(new HelloWorldModel(_authConfig));
+      return View(new HelloWorldModel(_tetraPakConfig));
    }
 
-   public HelloWordlController(TetraPakAuthConfig authConfig)
+   public HelloWordlController(TetraPakConfig tetraPakConfig)
    {
-      _authConfig = authConfig;
+      _tetraPakConfig = tetraPakConfig;
    }
 }
 ```
@@ -276,7 +276,7 @@ Your view could, potentially, get to all Tetra Pak configuration through its mod
 
 While you might not have much use for the configuration details in your code the Tetra Pak SDK needs this information and can always get to it through service location or dependency injection.
   
-Please check out the [`TetraPakAuthConfig` code API][md-code-api-tetrapakauthconfig] for more details.
+Please check out the [`TetraPakConfig` code API][md-code-api-tetrapakconfig] for more details.
 
 ### Runtime Environment
 
@@ -351,7 +351,7 @@ Please consult the documentation for your preferred hosting service to learn how
 
 #### Explicit Runtime Environment Method
 
-As already stated, this method should only be considered when you, for whatever reason, need to run your project in a runtime environment that differs from Tetra Pak Auth Services. This method relies on the `TetraPakAuthConfig` code API and overrides the value specified by runtime variable `ASPNETCORE_ENVIRONMENT`.
+As already stated, this method should only be considered when you, for whatever reason, need to run your project in a runtime environment that differs from Tetra Pak Auth Services. This method relies on the `TetraPakConfig` code API and overrides the value specified by runtime variable `ASPNETCORE_ENVIRONMENT`.
 
 > *Please note that setting the runtime environment explicitly only affects the SDK. Most importantly, the SDK will ensure the correct services, in the specified environment, will be consumed. Your own code, or code from other libraries you are including will not be affected by this value.*
 
@@ -405,7 +405,7 @@ The TetraPak.AspNet SDK have this
 [tetra-pak-aspnet-api-recipe]: ./TetraPak.AspNet.Api/recipe-webapi.md
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
 [doc-webapp-overview-middleware]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#middleware
-[md-code-api-tetrapakauthconfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfig.md
+[md-code-api-tetrapakconfig]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakConfig.md
 [md-code-api-runtimeenvironment]: --TODO-- (link to TetraPak.Common GitHub documentation)
 [md-code-api-discoverydocument]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md
 [md-code-api-TetraPakClaimsTransformation]: ./TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakClaimsTransformation.md

@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public AmbientData AmbientData { get; }
 
-        internal TetraPakAuthConfig AuthConfig => AmbientData.AuthConfig;
+        internal TetraPakConfig Config => AmbientData.Config;
         
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig { get; }
@@ -39,11 +39,11 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets a value indicating whether the configuration has been delegated.  
         /// </summary>
-        /// <see cref="ITetraPakAuthConfigDelegate"/>
-        protected virtual bool IsConfigDelegated => AmbientData.AuthConfig.IsDelegated;
+        /// <see cref="ITetraPakConfigDelegate"/>
+        protected virtual bool IsConfigDelegated => AmbientData.Config.IsDelegated;
 
         /// <inheritdoc />
-        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
+        public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
         public virtual GrantType GrantType
@@ -54,7 +54,7 @@ namespace TetraPak.AspNet.Api
                     if (string.IsNullOrWhiteSpace(value))
                         value = GrantType.Inherited.ToString();
 
-                    if (!TetraPakAuthConfig.TryParseEnum(value, out grantType))
+                    if (!TetraPakConfig.TryParseEnum(value, out grantType))
                         throw new FormatException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
 
                     if (grantType == GrantType.Inherited)
@@ -130,11 +130,11 @@ namespace TetraPak.AspNet.Api
         public static ConfigPath GetServiceConfigPath(string serviceName = null!)
         {
             if (serviceName is null or ServicesConfigName)
-                return $"{TetraPakAuthConfig.DefaultSectionIdentifier}{ConfigPath.Separator}{ServicesConfigName}";
+                return $"{TetraPakConfig.DefaultSectionIdentifier}{ConfigPath.Separator}{ServicesConfigName}";
 
             return serviceName.Contains(':')
                 ? serviceName 
-                : $"{TetraPakAuthConfig.DefaultSectionIdentifier}:{ServicesConfigName}:{serviceName}";
+                : $"{TetraPakConfig.DefaultSectionIdentifier}:{ServicesConfigName}:{serviceName}";
         }
         
         public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)

@@ -33,7 +33,7 @@ namespace TetraPak.AspNet.Api
         public IServiceAuthConfig? ParentConfig => Parent;
 
         /// <inheritdoc />
-        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
+        public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
         public string? StringValue { get; protected set; }

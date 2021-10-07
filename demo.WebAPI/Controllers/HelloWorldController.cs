@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
     public class HelloWorldController : ControllerBase
     {
         readonly ITokenExchangeService _tokenExchangeService;
-        readonly TetraPakAuthConfig _tetraPakConfig;
+        readonly TetraPakConfig _tetraPakConfig;
 
         /// <summary>
         ///   <para>
@@ -73,7 +73,7 @@ namespace WebAPI.Controllers
             return this.RespondAsync(Outcome<object>.Success(data));
         }
         
-        [Authorize(AuthenticationSchemes = "obsolete")]
+        [Authorize(AuthenticationSchemes = "obsolete,Bearer")]
         [HttpGet, Route("aad")]
         public Task<ActionResult> GetAad()
         {
@@ -99,7 +99,7 @@ namespace WebAPI.Controllers
         ///   This service becomes available for dependency injection when you call
         ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection,string?,TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)"/> (see <see cref="Startup.ConfigureServices"/>).
         /// </param>
-        public HelloWorldController(TetraPakAuthConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
+        public HelloWorldController(TetraPakConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
         {
             _tetraPakConfig = tetraPakConfig;
             _tokenExchangeService = tokenExchangeService;

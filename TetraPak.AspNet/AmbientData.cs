@@ -61,27 +61,27 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets an auth config value. 
         /// </summary>
-        public TetraPakAuthConfig AuthConfig { get; }
+        public TetraPakConfig Config { get; }
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger? Logger => AuthConfig.Logger;
+        public ILogger? Logger => Config.Logger;
 
         /// <inheritdoc />
         public string? GetMessageId(bool enforce = false) 
-            => _httpContextAccessor.HttpContext?.Request.GetMessageId(AuthConfig, enforce);
+            => _httpContextAccessor.HttpContext?.Request.GetMessageId(Config, enforce);
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => HttpContext is { }
-                ? HttpContext.GetAccessTokenAsync(AuthConfig, forceStandardHeader)
+                ? HttpContext.GetAccessTokenAsync(Config, forceStandardHeader)
                 : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found in request")));
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetIdTokenAsync() 
             => HttpContext is { }
-                ? HttpContext.GetIdentityTokenAsync(AuthConfig)
+                ? HttpContext.GetIdentityTokenAsync(Config)
                 : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Identity token not found in request")));
 
         /// <summary>
@@ -167,17 +167,17 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes the <see cref="AmbientData"/> instance.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   The Tetra Pak auth configuration.
         /// </param>
         /// <param name="httpContextAccessor">
         ///   A <see cref="IHttpContextAccessor"/> that is required for many of the ambient data operations.
         /// </param>
         public AmbientData(
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             IHttpContextAccessor httpContextAccessor)
         {
-            AuthConfig = authConfig;
+            Config = config;
             _httpContextAccessor = httpContextAccessor;
         }
     }

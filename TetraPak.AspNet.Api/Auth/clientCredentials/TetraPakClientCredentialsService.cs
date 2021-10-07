@@ -20,16 +20,16 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakClientCredentialsService : IClientCredentialsService
     {
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
 
         /// <summary>
         ///   Gets a logger provider.
         /// </summary>
-        protected ILogger? Logger => _authConfig.Logger;
+        protected ILogger? Logger => _config.Logger;
 
-        ITimeLimitedRepositories? Cache => _authConfig.Cache;
+        ITimeLimitedRepositories? Cache => _config.Cache;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
@@ -73,7 +73,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var keyValues = formsValues.Select(kvp 
                     => new KeyValuePair<string?, string?>(kvp.Key, kvp.Value));
                 var response = await client.PostAsync(
-                    _authConfig.TokenIssuerUrl,
+                    _config.TokenIssuerUrl,
                     new FormUrlEncodedContent(keyValues),
                     useCancellation);
 
@@ -111,23 +111,23 @@ namespace TetraPak.AspNet.Api.Auth
                 if (Logger is null)
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
 
-                var messageId = _authConfig.AmbientData.GetMessageId(true);
+                var messageId = _config.AmbientData.GetMessageId(true);
                 var message = new StringBuilder();
                 message.AppendLine("Client credentials failure (state dump to follow if DEBUG log level is enabled)");
                 
                 if (Logger.IsEnabled(LogLevel.Debug))
                 {
-                    var options = new StateDumpOptions(_authConfig)
+                    var options = new StateDumpOptions(_config)
                         .WithIgnored(
-                            nameof(TetraPakApiAuthConfig.GrantType),
-                            nameof(TetraPakAuthConfig.ClientId),
-                            nameof(TetraPakAuthConfig.ClientSecret),
-                            nameof(TetraPakAuthConfig.RequestMessageIdHeader),
-                            nameof(TetraPakAuthConfig.IsPkceUsed),
-                            nameof(TetraPakAuthConfig.CallbackPath))
+                            nameof(TetraPakApiConfig.GrantType),
+                            nameof(TetraPakConfig.ClientId),
+                            nameof(TetraPakConfig.ClientSecret),
+                            nameof(TetraPakConfig.RequestMessageIdHeader),
+                            nameof(TetraPakConfig.IsPkceUsed),
+                            nameof(TetraPakConfig.CallbackPath))
                         .WithTargetLogger(Logger);
                     var dump = new StateDump().WithStackTrace();
-                    dump.Add(_authConfig, "AuthConfig", options);
+                    dump.Add(_config, "AuthConfig", options);
                     options = new StateDumpOptions(clientCredentials).WithTargetLogger(Logger);
                     dump.Add(clientCredentials, "Credentials", options);
                     message.AppendLine(dump.ToString());
@@ -205,22 +205,22 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         protected virtual Task<Outcome<Credentials>> OnGetCredentialsAsync()
         {
-            if (string.IsNullOrWhiteSpace(_authConfig.ClientId))
+            if (string.IsNullOrWhiteSpace(_config.ClientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
                     new ConfigurationException("Client credentials have not been provisioned")));
 
             return Task.FromResult(Outcome<Credentials>.Success(
-                new BasicAuthCredentials(_authConfig.ClientId, _authConfig.ClientSecret)));
+                new BasicAuthCredentials(_config.ClientId, _config.ClientSecret)));
         }
 
         /// <summary>
         ///   
         /// </summary>
-        /// <param name="authConfig"></param>
+        /// <param name="config"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TetraPakClientCredentialsService(TetraPakAuthConfig authConfig)
+        public TetraPakClientCredentialsService(TetraPakConfig config)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
     }
 }

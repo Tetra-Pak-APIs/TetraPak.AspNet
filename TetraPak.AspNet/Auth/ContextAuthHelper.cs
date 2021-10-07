@@ -10,11 +10,11 @@ namespace TetraPak.AspNet.Auth
         public static bool TryReadAuthorization(
             this MessageReceivedContext context,
             OpenIdConnectOptions options,
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             ILogger logger, 
             out string authorization)
         {
-            authorization = context.Request.Headers[authConfig.AuthorizationHeader];
+            authorization = context.Request.Headers[config.AuthorizationHeader];
             var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
             var isJwtToken = authorization.TryParseToJwtSecurityToken(out var jwt);
 
@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Auth
             if (isJwtToken)
             {
                 logger.Debug($"Received JWT: \n{jwt.ToDebugString()}");
-                logger.Debug($"Environment: {authConfig.Environment}");
+                logger.Debug($"Environment: {config.Environment}");
                 logger.Debug($"Discovery document URL: {options.MetadataAddress}");
                 return true;
             }

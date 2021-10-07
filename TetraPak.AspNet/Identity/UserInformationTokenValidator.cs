@@ -12,14 +12,14 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Gets a log provider.
         /// </summary>
-        protected ILogger Logger => AuthConfig.Logger;
+        protected ILogger Logger => Config.Logger;
 
         /// <summary>
         ///   Gets the auth configuration.
         /// </summary>
-        public TetraPakAuthConfig AuthConfig { get; private set; }
+        public TetraPakConfig Config { get; private set; }
 
-        internal void Initialize(TetraPakAuthConfig authConfig) => AuthConfig = authConfig;
+        internal void Initialize(TetraPakConfig config) => Config = config;
 
         /// <summary>
         ///   Called by the <see cref="UserInformationProvider"/> for custom access token validation/processing.

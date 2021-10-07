@@ -23,19 +23,22 @@
 | [HttpResponseMessageHelper](TetraPak_AspNet_HttpResponseMessageHelper.md 'TetraPak.AspNet.HttpResponseMessageHelper') | Provides convenient extension methods for [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')s.<br/> |
 | [QueryParametersHelper](TetraPak_AspNet_QueryParametersHelper.md 'TetraPak.AspNet.QueryParametersHelper') |  |
 | [RoutingHelper](TetraPak_AspNet_RoutingHelper.md 'TetraPak.AspNet.RoutingHelper') | Convenient extension methods for working with controllers and endpoints. <br/> |
-| [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') | Provides a code API to the main Tetra Pak section in the configuration.  <br/> |
-| [TetraPakAuthConfigDelegate](TetraPak_AspNet_TetraPakAuthConfigDelegate.md 'TetraPak.AspNet.TetraPakAuthConfigDelegate') | A partial implementation of the [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate') contract.<br/> |
-| [TetraPakClaimsTransformation](TetraPak_AspNet_TetraPakClaimsTransformation.md 'TetraPak.AspNet.TetraPakClaimsTransformation') | A basic (abstract) implementation of the [TetraPak.AspNet.ITetraPakClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ITetraPakClaimsTransformation 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.<br/> |
+| [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') | OBSOLETE!<br/>Please use the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') class instead.<br/> |
+| [TetraPakClaimsTransformation](TetraPak_AspNet_TetraPakClaimsTransformation.md 'TetraPak.AspNet.TetraPakClaimsTransformation') | A basic (abstract) implementation of the [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.<br/> |
 | [TetraPakClaimsTransformationHelper](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md 'TetraPak.AspNet.TetraPakClaimsTransformationHelper') | Provides convenience methods fo setting up claims transformation.<br/> |
-| [TetraPakConfigHelper](TetraPak_AspNet_TetraPakConfigHelper.md 'TetraPak.AspNet.TetraPakConfigHelper') |  |
+| [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') | Provides a code API to the main Tetra Pak section in the configuration.  <br/> |
+| [TetraPakConfigDelegate](TetraPak_AspNet_TetraPakConfigDelegate.md 'TetraPak.AspNet.TetraPakConfigDelegate') | A partial implementation of the [ITetraPakConfigDelegate](TetraPak_AspNet_ITetraPakConfigDelegate.md 'TetraPak.AspNet.ITetraPakConfigDelegate') contract.<br/> |
+| [TetraPakConfigHelper](TetraPak_AspNet_TetraPakConfigHelper.md 'TetraPak.AspNet.TetraPakConfigHelper') | Provides convenient helper methods for Tetra Pak configuration scenarios. <br/> |
 | [TetraPakJwtClaimsTransformation](TetraPak_AspNet_TetraPakJwtClaimsTransformation.md 'TetraPak.AspNet.TetraPakJwtClaimsTransformation') | Add this class to the DI configuration to automatically provide a Tetra Pak identity to any request.<br/>The class constructor also needs [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData') and <br/>Please note that this is automatically done by calling [TetraPak.AspNet.Auth.TetraPakAuth.AddTetraPakWebClientAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.TetraPakAuth.AddTetraPakWebClientAuthentication#TetraPak_AspNet_Auth_TetraPakAuth_AddTetraPakWebClientAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_ 'TetraPak.AspNet.Auth.TetraPakAuth.AddTetraPakWebClientAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection)').<br/> |
 
 | Interfaces | |
 | :--- | :--- |
 | [IMessageIdProvider](TetraPak_AspNet_IMessageIdProvider.md 'TetraPak.AspNet.IMessageIdProvider') |  |
-| [ITetraPakAuthConfigDelegate](TetraPak_AspNet_ITetraPakAuthConfigDelegate.md 'TetraPak.AspNet.ITetraPakAuthConfigDelegate') | Classes implementing this contract can be passed as a delegate to customize several aspects<br/>of Tetra Pak related configuration. <br/> |
+| [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') | Classes implementing this code contract can be used as (custom) "claims transformers".  <br/> |
+| [ITetraPakConfigDelegate](TetraPak_AspNet_ITetraPakConfigDelegate.md 'TetraPak.AspNet.ITetraPakConfigDelegate') | Classes implementing this contract can be passed as a delegate to customize several aspects<br/>of Tetra Pak related configuration. <br/> |
 
 | Enums | |
 | :--- | :--- |
 | [ComparisonOperation](TetraPak_AspNet_ComparisonOperation.md 'TetraPak.AspNet.ComparisonOperation') | used to express a comparison operation.<br/> |
 | [HttpRequestElement](TetraPak_AspNet_HttpRequestElement.md 'TetraPak.AspNet.HttpRequestElement') | Used to express a HTTP request element.<br/> |
+| [ServiceScope](TetraPak_AspNet_ServiceScope.md 'TetraPak.AspNet.ServiceScope') | Can be used to specify a scope when configuring (DI) services. <br/> |

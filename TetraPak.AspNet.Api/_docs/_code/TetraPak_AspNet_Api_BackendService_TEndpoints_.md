@@ -6,7 +6,7 @@ Supports configuration for an individual backend service, and a collection of se
 public class BackendService<TEndpoints> :
 TetraPak.AspNet.Api.IBackendService,
 TetraPak.AspNet.Auth.IServiceAuthConfig
-    where TEndpoints : TetraPak.AspNet.Api.ServiceEndpointCollection
+    where TEndpoints : TetraPak.AspNet.Api.ServiceEndpoints
 ```
 #### Type parameters
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__TEndpoints'></a>
@@ -29,32 +29,14 @@ public TetraPak.AspNet.AmbientData AmbientData { get; }
 
 Implements [AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.AmbientData 'TetraPak.AspNet.Auth.IServiceAuthConfig.AmbientData')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__AuthConfig'></a>
-## BackendService&lt;TEndpoints&gt;.AuthConfig Property
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__Config'></a>
+## BackendService&lt;TEndpoints&gt;.Config Property
 Gets the Tetra Pak configuration.  
 ```csharp
-protected TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; }
+protected TetraPak.AspNet.TetraPakConfig Config { get; }
 ```
 #### Property Value
-[TetraPak.AspNet.TetraPakAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakAuthConfig 'TetraPak.AspNet.TetraPakAuthConfig')
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ClientId'></a>
-## BackendService&lt;TEndpoints&gt;.ClientId Property
-Gets a configured client id at this configuration level.  
-```csharp
-public string? ClientId { get; }
-```
-#### Property Value
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ClientSecret'></a>
-## BackendService&lt;TEndpoints&gt;.ClientSecret Property
-Gets a configured client secret at this configuration level.  
-```csharp
-public string? ClientSecret { get; }
-```
-#### Property Value
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+[TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ConfigPath'></a>
 ## BackendService&lt;TEndpoints&gt;.ConfigPath Property
@@ -117,7 +99,7 @@ Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspN
 Gets a delegate used to provide a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient'),  
 used to consumer the backend service.  
 ```csharp
-protected TetraPak.AspNet.Api.IHttpServiceProvider HttpServiceProvider { get; set; }
+protected TetraPak.AspNet.Api.IHttpServiceProvider HttpServiceProvider { get; }
 ```
 #### Property Value
 [IHttpServiceProvider](TetraPak_AspNet_Api_IHttpServiceProvider.md 'TetraPak.AspNet.Api.IHttpServiceProvider')
@@ -130,27 +112,6 @@ protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ParentConfig'></a>
-## BackendService&lt;TEndpoints&gt;.ParentConfig Property
-Gets a declaring configuration (when this configuration is a sub configuration).  
-```csharp
-public TetraPak.AspNet.Auth.IServiceAuthConfig ParentConfig { get; }
-```
-#### Property Value
-[TetraPak.AspNet.Auth.IServiceAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig')
-
-Implements [ParentConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.ParentConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig.ParentConfig')  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__Scope'></a>
-## BackendService&lt;TEndpoints&gt;.Scope Property
-Gets a scope of identity claims, a this configuration level,  
-to be requested while authenticating the identity. When omitted a default scope will be used.  
-```csharp
-public TetraPak.MultiStringValue? Scope { get; }
-```
-#### Property Value
-[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__ServiceName'></a>
 ## BackendService&lt;TEndpoints&gt;.ServiceName Property
@@ -192,8 +153,8 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_string__TetraPak_AspNet_Api_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A unique string value for tracking a request/response (mainly for diagnostics purposes).  
+(optional)<bt/>  
+A unique string value to be used for referencing/diagnostics purposes.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -234,8 +195,8 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A unique string value for tracking a request/response (mainly for diagnostics purposes).  
+(optional)<bt/>  
+A unique string value to be used for referencing/diagnostics purposes.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -281,8 +242,8 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_string__TetraPak_AspNet_Api_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A unique string value for tracking a request/response (mainly for diagnostics purposes).  
+(optional)<bt/>  
+A unique string value to be used for referencing/diagnostics purposes.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[T](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_string__TetraPak_AspNet_Api_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_T 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, string?, TetraPak.AspNet.Api.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -328,8 +289,8 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A unique string value for tracking a request/response (mainly for diagnostics purposes).  
+(optional)<bt/>  
+A unique string value to be used for referencing/diagnostics purposes.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[T](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_System_Collections_Generic_IDictionary_string_string__TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken__string_)_T 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, System.Collections.Generic.IDictionary&lt;string,string&gt;, TetraPak.AspNet.Api.HttpClientOptions, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -402,25 +363,6 @@ A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'Sys
 
 Implements [GetConfiguredValue(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String)')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
-## BackendService&lt;TEndpoints&gt;.GetScopeAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
-Gets a scope to be requested for authorization.  
-```csharp
-public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.MultiStringValue>> GetScopeAsync(TetraPak.AspNet.AuthContext authContext, System.Nullable<System.Threading.CancellationToken> cancellationToken=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_authContext'></a>
-`authContext` [TetraPak.AspNet.AuthContext](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AuthContext 'TetraPak.AspNet.AuthContext')  
-Details the auth context in which the (confidential) client secrets are requested.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Cancellation token for cancellation the operation.  
-  
-#### Returns
-[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
-  
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;) Method
 Gets a scope to be requested for authorization while, optionally, specifying a default scope.  
@@ -446,6 +388,29 @@ Cancellation token for cancellation the operation.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 
 Implements [GetScopeAsync(AuthContext, MultiStringValue?, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync#TetraPak_AspNet_Auth_IServiceAuthConfig_GetScopeAsync_TetraPak_AspNet_AuthContext,TetraPak_MultiStringValue,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync(TetraPak.AspNet.AuthContext,TetraPak.MultiStringValue,System.Nullable{System.Threading.CancellationToken})')  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__IsAuthIdentifier(string)'></a>
+## BackendService&lt;TEndpoints&gt;.IsAuthIdentifier(string) Method
+Examines a string and returns a value to indicate whether the value identifies  
+an attribute used for auth configuration. This is to ensure there is no risk of confusing  
+services or endpoints with such attributes.   
+```csharp
+public bool IsAuthIdentifier(string identifier);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__IsAuthIdentifier(string)_identifier'></a>
+`identifier` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The identifier being examined.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [identifier](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__IsAuthIdentifier(string)_identifier 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.IsAuthIdentifier(string).identifier') matches an auth configuration attribute; otherwise `false`.   
+            
+
+Implements [IsAuthIdentifier(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier#TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier(System.String)')  
+### Remarks
+Examples of auth identifiers: "`ConfigPath`", "`GrantType`",  
+"`ClientId`", "`ClientSecret`", "`Scope`".  
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnGetHttpClientAsync(TetraPak_AspNet_Api_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.OnGetHttpClientAsync(HttpClientOptions, Nullable&lt;CancellationToken&gt;) Method
@@ -495,8 +460,8 @@ A collection of issues found.
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnServiceConfigurationError(System_Net_Http_HttpMethod_string_string__System_Collections_Generic_IEnumerable_System_Exception__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A unique string value for tracking a request/response (mainly for diagnostics purposes).  
+(optional)<bt/>  
+A unique string value to be used for referencing/diagnostics purposes.  
   
 #### Returns
 [TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')  

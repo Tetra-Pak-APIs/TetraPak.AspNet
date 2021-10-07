@@ -8,20 +8,20 @@ public class TetraPakUserInformation
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakUserInformation  
 ### Constructors
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## TetraPakUserInformation.TetraPakUserInformation(TetraPakAuthConfig) Constructor
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)'></a>
+## TetraPakUserInformation.TetraPakUserInformation(TetraPakConfig) Constructor
 Initializes the [TetraPakUserInformation](TetraPak_AspNet_Identity_TetraPakUserInformation.md 'TetraPak.AspNet.Identity.TetraPakUserInformation') object.  
 ```csharp
-public TetraPakUserInformation(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[authConfig](TetraPak_AspNet_Identity_TetraPakUserInformation.md#TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakAuthConfig)_authConfig 'TetraPak.AspNet.Identity.TetraPakUserInformation.TetraPakUserInformation(TetraPak.AspNet.TetraPakAuthConfig).authConfig') was unassigned.  
+[config](TetraPak_AspNet_Identity_TetraPakUserInformation.md#TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)_config 'TetraPak.AspNet.Identity.TetraPakUserInformation.TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig).config') was unassigned.  
             
   
 ### Properties

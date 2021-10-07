@@ -21,10 +21,26 @@ using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 namespace TetraPak.AspNet
 {
     /// <summary>
+    ///   OBSOLETE!
+    ///   Please use the <see cref="TetraPakConfig"/> class instead.
+    /// </summary>
+    [Obsolete("This class is being deprecated. Please use TetraPakConfig")]
+    public class TetraPakAuthConfig : TetraPakConfig
+    {
+        /// <summary>
+        ///   OBSOLETE!
+        ///   Please use the <see cref="TetraPakConfig"/> class instead.
+        /// </summary>
+        public TetraPakAuthConfig(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+        }
+    }
+    
+    /// <summary>
     ///   Provides a code API to the main Tetra Pak section in the configuration.  
     /// </summary>
-    /// <seealso cref="ITetraPakAuthConfigDelegate"/>
-    public class TetraPakAuthConfig : ConfigurationSection, IServiceAuthConfig
+    /// <seealso cref="ITetraPakConfigDelegate"/>
+    public class TetraPakConfig : ConfigurationSection, IServiceAuthConfig
     {
         /// <summary>
         ///   The default root configuration section name for Tetra Pak configuration. 
@@ -87,7 +103,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets a configuration delegate.
         /// </summary>
-        protected ITetraPakAuthConfigDelegate? ConfigDelegate { get; }
+        protected ITetraPakConfigDelegate? ConfigDelegate { get; }
 
         /// <summary>
         ///   Gets a time limited repository to be used for caching (if available).
@@ -874,27 +890,27 @@ namespace TetraPak.AspNet
         /// <param name="serviceProvider">
         ///   A service locator.
         /// </param>
-        public TetraPakAuthConfig(IServiceProvider serviceProvider) 
+        public TetraPakConfig(IServiceProvider serviceProvider) 
         : base(
             serviceProvider.GetRequiredService<IConfiguration>(), 
-            serviceProvider.GetService<ILogger<TetraPakAuthConfig>>(), 
+            serviceProvider.GetService<ILogger<TetraPakConfig>>(), 
             DefaultSectionIdentifier)
         {
             SectionIdentifier = DefaultSectionIdentifier;
             ServiceProvider = serviceProvider;
             Configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            ConfigDelegate = ServiceProvider.GetService<ITetraPakAuthConfigDelegate>();
-            if (ConfigDelegate is TetraPakAuthConfigDelegate tetraPakAuthConfigDelegate)
+            ConfigDelegate = ServiceProvider.GetService<ITetraPakConfigDelegate>();
+            if (ConfigDelegate is TetraPakConfigDelegate tetraPakAuthConfigDelegate)
             {
                 tetraPakAuthConfigDelegate.WithTetraPakConfig(this);
             }
             else
             {
                 var secretsProvider = ServiceProvider.GetService<ITetraPakSecretsProvider>();
-                ConfigDelegate = new TetraPakAuthConfigDelegate(secretsProvider).WithTetraPakConfig(this);
+                ConfigDelegate = new TetraPakConfigDelegate(secretsProvider).WithTetraPakConfig(this);
             }
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
-            var logger = serviceProvider.GetService<ILogger<TetraPakAuthConfig>>();
+            var logger = serviceProvider.GetService<ILogger<TetraPakConfig>>();
             JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();

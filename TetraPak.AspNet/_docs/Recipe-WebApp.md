@@ -2,7 +2,7 @@
 
 This document will walk you through creating a small ASP.NET Core/5+ web app and integrate it with the Tetra Pak Auth Services. After completion you should have a good understanding of how to integrate an existing web app as well. 
 
-The web app will constist of a single view (web page) that will greet the user with his/her name and identity. The page will also present the access token issued by Tetra Pak. 
+The web app will consist of a single view (web page) that will greet the user with his/her name and identity. The page will also present the access token issued by Tetra Pak. 
 
 >*If you need an overview and some background then please check out the [README document][tetra-pak-aspnet-readme]. If you already know everything and just need the fast-track to integrating your existing web app then there is also a neat [cheat sheet][tetra-pak-aspnet-cheat-sheet] (yes, that rhymes :-). Finally, for many issues there is a small [troubleshooting document][tetra-pak-aspnet-scenarios] that might help you out*
 

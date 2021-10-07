@@ -5,7 +5,7 @@ namespace TetraPak.AspNet
     /// <summary>
     ///   Used to describe an auth request context.
     /// </summary>
-    /// <seealso cref="TetraPakAuthConfig.ConfigDelegate"/>
+    /// <seealso cref="TetraPakConfig.ConfigDelegate"/>
     public class AuthContext
     {
         /// <summary>

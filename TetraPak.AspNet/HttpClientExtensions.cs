@@ -9,13 +9,13 @@ namespace TetraPak.AspNet
 
     public class RefreshTokenArgs
     {
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
         
         
 
-        public RefreshTokenArgs(TetraPakAuthConfig authConfig)
+        public RefreshTokenArgs(TetraPakConfig config)
         {
-            _authConfig = authConfig;
+            _config = config;
         }
     }
 }

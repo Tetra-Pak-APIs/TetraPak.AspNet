@@ -21,7 +21,7 @@ namespace TetraPak.AspNet.Identity
         readonly AmbientData _ambientData;
         readonly ITimeLimitedRepositories _cache;
         
-        TetraPakAuthConfig AuthConfig => _ambientData.AuthConfig;
+        TetraPakConfig Config => _ambientData.Config;
         
         string CacheRepository => $"{nameof(UserInformationProvider)}-{_instanceId}"; 
         
@@ -68,7 +68,7 @@ namespace TetraPak.AspNet.Identity
             }
 
             Logger?.Trace("Obtains discovery document");
-            var discoOutcome = await AuthConfig.GetDiscoveryDocumentAsync();
+            var discoOutcome = await Config.GetDiscoveryDocumentAsync();
             if (!discoOutcome)
             {
                 const string MissingDiscoDocErrorMessage =

@@ -25,12 +25,12 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         const string CacheRepository = CacheRepositories.Tokens.DevProxy;
         
         readonly string _url;
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
         readonly HttpComparison? _isMutedWhenCriteria;
 
-        ITimeLimitedRepositories? Cache => _authConfig.Cache;
+        ITimeLimitedRepositories? Cache => _config.Cache;
         
-        ILogger? Logger => _authConfig.Logger;
+        ILogger? Logger => _config.Logger;
 
         public async Task<bool> InvokeAsync(HttpContext context)
         {
@@ -42,7 +42,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return true;
             }
                 
-            var messageId = context.Request.GetMessageId(_authConfig);
+            var messageId = context.Request.GetMessageId(_config);
             if (!context.GetEndpoint().IsAuthorizationRequired())
             {
                 Logger.Debug("Local development proxy bails out. Endpoint does not require authorization", messageId);
@@ -66,7 +66,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             {
                 // access token is already a JWT; no need to get a new one ...
                 Logger.Debug("Local development proxy bails out. Token was already JWT token");
-                context.Request.Headers[_authConfig.AuthorizationHeader] = accessToken.ToString();
+                context.Request.Headers[_config.AuthorizationHeader] = accessToken.ToString();
                 return true;
             }
 
@@ -76,7 +76,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (cachedJwtOutcome)
             {
                 jwtBearer = cachedJwtOutcome.Value!.Identity.ToBearerToken();
-                context.Request.Headers[_authConfig.AuthorizationHeader] = jwtBearer.ToString();
+                context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
                 context.EndDiagnosticsTime(TimerName);
                 return true;
             }
@@ -122,7 +122,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
 
             jwtBearer = jwtBearerOutcome.Value!.Identity.ToBearerToken();
-            context.Request.Headers[_authConfig.AuthorizationHeader] = jwtBearer.ToString();
+            context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
             await cacheToken(accessToken, jwtBearerOutcome.Value);
             context.EndDiagnosticsTime(TimerName);
  
@@ -208,9 +208,9 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public DevProxyMiddleware(TetraPakAuthConfig authConfig, string url, HttpComparison? isMutedWhenCriteria)
+        public DevProxyMiddleware(TetraPakConfig config, string url, HttpComparison? isMutedWhenCriteria)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;

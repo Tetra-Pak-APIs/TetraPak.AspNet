@@ -50,9 +50,9 @@ namespace TetraPak.AspNet.Api
         public IServiceAuthConfig ParentConfig => ServiceAuthConfig;
 
         /// <inheritdoc />
-        public bool IsAuthIdentifier(string identifier) => TetraPakAuthConfig.CheckIsAuthIdentifier(identifier);
+        public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
-        internal TetraPakAuthConfig AuthConfig => ((ServiceAuthConfig) ServiceAuthConfig).AuthConfig;
+        internal TetraPakConfig Config => ((ServiceAuthConfig) ServiceAuthConfig).Config;
         
         [StateDump]
         public virtual GrantType GrantType
@@ -63,7 +63,7 @@ namespace TetraPak.AspNet.Api
                     if (string.IsNullOrWhiteSpace(value))
                         value = GrantType.Inherited.ToString();
                     
-                    if (!TetraPakAuthConfig.TryParseEnum(value, out grantType))
+                    if (!TetraPakConfig.TryParseEnum(value, out grantType))
                         throw new ConfigurationException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
 
                     if (grantType == GrantType.Inherited)
@@ -81,7 +81,7 @@ namespace TetraPak.AspNet.Api
         {
             get
             {
-                if (AuthConfig.IsDelegated)
+                if (Config.IsDelegated)
                     return ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
                 
                 return GetFromFieldThenSection<string>() 
@@ -95,7 +95,7 @@ namespace TetraPak.AspNet.Api
         {
             get
             {
-                if (AuthConfig.IsDelegated)
+                if (Config.IsDelegated)
                     return ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
                 
                 return GetFromFieldThenSection<string>() 
@@ -109,7 +109,7 @@ namespace TetraPak.AspNet.Api
         {
             get
             {
-                if (AuthConfig.IsDelegated)
+                if (Config.IsDelegated)
                     return ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
                 
                 return GetFromFieldThenSection<MultiStringValue>() 
@@ -123,8 +123,8 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext, 
             CancellationToken? cancellationToken = null)
         {
-            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_clientId))
-                return AuthConfig.GetClientIdAsync(authContext, cancellationToken);
+            if (Config.IsDelegated || string.IsNullOrWhiteSpace(_clientId))
+                return Config.GetClientIdAsync(authContext, cancellationToken);
 
             return Task.FromResult(Outcome<string>.Success(_clientId));
         }
@@ -134,8 +134,8 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext, 
             CancellationToken? cancellationToken = null)
         {
-            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_clientSecret))
-                return AuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this));
+            if (Config.IsDelegated || string.IsNullOrWhiteSpace(_clientSecret))
+                return Config.GetClientSecretAsync(new AuthContext(GrantType, this));
 
             return Task.FromResult(Outcome<string>.Success(_clientSecret));
         }
@@ -146,8 +146,8 @@ namespace TetraPak.AspNet.Api
             MultiStringValue? useDefault = null,
             CancellationToken? cancellationToken = null)
         {
-            if (AuthConfig.IsDelegated || string.IsNullOrWhiteSpace(_scope))
-                return AuthConfig.GetScopeAsync(new AuthContext(GrantType, this));
+            if (Config.IsDelegated || string.IsNullOrWhiteSpace(_scope))
+                return Config.GetScopeAsync(new AuthContext(GrantType, this));
 
             return Task.FromResult(Outcome<MultiStringValue>.Success(_scope));
         }
@@ -182,7 +182,7 @@ namespace TetraPak.AspNet.Api
 
         internal IBackendService? BackendService { get; set; }
         
-        internal bool IsDelegated => AuthConfig.IsDelegated;
+        internal bool IsDelegated => Config.IsDelegated;
 
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {

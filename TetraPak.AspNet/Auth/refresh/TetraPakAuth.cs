@@ -17,12 +17,12 @@ namespace TetraPak.AspNet.Auth
     partial class TetraPakAuth // refresh token flow 
     {
         public static async Task<Outcome<TokenRefreshResponse>> RefreshTokenAsync( // todo Consider refactoring to service (like with ITokenExchangeService)
-            this TetraPakAuthConfig authConfig,
+            this TetraPakConfig config,
             string refreshToken,
             ILogger logger)
         {
-            var body = makeRefreshTokenBody(refreshToken, authConfig.IsPkceUsed ? authConfig.ClientId : null);
-            var uri = authConfig.TokenIssuerUrl;
+            var body = makeRefreshTokenBody(refreshToken, config.IsPkceUsed ? config.ClientId : null);
+            var uri = config.TokenIssuerUrl;
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -98,7 +98,7 @@ namespace TetraPak.AspNet.Auth
         /// </param>
         public static void UseTetraPakAuthentication(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             if (config.IsMessageIdEnabled)
             {
                 app.UseTetraPakMessageId();

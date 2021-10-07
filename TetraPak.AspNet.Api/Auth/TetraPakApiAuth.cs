@@ -18,12 +18,12 @@ namespace TetraPak.AspNet.Api.Auth
         ///   The <see cref="IApplicationBuilder"/> instance.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   The method requires an <see cref="TetraPakAuthConfig"/> service is available
+        ///   The method requires an <see cref="TetraPakConfig"/> service is available
         ///   though the DI service locator but no such service could be obtained. 
         /// </exception>
         public static IApplicationBuilder UseMessageId(this IApplicationBuilder app)
         {
-            var authConfig = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            var authConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             app.Use((context, func) =>
             {
                 context.Request.GetMessageId(authConfig, true);

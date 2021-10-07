@@ -74,10 +74,10 @@ namespace TetraPak.AspNet.Api.Auth
             if (_clientCredentialsProvider is { })
                 return await _clientCredentialsProvider.GetClientCredentialsAsync();
 
-            if (AuthConfig.ClientId is null)
+            if (Config.ClientId is null)
                 throw new InvalidOperationException("Failed obtaining client id from configuration");
             
-            return new Credentials(AuthConfig.ClientId, AuthConfig.ClientSecret);
+            return new Credentials(Config.ClientId, Config.ClientSecret);
         }
         
         // async Task<Outcome<ActorToken>> getCachedExchangedTokenAsync(ActorToken accessToken) obsolete
@@ -104,12 +104,12 @@ namespace TetraPak.AspNet.Api.Auth
             ILoggerFactory logger, 
             UrlEncoder encoder, 
             ISystemClock clock, 
-            TetraPakAuthConfig authConfig, 
+            TetraPakConfig config, 
             AmbientData ambientData, 
             UserInformationProvider userInformationProvider,
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsProvider clientCredentialsProvider = null) 
-        : base(options, logger, encoder, clock, authConfig, ambientData, userInformationProvider)
+        : base(options, logger, encoder, clock, config, ambientData, userInformationProvider)
         {
             _clientCredentialsProvider = clientCredentialsProvider;
             _tokenExchangeService = tokenExchangeService;

@@ -60,21 +60,21 @@ namespace TetraPak.AspNet.Auth
             // todo This method is HUGE. Consider refactoring to break it down!
             services.AddAmbientData();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddSingleton<TetraPakAuthConfig>();
+            services.TryAddSingleton<TetraPakConfig>();
             // services.AddTetraPakClaimsTransformation();
             // services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
             var provider = services.BuildServiceProvider();
-            var authConfig = provider.GetService<TetraPakAuthConfig>();
+            var authConfig = provider.GetService<TetraPakConfig>();
 
             addCachingIfAllowed();
 
             var logger = authConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
             if (authConfig is null)
             {
-                logger.Error(new ConfigurationException($"Cannot resolve service: {typeof(TetraPakAuthConfig)}"));
+                logger.Error(new ConfigurationException($"Cannot resolve service: {typeof(TetraPakConfig)}"));
                 return;
             }
 
@@ -285,12 +285,12 @@ namespace TetraPak.AspNet.Auth
 
         static void AddTetraPakWebClientAuthentication(this IServiceCollection services) // todo Make available when needed -JR 2021-09-01
         {
-            services.TryAddSingleton<TetraPakAuthConfig>();
+            services.TryAddSingleton<TetraPakConfig>();
             services.AddTetraPakClaimsTransformation();
             
             var provider = services.BuildServiceProvider();
-            var authConfig = provider.GetService<TetraPakAuthConfig>() 
-                             ?? throw new ConfigurationException($"Service location failed: {typeof(TetraPakAuthConfig)}");
+            var authConfig = provider.GetService<TetraPakConfig>() 
+                             ?? throw new ConfigurationException($"Service location failed: {typeof(TetraPakConfig)}");
             var logger = authConfig.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
 
             services.AddAuthentication(options =>
@@ -389,7 +389,7 @@ namespace TetraPak.AspNet.Auth
     {
         public static async Task<bool> RefreshTokenIfExpiredAsync(
             this CookieValidatePrincipalContext context,
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             ILogger logger)
         {
             if (!isExpired())
@@ -399,7 +399,7 @@ namespace TetraPak.AspNet.Auth
             if (refreshToken is null)
                 return true;
 
-            var outcome = await authConfig.RefreshTokenAsync(refreshToken, logger);
+            var outcome = await config.RefreshTokenAsync(refreshToken, logger);
             if (!outcome)
                 return await fail();
             
@@ -430,7 +430,7 @@ namespace TetraPak.AspNet.Auth
                 var now = DateTimeOffset.UtcNow;
                 expiresAt = DateTimeOffset.Parse(expiresAtString);
                 var remainingTimeSpan = expiresAt.Subtract(now);
-                var refreshThresholdTimeSpan = TimeSpan.FromSeconds(authConfig.RefreshThreshold);
+                var refreshThresholdTimeSpan = TimeSpan.FromSeconds(config.RefreshThreshold);
                 var result = remainingTimeSpan < refreshThresholdTimeSpan;
                 
                 logger.Trace(

@@ -13,7 +13,7 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public interface IHttpServiceProvider : IApiLoggerProvider, IMessageIdProvider, IAccessTokenProvider
     {
-        Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig);
+        Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakConfig config);
         
         /// <summary>
         ///   Creates and returns a (configured) <see cref="HttpClient"/> for use with a specific service. 

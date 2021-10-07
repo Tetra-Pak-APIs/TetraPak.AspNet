@@ -27,37 +27,25 @@ namespace WebAPI
             services.AddControllers();
 
             services.AddSingleton<ITetraPakSecretsProvider, MySecretsProvider>();
-            services.AddSingleton<ITetraPakAuthConfigDelegate, MyAuthConfigDelegate>();
+            services.AddSingleton<ITetraPakConfigDelegate, MyConfigDelegate>();
             services.AddTetraPakJwtBearerAssertion()
                     .AddJwtBearer("obsolete", options => // <-- spike: test additional (AAD) JWT Bearer auth scheme
                     {
-                        // options.Audience = "https://ta01qtasdev01.azurewebsites.net";
                         options.Authority =  "https://api-dev.tetrapak.com/oauth2/v2";
                         options.SaveToken = true;
                         options.TokenValidationParameters.ValidateLifetime = false;
                         options.TokenValidationParameters.ValidAudiences = new []{ "https://ta01qtastst01.azurewebsites.net", "EdgeIDP" };
-                        options.Events = new JwtBearerEvents
-                        {       
-                            OnMessageReceived = context =>
-                            {
-                                return Task.CompletedTask;
-                            },
-                            OnAuthenticationFailed = context =>
-                            {
-                                return Task.CompletedTask;
-                            },
-                            OnTokenValidated = context =>
-                            {
-                                return Task.CompletedTask;
-                            }
-                        };
-                    })
+                        options.Events.OnAuthenticationFailed = OnJwtAuthenticationFailed;
+                    })  
+                    // .AddScheme<AliBabaAuthenticationOptions,AliBabaAuthenticationHandler>("AliBaba", null)
                     .AddAliBabaAuthentication();            // <-- spike: testing custom auth scheme
-            services.AddCustomClaimsTransformation<AliBabaJwtClaimsTransformation>();
+            services.AddTetraPakCustomClaimsTransformation<AliBabaClaimsTransformation>();
             services.AddTetraPakServices();              // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services
 
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.WebAPI", Version = "v1"}); });
         }
+
+        Task OnJwtAuthenticationFailed(AuthenticationFailedContext arg) => Task.CompletedTask; // spike throw away
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -77,7 +65,7 @@ namespace WebAPI
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseTetraPakDiagnostics(env);       // <-- add this to allow diagnostics, such a profiling headers
+            app.UseTetraPakDiagnostics();       // <-- add this to allow diagnostics, such a profiling headers
             
             app.UseTetraPakApiAuthentication(env); // <-- add this (after UserRouting and before UseAuthorization)
             

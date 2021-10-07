@@ -69,7 +69,7 @@ namespace TetraPak.AspNet
                     case TetraPakIdentitySource.RemoteService:
                         var accessTokenOutcome = await OnGetAccessTokenAsync(_);
                         if (accessTokenOutcome)
-                            return await mapFromApiAsync(accessTokenOutcome.Value);
+                            return await mapFromRemoteServiceAsync(accessTokenOutcome.Value);
                         
                         Logger.Warning("Could not populate identity from API. No access token was available");
                         break;
@@ -84,17 +84,15 @@ namespace TetraPak.AspNet
 
             ClaimsPrincipal mapFromIdToken(ActorToken token)
             {
-                // var clone = principal.Clone(); obsolete 
                 foreach (var identity in principal.Identities)
                 {
+                    if (identity is not { AuthenticationType: AuthenticationTypes.Federation } claimsIdentity)
+                        return principal; // not the "Federation" identity 
+
                     var jwtHandler = new JwtSecurityTokenHandler(); 
                     if (!jwtHandler.CanReadToken(token.Identity))
-                        return principal;
+                        return principal; // not a JWT token; skip transformation
                         
-                    if (identity is not { AuthenticationType: AuthenticationTypes.Federation } claimsIdentity)
-                        return principal;
-                    
-                
                     var jwt = jwtHandler.ReadJwtToken(token.Identity);
                     var mappedClaims = new List<Claim>();
                     foreach (var claim in jwt.Claims)
@@ -111,7 +109,7 @@ namespace TetraPak.AspNet
                 return principal;
             }
             
-            async Task<ClaimsPrincipal> mapFromApiAsync(string accessToken)
+            async Task<ClaimsPrincipal> mapFromRemoteServiceAsync(string accessToken)
             {
                 Logger.Trace("Fetches identity from Tetra Pak User Information Service");
                 var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken);
@@ -123,7 +121,6 @@ namespace TetraPak.AspNet
                     return principal;
                 }
 
-                // var clone = principal.Clone(); obsolete
                 if (principal.Identity is not ClaimsIdentity identity)
                     return principal;
 
@@ -153,7 +150,7 @@ namespace TetraPak.AspNet
 
         async Task<Outcome<CachedClaimsPrincipal>> tryGetCachedPrincipalAsync(ClaimsPrincipal principal)
         {
-            if (!principal.TryResolveIdClaim(out var id, "sub"))
+            if (!principal.TryResolveClaim(out var id, "sub"))
                 return Outcome<CachedClaimsPrincipal>.Fail();
 
             if (Cache is null)

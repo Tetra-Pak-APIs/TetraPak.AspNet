@@ -61,6 +61,25 @@ The logger provider.
 [Microsoft.Extensions.Logging.LogLevel](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.LogLevel 'Microsoft.Extensions.Logging.LogLevel')  
 A [Microsoft.Extensions.Logging.LogLevel](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.LogLevel 'Microsoft.Extensions.Logging.LogLevel') value.  
   
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding)'></a>
+## WebLoggerHelper.GetRawBodyStringAsync(HttpRequest, Encoding) Method
+Retrieves the [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') body as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').    
+```csharp
+public static System.Threading.Tasks.Task<string> GetRawBodyStringAsync(this Microsoft.AspNetCore.Http.HttpRequest request, System.Text.Encoding encoding);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding)_request'></a>
+`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding)_encoding'></a>
+`encoding` [System.Text.Encoding](https://docs.microsoft.com/en-us/dotnet/api/System.Text.Encoding 'System.Text.Encoding')  
+The character encoding to use.   
+  
+#### Returns
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+The (raw) textual representation of the request body as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').   
+  
 <a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string__)'></a>
 ## WebLoggerHelper.TraceAsync(ILogger?, HttpRequest, Func&lt;string&gt;?) Method
 Traces a [System.Net.HttpWebRequest](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpWebRequest 'System.Net.HttpWebRequest') in the logs.  

@@ -19,7 +19,7 @@ System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessToke
 <a name='TetraPak_AspNet_Auth_IAccessTokenProvider_GetAccessTokenAsync(bool)_forceStandardHeader'></a>
 `forceStandardHeader` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
-When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.AuthorizationHeader')) authorization  
+When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader')) authorization  
 header is ignored in favour of the HTTP standard [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization') header.   
   
 #### Returns

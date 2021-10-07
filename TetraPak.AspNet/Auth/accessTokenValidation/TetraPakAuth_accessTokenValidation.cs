@@ -43,7 +43,7 @@ namespace TetraPak.AspNet.Auth
     public class TetraPakAccessTokenAuthenticationHandler : AuthenticationHandler<ValidateTetraPakAccessTokenSchemeOptions>
     {
         readonly UserInformationProvider _userInformationProvider;
-        public TetraPakAuthConfig AuthConfig { get; }
+        public TetraPakConfig Config { get; }
 
         public AmbientData AmbientData { get; }
 
@@ -91,12 +91,12 @@ namespace TetraPak.AspNet.Auth
             ILoggerFactory logger, 
             UrlEncoder encoder, 
             ISystemClock clock,
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             AmbientData ambientData,
             UserInformationProvider userInformationProvider)
         : base(options, logger, encoder, clock)
         {
-            AuthConfig = authConfig;
+            Config = config;
             AmbientData = ambientData;
             _userInformationProvider = userInformationProvider;
         }

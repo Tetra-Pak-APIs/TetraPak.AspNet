@@ -270,7 +270,7 @@ The [actor's][cat-actor] name can be resolved using one of two mechanisms:
 - From a token
 - From the [TPAS][cat-tpas] User Information (remote) service
 
-Resolving and constructing the [actor's][cat-actor] identity is a mechanism we call [claims transformation][cat-claims-transformation] and it's an automatic step that gets invoked at the end of the authentication process. This mechanism examines the property [`TetraPakAuthConfig.IdentitySource`][md-prop-TetraPakAuthConfig-IdentitySource], which is a simple enum - [`TetraPakIdentitySource`][md-type-TetraPakIdentitySource] - that (currently) supports two values; `IdToken` and `RemoteService` (`IdToken` is the default).
+Resolving and constructing the [actor's][cat-actor] identity is a mechanism we call [claims transformation][cat-claims-transformation] and it's an automatic step that gets invoked at the end of the authentication process. This mechanism examines the property [`TetraPakConfig.IdentitySource`][md-prop-TetraPakConfig-IdentitySource], which is a simple enum - [`TetraPakIdentitySource`][md-type-TetraPakIdentitySource] - that (currently) supports two values; `IdToken` and `RemoteService` (`IdToken` is the default).
 
 > You can configure this value in appsettings.json, like so:
 > ```json
@@ -576,7 +576,7 @@ That's it! Try running your API locally. If you run into trouble, please consult
 [md-ControllerBaseExtensions]: ./_code/TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md
 [md-Outcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_Outcome_T_.md
 [md-EnumOutcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_EnumOutcome_T_.md
-[md-prop-TetraPakAuthConfig-IdentitySource]: ../../TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakAuthConfig.md#tetrapakauthconfigidentitysource-property
+[md-prop-TetraPakConfig-IdentitySource]: ../../TetraPak.AspNet/_docs/_code/TetraPak_AspNet_TetraPakConfig.md#tetrapakconfigidentitysource-property
 [md-type-TetraPakIdentitySource]: ../../TetraPak.AspNet/_docs/_code/TetraPak_AspNet_Auth_TetraPakIdentitySource.md
 
 [md-setting-localhost-port]: ../../Scenarios.md#setting-the-localhost-port

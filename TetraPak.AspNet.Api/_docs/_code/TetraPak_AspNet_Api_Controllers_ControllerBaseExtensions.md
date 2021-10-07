@@ -102,7 +102,7 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 ## ControllerBaseExtensions.GetMessageId(ControllerBase) Method
 Gets a unique string value for tracking a request/response (mainly for diagnostics purposes).  
 ```csharp
-public static string GetMessageId(this Microsoft.AspNetCore.Mvc.ControllerBase self);
+public static string? GetMessageId(this Microsoft.AspNetCore.Mvc.ControllerBase self);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetMessageId(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
@@ -115,7 +115,7 @@ public static string GetMessageId(this Microsoft.AspNetCore.Mvc.ControllerBase s
 ## ControllerBaseExtensions.GetTetraPakApiAuthConfig(ControllerBase) Method
 Obtains the Tetra Pak (API) configuration object.  
 ```csharp
-public static TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig? GetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self);
+public static TetraPak.AspNet.Api.Auth.TetraPakApiConfig? GetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
@@ -123,13 +123,13 @@ public static TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig? GetTetraPakApiAuth
 The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
   
 #### Returns
-[TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')  
+[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')  
 A Tetra Pak (API) configuration object.  
 #### Exceptions
 [TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
 The Tetra Pak (API) configuration object could not be obtained  
 #### See Also
-- [TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiAuthConfig?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig?)')
+- [TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiConfig?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Auth.TetraPakApiConfig?)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)'></a>
 ## ControllerBaseExtensions.InternalServerError(ControllerBase, Exception) Method
@@ -483,7 +483,7 @@ The backend service could not be resolved.
 Please ensure you haven't misspelled it in service configuration.   
 ### Remarks
 Use this method to obtain a backend service with its own custom implementation  
-of the [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection') interface.  
+of the [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints') interface.  
 
 
 
@@ -493,60 +493,19 @@ When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.
 based on the controller's type. As an example; calling this method from a controller of type  
 `WeatherServiceController` will assume the requested backend service name is "WeatherService".     
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)'></a>
-## ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(ControllerBase, string?) Method
-Gets a backend service with (custom) endpoints.  
-```csharp
-public static TetraPak.AspNet.Api.BackendService<TEndpoints> ServiceWithEndpoints<TEndpoints>(this Microsoft.AspNetCore.Mvc.ControllerBase self, string? serviceName=null)
-    where TEndpoints : TetraPak.AspNet.Api.ServiceEndpointCollection;
-```
-#### Type parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_TEndpoints'></a>
-`TEndpoints`  
-The service endpoints [System.Type](https://docs.microsoft.com/en-us/dotnet/api/System.Type 'System.Type') (must derive from [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection')).  
-  
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName'></a>
-`serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional; default=[see remarks])<br/>  
-Identifies the service.   
-  
-#### Returns
-[TetraPak.AspNet.Api.BackendService&lt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')[TEndpoints](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_TEndpoints 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string?).TEndpoints')[&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')  
-A [BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;') object.  
-#### Exceptions
-[TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
-The backend service could not be resolved.  
-Please ensure you haven't misspelled it in service configuration.   
-### Remarks
-Use this method to obtain a backend service that implements an endpoints collection of specified type  
-(derived from [ServiceEndpointCollection](TetraPak_AspNet_Api_ServiceEndpointCollection.md 'TetraPak.AspNet.Api.ServiceEndpointCollection')).  
-
-
-
-
-  
-When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ServiceWithEndpoints_TEndpoints_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.ServiceWithEndpoints&lt;TEndpoints&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string?).serviceName') is omitted it will instead be resolved from naming convention,  
-based on the controller's type. As an example; calling this method from a controller of type  
-`WeatherServiceController` will assume the requested backend service name is "WeatherService".     
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig_)'></a>
-## ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiAuthConfig?) Method
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)'></a>
+## ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiConfig?) Method
 Attempts obtaining the Tetra Pak (API) configuration object.  
 ```csharp
-public static bool TryGetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self, out TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig? config);
+public static bool TryGetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self, out TetraPak.AspNet.Api.Auth.TetraPakApiConfig? config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig_)_self'></a>
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_self'></a>
 `self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
 The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig_)_config'></a>
-`config` [TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_config'></a>
+`config` [TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')  
 Passes back the Tetra Pak (API) configuration object (on success).  
   
 #### Returns

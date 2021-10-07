@@ -6,10 +6,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace TetraPak.AspNet.Api.Auth
 {
+    [Obsolete("This class is being deprecated. Please use TetraPakApiConfig")]
+    public class TetraPakApiAuthConfig : TetraPakApiConfig
+    {
+        public TetraPakApiAuthConfig(IServiceProvider provider) : base(provider)
+        {
+        }
+    }
+    
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
     /// </summary>
-    public class TetraPakApiAuthConfig : TetraPakAuthConfig
+    public class TetraPakApiConfig : TetraPakConfig
     {
         protected override void OnSetProperty(PropertyInfo property, object value)
         {
@@ -24,7 +32,7 @@ namespace TetraPak.AspNet.Api.Auth
         public ITetraPackServiceProvider? BackendServiceProvider =>
             ServiceProvider.GetService<ITetraPackServiceProvider>();
 
-        public TetraPakApiAuthConfig(IServiceProvider provider) : base(provider)
+        public TetraPakApiConfig(IServiceProvider provider) : base(provider)
         {
         }
     }

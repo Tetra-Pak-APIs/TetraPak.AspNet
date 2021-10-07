@@ -21,14 +21,14 @@ A logger provider.
   
   
 ### Properties
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_AuthConfig'></a>
-## ReadDiscoveryDocumentArgs.AuthConfig Property
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Config'></a>
+## ReadDiscoveryDocumentArgs.Config Property
 Gets or sets the Tetra Pak integration configuration.  
 ```csharp
-public TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; set; }
+public TetraPak.AspNet.TetraPakConfig Config { get; set; }
 ```
 #### Property Value
-[TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_LocalCachePath'></a>
 ## ReadDiscoveryDocumentArgs.LocalCachePath Property
@@ -78,43 +78,43 @@ public System.Nullable<System.TimeSpan> Timeout { get; set; }
 [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/System.TimeSpan 'System.TimeSpan')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')
   
 ### Methods
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromDefault(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## ReadDiscoveryDocumentArgs.FromDefault(TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromDefault(TetraPak_AspNet_TetraPakConfig)'></a>
+## ReadDiscoveryDocumentArgs.FromDefault(TetraPakConfig) Method
 Creates default configuration for reading [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
 ```csharp
-public static TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs FromDefault(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs FromDefault(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromDefault(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromDefault(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.     
   
 #### Returns
 [ReadDiscoveryDocumentArgs](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs')  
 A [ReadDiscoveryDocumentArgs](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs') object.  
   
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakAuthConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)'></a>
-## ReadDiscoveryDocumentArgs.FromMasterSource(TetraPakAuthConfig, Nullable&lt;TimeSpan&gt;, ReadDocumentPolicy, string) Method
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)'></a>
+## ReadDiscoveryDocumentArgs.FromMasterSource(TetraPakConfig, Nullable&lt;TimeSpan&gt;, ReadDocumentPolicy, string) Method
 Creates default configuration for reading [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument') from a master (remote) source.  
 ```csharp
-public static TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs FromMasterSource(TetraPak.AspNet.TetraPakAuthConfig authConfig, System.Nullable<System.TimeSpan> timeout=null, TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy fallbackPolicy=TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy.All, string localCachePath=null);
+public static TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs FromMasterSource(TetraPak.AspNet.TetraPakConfig config, System.Nullable<System.TimeSpan> timeout=null, TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy fallbackPolicy=TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy.All, string localCachePath=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakAuthConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakAuthConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_timeout'></a>
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_timeout'></a>
 `timeout` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/System.TimeSpan 'System.TimeSpan')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 Gets or sets a maximum allowed time for reading the [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument'),  
 after which the operation will fail (and, potentially, fall back to some other source  
 as specified by the [Policy](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Policy 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.Policy')).  
   
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakAuthConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_fallbackPolicy'></a>
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_fallbackPolicy'></a>
 `fallbackPolicy` [ReadDocumentPolicy](TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md 'TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy')  
 A (fallback) policy for reading a [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
   
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakAuthConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_localCachePath'></a>
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_FromMasterSource(TetraPak_AspNet_TetraPakConfig_System_Nullable_System_TimeSpan__TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy_string)_localCachePath'></a>
 `localCachePath` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A local (file) path for locally caching the [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').  
   

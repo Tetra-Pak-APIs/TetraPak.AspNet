@@ -59,7 +59,7 @@ In programming you often find a need to reflect an "outcome" of an operation. A 
 
 This type of code APIs are very convenient (unless you're a purist that gets runny eyes from `out` parameters) but they will only work with *synchronous* methods. When you rely on the `async` patterns of .NET you can no longer enjoy `out` parameters.
 
-For this reason the `TetraPak.Common` library ([Nuget][nuget-tetrapak-common]) offers the [Outcome&lt;T&gt;][md-Outcome-T] and [EnumOutcome&lt;T&gt;][md-EnumOutcome-T] classes.
+For this reason the `TetraPak.Common` library ([Nuget][nuget-tetrapak-common]) offers the [Outcome&lt;T&gt;][code-Outcome-T] and [EnumOutcome&lt;T&gt;][code-EnumOutcome-T] classes.
 
 ## Audience
 
@@ -132,9 +132,11 @@ See also: [Identity](#identity), [ClaimsIdentity][class-ClaimsIdentity]
 
 ## Claims transformation
 
-The process of constructing the [identity](#identity) of an [actor](#actor) during an ASP.NET request/response operation. This happens automatically after a successful [authentication](#authentication) operation. It is possible to inject one's own "claims transformation delegate" by simply configuring the `IClaimsTransformation` service during the DI services configuration (usually from the `ConfigureServices` method of the `Startup`).
+The process of constructing the [identity](#identity) of an [actor](#actor) during an ASP.NET request/response operation. This happens automatically after a successful [authentication](#authentication) operation. It is possible to replace the default (Microsoft) *claims transformer* with a custom *claims transformer* by simply configuring the `IClaimsTransformation` service during the DI services configuration (usually from the `ConfigureServices` method of the `Startup`).
 
-Please note that the SDK ([TetraPak.AspNet][nuget-tetrapak-aspnet]) already does this so replacing the claims transformation service with a custom one might cause unexpected results.
+Please note that the SDK ([TetraPak.AspNet][nuget-tetrapak-aspnet]) already does this so replacing the *claims transformer* with a custom one might cause unexpected results. It is also possible to add one ore more custom claims transformers.
+
+See also: [Custom claims transformation][scenario-custom-claims-transformation]
 
 ## Client
 
@@ -281,7 +283,7 @@ While the *development proxy* is a useful tool for local debugging requirements 
 - The bound host URL(s) contain the textual pattern "`://localhost`"
 - The "actual" [sidecar](#sidecar) is properly named (configuration) and supports a *development proxy*. The [sidecar](#sidecar) name can be obtained from an [API manager](#api-manager)
 
-See: [API recipe][md-api-recipe-dev-proxy]
+See: [API recipe][api-recipe-dev-proxy]
 
 ## Downstream
 
@@ -447,7 +449,7 @@ The [TetraPak.AspNet][nuget-tetrapak-aspnet] SDK supports this flow through the 
   public class HelloWorldController : ControllerBase
   {
       readonly ITokenExchangeService _tokenExchangeService;
-      readonly TetraPakAuthConfig _tetraPakConfig;
+      readonly TetraPakConfig _tetraPakConfig;
 
       [HttpGet]
       public async Task<ActionResult> Get()
@@ -491,7 +493,7 @@ The [TetraPak.AspNet][nuget-tetrapak-aspnet] SDK supports this flow through the 
       ///   This service becomes available for dependency injection when you call
       ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion"/> (see <see cref="Startup.ConfigureServices"/>).
       /// </param>
-      public HelloWorldController(TetraPakAuthConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
+      public HelloWorldController(TetraPakConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
       {
           _tetraPakConfig = tetraPakConfig;
           _tokenExchangeService = tokenExchangeService;
@@ -533,10 +535,12 @@ See also: [Terminus API](#terminus-api)
 
 [nuget-tetrapak-common]: https://www.nuget.org/packages/TetraPak.Common
 
-[md-Outcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_Outcome_T_.md
-[md-EnumOutcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_EnumOutcome_T_.md
+[code-Outcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_Outcome_T_.md
+[code-EnumOutcome-T]: https://github.com/Tetra-Pak-APIs/TetraPak.Common/blob/master/TetraPak.Common/_docs/_code/TetraPak_EnumOutcome_T_.md
 
-[md-api-recipe-dev-proxy]: ./TetraPak.AspNet.Api/_docs/Recipe-WebApi.md#the-development-proxy
+[api-recipe-dev-proxy]: ./TetraPak.AspNet.Api/_docs/Recipe-WebApi.md#the-development-proxy
 
 [nuget-tetrapak-aspnet]: https://www.nuget.org/packages/TetraPak.AspNet
 [nuget-tetrapak-aspnet-api]: https://www.nuget.org/packages/TetraPak.AspNet.Api
+
+[scenario-custom-claims-transformation]: ./Scenarios.md#custom-claims-transformation

@@ -48,7 +48,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// </returns>
         /// <exception cref="InvalidOperationException">
         ///   Required configuration was not provided; such as <see cref="ReadDiscoveryDocumentArgs.MasterSourceUrl"/>
-        ///   or <see cref="ReadDiscoveryDocumentArgs.AuthConfig"/>.
+        ///   or <see cref="ReadDiscoveryDocumentArgs.Config"/>.
         /// </exception>
         /// <seealso cref="ReadDocumentPolicy"/>
         public static async Task<Outcome<DiscoveryDocument>> ReadAsync(ReadDiscoveryDocumentArgs args)
@@ -73,10 +73,10 @@ namespace TetraPak.AspNet.OpenIdConnect
 
             if ((policy & ReadDocumentPolicy.Default) == ReadDocumentPolicy.Default)
             {
-                if (args.AuthConfig is null)
-                    throw new InvalidOperationException($"Cannot read discovery document from master source. Missing {nameof(ReadDiscoveryDocumentArgs.AuthConfig)}");
+                if (args.Config is null)
+                    throw new InvalidOperationException($"Cannot read discovery document from master source. Missing {nameof(ReadDiscoveryDocumentArgs.Config)}");
                     
-                return Outcome<DiscoveryDocument>.Success(GetDefault(args.AuthConfig));
+                return Outcome<DiscoveryDocument>.Success(GetDefault(args.Config));
             }
 
             return Outcome<DiscoveryDocument>.Fail(new Exception($"Could not read {typeof(DiscoveryDocument)} (policy={args.Policy})"));
@@ -85,15 +85,15 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///   Creates and returns a default <see cref="DiscoveryDocument"/>.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
         /// <returns>
         ///   A <see cref="DiscoveryDocument"/> object.
         /// </returns>
-        public static DiscoveryDocument GetDefault(TetraPakAuthConfig authConfig)
+        public static DiscoveryDocument GetDefault(TetraPakConfig config)
         {
-            return GetDefault(authConfig.AuthDomain);
+            return GetDefault(config.AuthDomain);
         }
         
         /// <summary>
@@ -226,7 +226,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///   Gets or sets the Tetra Pak integration configuration.
         /// </summary>
-        public TetraPakAuthConfig AuthConfig { get; set; }
+        public TetraPakConfig Config { get; set; }
 
         /// <summary>
         ///   Gets or sets a local (file) path for locally caching the <see cref="DiscoveryDocument"/>. 
@@ -236,7 +236,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///   Creates default configuration for reading <see cref="DiscoveryDocument"/> from a master (remote) source.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
         /// <param name="timeout">
@@ -254,19 +254,19 @@ namespace TetraPak.AspNet.OpenIdConnect
         ///   A <see cref="ReadDiscoveryDocumentArgs"/> object.
         /// </returns>
         public static ReadDiscoveryDocumentArgs FromMasterSource(
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             TimeSpan? timeout = null,
             ReadDocumentPolicy fallbackPolicy = ReadDocumentPolicy.All,
             string localCachePath = null)
         {
             return new ReadDiscoveryDocumentArgs
             {
-                MasterSourceUrl = authConfig.DiscoveryDocumentUrl,
+                MasterSourceUrl = config.DiscoveryDocumentUrl,
                                   // ?? throw new InvalidOperationException( obsolete
                                   //     "Cannot read discovery document from master source. "+
                                   //     "Configuration does not specify a URL for the discovery document"),
-                Logger = authConfig.Logger,
-                AuthConfig = authConfig,
+                Logger = config.Logger,
+                Config = config,
                 Timeout = timeout,
                 Policy = fallbackPolicy,
                 LocalCachePath = string.IsNullOrWhiteSpace(localCachePath) 
@@ -283,18 +283,18 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///    Creates default configuration for reading <see cref="DiscoveryDocument"/>.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///    The Tetra Pak integration configuration.   
         /// </param>
         /// <returns>
         ///   A <see cref="ReadDiscoveryDocumentArgs"/> object.
         /// </returns>
-        public static ReadDiscoveryDocumentArgs FromDefault(TetraPakAuthConfig authConfig)
+        public static ReadDiscoveryDocumentArgs FromDefault(TetraPakConfig config)
         {
             return new ReadDiscoveryDocumentArgs
             {
-                AuthConfig = authConfig,
-                Logger = authConfig.Logger
+                Config = config,
+                Logger = config.Logger
             };
         }
 

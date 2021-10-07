@@ -25,7 +25,7 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### Exceptions
 [ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
-No [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') service could be obtained from service locator.  
+No [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') service could be obtained from service locator.  
   
 <a name='TetraPak_AspNet_ControllerExtensions_GetIdentityTokenAsync(Microsoft_AspNetCore_Mvc_Controller)'></a>
 ## ControllerExtensions.GetIdentityTokenAsync(Controller) Method
@@ -44,22 +44,22 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### Exceptions
 [ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
-No [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') service could be obtained from service locator.  
+No [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') service could be obtained from service locator.  
   
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## ControllerExtensions.TryGetTetraPakAuthConfig(Controller, TetraPakAuthConfig) Method
-Attempts obtaining the [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') instance.  
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)'></a>
+## ControllerExtensions.TryGetTetraPakAuthConfig(Controller, TetraPakConfig) Method
+Attempts obtaining the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') instance.  
 ```csharp
-public static bool TryGetTetraPakAuthConfig(this Microsoft.AspNetCore.Mvc.Controller self, out TetraPak.AspNet.TetraPakAuthConfig config);
+public static bool TryGetTetraPakAuthConfig(this Microsoft.AspNetCore.Mvc.Controller self, out TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakAuthConfig)_self'></a>
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Mvc.Controller](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.Controller 'Microsoft.AspNetCore.Mvc.Controller')  
 The extended [Microsoft.AspNetCore.Mvc.Controller](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.Controller 'Microsoft.AspNetCore.Mvc.Controller') instance.  
   
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakAuthConfig)_config'></a>
-`config` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
-Passes back the [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') instance if successful; otherwise `null`.   
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+Passes back the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') instance if successful; otherwise `null`.   
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  

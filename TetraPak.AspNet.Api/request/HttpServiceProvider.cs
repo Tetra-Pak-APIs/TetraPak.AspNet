@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly HttpClientOptions _singletonClientOptions;
         HttpClient _singletonClient;
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
 
         /// <summary>
         ///   Gets a <see cref="ITokenExchangeService"/> for acquiring a token to be used
@@ -39,19 +39,19 @@ namespace TetraPak.AspNet.Api
         protected IClientCredentialsService ClientCredentialsService { get; }
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) => _authConfig.AmbientData.GetMessageId();
+        public string GetMessageId(bool enforce = false) => _config.AmbientData.GetMessageId();
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
-            => _authConfig.AmbientData.GetAccessTokenAsync(forceStandardHeader);
+            => _config.AmbientData.GetAccessTokenAsync(forceStandardHeader);
 
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakAuthConfig authConfig) 
-            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(authConfig);
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakConfig config) 
+            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(config);
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger Logger => _authConfig.Logger;
+        protected ILogger Logger => _config.Logger;
 
         public HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions);
         
@@ -278,13 +278,13 @@ namespace TetraPak.AspNet.Api
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsService clientCredentialsService,
             IHttpContextAccessor httpContextAccessor,
-            TetraPakAuthConfig authConfig,
+            TetraPakConfig config,
             Func<HttpClientOptions,HttpClient> singletonClientFactory = null, 
             HttpClientOptions singletonClientOptions = null)
         {
             TokenExchangeService = tokenExchangeService ?? throw new ArgumentNullException(nameof(tokenExchangeService));
             ClientCredentialsService = clientCredentialsService;
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             _singletonClientFactory = singletonClientFactory ?? (_ => new SingletonHttpClient());
             _httpContextAccessor = httpContextAccessor;
             _singletonClientOptions = singletonClientOptions;

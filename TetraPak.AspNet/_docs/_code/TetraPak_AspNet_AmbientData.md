@@ -13,31 +13,31 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IMessageIdProvider](TetraPak_AspNet_IMessageIdProvider.md 'TetraPak.AspNet.IMessageIdProvider'), [IAccessTokenProvider](TetraPak_AspNet_Auth_IAccessTokenProvider.md 'TetraPak.AspNet.Auth.IAccessTokenProvider'), [IIdentityTokenProvider](TetraPak_AspNet_Auth_IIdentityTokenProvider.md 'TetraPak.AspNet.Auth.IIdentityTokenProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)'></a>
-## AmbientData.AmbientData(TetraPakAuthConfig, IHttpContextAccessor) Constructor
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)'></a>
+## AmbientData.AmbientData(TetraPakConfig, IHttpContextAccessor) Constructor
 Initializes the [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData') instance.  
 ```csharp
-public AmbientData(TetraPak.AspNet.TetraPakAuthConfig authConfig, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor);
+public AmbientData(TetraPak.AspNet.TetraPakConfig config, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak auth configuration.  
   
-<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakAuthConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_httpContextAccessor'></a>
+<a name='TetraPak_AspNet_AmbientData_AmbientData(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_IHttpContextAccessor)_httpContextAccessor'></a>
 `httpContextAccessor` [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor')  
 A [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor') that is required for many of the ambient data operations.  
   
   
 ### Properties
-<a name='TetraPak_AspNet_AmbientData_AuthConfig'></a>
-## AmbientData.AuthConfig Property
+<a name='TetraPak_AspNet_AmbientData_Config'></a>
+## AmbientData.Config Property
 Gets an auth config value.   
 ```csharp
-public TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; }
+public TetraPak.AspNet.TetraPakConfig Config { get; }
 ```
 #### Property Value
-[TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_AmbientData_HttpContext'></a>
 ## AmbientData.HttpContext Property
@@ -82,7 +82,7 @@ public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAcc
 <a name='TetraPak_AspNet_AmbientData_GetAccessTokenAsync(bool)_forceStandardHeader'></a>
 `forceStandardHeader` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
-When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.AuthorizationHeader')) authorization  
+When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader')) authorization  
 header is ignored in favour of the HTTP standard [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization') header.   
   
 #### Returns
@@ -123,6 +123,27 @@ A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'Sys
 
 Implements [GetMessageId(bool)](TetraPak_AspNet_IMessageIdProvider.md#TetraPak_AspNet_IMessageIdProvider_GetMessageId(bool) 'TetraPak.AspNet.IMessageIdProvider.GetMessageId(bool)')  
   
+<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)'></a>
+## AmbientData.GetValue(string, object) Method
+Gets an ambient value.  
+```csharp
+public object GetValue(string key, object useDefault=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)_key'></a>
+`key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Identifies the value.  
+  
+<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)_useDefault'></a>
+`useDefault` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
+(optional)<br/>  
+A default value to be returned if the requested ambient value is not supported.    
+  
+#### Returns
+[System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
+The requested value if present; otherwise [useDefault](TetraPak_AspNet_AmbientData.md#TetraPak_AspNet_AmbientData_GetValue(string_object)_useDefault 'TetraPak.AspNet.AmbientData.GetValue(string, object).useDefault') when specified,  
+otherwise `null`.  
+  
 <a name='TetraPak_AspNet_AmbientData_GetValue_T_(string_T)'></a>
 ## AmbientData.GetValue&lt;T&gt;(string, T) Method
 Gets an ambient value of a specified type.  
@@ -148,27 +169,6 @@ A default value to be returned if the requested ambient value is not supported.
 [T](TetraPak_AspNet_AmbientData.md#TetraPak_AspNet_AmbientData_GetValue_T_(string_T)_T 'TetraPak.AspNet.AmbientData.GetValue&lt;T&gt;(string, T).T')  
 The requested value if present; otherwise [useDefault](TetraPak_AspNet_AmbientData.md#TetraPak_AspNet_AmbientData_GetValue_T_(string_T)_useDefault 'TetraPak.AspNet.AmbientData.GetValue&lt;T&gt;(string, T).useDefault') when specified,  
 otherwise `default(T)`.  
-  
-<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)'></a>
-## AmbientData.GetValue(string, object) Method
-Gets an ambient value.  
-```csharp
-public object GetValue(string key, object useDefault=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)_key'></a>
-`key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-Identifies the value.  
-  
-<a name='TetraPak_AspNet_AmbientData_GetValue(string_object)_useDefault'></a>
-`useDefault` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
-(optional)<br/>  
-A default value to be returned if the requested ambient value is not supported.    
-  
-#### Returns
-[System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
-The requested value if present; otherwise [useDefault](TetraPak_AspNet_AmbientData.md#TetraPak_AspNet_AmbientData_GetValue(string_object)_useDefault 'TetraPak.AspNet.AmbientData.GetValue(string, object).useDefault') when specified,  
-otherwise `null`.  
   
 <a name='TetraPak_AspNet_AmbientData_IsApiEndpoint()'></a>
 ## AmbientData.IsApiEndpoint() Method

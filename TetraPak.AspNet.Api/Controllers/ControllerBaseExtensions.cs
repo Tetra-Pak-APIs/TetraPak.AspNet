@@ -48,7 +48,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new Exception(
                         "Cannot get access token. Failed when trying to obtain a "+
-                        $" configuration ({typeof(TetraPakApiAuthConfig)})")));
+                        $" configuration ({typeof(TetraPakApiConfig)})")));
                 
             return self.HttpContext.Request.GetAccessTokenAsync(config!);
         }
@@ -631,9 +631,9 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   <c>true</c> if the Tetra Pak (API) configuration object could be obtained; otherwise <c>false</c>.
         /// </returns>
         /// <seealso cref="GetTetraPakApiAuthConfig"/>
-        public static bool TryGetTetraPakApiAuthConfig(this ControllerBase self, out TetraPakApiAuthConfig? config)
+        public static bool TryGetTetraPakApiAuthConfig(this ControllerBase self, out TetraPakApiConfig? config)
         {
-            config = self.HttpContext.RequestServices.GetService<TetraPakApiAuthConfig>();
+            config = self.HttpContext.RequestServices.GetService<TetraPakApiConfig>();
             return config is {};
         }
         
@@ -651,7 +651,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <exception cref="ConfigurationException">
         ///   The Tetra Pak (API) configuration object could not be obtained
         /// </exception>
-        public static TetraPakApiAuthConfig? GetTetraPakApiAuthConfig(this ControllerBase self)
+        public static TetraPakApiConfig? GetTetraPakApiAuthConfig(this ControllerBase self)
         {
             if (self.TryGetTetraPakApiAuthConfig(out var config))
                 return config;
@@ -659,7 +659,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (self is BusinessApiController apiController)
                 return apiController.GetConfig();
                 
-            throw new ConfigurationException($"Could not retrieve a {typeof(TetraPakApiAuthConfig)} instance");
+            throw new ConfigurationException($"Could not retrieve a {typeof(TetraPakApiConfig)} instance");
         }
         
         static Outcome<ApiErrorResponse> tryParseTetraPakErrorResponse(string s)

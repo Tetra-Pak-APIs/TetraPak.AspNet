@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TetraPak;
+using TetraPak.AspNet;
 
 namespace WebAPI.spike_customAuthScheme
 {
@@ -17,42 +18,51 @@ namespace WebAPI.spike_customAuthScheme
     /// </summary>
     class AliBabaAuthenticationHandler : AuthenticationHandler<AliBabaAuthenticationOptions>
     {
-        const string AuthHeader = "Authorization";
+        readonly TetraPakConfig _tetraPakConfig;
         const string ExpectedSecret = "Open Sesame!";
         
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey(AuthHeader))
-                return Task.FromResult(AuthenticateResult.Fail("No authorization header found"));
+            // get token from request and try parsing it as Basic Authentication credentials ...
+            var tokenOutcome = await Context.GetAccessTokenAsync(_tetraPakConfig);
+            if (!tokenOutcome)
+                return AuthenticateResult.Fail("No authorization found");
 
-            var encoded = Request.Headers[AuthHeader].ToString();
-            var bac = BasicAuthCredentials.Parse(encoded);
-            if (bac is null)
-                return Task.FromResult(AuthenticateResult.Fail("Invalid token"));
+            var token = tokenOutcome.Value!;
+            var credentials = BasicAuthCredentials.Parse(token);
+            if (credentials is null)
+                return AuthenticateResult.Fail("Invalid token");
             
-            if (bac.Secret != ExpectedSecret)
-                return Task.FromResult(AuthenticateResult.Fail("Invalid token"));
+            // assert the secret is the expected one ...        
+            if (credentials.Secret != ExpectedSecret)
+                return AuthenticateResult.Fail("Invalid token");
 
+            // construct a claims principal and return a successful authentication result...
             var claims = new[]
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType,  bac.Identity),
-                new Claim(ClaimTypes.Email, $"{bac.Identity}@thieves.org")
+                new Claim(ClaimsIdentity.DefaultNameClaimType,  credentials.Identity),
+                new Claim(ClaimTypes.Email, $"{credentials.Identity}@thieves.org")
             };
             var claimsIdentity = new ClaimsIdentity(claims, AliBabaAuthentication.Scheme);
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name);
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            return AuthenticateResult.Success(ticket);
         }
         
         public AliBabaAuthenticationHandler(IOptionsMonitor<AliBabaAuthenticationOptions> options, 
             ILoggerFactory logger, 
-            UrlEncoder encoder, ISystemClock clock) 
+            UrlEncoder encoder, 
+            ISystemClock clock,
+            TetraPakConfig tetraPakConfig) 
             : base(options, logger, encoder, clock)
         {
+            _tetraPakConfig = tetraPakConfig;
         }
     }
-    
+
     class AliBabaAuthenticationOptions : AuthenticationSchemeOptions
-    {}
+    {
+        // add any options here
+    }
 
     public static class AliBabaAuthentication
     {

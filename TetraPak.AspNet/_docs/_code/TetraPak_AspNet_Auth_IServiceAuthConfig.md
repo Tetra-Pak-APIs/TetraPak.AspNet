@@ -7,7 +7,7 @@ public interface IServiceAuthConfig
 ```
 
 Derived  
-&#8627; [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+&#8627; [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 ### Properties
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_AmbientData'></a>
 ## IServiceAuthConfig.AmbientData Property
@@ -135,4 +135,25 @@ Cancellation token for cancellation the operation.
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+  
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier(string)'></a>
+## IServiceAuthConfig.IsAuthIdentifier(string) Method
+Examines a string and returns a value to indicate whether the value identifies  
+an attribute used for auth configuration. This is to ensure there is no risk of confusing  
+services or endpoints with such attributes.   
+```csharp
+bool IsAuthIdentifier(string identifier);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier(string)_identifier'></a>
+`identifier` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The identifier being examined.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [identifier](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier(string)_identifier 'TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier(string).identifier') matches an auth configuration attribute; otherwise `false`.   
+            
+### Remarks
+Examples of auth identifiers: "`ConfigPath`", "`GrantType`",  
+"`ClientId`", "`ClientSecret`", "`Scope`".  
   

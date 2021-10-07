@@ -11,7 +11,7 @@ namespace TetraPak.AspNet.Api.Auth
         public static bool TryReadCustomAuthorization(
             this MessageReceivedContext context,
             JwtBearerOptions options,
-            TetraPakApiAuthConfig config,
+            TetraPakApiConfig config,
             ILogger logger, 
             out ActorToken token)
         {

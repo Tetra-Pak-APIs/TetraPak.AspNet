@@ -17,7 +17,7 @@ namespace TetraPak.AspNet
         static readonly List<ClaimsTransformationFactoryInfo> s_claimsTransformations;
         readonly IServiceProvider _provider;
         ILogger? _logger;
-        static IServiceCollection s_services;
+        static IServiceCollection? s_services;
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
@@ -42,7 +42,7 @@ namespace TetraPak.AspNet
                             logger(_provider).Warning($"Could not resolve claims transformation service \"{info.Type}\"", messageId);
                             continue;
 
-                        case TetraPakJwtClaimsTransformation tetraPakClaimsTransformation:
+                        case TetraPakClaimsTransformation tetraPakClaimsTransformation:
                             tetraPakClaimsTransformation.OnInitialize(_provider);
                             break;
                     }
@@ -73,7 +73,7 @@ namespace TetraPak.AspNet
         internal static void AddCustomClaimsTransformation<T>(IServiceCollection c, ServiceScope? serviceScope)
         where T : class, ITetraPakClaimsTransformation
         {
-            var scope = serviceScope ?? TetraPakJwtClaimsTransformation.DefaultServiceScope;
+            var scope = serviceScope ?? TetraPakClaimsTransformation.DefaultServiceScope;
             switch (scope)
             {
                 case ServiceScope.Singleton:
@@ -93,12 +93,12 @@ namespace TetraPak.AspNet
             }
 
             s_services = c; // bug (see ctor for explanation)
-            s_claimsTransformations.Add(new ClaimsTransformationFactoryInfo(typeof(T), scope));
+            s_claimsTransformations.Add(new ClaimsTransformationFactoryInfo(typeof(T)));
         }
         
         internal static void AddCustomClaimsTransformation(ClaimsTransformationFactory factory)
         {
-            s_claimsTransformations.Add(new ClaimsTransformationFactoryInfo(factory, ServiceScope.Unspecified));
+            s_claimsTransformations.Add(new ClaimsTransformationFactoryInfo(factory));
         }
         
         public TetraPakClaimsTransformationDispatcher()
@@ -111,46 +111,5 @@ namespace TetraPak.AspNet
         {
             s_claimsTransformations = new List<ClaimsTransformationFactoryInfo>();
         }
-    }
-
-    class ClaimsTransformationFactoryInfo
-    {
-        public Type Type { get; }
-
-        public ClaimsTransformationFactory? ClaimsTransformationFactory { get; }
-
-        public ServiceScope ServiceScope { get; }
-        
-        public ClaimsTransformationFactoryInfo(Type type, ServiceScope serviceScope)
-        {
-            Type = type;
-            ServiceScope = serviceScope; 
-        }
-
-        public ClaimsTransformationFactoryInfo(ClaimsTransformationFactory factory, ServiceScope serviceScope)
-        {
-            ClaimsTransformationFactory = factory;
-            ServiceScope = serviceScope; 
-        }
-    }
-
-    public abstract class ClaimsTransformationFactory : ITetraPakClaimsTransformation
-    {
-        internal ITetraPakClaimsTransformation GetClaimsTransformation(IServiceProvider serviceProvider)
-        {
-            return OnGetClaimsTransformation(serviceProvider);
-        }
-
-        protected abstract ITetraPakClaimsTransformation OnGetClaimsTransformation(IServiceProvider serviceProvider);
-
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public interface ITetraPakClaimsTransformation
-    {
-        Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal);
     }
 }

@@ -11,20 +11,20 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## ConfiguredClientCredentialsProvider.ConfiguredClientCredentialsProvider(TetraPakAuthConfig) Constructor
+<a name='TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakConfig)'></a>
+## ConfiguredClientCredentialsProvider.ConfiguredClientCredentialsProvider(TetraPakConfig) Constructor
 Initializes the [ConfiguredClientCredentialsProvider](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider') object.  
 ```csharp
-public ConfiguredClientCredentialsProvider(TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public ConfiguredClientCredentialsProvider(TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
-A [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') object.   
+<a name='TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+A [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') object.   
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[authConfig](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md#TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakAuthConfig)_authConfig 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider.ConfiguredClientCredentialsProvider(TetraPak.AspNet.TetraPakAuthConfig).authConfig') was unassigned.  
+[config](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md#TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider_ConfiguredClientCredentialsProvider(TetraPak_AspNet_TetraPakConfig)_config 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider.ConfiguredClientCredentialsProvider(TetraPak.AspNet.TetraPakConfig).config') was unassigned.  
             
   
 ### Methods

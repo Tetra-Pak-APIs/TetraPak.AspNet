@@ -6,7 +6,7 @@
         <Platforms>AnyCPU</Platforms>
         <UserSecretsId>575bc507-ab9c-4123-bbe8-863ebcf4dc3a</UserSecretsId>
         <RootNamespace>WebAPI</RootNamespace>
-        <LangVersion>8</LangVersion>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

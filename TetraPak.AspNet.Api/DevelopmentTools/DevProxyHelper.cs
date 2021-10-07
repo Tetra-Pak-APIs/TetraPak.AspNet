@@ -57,10 +57,10 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     return app;
                 }
 
-                var authConfig = app.ApplicationServices.GetService<TetraPakAuthConfig>();
+                var authConfig = app.ApplicationServices.GetService<TetraPakConfig>();
                 if (authConfig is null)
                 {
-                    logger.Warning($"Cannot inject a local development proxy. {nameof(TetraPakAuthConfig)} service is not configured");
+                    logger.Warning($"Cannot inject a local development proxy. {nameof(TetraPakConfig)} service is not configured");
                     s_isDevProxyConfigured = true;
                     return app;
                 }

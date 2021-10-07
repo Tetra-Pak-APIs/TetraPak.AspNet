@@ -21,7 +21,7 @@ namespace TetraPak.AspNet
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         /// <exception cref="ConfigurationException">
-        ///   No <see cref="TetraPakAuthConfig"/> service could be obtained from service locator.
+        ///   No <see cref="TetraPakConfig"/> service could be obtained from service locator.
         /// </exception>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this Controller self)
         {
@@ -29,7 +29,7 @@ namespace TetraPak.AspNet
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new ConfigurationException(
                         "Cannot get access token. Failed to obtain a "+
-                        $" configuration ({typeof(TetraPakAuthConfig)})")));
+                        $" configuration ({typeof(TetraPakConfig)})")));
                 
             return self.HttpContext.Request.GetAccessTokenAsync(config);
         }
@@ -45,7 +45,7 @@ namespace TetraPak.AspNet
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         /// <exception cref="ConfigurationException">
-        ///   No <see cref="TetraPakAuthConfig"/> service could be obtained from service locator.
+        ///   No <see cref="TetraPakConfig"/> service could be obtained from service locator.
         /// </exception>
         public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this Controller self)
         {
@@ -53,26 +53,26 @@ namespace TetraPak.AspNet
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new ConfigurationException(
                         "Cannot get identity token. Failed to obtain a "+
-                        $" configuration ({typeof(TetraPakAuthConfig)})")));
+                        $" configuration ({typeof(TetraPakConfig)})")));
                 
             return self.HttpContext.Request.GetAccessTokenAsync(config);
         }
 
         /// <summary>
-        ///   Attempts obtaining the <see cref="TetraPakAuthConfig"/> instance.
+        ///   Attempts obtaining the <see cref="TetraPakConfig"/> instance.
         /// </summary>
         /// <param name="self">
         ///   The extended <see cref="Controller"/> instance.
         /// </param>
         /// <param name="config">
-        ///   Passes back the <see cref="TetraPakAuthConfig"/> instance if successful; otherwise <c>null</c>. 
+        ///   Passes back the <see cref="TetraPakConfig"/> instance if successful; otherwise <c>null</c>. 
         /// </param>
         /// <returns>
         ///   <c>true</c> 
         /// </returns>
-        public static bool TryGetTetraPakAuthConfig(this Controller self, out TetraPakAuthConfig config)
+        public static bool TryGetTetraPakAuthConfig(this Controller self, out TetraPakConfig config)
         {
-            config = self.HttpContext.RequestServices.GetService<TetraPakAuthConfig>();
+            config = self.HttpContext.RequestServices.GetService<TetraPakConfig>();
             return config is {};
         }
     }

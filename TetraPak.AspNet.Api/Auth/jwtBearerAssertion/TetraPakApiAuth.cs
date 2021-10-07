@@ -90,8 +90,8 @@ namespace TetraPak.AspNet.Api.Auth
         {
             var c = a.Services;
             c.TryAddSingleton<HostProvider>();
-            c.TryAddSingleton<TetraPakApiAuthConfig>();            
-            c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
+            c.TryAddSingleton<TetraPakApiConfig>();            
+            c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
 
             addCachingIfAllowed();
             
@@ -107,7 +107,7 @@ namespace TetraPak.AspNet.Api.Auth
             void addCachingIfAllowed()
             {
                 var provider = c.BuildServiceProvider();
-                var authConfig = provider.GetService<TetraPakAuthConfig>();
+                var authConfig = provider.GetService<TetraPakConfig>();
                 if (authConfig is null || !authConfig.IsCachingAllowed)
                     return;
 
@@ -205,7 +205,7 @@ namespace TetraPak.AspNet.Api.Auth
         {
             app.UseTetraPakAuthentication(env);
             
-            var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             var proxyUrl = config.JwtBearerAssertion.DevProxy;
             var mutedWhen = config.JwtBearerAssertion.DevProxyIsMutedWhen;
             if (!string.IsNullOrEmpty(proxyUrl))

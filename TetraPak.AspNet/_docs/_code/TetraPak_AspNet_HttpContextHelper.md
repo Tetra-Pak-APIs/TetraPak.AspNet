@@ -8,65 +8,65 @@ public static class HttpContextHelper
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; HttpContextHelper  
 ### Methods
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## HttpContextHelper.GetAccessToken(HttpContext, TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)'></a>
+## HttpContextHelper.GetAccessToken(HttpContext, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') instance representing the request's access token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetAccessToken(HttpRequest, TetraPakAuthConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakAuthConfig)')
+- [GetAccessToken(HttpRequest, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakConfig)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## HttpContextHelper.GetAccessToken(HttpRequest, TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)'></a>
+## HttpContextHelper.GetAccessToken(HttpRequest, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') instance representing the request's access token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetAccessToken(HttpContext, TetraPakAuthConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakAuthConfig)')
+- [GetAccessToken(HttpContext, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakConfig)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig__bool)'></a>
-## HttpContextHelper.GetAccessTokenAsync(HttpContext, TetraPakAuthConfig?, bool) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)'></a>
+## HttpContextHelper.GetAccessTokenAsync(HttpContext?, TetraPakConfig?, bool) Method
 Tries obtaining an access token from the request.   
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakAuthConfig? authConfig, bool forceStandardHeader=false);
+public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpContext? self, TetraPak.AspNet.TetraPakConfig? config, bool forceStandardHeader=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig__bool)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
 The [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig__bool)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 A Tetra Pak configuration object.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig__bool)_forceStandardHeader'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_forceStandardHeader'></a>
 `forceStandardHeader` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
-When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.AuthorizationHeader')) authorization  
+When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader')) authorization  
 header is ignored in favour of the HTTP standard [Microsoft.Net.Http.Headers.HeaderNames.Authorization](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Net.Http.Headers.HeaderNames.Authorization 'Microsoft.Net.Http.Headers.HeaderNames.Authorization') header.   
   
 #### Returns
@@ -75,20 +75,20 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 holds the access token in its [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value') property. On failure the outcome   
 declares the problem via its [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception') property.   
 #### See Also
-- [GetAccessToken(HttpContext, TetraPakAuthConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakAuthConfig)')
+- [GetAccessToken(HttpContext, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakConfig)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## HttpContextHelper.GetAccessTokenAsync(HttpRequest, TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)'></a>
+## HttpContextHelper.GetAccessTokenAsync(HttpRequest, TetraPakConfig) Method
 Tries obtaining an access token from the request.   
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -96,7 +96,25 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 holds the access token in its [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value') property. On failure the outcome   
 declares the problem via its [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception') property.   
 #### See Also
-- [GetAccessToken(HttpRequest, TetraPakAuthConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakAuthConfig)')
+- [GetAccessToken(HttpRequest, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakConfig)')
+  
+<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)'></a>
+## HttpContextHelper.GetActorTokensAsync(HttpContext?, TetraPakConfig) Method
+Gets all tokens from an [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
+```csharp
+public static System.Threading.Tasks.Task<TetraPak.EnumOutcome<TetraPak.ActorToken>> GetActorTokensAsync(this Microsoft.AspNetCore.Http.HttpContext? self, TetraPak.AspNet.TetraPakConfig config);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)_self'></a>
+`self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
+The [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+The Tetra Pak integration configuration.  
+  
+#### Returns
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   
 <a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger_TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)'></a>
 ## HttpContextHelper.GetDiagnosticsLevel(HttpRequest, ILogger, ServiceDiagnosticsLevel) Method
@@ -122,22 +140,22 @@ the specified telemetry level could not be successfully parsed.
 [TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel 'TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel')  
 A [TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel 'TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel') value.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)'></a>
-## HttpContextHelper.GetIdentityToken(HttpContext, TetraPakAuthConfig?) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)'></a>
+## HttpContextHelper.GetIdentityToken(HttpContext, TetraPakConfig?) Method
 Returns the request identity token, or `null` if unavailable.  
 ```csharp
-public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakAuthConfig? authConfig=null);
+public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig? config=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
 The request [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext') object.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 (optional)<br/>  
 The Tetra Pak integration configuration object. When passed the method will look  
-for the identity token in the header specified by [AuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.AuthorizationHeader').  
+for the identity token in the header specified by [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader').  
 If not the identity token is assumed to be carried by the header named as [IdToken](TetraPak_AspNet_AmbientData_Keys.md#TetraPak_AspNet_AmbientData_Keys_IdToken 'TetraPak.AspNet.AmbientData.Keys.IdToken').  
   
 #### Returns
@@ -145,44 +163,44 @@ If not the identity token is assumed to be carried by the header named as [IdTok
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') object representing the request's identity token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetIdentityToken(HttpRequest, TetraPakAuthConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig) 'TetraPak.AspNet.HttpContextHelper.GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakAuthConfig)')
+- [GetIdentityToken(HttpRequest, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakConfig)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)'></a>
-## HttpContextHelper.GetIdentityToken(HttpRequest, TetraPakAuthConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)'></a>
+## HttpContextHelper.GetIdentityToken(HttpRequest, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakAuthConfig authConfig);
+public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_config'></a>
+`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') instance representing the request's access token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetIdentityToken(HttpContext, TetraPakAuthConfig?)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_) 'TetraPak.AspNet.HttpContextHelper.GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakAuthConfig?)')
+- [GetIdentityToken(HttpContext, TetraPakConfig?)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_) 'TetraPak.AspNet.HttpContextHelper.GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakConfig?)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)'></a>
-## HttpContextHelper.GetIdentityTokenAsync(HttpContext, TetraPakAuthConfig?) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)'></a>
+## HttpContextHelper.GetIdentityTokenAsync(HttpContext, TetraPakConfig?) Method
 Asynchronously returns the request identity token, or `null` if unavailable.  
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetIdentityTokenAsync(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakAuthConfig? authConfig=null);
+public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetIdentityTokenAsync(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig? authConfig=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
 The request [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext') object.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakAuthConfig_)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetIdentityTokenAsync(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)_authConfig'></a>
+`authConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 (optional)<br/>  
 The Tetra Pak integration configuration object. When passed the method will look  
-for the identity token in the header specified by [AuthorizationHeader](TetraPak_AspNet_TetraPakAuthConfig.md#TetraPak_AspNet_TetraPakAuthConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakAuthConfig.AuthorizationHeader').  
+for the identity token in the header specified by [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader').  
 If not the identity token is assumed to be carried by the header named as [IdToken](TetraPak_AspNet_AmbientData_Keys.md#TetraPak_AspNet_AmbientData_Keys_IdToken 'TetraPak.AspNet.AmbientData.Keys.IdToken').  
   
 #### Returns
@@ -190,22 +208,22 @@ If not the identity token is assumed to be carried by the header named as [IdTok
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') object representing the request's identity token if one can be obtained;  
 otherwise `null`.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig__bool)'></a>
-## HttpContextHelper.GetMessageId(HttpRequest, TetraPakAuthConfig?, bool) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)'></a>
+## HttpContextHelper.GetMessageId(HttpRequest, TetraPakConfig?, bool) Method
 Gets a standardized value used for referencing a unique request.   
 ```csharp
-public static string? GetMessageId(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.TetraPakAuthConfig? authConfig, bool enforce=false);
+public static string? GetMessageId(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.TetraPakConfig? authConfig, bool enforce=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig__bool)_request'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig__bool)_authConfig'></a>
-`authConfig` [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_authConfig'></a>
+`authConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 Carries the Tetra Pak authorization configuration.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakAuthConfig__bool)_enforce'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_enforce'></a>
 `enforce` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
 When set, a random unique string will be generated and attached to the request.    

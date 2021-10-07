@@ -35,7 +35,7 @@ namespace TetraPak.AspNet.Debugging
         public static void DebugAssembliesInUse(this IServiceCollection c, bool justOnce = true)
         {
             var services = c.BuildServiceProvider();
-            var logger = services.GetService<ILogger<TetraPakAuthConfig>>();
+            var logger = services.GetService<ILogger<TetraPakConfig>>();
             logger.DebugAssembliesInUse(justOnce);
         }
 
@@ -95,11 +95,11 @@ namespace TetraPak.AspNet.Debugging
             return (LogLevel) min;
         }
         
-        public static void TraceAsync(this ILogger logger, TetraPakAuthConfig authConfig, bool justOnce = true)
+        public static void TraceAsync(this ILogger logger, TetraPakConfig config, bool justOnce = true)
         {
             // ReSharper disable once InconsistentNaming
             const int Indent = 3;
-            if (authConfig is null || !logger.IsEnabled(LogLevel.Debug))
+            if (config is null || !logger.IsEnabled(LogLevel.Debug))
                 return;
 
             lock (s_syncRoot)
@@ -113,9 +113,9 @@ namespace TetraPak.AspNet.Debugging
             var sb = new StringBuilder();
             sb.AppendLine();
             sb.AppendLine(">===== AUTH CONFIGURATION =====<");
-            sb.AppendLine(authConfig.GetSectionIdentifier());
+            sb.AppendLine(config.GetSectionIdentifier());
             sb.AppendLine("{");
-            buildContent(authConfig, Indent);
+            buildContent(config, Indent);
             sb.AppendLine("}");
             sb.AppendLine(">==============================<");
             logger.Debug(sb.ToString());

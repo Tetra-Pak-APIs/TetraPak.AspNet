@@ -8,7 +8,7 @@
         /// <summary>
         ///   Provides access to the Tetra Pak configuration.
         /// </summary>
-        public TetraPakApiAuthConfig Config { get; }
+        public TetraPakApiConfig Config { get; }
 
         /// <summary>
         ///   Initializes the <see cref="JwBearerAssertionOptions"/>.
@@ -16,7 +16,7 @@
         /// <param name="config">
         ///   Initializes <see cref="Config"/>.
         /// </param>
-        public JwBearerAssertionOptions(TetraPakApiAuthConfig config)
+        public JwBearerAssertionOptions(TetraPakApiConfig config)
         {
             Config = config;
         }

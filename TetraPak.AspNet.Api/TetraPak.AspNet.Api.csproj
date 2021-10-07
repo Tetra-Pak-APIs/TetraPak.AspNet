@@ -7,12 +7,12 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>1.0.6-local</PackageVersion>
+        <PackageVersion>1.0.07-local</PackageVersion>
         <PackageIcon>icon.png</PackageIcon>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
-        <PackageReleaseNotes>Some configuration (appsettings) keys have changed:
-            - "Auth-TetraPak" key was changed to just "TetraPak"
-            - "DevSidecar" was changed to "DevProxy"
+        <PackageReleaseNotes>
+            PLEASE NOTE!
+            class TetraPakApiAuthConfig was replaced by TetraPakApiConfig (TetraPakApiAuthConfig is still available as [Obsolete])
         </PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</PackageProjectUrl>
         <Authors>Tetra Pak</Authors>

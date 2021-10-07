@@ -29,7 +29,7 @@ namespace TetraPak.AspNet.Api
         {
             c.TryAddSingleton<IServiceAuthConfig>(p =>
             {
-                var parentConfig = p.GetRequiredService<TetraPakAuthConfig>();
+                var parentConfig = p.GetRequiredService<TetraPakConfig>();
                 return new ServiceAuthConfig(p, parentConfig);
             });
             c.TryAddSingleton<TetraPakServiceProvider>();
@@ -104,7 +104,7 @@ namespace TetraPak.AspNet.Api
         {
             const string totalName = "*";
             
-            var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
+            var config = app.ApplicationServices.GetService<TetraPakConfig>();
             if (!(config?.EnableDiagnostics ?? false))
                 return app;
 

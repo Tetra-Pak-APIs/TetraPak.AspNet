@@ -9,7 +9,7 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class TetraPakUserInformation
     {
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
 
         /// <summary>
         ///   Gets a logging provider.
@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Gets the ambient data object.
         /// </summary>
-        public AmbientData AmbientData => _authConfig.AmbientData;
+        public AmbientData AmbientData => _config.AmbientData;
 
         /// <summary>
         ///   Obtains and returns user information from the Tetra Pak Auth Services. 
@@ -48,15 +48,15 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Initializes the <see cref="TetraPakUserInformation"/> object.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="authConfig"/> was unassigned.
+        ///   <paramref name="config"/> was unassigned.
         /// </exception>
-        public TetraPakUserInformation(TetraPakAuthConfig authConfig)
+        public TetraPakUserInformation(TetraPakConfig config)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
     }
 }

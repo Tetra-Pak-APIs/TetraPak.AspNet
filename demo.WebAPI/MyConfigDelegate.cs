@@ -9,16 +9,16 @@ using TetraPak.SecretsManagement;
 
 namespace WebAPI
 {
-    public class MyAuthConfigDelegate : TetraPakAuthConfigDelegate
+    public class MyConfigDelegate : TetraPakConfigDelegate
     {
         protected override Task<Outcome<Credentials>> OnGetClientCredentialsAsync(AuthContext authContext)
         {
             
-            if (!TryGetConfiguredValue(nameof(TetraPakAuthConfig.ClientId), authContext, out var clientId, true))
+            if (!TryGetConfiguredValue(nameof(TetraPakConfig.ClientId), authContext, out var clientId, true))
             {
                 clientId = "noI5fBHGFdy5HQIkzwxa6XI7Smg2Iyco";
             }
-            if (!TryGetConfiguredValue(nameof(TetraPakAuthConfig.ClientSecret), authContext, out var clientSecret, true))
+            if (!TryGetConfiguredValue(nameof(TetraPakConfig.ClientSecret), authContext, out var clientSecret, true))
             {
                 clientSecret = "H6WDbPSeIe2gigYF";
             }
@@ -27,7 +27,7 @@ namespace WebAPI
                 new Credentials(clientId, clientSecret)));
         }
 
-        public MyAuthConfigDelegate(ITetraPakSecretsProvider? secretsProvider = default) 
+        public MyConfigDelegate(ITetraPakSecretsProvider? secretsProvider = default) 
         : base(secretsProvider)
         {
         }

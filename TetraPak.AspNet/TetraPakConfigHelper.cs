@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.diagnostics;
@@ -11,8 +10,14 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Provides convenient helper methods for Tetra Pak configuration scenarios. 
+    /// </summary>
     public static class TetraPakConfigHelper
     {
+        static readonly object s_syncRoot = new object();
+        static bool s_isTetraPakAuthConfigDelegateConfigured;
+        
         /// <summary>
         ///   Enforces the use of a message id for all request/response round trips.
         /// </summary>
@@ -24,7 +29,7 @@ namespace TetraPak.AspNet
         /// </returns>
         public static IApplicationBuilder UseTetraPakMessageId(this IApplicationBuilder app)
         {
-            var config = app.ApplicationServices.GetRequiredService<TetraPakAuthConfig>();
+            var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             config.Logger.Debug("Support for messageId in request/response flows was injected");
             app.Use(async (context, func) =>
             {
@@ -39,14 +44,16 @@ namespace TetraPak.AspNet
         ///   Enabled various types of diagnostics features, such as timers and trackable message ids.
         /// </summary>
         /// <param name="app">
-        ///   The <see cref="IApplicationBuilder"/> instance.
+        ///   The <see cref="IApplicationBuilder"/> object.
         /// </param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseTetraPakDiagnostics(this IApplicationBuilder app, IWebHostEnvironment env)
+        /// <returns>
+        ///   The <see cref="IApplicationBuilder"/> object.
+        /// </returns>
+        public static IApplicationBuilder UseTetraPakDiagnostics(this IApplicationBuilder app)
         {
             const string TotalName = "*";
             
-            var config = app.ApplicationServices.GetService<TetraPakAuthConfig>();
+            var config = app.ApplicationServices.GetService<TetraPakConfig>();
             if (!(config?.EnableDiagnostics ?? false))
                 return app;
 
@@ -89,6 +96,26 @@ namespace TetraPak.AspNet
             });
 
             return app;
+        }
+        
+        /// <summary>
+        ///   Configures a custom configuration delegate, to be used by <see cref="TetraPakConfig"/>. 
+        /// </summary>
+        /// <typeparam name="TDelegate">
+        ///   The delegate type (must be a reference type that implements <see cref="ITetraPakConfigDelegate"/>).
+        /// </typeparam>
+        public static IServiceCollection AddTetraPakConfigDelegate<TDelegate>(this IServiceCollection self) 
+        where TDelegate : class, ITetraPakConfigDelegate 
+        {
+            lock (s_syncRoot)
+            {
+                if (s_isTetraPakAuthConfigDelegateConfigured)
+                    return self;
+        
+                self.AddSingleton<ITetraPakConfigDelegate, TDelegate>();
+                s_isTetraPakAuthConfigDelegateConfigured = true;
+                return self;
+            }
         }
     }
 }

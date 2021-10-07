@@ -25,18 +25,18 @@ namespace TetraPak.AspNet.Auth
     /// </summary>
     public class ConfiguredClientCredentialsProvider : IClientCredentialsProvider
     {
-        readonly TetraPakAuthConfig _authConfig;
+        readonly TetraPakConfig _config;
 
         /// <inheritdoc />
         public Task<Outcome<Credentials>> GetClientCredentialsAsync()
         {
-            var clientId = _authConfig.ClientId;
-            var clientSecret = _authConfig.ClientSecret;
+            var clientId = _config.ClientId;
+            var clientSecret = _config.ClientSecret;
             if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
                 return Task.FromResult(Outcome<Credentials>.Fail(
                     new Exception(
                         "Client credentials has not been fully configured. "+
-                        $"Please add {nameof(TetraPakAuthConfig.ClientId)} and {nameof(TetraPakAuthConfig.ClientSecret)} to the configuration")));
+                        $"Please add {nameof(TetraPakConfig.ClientId)} and {nameof(TetraPakConfig.ClientSecret)} to the configuration")));
             
             return Task.FromResult(Outcome<Credentials>.Success(new Credentials(clientId, clientSecret)));
         }
@@ -44,15 +44,15 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Initializes the <see cref="ConfiguredClientCredentialsProvider"/> object.
         /// </summary>
-        /// <param name="authConfig">
-        ///   A <see cref="TetraPakAuthConfig"/> object. 
+        /// <param name="config">
+        ///   A <see cref="TetraPakConfig"/> object. 
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="authConfig"/> was unassigned.
+        ///   <paramref name="config"/> was unassigned.
         /// </exception>
-        public ConfiguredClientCredentialsProvider(TetraPakAuthConfig authConfig)
+        public ConfiguredClientCredentialsProvider(TetraPakConfig config)
         {
-            _authConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
     }
 }

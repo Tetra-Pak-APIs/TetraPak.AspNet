@@ -8,14 +8,14 @@ public abstract class UserInformationTokenValidator
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; UserInformationTokenValidator  
 ### Properties
-<a name='TetraPak_AspNet_Identity_UserInformationTokenValidator_AuthConfig'></a>
-## UserInformationTokenValidator.AuthConfig Property
+<a name='TetraPak_AspNet_Identity_UserInformationTokenValidator_Config'></a>
+## UserInformationTokenValidator.Config Property
 Gets the auth configuration.  
 ```csharp
-public TetraPak.AspNet.TetraPakAuthConfig AuthConfig { get; set; }
+public TetraPak.AspNet.TetraPakConfig Config { get; set; }
 ```
 #### Property Value
-[TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig')
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_Identity_UserInformationTokenValidator_Logger'></a>
 ## UserInformationTokenValidator.Logger Property

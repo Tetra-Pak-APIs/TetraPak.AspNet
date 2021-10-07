@@ -17,7 +17,7 @@ namespace TetraPak.AspNet.Api.Controllers
     {
         protected AmbientData AmbientData { get; private set; }
 
-        protected TetraPakApiAuthConfig Config => (TetraPakApiAuthConfig) AmbientData?.AuthConfig;
+        protected TetraPakApiConfig Config => (TetraPakApiConfig) AmbientData?.Config;
 
         protected ILogger Logger => Config?.Logger;
 
@@ -45,7 +45,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <inheritdoc cref="ControllerBaseExtensions.GetMessageId"/>
         public string MessageId => HttpContext.Request.GetMessageId(Config);
 
-        internal TetraPakApiAuthConfig GetConfig() => Config;
+        internal TetraPakApiConfig GetConfig() => Config;
 
         protected Task<Outcome<ActorToken>> GetAccessTokenAsync() => ControllerBaseExtensions.GetAccessTokenAsync(this);
 

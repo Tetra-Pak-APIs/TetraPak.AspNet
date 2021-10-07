@@ -19,18 +19,18 @@ namespace TetraPak.AspNet.Api.Auth
         /// <remarks>
         ///   The difference between claims transformation in an API is that token exchange services
         ///   must be available for fetching identity from a user information endpoint
-        ///   (when <see cref="TetraPakAuthConfig.IdentitySource"/> = <see cref="TetraPakIdentitySource.RemoteService"/>).
+        ///   (when <see cref="TetraPakConfig.IdentitySource"/> = <see cref="TetraPakIdentitySource.RemoteService"/>).
         /// </remarks>
         public static void AddTetraPakApiClaimsTransformation(this IServiceCollection c)
         {
             c.AddHttpContextAccessor();
             c.AddAmbientData();
-            c.TryAddSingleton<TetraPakAuthConfig, TetraPakApiAuthConfig>();
+            c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
             try
             {
                 c.AddTetraPakUserInformation();
                 c.AddSingleton<IClaimsTransformation, TetraPakClaimsTransformationDispatcher>();
-                c.AddCustomClaimsTransformation<TetraPakJwtClaimsTransformation>();
+                c.AddTetraPakCustomClaimsTransformation<TetraPakJwtClaimsTransformation>();
                 // c.AddScoped<IDefaultClaimsTransformation, TetraPakApiClaimsTransformation>(); obsolete
             }
             catch (Exception ex)

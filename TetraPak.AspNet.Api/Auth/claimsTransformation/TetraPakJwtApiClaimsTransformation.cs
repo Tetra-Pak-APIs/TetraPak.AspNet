@@ -105,25 +105,5 @@ namespace TetraPak.AspNet.Api.Auth
             base.OnInitialize(provider);
             TokenExchangeService = provider.GetRequiredService<ITokenExchangeService>();
         }
-
-        /// <summary>
-        ///   Initializes the <see cref="TetraPakJwtApiClaimsTransformation"/> instance.
-        /// </summary>
-        /// <param name="authConfig">
-        ///   The Tetra Pak integration configuration.
-        /// </param>
-        /// <param name="userInformation">
-        ///   Used internally to obtain user information.
-        /// </param>
-        /// <param name="tokenExchangeService">
-        ///   User internally to support the token exchange auth flow,
-        ///   which is necessary when consuming user information from the Tetra Pak Auth Services. 
-        /// </param>
-        /// <param name="clientCredentials">
-        ///   Used internally to obtain client credentials.
-        /// </param>
-        public TetraPakJwtApiClaimsTransformation() 
-        {
-        }
     }
 }

@@ -23,17 +23,17 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger? Logger => AuthConfig.Logger;
+        protected ILogger? Logger => Config.Logger;
 
         /// <summary>
         ///   Gets the auth configuration code API.
         /// </summary>
-        protected TetraPakAuthConfig AuthConfig { get; }
+        protected TetraPakConfig Config { get; }
 
-        ITimeLimitedRepositories? Cache => AuthConfig.Cache;
+        ITimeLimitedRepositories? Cache => Config.Cache;
 
         /// <inheritdoc />
-        public string? GetMessageId(bool enforce = false) => AuthConfig.AmbientData.GetMessageId();
+        public string? GetMessageId(bool enforce = false) => Config.AmbientData.GetMessageId();
 
         /// <inheritdoc />
         public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
@@ -68,7 +68,7 @@ namespace TetraPak.AspNet.Api.Auth
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
-                var discoOutcome = await AuthConfig.GetDiscoveryDocumentAsync();
+                var discoOutcome = await Config.GetDiscoveryDocumentAsync();
                 if (!discoOutcome)
                     return Outcome<TokenExchangeResponse>.Fail(
                         new ConfigurationException("Failed to obtain an OIDC discovery document"));
@@ -133,18 +133,18 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Initializes the <see cref="TetraPakTokenExchangeService"/>.
         /// </summary>
-        /// <param name="authConfig">
+        /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="authConfig"/> was unassigned.
+        ///   <paramref name="config"/> was unassigned.
         /// </exception>
         /// <exception cref="ConfigurationException">
-        ///   The <see cref="AmbientData.AuthConfig"/> instance was not of type <see cref="TetraPakApiAuthConfig"/>.
+        ///   The <see cref="AmbientData.Config"/> instance was not of type <see cref="TetraPakApiConfig"/>.
         /// </exception>
-        public TetraPakTokenExchangeService(TetraPakAuthConfig authConfig)
+        public TetraPakTokenExchangeService(TetraPakConfig config)
         {
-            AuthConfig = authConfig ?? throw new ArgumentNullException(nameof(authConfig));
+            Config = config ?? throw new ArgumentNullException(nameof(config));
         }
     }
 }
