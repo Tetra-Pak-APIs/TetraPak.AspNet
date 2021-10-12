@@ -1,4 +1,4 @@
-# TetraPak.AspNet - Web App Cheat Sheet
+# Cheat Sheet: Web App 
 
 This is the fast-track to get your web app integrated with Tetra Pak Auth Services with minimum fuzz. 
 

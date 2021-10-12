@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
@@ -25,12 +24,12 @@ namespace TetraPak.AspNet.Api.Auth
         {
             c.AddHttpContextAccessor();
             c.AddAmbientData();
-            c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
+            c.AddTetraPakConfiguration<TetraPakApiConfig>();
             try
             {
                 c.AddTetraPakUserInformation();
                 c.AddSingleton<IClaimsTransformation, TetraPakClaimsTransformationDispatcher>();
-                c.AddTetraPakCustomClaimsTransformation<TetraPakJwtClaimsTransformation>();
+                c.AddTetraPakCustomClaimsTransformation<TetraPakJwtApiClaimsTransformation>();
                 // c.AddScoped<IDefaultClaimsTransformation, TetraPakApiClaimsTransformation>(); obsolete
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// <summary>
     ///   Provides convenience- and extension methods for Tetra Pak auth purposes.
     /// </summary>
-    partial class TetraPakApiAuth // JWT Bearer validation 
+    partial class TetraPakApiAuth 
     {
         /// <summary>
         ///   Configures the app service for Jwt Bearer Authentication.
@@ -90,8 +91,10 @@ namespace TetraPak.AspNet.Api.Auth
         {
             var c = a.Services;
             c.TryAddSingleton<HostProvider>();
-            c.TryAddSingleton<TetraPakApiConfig>();            
-            c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
+            // c.TryAddSingleton<TetraPakApiConfig>();            obsolete
+            // c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
+            c.AddTetraPakConfiguration<TetraPakApiConfig>();
+            c.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             addCachingIfAllowed();
             
@@ -107,8 +110,8 @@ namespace TetraPak.AspNet.Api.Auth
             void addCachingIfAllowed()
             {
                 var provider = c.BuildServiceProvider();
-                var authConfig = provider.GetService<TetraPakConfig>();
-                if (authConfig is null || !authConfig.IsCachingAllowed)
+                var tetraPakConfig = provider.GetService<TetraPakConfig>();
+                if (tetraPakConfig is null || !tetraPakConfig.IsCachingAllowed)
                     return;
 
                 if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
@@ -122,9 +125,9 @@ namespace TetraPak.AspNet.Api.Auth
                     var cacheLogger = p.GetService<ILogger<SimpleCache>>();
                     var cache = new SimpleCache(cacheLogger)
                     {
-                        DefaultLifeSpan = authConfig.DefaultCachingLifetime
+                        DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
                     };
-                    var cacheConfig = authConfig.Caching.WithCache(cache);
+                    var cacheConfig = tetraPakConfig.Caching.WithCache(cache);
                     return cache.WithConfiguration(cacheConfig);
                 });
             }
@@ -139,7 +142,7 @@ namespace TetraPak.AspNet.Api.Auth
         ///   Please use <see cref="UseTetraPakApiAuthentication"/> instead.
         ///   </para> 
         /// </summary>
-        /// <seealso cref="AddTetraPakJwtBearerAssertion"/>
+        /// <seealso cref="UseTetraPakApiAuthentication"/>
         [Obsolete("This method is obsolete. Please call UseTetraPakAuthentication instead")] // obsolete method (replaced)
         public static IApplicationBuilder UseTetraPakJwtAuthentication(
             this IApplicationBuilder app, 
@@ -198,7 +201,7 @@ namespace TetraPak.AspNet.Api.Auth
         ///   This is to ensure you cannot accidentally deploy it to any other environment.
         ///   </para>
         /// </remarks>
-        /// <seealso cref="AddTetraPakJwtBearerAssertion"/>
+        /// <seealso cref="AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection,string?,TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)"/>
         public static IApplicationBuilder UseTetraPakApiAuthentication(
             this IApplicationBuilder app,
             IWebHostEnvironment env)

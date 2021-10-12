@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
@@ -12,7 +14,7 @@ namespace TetraPak.AspNet.Api
         IEnumerable<Exception> _issues;
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) => AmbientData.GetMessageId(enforce);
+        public string? GetMessageId(bool enforce = false) => AmbientData.GetMessageId(enforce);
 
         /// <summary>
         ///   Retrieves all issues found for the invalid service endpoint URL.
@@ -34,12 +36,19 @@ namespace TetraPak.AspNet.Api
         ///   Initializes the <see cref="ServiceInvalidEndpoint"/>.
         ///   This constructor is mainly intended for the use by the dependency injection services. 
         /// </summary>
-        /// <param name="ambientData">
-        ///   Provides ambient data and configuration.
+        /// <param name="tetraPakConfig">
+        ///   Initializes <see cref="TetraPakConfig"/>.
         /// </param>
-        public ServiceInvalidEndpoint(AmbientData ambientData) 
-        : base(ambientData)
+        public ServiceInvalidEndpoint(TetraPakConfig tetraPakConfig) 
+        : base(tetraPakConfig)
         {
+            _issues = null!;
+        }
+        
+        public ServiceInvalidEndpoint(string? stringValue) 
+        : base(stringValue)
+        {
+            _issues = null!;
         }
     }
 }

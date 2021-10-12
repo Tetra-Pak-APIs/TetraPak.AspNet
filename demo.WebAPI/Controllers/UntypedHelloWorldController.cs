@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
             var userIdentity = User?.Identity;
             this.LogDebug($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
             if (string.IsNullOrEmpty(svc))
-                return ControllerBaseExtensions.Ok(this, new 
+                return ControllerBaseExtensions.RespondOk(this, new 
                 { 
                     message = "Hello World!", 
                     remarks = "You can also try sending '?svc=tx' or '?svc=cc' to test token exchange or client "+

@@ -79,7 +79,7 @@ namespace TetraPak.AspNet.Identity
             }
 
             var disco = discoOutcome.Value;
-            var userInfoEndpoint = disco.UserInformationEndpoint;
+            var userInfoEndpoint = disco!.UserInformationEndpoint;
             var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint));
             if (cached)
             {

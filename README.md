@@ -1,44 +1,58 @@
 # TetraPak.AspNet
 
-> *This document is an SDK overview. If you're a seasoned ASP.NET Core developer and just want to quickly integrate your web solution with Tetra Pak's Auth Services these might be faster options:*
-> - *[Web App recipe][tetra-pak-aspnet-recipe]: Build a small integrated web app*
-> - *[Web App Cheat Sheet][tetra-pak-aspnet-cheat-sheet]: Check list to quickly integrate an existing Web App*
+> *This document is an SDK overview. It uses many terms and concepts that also exist in other documents. To avoid explaining those in multiple documents they can instead be found in the [Concepts and Terminology document][cat].
+> 
+> If you're a seasoned ASP.NET Core developer and just want to quickly integrate your web solution with Tetra Pak's Auth Services these might be faster options:*
+> - *[Web App recipe][recipe-app]: Build a small integrated web app*
+> - *[Web App Cheat Sheet][cheat-app]: Check list to quickly integrate an existing Web App*
 > - *[Web API recipe][tetra-pak-aspnet-api-recipe]: Build a small integrated web app*
 > - *[Web API Cheat Sheet][tetra-pak-aspnet-api-cheat-sheet]: Check list to quickly integrate an existing Web App*
 > 
 > *Also, if you have already started integrating your web solution but are facing issues then you might find this [troubleshooting guide][tetra-pak-aspnet-scenarios] useful.*  
  
-The TetraPak.AspNet SDK is provided as a way to get more productive when writing web based solutions that integrate with Tetra Pak's landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, logging and so on. There are also some useful tools that should help you out to develop and test your solutions.
+The TetraPak.AspNet SDK is provided as a way to be more productive when writing .NET web based solutions that integrate with Tetra Pak's managed API landscape. It includes code APIs and helpers for typical cross-cutting concerns (a.k.a. "C3") such as authorization, configuration, logging, diagnostics and so on. There are also some useful tools that should help you develop and test your solutions.
 
 ## The 20 minute rule
 
-In the Tetra Pak API innovation team we try to live by what we call "*the 20 minute rule*" as our guiding principle. What that means is that API consumers (usually developers) should never have to spend more than 20 minutes on solving a problem that is typical to most projects.
+In the Tetra Pak API innovation team we try to live by what we call "*the 20 minute rule*" as our guiding design principle. What that means is that API consumers (usually developers) should never need to spend more than 20 minutes solving a problem that is typical to most projects. We have seen over the years that many development projects spend considerable time just establishing correct and safe [auth (authorization & authentication)][cat-auth] before they are able to move on to building new business value. This is one thing we want to address with this SDK.
 
-We have seen over the years that many development projects spend considerable time just establishing correct and safe *auth* (authorization & authentication) before they are able to move on to building new business value. This is something we want to address with this SDK.
-
-Hopefully, by the time you have read this documentation and tested the code APIs offered by the `TetraPak.AspNet` SDK packages you will be able to integrate your  should be able to just add a few lines of code and configuration to your project and you should be good to go. When you start your next project you should be done with auth and ready to start building business value in 20 minutes or less!
+Hopefully, by the time you have read this documentation and tested the code APIs offered by the [`TetraPak.AspNet` SDK packages][github-tetrapak-app] you should be able to just add a few lines of code and configuration to your project and be good to go. When you start your next project you should be done with [auth][cat-auth] and ready to start creating business value in 20 minutes or less!
 
 ## Structure
 
-The TetraPak.AspNet SDK consists of two separate Nuget packages (.NET projects): [TetraPak.AspNet][nuget-tetrapak-app] and [TetraPak.AspNet.Api][github-tetrapak-api]. Both Nuget packages requires the [TetraPak.Common][nuget-tetrapak-common] package ([documentation here][github-tetrapak-common]). 
+The TetraPak.AspNet SDK consists of two separate Nuget packages: [TetraPak.AspNet][nuget-tetrapak-app] and [TetraPak.AspNet.Api][github-tetrapak-api]. Both Nuget packages requires the [TetraPak.Common][nuget-tetrapak-common] package ([documentation here][github-tetrapak-common]). 
 
-The SDK is open source and both Nuget projects are part of the same solution, [available at GitHub][github-tetrapak-app].
+![SDK packages](./_graphics/sdk_packages.png)
+
+The SDK is open source and both Nuget projects are part of the same solution, [available on GitHub][github-tetrapak-app].
 
 ### [TetraPak.AspNet][github-tetrapak-app]
 
-This [Nuget][nuget] package is the base of the SDK and covers code APIs and toos to assist you when building Tetra Pak integrated web clients based on ASP.NET Core/5+. There are three documents to help you get up to speed using the [TetraPak.AspNet][nuget-tetrapak-app]:
+This [Nuget][nuget] package is the base of the SDK and covers code APIs and tools to assist you when building Tetra Pak integrated web clients based on ASP.NET Core/5+. There several documents to help you get up to speed using the [TetraPak.AspNet][nuget-tetrapak-app], depending on your needs and experience:
 
 - [README][tetra-pak-aspnet]
   
-  This document covers the introduction, overview and details of the Nuget package's code APIs and tools. Start here if you have the time and want the full picture.
+  This document. It covers the introduction, overview and details of the Nuget package's code APIs and tools. Start here if you have the time and want the full picture.
 
-- [Recipe][tetra-pak-aspnet-recipe]
+- [Concepts and Terminology][cat]
 
-  Provides a walk-through building a very simple ASP.NET web app and integrate it with the Tetra Pak Auth Services. This might be a great place to start for a quick introduction without too many details.
+  Your miniature WIKI for everything related to [auth][cat-auth] and integration in general, and with [TPAS][cat-tpas] in particular.
 
-- [Cheat Sheet][tetra-pak-aspnet-cheat-sheet]
+- [Recipe: Create a Tetra Pak Web App][recipe-app]
 
-  A very fast and no-nonsense checklist for quickly integrating an existing ASP.NET Core/5+ web client with the Tetra Pak Auth Services. Start here if you have used the SDK for this purpose one or two times before and just need a quick reminder.
+  Provides a detailed walk-through for building a very simple ASP.NET web app and integrate it with the [Tetra Pak Auth Services][cat-tpas]. This might be a great place to start for a quick introduction without too many details.
+
+- [Cheat Sheet: Web App][cheat-app]
+
+  A very fast and no-nonsense checklist for quickly integrating an existing ASP.NET web client with the [Tetra Pak Auth Services][cat-tpas]. Start here if you have used the SDK for this purpose once or twice before and just need a quick reminder.
+
+- [Recipe: Create a Tetra Pak API][recipe-api]
+
+  A more detailed tutorial for how to build a simple [terminus API][cat-terminus-api] and integrate it with [TPAS][cat-tpas].
+
+- [Cheat Sheet: API][cheat-api]
+
+  A fast and no-fuzz checklist for how to create or integrate your ASP.NET API with [TPAS][cat-tpas]. This is probably what you will need as a API developer, returning to make use of the SDK again.
 
 ### [TetraPak.AspNet.Api][github-tetrapak-api]
 
@@ -178,7 +192,7 @@ Like mentioned in the precious section, as a developer you are tasked with decid
 Some flows (typically in an API project) also requires a: 
 - *client secret*
 
-So, how do you get a *client id* (and *client secret*), and what is it used for, you might ask? Seconfly, how do you configure them along with the *runtime environment* to allow the SDK to do the hard work for you?
+So, how do you get a *client id* (and *client secret*), and what is it used for, you might ask? Secondly, how do you configure them along with the *runtime environment* to allow the SDK to do the hard work for you?
 
 Lets look into this now...
 
@@ -204,7 +218,7 @@ The *client id* and *client secret* is ***confidential information*** and you no
 
 Protecting your secrets is a topic in itself and we will have to get back to that later.
 
-**TIP**: Please check out the [web app recipe][tetra-pak-aspnet-recipe] (or [web API recipe][tetra-pak-aspnet-api-recipe]) if you want some more insight into how registering an app is actually done.
+**TIP**: Please check out the [web app recipe][recipe-app] (or [web API recipe][tetra-pak-aspnet-api-recipe]) if you want some more insight into how registering an app is actually done.
 
 ### Configuration
 
@@ -399,8 +413,6 @@ The TetraPak.AspNet SDK have this
 [tetra-pak-aspnet]: ./TetraPak.AspNet/README.md
 [tetra-pak-aspnet_dependency-injection]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#startup
 [tetra-pak-aspnet-scenarios]: ./Scenarios.md
-[tetra-pak-aspnet-recipe]: ./TetraPak.AspNet/_docs/Recipe-WebApp.md
-[tetra-pak-aspnet-cheat-sheet]: ./TetraPak.AspNet/_docs/cheatsheet-webapp.md
 [tetra-pak-aspnet-api]: ./TetraPak.AspNet.Api/README.md
 [tetra-pak-aspnet-api-recipe]: ./TetraPak.AspNet.Api/recipe-webapi.md
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
@@ -443,6 +455,16 @@ The TetraPak.AspNet SDK have this
 [di-intro-1]: https://medium.com/flawless-app-stories/dependency-injection-for-dummies-168dad181a3d
 [di-intro-2]: https://www.freecodecamp.org/news/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f/
 
+[cheat-app]: ./TetraPak.AspNet/_docs/cheatsheet-webapp.md
+[cheat-api]: ./TetraPak.AspNet.Api/_docs/cheatsheet-webapi.md
+
+[recipe-app]: ./TetraPak.AspNet/_docs/Recipe-WebApp.md
+[recipe-api]: ./TetraPak.AspNet.Api/_docs/Recipe-WebApi.md
+
+[cat]: ./CAT.md
 [cat-actor]: ./CAT.md#actor
 [cat-api]: ./CAT.md#api
+[cat-auth]: ./CAT.md#auth
 [cat-middleware-aspnet]: ./CAT.md#middleware-aspnet
+[cat-terminus-api]: ./CAT.md#terminus-api
+[cat-tpas]: ./CAT.md#tpas

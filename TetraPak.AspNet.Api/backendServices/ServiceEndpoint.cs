@@ -36,7 +36,7 @@ namespace TetraPak.AspNet.Api
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
-        public string? StringValue { get; protected set; }
+        public string StringValue { get; protected set; }
 
         /// <inheritdoc />
         public ConfigPath? ConfigPath => $"{Parent?.ConfigPath}{ConfigPath.Separator}{Name}";
@@ -48,7 +48,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets the current <see cref="HttpContext"/> instance.
         /// </summary>
-        public HttpContext HttpContext => AmbientData.HttpContext;
+        public HttpContext? HttpContext => AmbientData.HttpContext;
         
         /// <summary>
         ///   Gets the name of the service endpoint URL (as specified in the configuration).
@@ -57,14 +57,19 @@ namespace TetraPak.AspNet.Api
         public string Name { get; internal set; }
 
         /// <summary>
-        ///   Gets an object to provide access to ambient data.
+        ///   Gets the Tetra Pak integration configuration.
         /// </summary>
-        public AmbientData AmbientData { get; private set; }
+        public TetraPakConfig? TetraPakConfig { get; private set; }
+
+        /// <summary>
+        ///   Gets the ambient data object.
+        /// </summary>
+        public AmbientData AmbientData => TetraPakConfig!.AmbientData;
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger Logger => AmbientData.Logger;
+        public ILogger? Logger => AmbientData.Logger;
 
         public IConfiguration Configuration { get; private set; }
 
@@ -72,28 +77,28 @@ namespace TetraPak.AspNet.Api
         [StateDump]
         public GrantType GrantType
         {
-            get => _grantType is null or GrantType.Inherited ? Parent.GrantType : _grantType.Value;
+            get => _grantType is null or GrantType.Inherited ? Parent!.GrantType : _grantType.Value;
             set => _grantType = value;
         }
         
         [StateDump]
         public string? ClientId
         {
-            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result!;
             set => _clientId = value?.Trim() ?? null!;
         }
 
         [StateDump]
         public string? ClientSecret
         {
-            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result!;
             set => _clientSecret = value?.Trim() ?? null!;
         }
 
         [StateDump]
         public MultiStringValue? Scope
         {
-            get => GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
+            get => GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result!;
             set => _scope = value!;
         }
 
@@ -157,12 +162,12 @@ namespace TetraPak.AspNet.Api
         public static implicit operator string?(ServiceEndpoint? value) => value?.StringValue;
 
         /// <inheritdoc />
-        public override string? ToString() => StringValue;
+        public override string ToString() => StringValue;
 
         /// <inheritdoc />
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => AmbientData.GetAccessTokenAsync(forceStandardHeader);
-
+        
         #region .  Equality  .
 
         /// <summary>
@@ -174,9 +179,9 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   <c>true</c> if <paramref name="other"/> is equal to the current value; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ServiceEndpoint? other)
+        bool @equals(ServiceEndpoint? other)
         {
-            return !(other is null) && string.Equals(StringValue, other.StringValue);
+            return other is {} && string.Equals(StringValue, other.StringValue);
         }
 
         /// <summary>
@@ -190,7 +195,7 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public override bool Equals(object? obj)
         {
-            return !(obj is null) && (obj is ServiceEndpoint other && Equals(other));
+            return obj is ServiceEndpoint other && equals(other);
         }
 
         /// <summary>
@@ -207,17 +212,17 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator ==(ServiceEndpoint left, ServiceEndpoint? right)
+        public static bool operator ==(ServiceEndpoint? left, ServiceEndpoint? right)
         {
-            return left?.Equals(right) ?? right is null;
+            return left?.equals(right) ?? right is null;
         }
 
         /// <summary>
         ///   Comparison operator overload.
         /// </summary>
-        public static bool operator !=(ServiceEndpoint left, ServiceEndpoint? right)
+        public static bool operator !=(ServiceEndpoint? left, ServiceEndpoint? right)
         {
-            return !left?.Equals(right) ?? right is { };
+            return !left?.equals(right) ?? right is {};
         }
 
         #endregion
@@ -226,14 +231,14 @@ namespace TetraPak.AspNet.Api
         {
             Name = name;
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));
-            AmbientData = parent.AmbientData;
             return this;
         }
         
         public string GetConfiguredValue(string key) => Configuration[key];
 
-        internal ServiceEndpoint WithConfig(IConfiguration config)
+        internal ServiceEndpoint WithConfig(TetraPakConfig tetraPakConfig, IConfiguration config)
         {
+            TetraPakConfig = tetraPakConfig;
             Configuration = config;
             var grantTypeSection = config.GetChildren()
                 .FirstOrDefault(i => i.Key.Equals("grantType", StringComparison.InvariantCultureIgnoreCase));
@@ -251,7 +256,7 @@ namespace TetraPak.AspNet.Api
             return this;
         }
         
-        static GrantType parseGrantType(string stringValue, GrantType useDefault) 
+        static GrantType parseGrantType(string? stringValue, GrantType useDefault) 
         {
             if (string.IsNullOrWhiteSpace(stringValue))
                 return useDefault;
@@ -271,20 +276,24 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="stringValue"/> string representation was incorrectly formed.
         /// </exception>
         [DebuggerStepThrough]
-        public ServiceEndpoint(string stringValue)
+        public ServiceEndpoint(string? stringValue)
         {
             StringValue = stringValue ?? throw new ArgumentNullException(nameof(stringValue));
+
+            // Configuration and Name will be assigned via the WithConfig and WithIdentity methods
+            Configuration = null!;
+            Name = null!;
         }
 
         /// <summary>
-        ///   Initializes an <see cref="ServiceEndpoint"/> 
+        ///   Initializes an <see cref="ServiceEndpoint"/>  
         /// </summary>
-        /// <param name="ambientData">
-        ///   Provides ambient data and configuration.
+        /// <param name="tetraPakConfig">
+        ///   Initializes <see cref="TetraPakConfig"/>.
         /// </param>
-        protected ServiceEndpoint(AmbientData ambientData)
+        protected ServiceEndpoint(TetraPakConfig tetraPakConfig)
         {
-            AmbientData = ambientData;
+            TetraPakConfig = tetraPakConfig;
         }
     }
 }

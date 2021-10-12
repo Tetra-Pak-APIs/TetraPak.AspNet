@@ -60,19 +60,20 @@ namespace TetraPak.AspNet.Auth
             // todo This method is HUGE. Consider refactoring to break it down!
             services.AddAmbientData();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddSingleton<TetraPakConfig>();
+            services.AddTetraPakConfiguration();
+            // services.TryAddSingleton<TetraPakConfig>(); obsolete
             // services.AddTetraPakClaimsTransformation();
             // services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
             var provider = services.BuildServiceProvider();
-            var authConfig = provider.GetService<TetraPakConfig>();
+            var tetraPakConfig = provider.GetService<TetraPakConfig>();
 
             addCachingIfAllowed();
 
-            var logger = authConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
-            if (authConfig is null)
+            var logger = tetraPakConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
+            if (tetraPakConfig is null)
             {
                 logger.Error(new ConfigurationException($"Cannot resolve service: {typeof(TetraPakConfig)}"));
                 return;
@@ -93,7 +94,7 @@ namespace TetraPak.AspNet.Auth
                     {
                         OnValidatePrincipal = async context =>
                         {
-                            if (!await context.RefreshTokenIfExpiredAsync(authConfig, logger))
+                            if (!await context.RefreshTokenIfExpiredAsync(tetraPakConfig, logger))
                                 return;
                             
                             // transfer access and id token to HttpContext, making them available as ambient values ...
@@ -117,21 +118,21 @@ namespace TetraPak.AspNet.Auth
                     //options.ResponseType = "code id_token"; // <- first get code, then get token from standard token endpoint
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     //options.RequireHttpsMetadata = true;
-                    options.MetadataAddress = authConfig.DiscoveryDocumentUrl;
-                    options.ClientId = authConfig.ClientId;
-                    options.ClientSecret = authConfig.ClientSecret;
+                    options.MetadataAddress = tetraPakConfig.DiscoveryDocumentUrl;
+                    options.ClientId = tetraPakConfig.ClientId;
+                    options.ClientSecret = tetraPakConfig.ClientSecret;
                     options.UseTokenLifetime = true;
                     options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.ProtocolValidator.RequireNonce = false; // nonstandard
                     //options.GetClaimsFromUserInfoEndpoint = true;
                     options.SaveTokens = true;
-                    options.CallbackPath = authConfig.CallbackPath is { } 
-                        ? new PathString(authConfig.CallbackPath) 
+                    options.CallbackPath = tetraPakConfig.CallbackPath is { } 
+                        ? new PathString(tetraPakConfig.CallbackPath) 
                         : null;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     
-                    foreach (var scopeItem in authConfig.Scope)
+                    foreach (var scopeItem in tetraPakConfig.Scope)
                     {
                         options.Scope.Add(scopeItem);
                     }
@@ -155,7 +156,7 @@ namespace TetraPak.AspNet.Auth
                     {
                         OnMessageReceived = context =>
                         {
-                            if (context.TryReadAuthorization(options, authConfig, logger, out var token))
+                            if (context.TryReadAuthorization(options, tetraPakConfig, logger, out var token))
                             {
                                 context.Token = token;
                                 traceOidc(() => $"Token received: {token}");
@@ -165,7 +166,7 @@ namespace TetraPak.AspNet.Auth
                         OnRemoteFailure = context =>
                         {
                             var messageId = context.Request.GetMessageId(null);
-                            authConfig.Logger.Error(context.Failure,"<OIDC> authentication error!", messageId);
+                            tetraPakConfig.Logger.Error(context.Failure,"<OIDC> authentication error!", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -178,14 +179,14 @@ namespace TetraPak.AspNet.Auth
                         OnAuthenticationFailed = context =>
                         {
                             var messageId = context.Request.GetMessageId(null);
-                            authConfig.Logger.Warning($"<OIDC> Authentication failed! {context.Exception.Message}", messageId);
+                            tetraPakConfig.Logger.Warning($"<OIDC> Authentication failed! {context.Exception.Message}", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
                         OnAccessDenied = context =>
                         {
                             var messageId = context.Request.GetMessageId(null);
-                            authConfig.Logger.Information($"<IODC> Access denied: {context.AccessDeniedPath}", messageId);
+                            tetraPakConfig.Logger.Information($"<IODC> Access denied: {context.AccessDeniedPath}", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -239,7 +240,7 @@ namespace TetraPak.AspNet.Auth
                 if (!logger?.IsEnabled(LogLevel.Trace) ?? true)
                     return;
                 
-                var messageId = authConfig?.AmbientData.GetMessageId(true);
+                var messageId = tetraPakConfig?.AmbientData.GetMessageId(true);
                 logger.Trace($"<IODC> {message()}", messageId);
             }
 
@@ -261,7 +262,7 @@ namespace TetraPak.AspNet.Auth
 
             void addCachingIfAllowed()
             {
-                if (authConfig is null || !authConfig.IsCachingAllowed)
+                if (tetraPakConfig is null || !tetraPakConfig.IsCachingAllowed)
                     return;
 
                 if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
@@ -275,9 +276,9 @@ namespace TetraPak.AspNet.Auth
                     var cacheLogger = p.GetService<ILogger<SimpleCache>>();
                     var cache = new SimpleCache(cacheLogger)
                     {
-                        DefaultLifeSpan = authConfig.DefaultCachingLifetime
+                        DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
                     };
-                    var cacheConfig = authConfig.Caching.WithCache(cache);
+                    var cacheConfig = tetraPakConfig.Caching.WithCache(cache);
                     return cache.WithConfiguration(cacheConfig);
                 });
             }
@@ -285,7 +286,8 @@ namespace TetraPak.AspNet.Auth
 
         static void AddTetraPakWebClientAuthentication(this IServiceCollection services) // todo Make available when needed -JR 2021-09-01
         {
-            services.TryAddSingleton<TetraPakConfig>();
+            services.AddTetraPakConfiguration();
+            // services.TryAddSingleton<TetraPakConfig>(); obsolete
             services.AddTetraPakClaimsTransformation();
             
             var provider = services.BuildServiceProvider();

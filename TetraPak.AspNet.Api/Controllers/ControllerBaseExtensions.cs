@@ -44,7 +44,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </returns>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this ControllerBase self)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new Exception(
                         "Cannot get access token. Failed when trying to obtain a "+
@@ -76,7 +76,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="data"/> was unassigned.
         /// </exception>
-        public static OkObjectResult Ok(
+        public static OkObjectResult RespondOk(
             this ControllerBase self, 
             object? data, 
             int totalCount = -1, 
@@ -137,7 +137,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   tp stay current. 
         ///   </para>
         ///   <para>
-        ///   If the <paramref name="outcome"/> is unsuccessful the <see cref="Error(ControllerBase,Exception)"/>
+        ///   If the <paramref name="outcome"/> is unsuccessful the <see cref="RespondError(Microsoft.AspNetCore.Mvc.ControllerBase,System.Exception)"/>
         ///   method will automatically be invoked.
         ///   </para>
         ///   <para>
@@ -150,8 +150,8 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   to be included in the response.  
         ///   </para>
         /// </remarks>
-        /// <seealso cref="Ok(ControllerBase)"/>
-        /// <seealso cref="Ok(ControllerBase,object,int,ReadChunk)"/>
+        /// <seealso cref="RespondOk"/>
+        /// <seealso cref="RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>
         public static async Task<ActionResult> RespondAsync<T>(
             this ControllerBase self,
             Outcome<T> outcome,
@@ -160,36 +160,34 @@ namespace TetraPak.AspNet.Api.Controllers
             ResponseDelegate<T>? responseDelegate = null)
         {
             if (!outcome)
-                return self.Error(outcome.Exception);
+                return self.RespondError(outcome.Exception);
             
             if (responseDelegate is {})
             {
                 try
                 {
-                    var delegateOutcome = await responseDelegate(outcome.Value);
+                    var delegateOutcome = await responseDelegate(outcome.Value!);
                     return !delegateOutcome 
-                        ? self.Error(delegateOutcome.Exception) 
+                        ? self.RespondError(delegateOutcome.Exception) 
                         : await RespondAsync(self, delegateOutcome);
                 }
                 catch (Exception ex)
                 {
-                    return self.Error(ex);
+                    return self.RespondError(ex);
                 }
             }
 
-            if (outcome.Value is HttpResponseMessage responseMessage)
-            {
-                var stringValue = await responseMessage.Content.ReadAsStringAsync();
-                var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
-                return Ok(self, 
-                    entityOutcome
-                        ? entityOutcome.Value
-                        : stringValue,
-                    totalCount, 
-                    chunk);
-            }
-
-            return Ok(self, outcome.Value, totalCount, chunk);
+            if (outcome.Value is not HttpResponseMessage responseMessage)
+                return self.RespondOk(outcome.Value, totalCount, chunk);
+            
+            var stringValue = await responseMessage.Content.ReadAsStringAsync();
+            var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
+            return RespondOk(self, 
+                entityOutcome
+                    ? entityOutcome.Value
+                    : stringValue,
+                totalCount, 
+                chunk);
         }
 
         /// <summary>
@@ -212,9 +210,9 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="ObjectResult"/> object.
         /// </returns>
         /// <seealso cref="ApiDataResponse{T}"/>
-        /// <seealso cref="Ok(Microsoft.AspNetCore.Mvc.ControllerBase)"/>
-        /// <seealso cref="Ok(Microsoft.AspNetCore.Mvc.ControllerBase,object,int,TetraPak.ReadChunk)"/>
-        public static OkObjectResult Ok<T>(this ControllerBase self, EnumOutcome<T> outcome, int totalCount = -1)
+        /// <seealso cref="RespondOk"/>
+        /// <seealso cref="RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>
+        public static OkObjectResult RespondOk<T>(this ControllerBase self, EnumOutcome<T> outcome, int totalCount = -1)
         {
             return self.Ok(new ApiDataResponse<T>(outcome, totalCount));
         }
@@ -228,7 +226,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ObjectResult"/> object.
         /// </returns>
-        public static OkObjectResult Ok(this ControllerBase self)
+        public static OkObjectResult RespondOk(this ControllerBase self)
         {
             return self.Ok(ApiDataResponse<object>.Empty(self.GetMessageId()));
         }
@@ -249,7 +247,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult ErrorExpectedQueryParameter(
+        public static ActionResult RespondErrorExpectedQueryParameter(
             this ControllerBase self, 
             string queryParameterName, 
             string? example = null)
@@ -257,7 +255,7 @@ namespace TetraPak.AspNet.Api.Controllers
             var body = !string.IsNullOrWhiteSpace(example) 
                 ? new {messages = new [] { $"Expected query parameter: '{queryParameterName}' (example: {example})" }} 
                 : new {messages = new [] { $"Expected query parameter: '{queryParameterName}'" }};
-            return self.Error(HttpStatusCode.BadRequest, new Exception(body.ToJson()));
+            return self.RespondError(HttpStatusCode.BadRequest, new Exception(body.ToJson()));
         }
         
         /// <summary>
@@ -274,7 +272,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </returns>
         public static ActionResult UnauthorizedError(this ControllerBase self, Exception error)
         {
-            return self.Error(HttpStatusCode.Unauthorized, error);
+            return self.RespondError(HttpStatusCode.Unauthorized, error);
         }
         
         /// <summary>
@@ -290,10 +288,10 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        /// <seealso cref="Error(ControllerBase,Exception)"/>
+        /// <seealso cref="RespondError(Microsoft.AspNetCore.Mvc.ControllerBase,System.Exception)"/>
         public static ActionResult InternalServerError(this ControllerBase self, Exception error)
         {
-            return self.Error(HttpStatusCode.InternalServerError, error);
+            return self.RespondError(HttpStatusCode.InternalServerError, error);
         }
         
         /// <summary>
@@ -314,9 +312,9 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   If none can be resolved the <see cref="InternalServerError"/> method is invoked, to
         ///   produce a generic status code of 500 (<see cref="HttpStatusCode.InternalServerError"/>).
         /// </remarks>
-        /// <seealso cref="Error(ControllerBase,HttpStatusCode,Exception)"/>
+        /// <seealso cref="RespondError(ControllerBase,HttpStatusCode,Exception)"/>
         /// <seealso cref="InternalServerError"/>
-        public static ActionResult Error(this ControllerBase self, Exception error)
+        public static ActionResult RespondError(this ControllerBase self, Exception error)
         {
             if (error is HttpException httpException)
             {
@@ -343,7 +341,8 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult Error(this ControllerBase self, HttpStatusCode status, Exception error)
+        /// <seealso cref="RespondError(ControllerBase,Exception)"/>
+        public static ActionResult RespondError(this ControllerBase self, HttpStatusCode status, Exception error)
         {
             // error message might already be a standard error response json object 
             var parseOutcome = tryParseTetraPakErrorResponse(error.Message);
@@ -509,7 +508,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static void LogTrace(this ControllerBase self, string message, string? messageId = null)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
             config?.Logger.Trace(message, messageId);
@@ -533,7 +532,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static void LogDebug(this ControllerBase self, string message, string? messageId = null)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
             config?.Logger.Debug(message, messageId);
@@ -557,7 +556,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static void LogInformation(this ControllerBase self, string message, string? messageId = null)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
             config?.Logger.Information(message, messageId);
@@ -581,7 +580,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </remarks>
         public static void LogWarning(this ControllerBase self, string message, string? messageId = null)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
             config?.Logger.Warning(message, messageId);
@@ -612,7 +611,7 @@ namespace TetraPak.AspNet.Api.Controllers
             string? message = null, 
             string? messageId = null)
         {
-            if (!self.TryGetTetraPakApiAuthConfig(out var config))
+            if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
             config?.Logger.Error(exception, message, messageId);
@@ -630,8 +629,8 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   <c>true</c> if the Tetra Pak (API) configuration object could be obtained; otherwise <c>false</c>.
         /// </returns>
-        /// <seealso cref="GetTetraPakApiAuthConfig"/>
-        public static bool TryGetTetraPakApiAuthConfig(this ControllerBase self, out TetraPakApiConfig? config)
+        /// <seealso cref="GetTetraPakConfig"/>
+        public static bool TryGetTetraPakApiConfig(this ControllerBase self, out TetraPakApiConfig? config)
         {
             config = self.HttpContext.RequestServices.GetService<TetraPakApiConfig>();
             return config is {};
@@ -647,13 +646,13 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   A Tetra Pak (API) configuration object.
         /// </returns>
-        /// <seealso cref="TryGetTetraPakApiAuthConfig"/>
+        /// <seealso cref="TryGetTetraPakApiConfig"/>
         /// <exception cref="ConfigurationException">
         ///   The Tetra Pak (API) configuration object could not be obtained
         /// </exception>
-        public static TetraPakApiConfig? GetTetraPakApiAuthConfig(this ControllerBase self)
+        public static TetraPakConfig? GetTetraPakConfig(this ControllerBase self)
         {
-            if (self.TryGetTetraPakApiAuthConfig(out var config))
+            if (self.TryGetTetraPakApiConfig(out var config))
                 return config;
 
             if (self is BusinessApiController apiController)
@@ -675,7 +674,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 {
                     PropertyNameCaseInsensitive = true
                 };
-                return Outcome<ApiErrorResponse>.Success(JsonSerializer.Deserialize<ApiErrorResponse>(s, options));
+                return Outcome<ApiErrorResponse>.Success(JsonSerializer.Deserialize<ApiErrorResponse>(s, options)!);
             }
             catch (Exception ex)
             {

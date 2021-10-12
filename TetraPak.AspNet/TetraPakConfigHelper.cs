@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +17,8 @@ namespace TetraPak.AspNet
     public static class TetraPakConfigHelper
     {
         static readonly object s_syncRoot = new object();
-        static bool s_isTetraPakAuthConfigDelegateConfigured;
+        static bool s_isTetraPakConfigAdded;
+        static bool s_isTetraPakConfigDelegateConfigured;
         
         /// <summary>
         ///   Enforces the use of a message id for all request/response round trips.
@@ -38,6 +40,56 @@ namespace TetraPak.AspNet
                 await func();
             });
             return app;
+        }
+
+        /// <summary>
+        ///   Adds the Tetra Pak configuration code API as a (DI) service. 
+        /// </summary>
+        /// <param name="c">
+        ///   The service collection.
+        /// </param>
+        /// <returns>
+        ///   The service collection.
+        /// </returns>
+        public static IServiceCollection AddTetraPakConfiguration(this IServiceCollection c) =>
+            AddTetraPakConfiguration<TetraPakConfig>(c);
+
+        /// <summary>
+        ///   Adds a specific implementation for the Tetra Pak configuration API as a (DI) service. 
+        /// </summary>
+        /// <param name="c">
+        ///   The service collection.
+        /// </param>
+        /// <typeparam name="T">
+        ///   The type implementing the Tetra Pak integration configuration code API
+        ///   (must derive from <see cref="TetraPakConfig"/>).  
+        /// </typeparam>
+        /// <returns>
+        ///   The service collection.
+        /// </returns>
+        public static IServiceCollection AddTetraPakConfiguration<T>(this IServiceCollection c) 
+        where T : TetraPakConfig
+        {
+            lock (s_syncRoot)
+            {
+                if (s_isTetraPakConfigAdded)
+                    return c;
+
+                try
+                {
+                    c.AddSingleton<TetraPakConfig, T>();
+                    c.AddSingleton<T, T>();
+                    s_isTetraPakConfigAdded = true;
+                }
+                catch (Exception ex)
+                {
+                    var p = c.BuildServiceProvider();
+                    var logger = p.GetService<ILogger<TetraPakConfig>>();
+                    logger.Error(ex, $"Failed to add Tetra Pak configuration API ({typeof(TetraPakConfig)}) to service collection");
+                }
+
+                return c;
+            }
         }
         
         /// <summary>
@@ -109,11 +161,11 @@ namespace TetraPak.AspNet
         {
             lock (s_syncRoot)
             {
-                if (s_isTetraPakAuthConfigDelegateConfigured)
+                if (s_isTetraPakConfigDelegateConfigured)
                     return self;
         
                 self.AddSingleton<ITetraPakConfigDelegate, TDelegate>();
-                s_isTetraPakAuthConfigDelegateConfigured = true;
+                s_isTetraPakConfigDelegateConfigured = true;
                 return self;
             }
         }

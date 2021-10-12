@@ -26,15 +26,15 @@ namespace TetraPak.AspNet.Api
     {
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
-        
+
         /// <inheritdoc />
-        public string ServiceName { get; set; }
-        
+        public string ServiceName { get; }
+
         /// <summary>
         ///   Gets the endpoint configuration.
         /// </summary>
         // ReSharper disable MemberCanBePrivate.Global
-        public TEndpoints Endpoints { get; private set; }
+        public TEndpoints Endpoints { get; }
 
         /// <summary>
         ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
@@ -77,7 +77,7 @@ namespace TetraPak.AspNet.Api
         public string? ClientSecret => Endpoints.ClientSecret;
 
         [StateDump]
-        public MultiStringValue? Scope => Endpoints.Scope;
+        public MultiStringValue Scope => Endpoints.Scope;
 
         /// <inheritdoc />
         public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
@@ -105,10 +105,10 @@ namespace TetraPak.AspNet.Api
         
         
         /// <inheritdoc />
-        public HttpClientOptions DefaultClientOptions => Endpoints!.ClientOptions;
+        public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
         
         /// <inheritdoc />
-        public ServiceEndpoint GetEndpoint(string name) => Endpoints![name];
+        public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
 
         internal void DiagnosticsStartTimer(string timerKey)
         {
@@ -128,7 +128,7 @@ namespace TetraPak.AspNet.Api
             var accessTokenOutcome  = await HttpServiceProvider.GetAccessTokenAsync(Config);
             if (accessTokenOutcome)
             {
-                clientOptions.Authorization = new BearerToken(accessTokenOutcome.Value.Identity);
+                clientOptions.Authorization = new BearerToken(accessTokenOutcome.Value!.Identity);
             }
             clientOptions.AuthConfig = this;
             return await OnAuthenticateAsync(clientOptions, ct);
@@ -147,7 +147,7 @@ namespace TetraPak.AspNet.Api
                     new Exception("Could not initialize a HTTP client (see inner exception)", 
                         clientOutcome.Exception));
             
-            var client = clientOutcome.Value;
+            var client = clientOutcome.Value!;
             var response = await client.SendAsync(request, ct);
             return response.IsSuccessStatusCode
                 ? Outcome<HttpResponseMessage>.Success(response)
@@ -166,7 +166,7 @@ namespace TetraPak.AspNet.Api
             if (!clientOutcome)
                 return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
             
-            var client = clientOutcome.Value;
+            var client = clientOutcome.Value!;
             Logger.Trace($"Sending request URI: {path}");
             Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
             
@@ -198,7 +198,7 @@ namespace TetraPak.AspNet.Api
                 if (!outcome)
                     return Outcome<T>.Fail(outcome.Exception);
 
-                var stream = await outcome.Value.Content.ReadAsStreamAsync();
+                var stream = await outcome.Value!.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<T>(stream);
                 return Outcome<T>.Success(result!);
             }
@@ -226,7 +226,7 @@ namespace TetraPak.AspNet.Api
             if (!clientOutcome)
                 return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
 
-            var client = clientOutcome.Value;
+            var client = clientOutcome.Value!;
             path = pathWithQueryParameters();
             var url = $"{client.BaseAddress}{path.TrimStart('/')}";
             
@@ -271,9 +271,9 @@ namespace TetraPak.AspNet.Api
                 if (!outcome)
                     return Outcome<T>.Fail(outcome.Exception);
 
-                var stream = await outcome.Value.Content.ReadAsStreamAsync();
+                var stream = await outcome.Value!.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<T>(stream);
-                return Outcome<T>.Success(result);
+                return Outcome<T>.Success(result!);
             }
             catch (Exception ex)
             {
@@ -375,7 +375,7 @@ namespace TetraPak.AspNet.Api
             if (!clientOutcome)
                 return Outcome<HttpClient>.Fail(clientOutcome.Exception);
 
-            var client = clientOutcome.Value;
+            var client = clientOutcome.Value!;
             if (client.BaseAddress is {})
                 return clientOutcome;
 

@@ -25,7 +25,7 @@ namespace TetraPak.AspNet
         /// </exception>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this Controller self)
         {
-            if (!self.TryGetTetraPakAuthConfig(out var config))
+            if (!self.TryGetTetraPakConfig(out var config))
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new ConfigurationException(
                         "Cannot get access token. Failed to obtain a "+
@@ -49,7 +49,7 @@ namespace TetraPak.AspNet
         /// </exception>
         public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this Controller self)
         {
-            if (!self.TryGetTetraPakAuthConfig(out var config))
+            if (!self.TryGetTetraPakConfig(out var config))
                 return Task.FromResult(Outcome<ActorToken>.Fail(
                     new ConfigurationException(
                         "Cannot get identity token. Failed to obtain a "+
@@ -64,16 +64,16 @@ namespace TetraPak.AspNet
         /// <param name="self">
         ///   The extended <see cref="Controller"/> instance.
         /// </param>
-        /// <param name="config">
+        /// <param name="tetraPakConfig">
         ///   Passes back the <see cref="TetraPakConfig"/> instance if successful; otherwise <c>null</c>. 
         /// </param>
         /// <returns>
         ///   <c>true</c> 
         /// </returns>
-        public static bool TryGetTetraPakAuthConfig(this Controller self, out TetraPakConfig config)
+        public static bool TryGetTetraPakConfig(this Controller self, out TetraPakConfig tetraPakConfig)
         {
-            config = self.HttpContext.RequestServices.GetService<TetraPakConfig>();
-            return config is {};
+            tetraPakConfig = self.HttpContext.RequestServices.GetService<TetraPakConfig>();
+            return tetraPakConfig is {};
         }
     }
 }

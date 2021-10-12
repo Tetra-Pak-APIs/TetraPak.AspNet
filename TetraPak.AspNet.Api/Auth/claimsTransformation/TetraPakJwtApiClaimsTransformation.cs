@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -28,7 +27,6 @@ namespace TetraPak.AspNet.Api.Auth
         
         protected ITokenExchangeService TokenExchangeService { get; private set; }
 
-        ITimeLimitedRepositories Cache => TetraPakConfig.Cache;
         
         /// <inheritdoc />
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)

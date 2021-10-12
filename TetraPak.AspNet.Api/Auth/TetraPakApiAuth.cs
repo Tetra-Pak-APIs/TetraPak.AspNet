@@ -23,10 +23,10 @@ namespace TetraPak.AspNet.Api.Auth
         /// </exception>
         public static IApplicationBuilder UseMessageId(this IApplicationBuilder app)
         {
-            var authConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
+            var tetraPakConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             app.Use((context, func) =>
             {
-                context.Request.GetMessageId(authConfig, true);
+                context.Request.GetMessageId(tetraPakConfig, true);
                 return func();
             });
             

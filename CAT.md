@@ -1,4 +1,4 @@
-# TetraPak.AspNet SDK - Concepts and Terms
+# TetraPak.AspNet SDK - Concepts and Terminology
 
 The security and API management domains are filled with terms, many to describe the same concept. This document is just a convenient go-to for those terms and concepts referred to by the other SDK documents.
 

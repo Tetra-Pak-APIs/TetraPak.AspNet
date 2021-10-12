@@ -16,7 +16,7 @@ namespace TetraPak.AspNet
     public class AmbientData : IMessageIdProvider, IAccessTokenProvider, IIdentityTokenProvider
     {
         readonly IHttpContextAccessor _httpContextAccessor;
-
+        
         /// <summary>
         ///   Provides well-known identifiers to access ambient values.  
         /// </summary>

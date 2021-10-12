@@ -31,10 +31,12 @@ namespace TetraPak.AspNet.Api
         string? _clientSecret;
         MultiStringValue? _scope;
         // ReSharper restore NotAccessedField.Local
-
+        
         Dictionary<string, ServiceEndpoint> _endpoints;
         List<Exception>? _issues;
 
+        public TetraPakConfig TetraPakConfig { get; private set; }
+        
         public bool IsValid => _issues is null;
 
         public IEnumerable<Exception>? GetIssues() => _issues;
@@ -82,10 +84,10 @@ namespace TetraPak.AspNet.Api
             get
             {
                 if (Config.IsDelegated)
-                    return ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+                    return ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result!;
                 
                 return GetFromFieldThenSection<string>() 
-                       ?? ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+                       ?? ServiceAuthConfig.GetClientIdAsync(new AuthContext(GrantType, this)).Result!;
             }
             set => _clientId = value?.Trim() ?? null!;
         }
@@ -96,10 +98,10 @@ namespace TetraPak.AspNet.Api
             get
             {
                 if (Config.IsDelegated)
-                    return ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+                    return ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result!;
                 
                 return GetFromFieldThenSection<string>() 
-                       ?? ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+                       ?? ServiceAuthConfig.GetClientSecretAsync(new AuthContext(GrantType, this)).Result!;
             }
             set => _clientSecret = value?.Trim() ?? null!;
         }
@@ -110,10 +112,10 @@ namespace TetraPak.AspNet.Api
             get
             {
                 if (Config.IsDelegated)
-                    return ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result;
+                    return ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this)).Result!;
                 
                 return GetFromFieldThenSection<MultiStringValue>() 
-                       ?? ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
+                       ?? ServiceAuthConfig.GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result!;
             }
             set => _scope = value;
         }
@@ -153,7 +155,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Section[key];
+        public string GetConfiguredValue(string key) => Section![key];
 
         /// <summary>
         ///   The default host address.
@@ -212,20 +214,18 @@ namespace TetraPak.AspNet.Api
 
         ServiceEndpoint getServiceEndpoint(string endpointName)
         {
-            if (!_endpoints.TryGetValue(endpointName, out var endpoint))
-            {
-                if (_endpoints.Count == 0 && getServiceEndpointFromConfiguration(endpointName, out endpoint))
-                    return endpoint;
+            if (_endpoints.TryGetValue(endpointName, out var endpoint)) 
+                return endpoint;
+            
+            if (_endpoints.Count == 0 && getServiceEndpointFromConfiguration(endpointName, out endpoint))
+                return endpoint!;
 
-                return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
-                    endpointName, 
-                    new[]
-                    {
-                        new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
-                    });
-            }
-
-            return endpoint;
+            return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
+                endpointName, 
+                new[]
+                {
+                    new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
+                });
         }
 
         void addIssue(Exception exception)
@@ -267,12 +267,14 @@ namespace TetraPak.AspNet.Api
             if (child is null)
                 return false;
 
-            endpoint = new ServiceEndpoint(child.Value).WithIdentity(endpointName, this).WithConfig(child);
+            endpoint = new ServiceEndpoint(child.Value)
+                .WithIdentity(endpointName, this)
+                .WithConfig(TetraPakConfig, child);
             endpoint.SetBackendService(BackendService);
             return true;
         }
 
-        Dictionary<string, ServiceEndpoint> initializeEndpoints()
+        Dictionary<string, ServiceEndpoint> initializeEndpoints(TetraPakConfig tetraPakConfig)
         {
             var type = GetType();
             var children = Section!.GetChildren();
@@ -288,7 +290,7 @@ namespace TetraPak.AspNet.Api
                 ServiceEndpoint endpoint;
                 if (stringValue is { })
                 {
-                    endpoint = new ServiceEndpoint(stringValue).WithIdentity(name, this).WithConfig(child);
+                    endpoint = new ServiceEndpoint(stringValue).WithIdentity(name, this).WithConfig(tetraPakConfig, child);
                     addEndpoint(endpoint, property);
                     continue;
                 }
@@ -346,19 +348,23 @@ namespace TetraPak.AspNet.Api
                 });
 
             var path = pathSection.Value;
-            return new ServiceEndpoint(path).WithIdentity(section.Key, this).WithConfig(section);
+            return new ServiceEndpoint(path)
+                .WithIdentity(section.Key, this)
+                .WithConfig(TetraPakConfig, section);
         }
 
         public ServiceEndpoints(
+            TetraPakConfig tetraPakConfig,
             IServiceAuthConfig serviceAuthConfig, 
             IHttpServiceProvider httpServiceProvider,
             string serviceName)
         : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, serviceName)
         {
+            TetraPakConfig = tetraPakConfig; 
             ServiceAuthConfig = serviceAuthConfig;
             HttpServiceProvider = httpServiceProvider;
             validate(serviceName);
-            _endpoints = initializeEndpoints();
+            _endpoints = initializeEndpoints(tetraPakConfig);
         }
 
         internal static ServiceEndpoints MakeTypedEndpoints(

@@ -117,6 +117,18 @@ namespace TetraPak.AspNet
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => null!;
         
+        /// <summary>
+        ///   Examines a textual identifier and returns a value to indicate whether it is considered
+        ///   one of the identifiers reserved for 'auth' purposes.
+        /// </summary>
+        /// <param name="identifier">
+        ///   The textual identifier being examined.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if <paramref name="identifier"/> is considered a reserved 'auth' identifier;
+        ///   otherwise <c>false</c>.
+        /// </returns>
+        /// <seealso cref="IsAuthIdentifier"/>
         public static bool CheckIsAuthIdentifier(string identifier)
         {
             return identifier switch
@@ -130,6 +142,7 @@ namespace TetraPak.AspNet
             };
         }
 
+        /// <inheritdoc />
         public bool IsAuthIdentifier(string identifier) => CheckIsAuthIdentifier(identifier);
         
         /// <inheritdoc />
@@ -545,7 +558,7 @@ namespace TetraPak.AspNet
         ///   such as <see cref="TetraPakIdentitySource.RemoteService"/> or <see cref="TetraPakIdentitySource.IdToken"/>).
         /// </summary>
         [StateDump]
-        public TetraPakIdentitySource IdentitySource { get; set; }
+        public TetraPakIdentitySource IdentitySource { get; }
         
         // ReSharper restore UnusedMember.Global
         
@@ -860,8 +873,8 @@ namespace TetraPak.AspNet
         MultiStringValue parseScope()
         {
             // todo allow config delegate to resolve scope 
-            var scope = Section.GetList<string>(KeyScope, Logger);
-            if (scope is null || scope.Count == 0)
+            var scope = Section!.GetList<string>(KeyScope, Logger);
+            if (scope.Count == 0)
                 return s_defaultScope;
 
             if (scope.All(i => !i.Equals("openid", StringComparison.InvariantCultureIgnoreCase)))
@@ -872,17 +885,17 @@ namespace TetraPak.AspNet
             return new MultiStringValue(scope.ToArray());
         }
         
-        protected virtual void OnSetProperty(PropertyInfo property, object value) 
-        {
-            if (property.PropertyType == typeof(string))
-            {
-                property.SetValue(this, value);
-                return;
-            }
-            
-            var obj = Convert.ChangeType(value, property.PropertyType);
-            property.SetValue(this, obj);
-        }
+        // protected virtual void OnSetProperty(PropertyInfo property, object value) obsolete
+        // {
+        //     if (property.PropertyType == typeof(string))
+        //     {
+        //         property.SetValue(this, value);
+        //         return;
+        //     }
+        //     
+        //     var obj = Convert.ChangeType(value, property.PropertyType);
+        //     property.SetValue(this, obj);
+        // }
         
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 
@@ -900,9 +913,9 @@ namespace TetraPak.AspNet
             ServiceProvider = serviceProvider;
             Configuration = serviceProvider.GetRequiredService<IConfiguration>();
             ConfigDelegate = ServiceProvider.GetService<ITetraPakConfigDelegate>();
-            if (ConfigDelegate is TetraPakConfigDelegate tetraPakAuthConfigDelegate)
+            if (ConfigDelegate is TetraPakConfigDelegate tetraPakConfigDelegate)
             {
-                tetraPakAuthConfigDelegate.WithTetraPakConfig(this);
+                tetraPakConfigDelegate.WithTetraPakConfig(this);
             }
             else
             {

@@ -11,7 +11,7 @@ using TetraPak.AspNet.Auth;
 namespace TetraPak.AspNet.Api
 {
     // todo consider merging the code in ServiceInfo into TetraPakServiceFactory
-    public class TetraPakServiceProvider : ITetraPackServiceProvider
+    class TetraPakServiceProvider : ITetraPackServiceProvider
     {
         static IDictionary<string, BackendService<ServiceEndpoints>>? s_genericServicesIndex;
         static IDictionary<Type, IBackendService>? s_typedServicesIndex;
@@ -58,10 +58,14 @@ namespace TetraPak.AspNet.Api
         internal static void InitializeServices(IServiceCollection serviceCollection, params Assembly[]? assemblies)
         {
             var p = serviceCollection.BuildServiceProvider();
-            var config = p.GetRequiredService<IServiceAuthConfig>();
+            var tetraPakConfig = p.GetRequiredService<TetraPakConfig>();
+            var serviceAuthConfig = p.GetRequiredService<IServiceAuthConfig>();
             var httpServiceProvider = p.GetRequiredService<IHttpServiceProvider>();
             
-            var servicesIndex = indexGenericServicesFromConfiguration(config, httpServiceProvider);
+            var servicesIndex = indexGenericServicesFromConfiguration(
+                tetraPakConfig,
+                serviceAuthConfig, 
+                httpServiceProvider);
             if (servicesIndex is null)
                 throw new ConfigurationException("Backend services was not configured");
 
@@ -181,6 +185,7 @@ namespace TetraPak.AspNet.Api
         }
 
         static IDictionary<string, BackendService<ServiceEndpoints>> indexGenericServicesFromConfiguration(
+            TetraPakConfig tetraPakConfig,
             IServiceAuthConfig config, 
             IHttpServiceProvider httpServiceProvider)
         {
@@ -189,7 +194,7 @@ namespace TetraPak.AspNet.Api
             var index = new Dictionary<string, BackendService<ServiceEndpoints>>();
             foreach (var section in serviceConfigs)
             {
-                var endpoints = new ServiceEndpoints(config, httpServiceProvider, section.Key);
+                var endpoints = new ServiceEndpoints(tetraPakConfig, config, httpServiceProvider, section.Key);
                 var service = new BackendService<ServiceEndpoints>(endpoints);
                 index.Add(service.ServiceName, service);
             }

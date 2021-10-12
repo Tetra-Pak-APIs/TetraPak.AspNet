@@ -73,10 +73,10 @@ namespace TetraPak.AspNet.Api.Auth
                     return Outcome<TokenExchangeResponse>.Fail(
                         new ConfigurationException("Failed to obtain an OIDC discovery document"));
 
-                var discoveryDocument = discoOutcome.Value;
+                var discoveryDocument = discoOutcome.Value!;
                 var dictionary = args.ToDictionary();
                 var response = await client.PostAsync(
-                    discoveryDocument!.TokenEndpoint, 
+                    discoveryDocument.TokenEndpoint, 
                     new FormUrlEncodedContent(dictionary), 
                     cancellationToken);
 

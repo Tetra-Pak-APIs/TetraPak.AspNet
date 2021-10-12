@@ -197,7 +197,7 @@ namespace TetraPak.AspNet.Api
                 if (!txOutcome)
                     throw txOutcome.Exception;
 
-                var token = txOutcome.Value.AccessToken;
+                var token = txOutcome.Value!.AccessToken;
                 return Outcome<ActorToken>.Success(token);
             }
             catch (Exception ex)

@@ -1,11 +1,14 @@
 using System;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 #nullable enable
 
 namespace TetraPak.AspNet.Api.Auth
 {
+    /// <summary>
+    ///   OBSOLETE!
+    ///   This class is being deprecated. Please use <see cref="TetraPakApiConfig"/> 
+    /// </summary>
     [Obsolete("This class is being deprecated. Please use TetraPakApiConfig")]
     public class TetraPakApiAuthConfig : TetraPakApiConfig
     {
@@ -19,15 +22,15 @@ namespace TetraPak.AspNet.Api.Auth
     /// </summary>
     public class TetraPakApiConfig : TetraPakConfig
     {
-        protected override void OnSetProperty(PropertyInfo property, object value)
-        {
-            if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(ServiceEndpoint)))
-            {
-                value = new ServiceEndpoint(stringValue);
-            }
-
-            base.OnSetProperty(property, value);
-        }
+        // protected override void OnSetProperty(PropertyInfo property, object value) obsolete
+        // {
+        //     if (value is string stringValue && property.PropertyType.IsAssignableFrom(typeof(ServiceEndpoint)))
+        //     {
+        //         value = new ServiceEndpoint(stringValue);
+        //     }
+        //
+        //     base.OnSetProperty(property, value);
+        // }
 
         public ITetraPackServiceProvider? BackendServiceProvider =>
             ServiceProvider.GetService<ITetraPackServiceProvider>();

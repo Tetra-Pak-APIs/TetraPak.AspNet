@@ -59,7 +59,7 @@ namespace WebAPI.Controllers
                 case "tx":
                     if (!await this.GetAccessTokenAsync())
                         return this.UnauthorizedError(
-                            new Exception($"Cannot perform Token Exchange. No access token was passed in request"));
+                            new Exception("Cannot perform Token Exchange. No access token was passed in request"));
 
                     // note This is an example of how you can use an indexer to fetch the endpoint:
                     return await this.RespondAsync(await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"].GetAsync());

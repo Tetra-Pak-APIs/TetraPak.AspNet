@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -61,48 +59,48 @@ namespace TetraPak.AspNet.Api
             return c;
         }
 
-        public static void AddControllerBackendServices(this IServiceCollection c, params Assembly[] assemblies)
-        {
-            throw new NotImplementedException();
-            // assemblies = assemblies.Any() ? assemblies : new[] { Assembly.GetEntryAssembly() };
-            // foreach (var assembly in assemblies)
-            // {
-            //     var types = assembly.GetTypes().Where(i => i.GetCustomAttribute<ApiControllerAttribute>() is {}).ToArray();
-            //     HashSet<Type> registered = new();
-            //     for (var i = 0; i < types.Length; i++)
-            //     {
-            //         var type = types[i];
-            //         if (!type.TryGetGenericBase(typeof(ApiGatewayController<>), out var apiGatewayControllerType))
-            //             continue;
-            //         
-            //         var serviceType = apiGatewayControllerType.GetGenericArguments().First();
-            //         if (registered.Contains(serviceType))
-            //             continue;
-            //         
-            //         if (!serviceType.TryGetGenericBase(typeof(BackendService<>), out var backendServiceType))
-            //             throw new Exception(
-            //                 $"Unexpected error: Generic service type {serviceType} does not inherit from {typeof(BackendService<>)}");
-            //
-            //         var endpointsType = backendServiceType.GetGenericArguments().First();
-            //         if (serviceType.IsAbstract)
-            //             throw new InvalidOperationException(
-            //                 $"Invalid backend service type: {serviceType}. Type cannot be abstract");
-            //
-            //         // non-custom (derived) service and endpoints will be handled by custom controller factory
-            //         // (see TetraPakControllerFactory)
-            //         if (serviceType == typeof(BackendService<ServiceEndpoints>))
-            //             continue;
-            //         
-            //         c.TryAddSingleton(serviceType);
-            //         c.TryAddSingleton(endpointsType);
-            //         registered.Add(serviceType);
-            //     }
-            // }
-        }
+        // public static void AddControllerBackendServices(this IServiceCollection c, params Assembly[] assemblies) obsolete
+        // {
+        //     throw new NotImplementedException();
+        //     // assemblies = assemblies.Any() ? assemblies : new[] { Assembly.GetEntryAssembly() };
+        //     // foreach (var assembly in assemblies)
+        //     // {
+        //     //     var types = assembly.GetTypes().Where(i => i.GetCustomAttribute<ApiControllerAttribute>() is {}).ToArray();
+        //     //     HashSet<Type> registered = new();
+        //     //     for (var i = 0; i < types.Length; i++)
+        //     //     {
+        //     //         var type = types[i];
+        //     //         if (!type.TryGetGenericBase(typeof(ApiGatewayController<>), out var apiGatewayControllerType))
+        //     //             continue;
+        //     //         
+        //     //         var serviceType = apiGatewayControllerType.GetGenericArguments().First();
+        //     //         if (registered.Contains(serviceType))
+        //     //             continue;
+        //     //         
+        //     //         if (!serviceType.TryGetGenericBase(typeof(BackendService<>), out var backendServiceType))
+        //     //             throw new Exception(
+        //     //                 $"Unexpected error: Generic service type {serviceType} does not inherit from {typeof(BackendService<>)}");
+        //     //
+        //     //         var endpointsType = backendServiceType.GetGenericArguments().First();
+        //     //         if (serviceType.IsAbstract)
+        //     //             throw new InvalidOperationException(
+        //     //                 $"Invalid backend service type: {serviceType}. Type cannot be abstract");
+        //     //
+        //     //         // non-custom (derived) service and endpoints will be handled by custom controller factory
+        //     //         // (see TetraPakControllerFactory)
+        //     //         if (serviceType == typeof(BackendService<ServiceEndpoints>))
+        //     //             continue;
+        //     //         
+        //     //         c.TryAddSingleton(serviceType);
+        //     //         c.TryAddSingleton(endpointsType);
+        //     //         registered.Add(serviceType);
+        //     //     }
+        //     // }
+        // }
         
         public static IApplicationBuilder UseTetraPakServicesDiagnostics(this IApplicationBuilder app)
         {
-            const string totalName = "*";
+            const string TotalName = "*";
             
             var config = app.ApplicationServices.GetService<TetraPakConfig>();
             if (!(config?.EnableDiagnostics ?? false))
@@ -124,7 +122,7 @@ namespace TetraPak.AspNet.Api
                     var timer = (ServiceDiagnostics.Timer) timers[0].Value;
                     var key = timers[0].Key;
                     var name = key.Length == ServiceDiagnostics.TimerPrefix.Length 
-                        ? totalName 
+                        ? TotalName 
                         : key[timerNameIndex..];
                     sb.Append($"{name}={timer.ElapsedMs().ToString()}");
                     for (var i = 1; i < timers.Length; i++)
@@ -133,7 +131,7 @@ namespace TetraPak.AspNet.Api
                         timer = (ServiceDiagnostics.Timer) timers[i].Value;
                         key = timers[i].Key;
                         name = key.Length == ServiceDiagnostics.TimerPrefix.Length 
-                            ? totalName 
+                            ? TotalName 
                             : key[timerNameIndex..];
                         sb.Append($"{name}={timer.ElapsedMs().ToString()}");
                     }
@@ -154,12 +152,12 @@ namespace TetraPak.AspNet.Api
             string? serviceName = null) 
         where TBackendService : IBackendService
         {
-            if (!controller.TryGetTetraPakApiAuthConfig(out var apiAuthConfig))
+            if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<TBackendService>.Fail(
                     new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
                 
-            var outcome = apiAuthConfig.BackendServiceProvider?.ResolveService(
+            var outcome = tetraPakApiConfig!.BackendServiceProvider?.ResolveService(
                 typeof(TBackendService),
                 serviceName);
             if (outcome is null)
@@ -170,7 +168,7 @@ namespace TetraPak.AspNet.Api
             if (!outcome)
                 return Outcome<TBackendService>.Fail(outcome.Exception);
 
-            var service = outcome.Value;
+            var service = outcome.Value!;
             return Outcome<TBackendService>.Success((TBackendService) service);
         }
 
@@ -184,12 +182,12 @@ namespace TetraPak.AspNet.Api
             string serviceName)
         where TEndpoints : ServiceEndpoints
         {
-            if (!controller.TryGetTetraPakApiAuthConfig(out var apiAuthConfig))
+            if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<IBackendService>.Fail(
                     new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
 
-            var outcome = apiAuthConfig.BackendServiceProvider?.ResolveService(
+            var outcome = tetraPakApiConfig!.BackendServiceProvider?.ResolveService(
                 typeof(BackendService<TEndpoints>), 
                 serviceName);
             if (outcome is null)

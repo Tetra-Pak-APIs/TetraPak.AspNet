@@ -1,187 +1,257 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
-using TetraPak.AspNet.Api.Auth;
-using TetraPak.DynamicEntities;
-using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Controllers
 {
+    /// <summary>
+    ///   Business controller to provide convenient Tetra Pak integration.
+    ///   Most of the properties and methods found in this class are also available
+    ///   as extension methods of <see cref="ControllerBase"/> so deriving from this class
+    ///   is mainly a matter of style and convenience. 
+    /// </summary>
     public class BusinessApiController : ControllerBase
     {
-        protected AmbientData AmbientData { get; private set; }
+        /// <summary>
+        ///   Gets the ambient data object. 
+        /// </summary>
+        protected AmbientData? AmbientData => TetraPakConfig?.AmbientData;
 
-        protected TetraPakApiConfig Config => (TetraPakApiConfig) AmbientData?.Config;
+        /// <summary>
+        ///   Gets the Tetra Pak integration configuration.
+        /// </summary>
+        protected TetraPakConfig? TetraPakConfig { get; }
 
-        protected ILogger Logger => Config?.Logger;
+        /// <summary>
+        ///   Gets a logger provider.
+        /// </summary>
+        protected ILogger? Logger => TetraPakConfig?.Logger;
 
-        public AuthenticationHeaderValue AuthenticationHeaderValue =>
-            AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
-                ? authHeader
-                : null;
+        // public AuthenticationHeaderValue? AuthenticationHeaderValue => obsolete
+        //     AuthenticationHeaderValue.TryParse(Request.Headers[HeaderNames.Authorization], out var authHeader)
+        //         ? authHeader
+        //         : null;
 
-        internal void SetAmbientData(AmbientData ambientData)
-        {
-            AmbientData = ambientData;
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-            if (string.IsNullOrEmpty(environment))
-            {
-                environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
-            }
-
-            if (string.IsNullOrEmpty(environment))
-            {
-                environment = "Production";
-            }
-            Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
-        }
+        // internal void SetAmbientData(AmbientData ambientData) obsolete
+        // {
+        //     // AmbientData = ambientData;
+        //     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        //     if (string.IsNullOrEmpty(environment))
+        //     {
+        //         environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        //     }
+        //
+        //     if (string.IsNullOrEmpty(environment))
+        //     {
+        //         environment = "Production";
+        //     }
+        //     Logger.Debug($"Initializing controller: {GetType()} (environment={environment})");
+        // }
 
         /// <inheritdoc cref="ControllerBaseExtensions.GetMessageId"/>
-        public string MessageId => HttpContext.Request.GetMessageId(Config);
+        public string? MessageId => HttpContext.Request.GetMessageId(TetraPakConfig);
 
-        internal TetraPakApiConfig GetConfig() => Config;
+        internal TetraPakConfig? GetConfig() => TetraPakConfig;
 
+        /// <summary>
+        ///   Gets the request access token. 
+        /// </summary>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
         protected Task<Outcome<ActorToken>> GetAccessTokenAsync() => ControllerBaseExtensions.GetAccessTokenAsync(this);
 
-        protected ActionResult ErrorExpectedQueryParameter(string queryParameterName, string example = null)
+        /// <summary>
+        ///   Responds with standard error format reflecting an issue with query parameters. 
+        /// </summary>
+        /// <param name="queryParameterName">
+        ///   The name of the query parameter causing the issue.
+        /// </param>
+        /// <param name="example">
+        ///   (optional)<br/>
+        ///   An example for expected parameter use/format.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/>.
+        /// </returns>
+        protected ActionResult RespondErrorExpectedQueryParameter(string queryParameterName, string? example = null)
         {
-            return ControllerBaseExtensions.ErrorExpectedQueryParameter(this, queryParameterName, example);
+            return ControllerBaseExtensions.RespondErrorExpectedQueryParameter(this, queryParameterName, example);
         }
 
-        protected ActionResult UnauthorizedError(Exception error)
+        /// <summary>
+        ///   Responds with standard error format reflecting an unauthorized request issue. 
+        /// </summary>
+        /// <param name="error">
+        ///   The exception causing the issue.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/>.
+        /// </returns>
+        protected ActionResult RespondUnauthorizedError(Exception error)
         {
-            return OnError(HttpStatusCode.Unauthorized, error);
+            return OnRespondError(HttpStatusCode.Unauthorized, error);
         }
 
-        protected ActionResult InternalServerError(Exception error)
+        /// <summary>
+        ///   Responds with standard error format reflecting a unexpected/unhandled technical issue. 
+        /// </summary>
+        /// <param name="error">
+        ///   The exception causing the issue.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/>.
+        /// </returns>
+        protected ActionResult RespondInternalServerError(Exception error)
         {
-            return OnError(HttpStatusCode.InternalServerError, error);
+            return OnRespondError(HttpStatusCode.InternalServerError, error);
         }
 
-        protected ActionResult Error(Exception error)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        protected ActionResult RespondError(Exception error)
         {
             if (error is HttpException httpException)
             {
                 return StatusCode(
                     (int) httpException.StatusCode, 
-                    new ApiErrorResponse(error.Message, HttpContext.Request.GetMessageId(Config)));
+                    new ApiErrorResponse(error.Message, HttpContext.Request.GetMessageId(TetraPakConfig)));
             }
 
-            return InternalServerError(error);
+            return RespondInternalServerError(error);
         }
-
-        protected virtual ActionResult OnError(HttpStatusCode status, Exception error) => this.Error(status, error);
 
         /// <summary>
-        ///   Transforms an <see cref="Outcome"/> to an <see cref="ActionResult"/> response,
-        ///   including errors, in a format adhering to Tetra Pak's business API guidelines. 
+        ///   [virtual method]<br/>
+        ///   Invoked automatically by other methods to respond with an error.
+        ///   The default implementation simply invokes <see cref="RespondError"/>.  
+        /// </summary>
+        /// <param name="status">
+        ///   The <see cref="HttpStatusCode"/> to be returned to client.
+        /// </param>
+        /// <param name="error">
+        ///   The causing exception.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/>.
+        /// </returns>
+        protected virtual ActionResult OnRespondError(HttpStatusCode status, Exception error) => this.RespondError(status, error);
+
+        /// <summary>
+        ///   Please see <see cref="ControllerBaseExtensions.RespondAsync{T}"/>
+        /// </summary>
+        protected Task<ActionResult> RespondAsync<T>(
+            Outcome<T> outcome,
+            int totalCount = -1,
+            ReadChunk? chunk = null, 
+            ResponseDelegate<T>? responseDelegate = null)
+        {
+            return ControllerBaseExtensions.RespondAsync(this, outcome, totalCount, chunk, responseDelegate);
+            
+            // if (!outcome)
+            //     return RespondError(outcome.Exception); obsolete
+            //
+            // if (responseDelegate is {})
+            // {
+            //     try
+            //     {
+            //         var delegateOutcome = await responseDelegate(outcome.Value!);
+            //         return !delegateOutcome ? RespondError(delegateOutcome.Exception) : Ok(delegateOutcome.Value!);
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         return RespondError(ex);
+            //     }
+            // }
+            //
+            // if (outcome.Value is not HttpResponseMessage responseMessage) 
+            //     return this.RespondOk(outcome.Value!);
+            //
+            // var stringValue = await responseMessage.Content.ReadAsStringAsync();
+            // var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
+            // return Ok(entityOutcome
+            //     ? entityOutcome.Value!
+            //     : stringValue);
+        }
+
+        /// <summary>
+        ///   Responds with standard format, reflecting a successful request.
+        ///   This method just wraps the <see cref="ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>. 
         /// </summary>
         /// <param name="outcome">
-        ///   The outcome to be transformed into an <see cref="ActionResult"/>. 
+        ///   The outcome, carrying a collection of requested items, to be sent to client.
         /// </param>
-        /// <param name="responseDelegate">
-        ///   (optional)<br/>
-        ///   A <see cref="ResponseDelegate{T}"/> to be called before transforming the value/error into a
-        ///   correctly formed <see cref="ActionResult"/> response (see remarks).
+        /// <param name="totalCount">
+        ///   (optional; default=[number of items in <paramref name="outcome"/>])<br/>
+        ///   The total number of items available.
         /// </param>
-        /// <typeparam name="T">
-        ///   The type of value expected by the <paramref name="outcome"/>.
+        ///  <typeparam name="T">
+        ///    The type of requested items.
         /// </typeparam>
         /// <returns>
-        ///   An <see cref="ActionResult"/> instance.
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a collection of items or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <remarks>
-        ///   The <paramref name="responseDelegate"/> should be expected to handle these three types of values,
-        ///   passed in via its "data" parameter:
-        ///   <list> 
-        ///   <item>
-        ///     <term>
-        ///     object
-        ///     </term>
-        ///     <description>
-        ///     Any value carried by the <paramref name="outcome"/> when the outcome type is not a <see cref="HttpResponseMessage"/>. 
-        ///     </description>
-        ///   </item>
-        ///   <item>
-        ///     <term>
-        ///     <see cref="HttpResponseMessage"/>
-        ///     </term>
-        ///     <description>
-        ///     The raw response message carried by the <paramref name="outcome"/>. The delegate is responsible for
-        ///     downloading the response message content and transform it into  
-        ///     </description>
-        ///   </item>
-        ///   </list>
-        /// </remarks>
-        protected async Task<ActionResult> RespondAsync<T>(
-            Outcome<T> outcome, 
-            ResponseDelegate<T> responseDelegate = null)
+        protected OkObjectResult RespondOk<T>(EnumOutcome<T> outcome, int totalCount = -1)
         {
-            if (!outcome)
-                return Error(outcome.Exception);
-            
-            if (responseDelegate is {})
-            {
-                try
-                {
-                    var delegateOutcome = await responseDelegate(outcome.Value);
-                    return !delegateOutcome ? Error(delegateOutcome.Exception) : Ok(delegateOutcome.Value);
-                }
-                catch (Exception ex)
-                {
-                    return Error(ex);
-                }
-            }
-
-            if (outcome.Value is not HttpResponseMessage responseMessage) 
-                return Ok(outcome.Value);
-            
-            var stringValue = await responseMessage.Content.ReadAsStringAsync();
-            var entityOutcome = stringValue.TryParseJsonToDynamicEntity();
-            return Ok(entityOutcome
-                ? entityOutcome.Value
-                : stringValue);
+            return this.RespondOk(outcome, totalCount, HttpContext.Request.GetMessageId(TetraPakConfig));
         }
 
-        protected OkObjectResult Ok<T>(EnumOutcome<T> outcome, int totalCount = -1)
+        /// <summary>
+        ///   Overrides the <see cref="ControllerBase.Ok()"/> method to instead invoke the
+        ///   <see cref="ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>
+        ///   method.
+        /// </summary>
+        /// <param name="data">
+        ///   The data to be sent in the response.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="OkObjectResult"/>.
+        /// </returns>
+        public override OkObjectResult Ok(object? data)
         {
-            return this.Ok(outcome, totalCount, HttpContext.Request.GetMessageId(Config));
+            return data is null
+                ? this.RespondOk()
+                : this.RespondOk(data);
         }
 
-        public override OkObjectResult Ok(object value)
-        {
-            if (value is null)
-                return ControllerBaseExtensions.Ok(this);
+        // /// <summary>
+        // ///   Convenience method to yield a string from a <see cref="Dictionary{TKey,TValue}"/>,
+        // ///   suitable for logging. 
+        // /// </summary>
+        // /// <param name="formDictionary"></param>
+        // /// <param name="indent"></param>
+        // /// <returns></returns>
+        // protected static string DictionaryLogString(IDictionary<string, string> formDictionary, string indent = "  ") obsolete
+        // {
+        //     return formDictionary.ConcatDictionary($"\n{indent}");
+        // }
 
-            return ControllerBaseExtensions.Ok(this, value);
-            // return value.GetType().IsGenericBase(typeof(ApiDataResponse<>)) obsolete 
-            //     ? base.Ok(value) 
-            //     : ControllerBaseExtensions.Ok(this, value);
-        }
-
-        protected static string DictionaryLogString(IDictionary<string, string> formDictionary, string indent = "  ")
+        /// <summary>
+        ///   Initializes the <see cref="BusinessApiController"/>.
+        /// </summary>
+        /// <param name="tetraPakConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
+        public BusinessApiController(TetraPakConfig tetraPakConfig)
         {
-            return formDictionary.ConcatDictionary($"\n{indent}");
-        }
-
-        public BusinessApiController()
-        {
-        }
-        
-        public BusinessApiController(AmbientData ambientData) 
-        {
-            if (ambientData is { })
-            {
-                SetAmbientData(ambientData);
-            }
+            TetraPakConfig = tetraPakConfig;
         }
     }
 
+    /// <summary>
+    ///   This type of delegate can be used to customize a response,
+    ///   before it is being transformed to the recommended Tetra Pak format and sent to the client.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// 
     public delegate Task<Outcome<T>> ResponseDelegate<T>(object data);
 }

@@ -57,15 +57,15 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     return app;
                 }
 
-                var authConfig = app.ApplicationServices.GetService<TetraPakConfig>();
-                if (authConfig is null)
+                var tetraPakConfig = app.ApplicationServices.GetService<TetraPakConfig>();
+                if (tetraPakConfig is null)
                 {
                     logger.Warning($"Cannot inject a local development proxy. {nameof(TetraPakConfig)} service is not configured");
                     s_isDevProxyConfigured = true;
                     return app;
                 }
 
-                var proxyMiddleware = new DevProxyMiddleware(authConfig, proxyUrl, isMutedWhen);
+                var proxyMiddleware = new DevProxyMiddleware(tetraPakConfig, proxyUrl, isMutedWhen);
                 app.Use(async (context, next) =>
                 {
                     await proxyMiddleware.InvokeAsync(context);
