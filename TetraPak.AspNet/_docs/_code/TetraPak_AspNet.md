@@ -8,6 +8,7 @@
 | [AmbientDataServiceHelper](TetraPak_AspNet_AmbientDataServiceHelper.md 'TetraPak.AspNet.AmbientDataServiceHelper') | Declares convenient methods for dealing with [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData') as a service.<br/> |
 | [ApiChunkedMetadata](TetraPak_AspNet_ApiChunkedMetadata.md 'TetraPak.AspNet.ApiChunkedMetadata') | Derived from [ApiMetadata](TetraPak_AspNet_ApiMetadata.md 'TetraPak.AspNet.ApiMetadata') to add "chunked" meta data attributes.<br/> |
 | [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;') | Represents a standardized Tetra Pak API data response.<br/> |
+| [ApiDataResponseHelper](TetraPak_AspNet_ApiDataResponseHelper.md 'TetraPak.AspNet.ApiDataResponseHelper') |  |
 | [ApiErrorResponse](TetraPak_AspNet_ApiErrorResponse.md 'TetraPak.AspNet.ApiErrorResponse') | Represents a standard Tetra Pak API error response (body). <br/> |
 | [ApiErrorResponseHelper](TetraPak_AspNet_ApiErrorResponseHelper.md 'TetraPak.AspNet.ApiErrorResponseHelper') | Provides convenient methods for dealing with standard Tetra Pak error responses. <br/> |
 | [ApiMetadata](TetraPak_AspNet_ApiMetadata.md 'TetraPak.AspNet.ApiMetadata') | Used as the meta data block in [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;'). <br/> |
@@ -20,6 +21,9 @@
 | [HttpComparison.Elements](TetraPak_AspNet_HttpComparison_Elements.md 'TetraPak.AspNet.HttpComparison.Elements') | Specifies recognized elements of a HTTP request, for use in comparison operations.<br/> |
 | [HttpComparison.Operators](TetraPak_AspNet_HttpComparison_Operators.md 'TetraPak.AspNet.HttpComparison.Operators') | Specifies recognized comparison operators.<br/> |
 | [HttpContextHelper](TetraPak_AspNet_HttpContextHelper.md 'TetraPak.AspNet.HttpContextHelper') | Provides extension and convenience method for [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').<br/> |
+| [HttpEnumOutcome&lt;T&gt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;') | Represents the outcome of a HTTP request.<br/> |
+| [HttpOutcome&lt;T&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;') | Represents the outcome of a HTTP request.<br/> |
+| [HttpQueryParameters](TetraPak_AspNet_HttpQueryParameters.md 'TetraPak.AspNet.HttpQueryParameters') | Represents HTTP query parameters.<br/> |
 | [HttpResponseMessageHelper](TetraPak_AspNet_HttpResponseMessageHelper.md 'TetraPak.AspNet.HttpResponseMessageHelper') | Provides convenient extension methods for [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')s.<br/> |
 | [QueryParametersHelper](TetraPak_AspNet_QueryParametersHelper.md 'TetraPak.AspNet.QueryParametersHelper') |  |
 | [RoutingHelper](TetraPak_AspNet_RoutingHelper.md 'TetraPak.AspNet.RoutingHelper') | Convenient extension methods for working with controllers and endpoints. <br/> |
@@ -33,6 +37,7 @@
 
 | Interfaces | |
 | :--- | :--- |
+| [IApiDataResponse](TetraPak_AspNet_IApiDataResponse.md 'TetraPak.AspNet.IApiDataResponse') |  |
 | [IMessageIdProvider](TetraPak_AspNet_IMessageIdProvider.md 'TetraPak.AspNet.IMessageIdProvider') |  |
 | [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') | Classes implementing this code contract can be used as (custom) "claims transformers".  <br/> |
 | [ITetraPakConfigDelegate](TetraPak_AspNet_ITetraPakConfigDelegate.md 'TetraPak.AspNet.ITetraPakConfigDelegate') | Classes implementing this contract can be passed as a delegate to customize several aspects<br/>of Tetra Pak related configuration. <br/> |

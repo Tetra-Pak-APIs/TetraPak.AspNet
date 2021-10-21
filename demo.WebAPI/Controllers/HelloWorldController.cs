@@ -42,19 +42,19 @@ namespace WebAPI.Controllers
         {
             var actorTokenOutcome = await this.GetAccessTokenAsync();
             if (!actorTokenOutcome)
-                return this.UnauthorizedError(actorTokenOutcome.Exception);
+                return this.RespondUnauthorizedError(actorTokenOutcome.Exception);
 
             var credentials = new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret);
             var ct = new CancellationToken();
             var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(credentials, actorTokenOutcome!, ct);
             if (!txOutcome)
-                return this.InternalServerError(new ConfigurationException("Service is incorrectly configured"));
+                return this.RespondInternalServerError(new ConfigurationException("Service is incorrectly configured"));
 
             var apiAccessToken = txOutcome.Value!.AccessToken;
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiAccessToken);
             var response = await client.GetAsync("https://api-dev.tetrapak.com/samples/helloworld", ct);
-            return await this.RespondAsync(await response.ToOutcomeAsync()); 
+            return await this.RespondAsync(await response.ToOutcomeAsync());
         }
 
         [AllowAnonymous]
@@ -129,7 +129,7 @@ namespace WebAPI.Controllers
             {
                 Outcome<ClientCredentialsResponse> ccOutcome = await _clientCredentialsService.AcquireTokenAsync();
                 if (!ccOutcome)
-                    return this.UnauthorizedError(ccOutcome.Exception);
+                    return this.RespondUnauthorizedError(ccOutcome.Exception);
 
                 clientAccessToken = ccOutcome.Value!.AccessToken;
             }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -16,30 +17,43 @@ using TetraPak.AspNet.Diagnostics;
 
 namespace TetraPak.AspNet.Api
 {
+    /// <summary>
+    ///   Assists in configuring support for Tetra Pak managed services consumption.
+    /// </summary>
     public static class TetraPakServiceHelper
     {
         // static readonly IDictionary<ServiceKey, IBackendService> s_services 
         //     = new Dictionary<ServiceKey, IBackendService>();
 
-        public static IServiceCollection AddTetraPakServices(
-            this IServiceCollection c, 
-            bool addBackendServices = true)
+        /// <summary>
+        ///   (fluent API)<br/>
+        ///   Adds services needed to support consumption of "downstream" Tetra Pak managed services. 
+        /// </summary>
+        /// <param name="collection">
+        ///   The service collection.
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="collection"/>.
+        /// </returns>
+        public static IServiceCollection AddTetraPakServices(this IServiceCollection collection) 
+            // bool addBackendServices = true)
         {
-            c.TryAddSingleton<IServiceAuthConfig>(p =>
+            collection.TryAddSingleton<IServiceAuthConfig>(p =>
             {
                 var parentConfig = p.GetRequiredService<TetraPakConfig>();
                 return new ServiceAuthConfig(p, parentConfig);
             });
-            c.TryAddSingleton<TetraPakServiceProvider>();
-            c.TryAddSingleton<ITetraPackServiceProvider,TetraPakServiceProvider>();
-            c.AddTetraPakServiceEndpointTypes();
-            c.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
-            c.AddTetraPakTokenExchangeService();
-            c.AddTetraPakClientCredentialsService();
-            TetraPakServiceProvider.InitializeServices(c);
-            if (addBackendServices)
-            {
-                // register all API gateway controllers and corresponding services,
+            collection.TryAddTransient<AmbientData>();
+            collection.TryAddSingleton<TetraPakServiceProvider>();
+            collection.TryAddSingleton<ITetraPackServiceProvider,TetraPakServiceProvider2>();
+            // c.AddTetraPakServiceEndpointTypes(); obsolete
+            collection.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
+            collection.AddTetraPakTokenExchangeService();
+            collection.AddTetraPakClientCredentialsService();
+            TetraPakServiceProvider2.InitializeServices(collection);
+            // if (addBackendServices)
+            // {
+            //     // register all API gateway controllers and corresponding services,
                 // then replace controller factory to automatically activate non-custom (derived) services and endpoints
                 // c.AddControllerBackendServices();
                 // var p = c.BuildServiceProvider(); // todo Consider re-introducing custom controller factory when needed
@@ -47,17 +61,17 @@ namespace TetraPak.AspNet.Api
                 // c.Replace(new ServiceDescriptor(typeof(IControllerFactory), 
                 //     _ => new TetraPakControllerFactory(defaultControllerFactory), 
                 //     ServiceLifetime.Singleton));
-            }
+            // }
 
-            return c;
+            return collection;
         }
         
-        public static IServiceCollection AddTetraPakServiceEndpointTypes(this IServiceCollection c)
-        {
-            c.TryAddTransient<AmbientData>();
-            c.TryAddTransient<ServiceInvalidEndpoint>();
-            return c;
-        }
+        // public static IServiceCollection AddTetraPakServiceEndpointTypes(this IServiceCollection c) obsolete
+        // {
+        //     c.TryAddTransient<AmbientData>();
+        //     c.TryAddTransient<ServiceInvalidEndpoint>();
+        //     return c;
+        // }
 
         // public static void AddControllerBackendServices(this IServiceCollection c, params Assembly[] assemblies) obsolete
         // {
@@ -98,17 +112,27 @@ namespace TetraPak.AspNet.Api
         //     // }
         // }
         
-        public static IApplicationBuilder UseTetraPakServicesDiagnostics(this IApplicationBuilder app)
+        /// <summary>
+        ///   (fluent API)<br/>
+        ///   Injects middleware that diagnoses and logs statistics for "downstream" services.  
+        /// </summary>
+        /// <param name="applicationBuilder">
+        ///   The application builder instance. 
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="applicationBuilder"/>   
+        /// </returns>
+        public static IApplicationBuilder UseTetraPakServicesDiagnostics(this IApplicationBuilder applicationBuilder)
         {
             const string TotalName = "*";
             
-            var config = app.ApplicationServices.GetService<TetraPakConfig>();
+            var config = applicationBuilder.ApplicationServices.GetService<TetraPakConfig>();
             if (!(config?.EnableDiagnostics ?? false))
-                return app;
+                return applicationBuilder;
 
-            app.Use(async (context, func) =>
+            applicationBuilder.Use(async (context, func) =>
             {
-                var logger = app.ApplicationServices.GetService<ILogger<ServiceDiagnostics>>();
+                var logger = applicationBuilder.ApplicationServices.GetService<ILogger<ServiceDiagnostics>>();
                 var diagnostics = context.BeginDiagnostics(logger);
                 context.Response.OnStarting(() =>
                 {
@@ -144,10 +168,26 @@ namespace TetraPak.AspNet.Api
                 await func();
             });
 
-            return app;
+            return applicationBuilder;
         }
         
-        public static Outcome<TBackendService> GetService<TBackendService>(
+        /// <summary>
+        ///   Obtains and returns a configured backend service (<see cref="IBackendService"/>).
+        /// </summary>
+        /// <param name="controller">
+        ///   The extended controller.
+        /// </param>
+        /// <param name="serviceName">
+        ///   The name of the backend service (must be found in the configuration).
+        /// </param>
+        /// <typeparam name="TBackendService">
+        ///   The expected type of backend service.
+        /// </typeparam>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="TBackendService"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        public static Outcome<TBackendService> GetBackendService<TBackendService>(
             this ControllerBase controller, 
             string? serviceName = null) 
         where TBackendService : IBackendService
@@ -198,6 +238,17 @@ namespace TetraPak.AspNet.Api
             return outcome;
         }
 
+        /// <summary>
+        ///   Returns a specified backend service endpoint.
+        /// </summary>
+        /// <param name="service">
+        ///   The extended backend service.
+        /// </param>
+        /// <param name="name">
+        ///   The name of the requested endpoint (as specified in configuration).
+        /// </param>
+        /// <returns>  
+        /// </returns>
         public static ServiceEndpoint Endpoint(this IBackendService service, string name) => service.GetEndpoint(name);
     }
 }

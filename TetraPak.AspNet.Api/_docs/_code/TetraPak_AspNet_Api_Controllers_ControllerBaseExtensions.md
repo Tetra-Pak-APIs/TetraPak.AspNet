@@ -8,80 +8,6 @@ public static class ControllerBaseExtensions
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; ControllerBaseExtensions  
 ### Methods
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)'></a>
-## ControllerBaseExtensions.Error(ControllerBase, Exception) Method
-Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an error.  
-Please see remarks.  
-```csharp
-public static Microsoft.AspNetCore.Mvc.ActionResult Error(this Microsoft.AspNetCore.Mvc.ControllerBase self, System.Exception error);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_error'></a>
-`error` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-The exception to be reflected.  
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
-An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
-### Remarks
-This method will automatically look for an HTTP status code in the [error](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_error 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Error(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception).error').  
-If none can be resolved the [InternalServerError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.InternalServerError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)') method is invoked, to  
-produce a generic status code of 500 ([System.Net.HttpStatusCode.InternalServerError](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpStatusCode.InternalServerError 'System.Net.HttpStatusCode.InternalServerError')).  
-#### See Also
-- [Error(ControllerBase, HttpStatusCode, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Error(Microsoft.AspNetCore.Mvc.ControllerBase, System.Net.HttpStatusCode, System.Exception)')
-- [InternalServerError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.InternalServerError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)'></a>
-## ControllerBaseExtensions.Error(ControllerBase, HttpStatusCode, Exception) Method
-Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an error with a specified HTTP status code.  
-```csharp
-public static Microsoft.AspNetCore.Mvc.ActionResult Error(this Microsoft.AspNetCore.Mvc.ControllerBase self, System.Net.HttpStatusCode status, System.Exception error);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_status'></a>
-`status` [System.Net.HttpStatusCode](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpStatusCode 'System.Net.HttpStatusCode')  
-The HTTP status code to be returned in response.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_error'></a>
-`error` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-The exception to be reflected.  
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
-An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)'></a>
-## ControllerBaseExtensions.ErrorExpectedQueryParameter(ControllerBase, string, string?) Method
-Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an issue with a missing query parameter.  
-```csharp
-public static Microsoft.AspNetCore.Mvc.ActionResult ErrorExpectedQueryParameter(this Microsoft.AspNetCore.Mvc.ControllerBase self, string queryParameterName, string? example=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_queryParameterName'></a>
-`queryParameterName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-The name of the expected (missing) query parameter.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_ErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_example'></a>
-`example` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<br/>  
-A descriptive example, to assist developer in correcting the problem.  
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
-An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
-  
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetAccessTokenAsync(Microsoft_AspNetCore_Mvc_ControllerBase)'></a>
 ## ControllerBaseExtensions.GetAccessTokenAsync(ControllerBase) Method
 Obtains a security token from the request.   
@@ -111,25 +37,25 @@ public static string? GetMessageId(this Microsoft.AspNetCore.Mvc.ControllerBase 
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase)'></a>
-## ControllerBaseExtensions.GetTetraPakApiAuthConfig(ControllerBase) Method
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakConfig(Microsoft_AspNetCore_Mvc_ControllerBase)'></a>
+## ControllerBaseExtensions.GetTetraPakConfig(ControllerBase) Method
 Obtains the Tetra Pak (API) configuration object.  
 ```csharp
-public static TetraPak.AspNet.Api.Auth.TetraPakApiConfig? GetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self);
+public static TetraPak.AspNet.TetraPakConfig? GetTetraPakConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakConfig(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
 `self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
 The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
   
 #### Returns
-[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')  
+[TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
 A Tetra Pak (API) configuration object.  
 #### Exceptions
 [TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
 The Tetra Pak (API) configuration object could not be obtained  
 #### See Also
-- [TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiConfig?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Auth.TetraPakApiConfig?)')
+- [TryGetTetraPakApiConfig(ControllerBase, TetraPakApiConfig?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.TryGetTetraPakApiConfig(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Auth.TetraPakApiConfig?)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)'></a>
 ## ControllerBaseExtensions.InternalServerError(ControllerBase, Exception) Method
@@ -151,7 +77,7 @@ The exception to be reflected.
 [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
 An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
 #### See Also
-- [Error(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Error(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')
+- [RespondError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_LogDebug(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)'></a>
 ## ControllerBaseExtensions.LogDebug(ControllerBase, string, string?) Method
@@ -272,87 +198,6 @@ A unique string value for tracking a request/response (mainly for diagnostics pu
 ### Remarks
 If no logging is configured the call will simply be ignored.  
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)'></a>
-## ControllerBaseExtensions.Ok(ControllerBase, object?, int, ReadChunk?) Method
-Creates an [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult') object that produces an Status 200 OK response.  
-```csharp
-public static Microsoft.AspNetCore.Mvc.OkObjectResult Ok(this Microsoft.AspNetCore.Mvc.ControllerBase self, object? data, int totalCount=-1, TetraPak.ReadChunk? chunk=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_data'></a>
-`data` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
-The data to be sent back in response (`null` is allowed).   
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_totalCount'></a>
-`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
-(optional)<br/>  
-The total number of items available from service.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_chunk'></a>
-`chunk` [TetraPak.ReadChunk](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ReadChunk 'TetraPak.ReadChunk')  
-(optional)<br/>  
-A [TetraPak.ReadChunk](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ReadChunk 'TetraPak.ReadChunk') object specifying the data requested.  
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
-An [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult') object.  
-#### Exceptions
-[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[data](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_data 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?).data') was unassigned.  
-            
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase)'></a>
-## ControllerBaseExtensions.Ok(ControllerBase) Method
-Constructs and returns an empty 'OK' (HTTP status code 200) response.  
-```csharp
-public static Microsoft.AspNetCore.Mvc.OkObjectResult Ok(this Microsoft.AspNetCore.Mvc.ControllerBase self);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
-An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)'></a>
-## ControllerBaseExtensions.Ok&lt;T&gt;(ControllerBase, EnumOutcome&lt;T&gt;, int) Method
-Constructs and returns an 'OK' (HTTP status code 200) response from an [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.   
-```csharp
-public static Microsoft.AspNetCore.Mvc.OkObjectResult Ok<T>(this Microsoft.AspNetCore.Mvc.ControllerBase self, TetraPak.EnumOutcome<T> outcome, int totalCount=-1);
-```
-#### Type parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T'></a>
-`T`  
-The type of data items in response.  
-  
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome'></a>
-`outcome` [TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')  
-The [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_totalCount'></a>
-`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
-(optional; default=[read from [TetraPak.EnumOutcome&lt;&gt;.Count](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1.Count 'TetraPak.EnumOutcome`1.Count')])<br/>  
-Specifies a (custom) total count value. Use when the value from [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).outcome') is incorrect.    
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
-An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
-#### See Also
-- [TetraPak.AspNet.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse-1 'TetraPak.AspNet.ApiDataResponse`1')
-- [Ok(ControllerBase)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase)')
-- [Ok(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
-  
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)'></a>
 ## ControllerBaseExtensions.RespondAsync&lt;T&gt;(ControllerBase, Outcome&lt;T&gt;, int, ReadChunk?, ResponseDelegate&lt;T&gt;?) Method
 Constructs and returns a response from an [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') object (see remarks).   
@@ -384,7 +229,7 @@ The total number of items available from service.
 A [TetraPak.ReadChunk](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ReadChunk 'TetraPak.ReadChunk') object specifying the data requested.  
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)_responseDelegate'></a>
-`responseDelegate` [TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Controllers.ResponseDelegate-1 'TetraPak.AspNet.Api.Controllers.ResponseDelegate`1')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondAsync&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.Outcome&lt;T&gt;, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Controllers.ResponseDelegate-1 'TetraPak.AspNet.Api.Controllers.ResponseDelegate`1')  
+`responseDelegate` [TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;](TetraPak_AspNet_Api_Controllers_ResponseDelegate_T_(object).md 'TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;(object)')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondAsync&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.Outcome&lt;T&gt;, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;?).T')[&gt;](TetraPak_AspNet_Api_Controllers_ResponseDelegate_T_(object).md 'TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;(object)')  
 (optional)<br/>  
 A delegate tobe called for custom (successful) [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') construction.  
   
@@ -402,7 +247,7 @@ tp stay current.
 
 
   
-If the [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondAsync&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.Outcome&lt;T&gt;, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;?).outcome') is unsuccessful the [Error(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Error(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Error(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')  
+If the [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondAsync_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_Outcome_T__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_ResponseDelegate_T__)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondAsync&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.Outcome&lt;T&gt;, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.ResponseDelegate&lt;T&gt;?).outcome') is unsuccessful the [RespondError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')  
 method will automatically be invoked.  
 
 
@@ -420,8 +265,165 @@ If the [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#Tet
 an [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') object, the value will automatically be serialized to JSON  
 to be included in the response.    
 #### See Also
-- [Ok(ControllerBase)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase)')
-- [Ok(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Ok(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Ok(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
+- [RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
+- [RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)'></a>
+## ControllerBaseExtensions.RespondError(ControllerBase, Exception) Method
+Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an error.  
+Please see remarks.  
+```csharp
+public static Microsoft.AspNetCore.Mvc.ActionResult RespondError(this Microsoft.AspNetCore.Mvc.ControllerBase self, System.Exception error);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_error'></a>
+`error` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
+The exception to be reflected.  
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
+An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
+### Remarks
+This method will automatically look for an HTTP status code in the [error](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)_error 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception).error').  
+If none can be resolved the [InternalServerError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.InternalServerError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)') method is invoked, to  
+produce a generic status code of 500 ([System.Net.HttpStatusCode.InternalServerError](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpStatusCode.InternalServerError 'System.Net.HttpStatusCode.InternalServerError')).  
+#### See Also
+- [RespondError(ControllerBase, HttpStatusCode, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Net.HttpStatusCode, System.Exception)')
+- [InternalServerError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_InternalServerError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.InternalServerError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)'></a>
+## ControllerBaseExtensions.RespondError(ControllerBase, HttpStatusCode, Exception) Method
+Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an error with a specified HTTP status code.  
+```csharp
+public static Microsoft.AspNetCore.Mvc.ActionResult RespondError(this Microsoft.AspNetCore.Mvc.ControllerBase self, System.Net.HttpStatusCode status, System.Exception error);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_status'></a>
+`status` [System.Net.HttpStatusCode](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpStatusCode 'System.Net.HttpStatusCode')  
+The HTTP status code to be returned in response.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Net_HttpStatusCode_System_Exception)_error'></a>
+`error` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
+The exception to be reflected.  
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
+An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
+#### See Also
+- [RespondError(ControllerBase, Exception)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondError(Microsoft.AspNetCore.Mvc.ControllerBase, System.Exception)')
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)'></a>
+## ControllerBaseExtensions.RespondErrorExpectedQueryParameter(ControllerBase, string, string?) Method
+Constructs and returns an [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') to reflect an issue with a missing query parameter.  
+```csharp
+public static Microsoft.AspNetCore.Mvc.ActionResult RespondErrorExpectedQueryParameter(this Microsoft.AspNetCore.Mvc.ControllerBase self, string queryParameterName, string? example=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_queryParameterName'></a>
+`queryParameterName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The name of the expected (missing) query parameter.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondErrorExpectedQueryParameter(Microsoft_AspNetCore_Mvc_ControllerBase_string_string_)_example'></a>
+`example` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+(optional)<br/>  
+A descriptive example, to assist developer in correcting the problem.  
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
+An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)'></a>
+## ControllerBaseExtensions.RespondOk(ControllerBase, object?, int, ReadChunk?) Method
+Creates an [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult') object that produces an Status 200 OK response.  
+```csharp
+public static Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk(this Microsoft.AspNetCore.Mvc.ControllerBase self, object? data, int totalCount=-1, TetraPak.ReadChunk? chunk=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_data'></a>
+`data` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
+The data to be sent back in response (`null` is allowed).   
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_totalCount'></a>
+`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
+(optional)<br/>  
+The total number of items available from service.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_chunk'></a>
+`chunk` [TetraPak.ReadChunk](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ReadChunk 'TetraPak.ReadChunk')  
+(optional)<br/>  
+A [TetraPak.ReadChunk](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ReadChunk 'TetraPak.ReadChunk') object specifying the data requested.  
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
+An [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult') object.  
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+[data](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_)_data 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?).data') was unassigned.  
+            
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase)'></a>
+## ControllerBaseExtensions.RespondOk(ControllerBase) Method
+Constructs and returns an empty 'OK' (HTTP status code 200) response.  
+```csharp
+public static Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk(this Microsoft.AspNetCore.Mvc.ControllerBase self);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
+An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)'></a>
+## ControllerBaseExtensions.RespondOk&lt;T&gt;(ControllerBase, EnumOutcome&lt;T&gt;, int) Method
+Constructs and returns an 'OK' (HTTP status code 200) response from an [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.   
+```csharp
+public static Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk<T>(this Microsoft.AspNetCore.Mvc.ControllerBase self, TetraPak.EnumOutcome<T> outcome, int totalCount=-1);
+```
+#### Type parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T'></a>
+`T`  
+The type of data items in response.  
+  
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome'></a>
+`outcome` [TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')  
+The [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_totalCount'></a>
+`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
+(optional; default=[read from [TetraPak.EnumOutcome&lt;&gt;.Count](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1.Count 'TetraPak.EnumOutcome`1.Count')])<br/>  
+Specifies a (custom) total count value. Use when the value from [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).outcome') is incorrect.    
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
+An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
+#### See Also
+- [TetraPak.AspNet.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse-1 'TetraPak.AspNet.ApiDataResponse`1')
+- [RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
+- [RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)'></a>
 ## ControllerBaseExtensions.Service(ControllerBase, string?) Method
@@ -493,18 +495,18 @@ When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.
 based on the controller's type. As an example; calling this method from a controller of type  
 `WeatherServiceController` will assume the requested backend service name is "WeatherService".     
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)'></a>
-## ControllerBaseExtensions.TryGetTetraPakApiAuthConfig(ControllerBase, TetraPakApiConfig?) Method
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)'></a>
+## ControllerBaseExtensions.TryGetTetraPakApiConfig(ControllerBase, TetraPakApiConfig?) Method
 Attempts obtaining the Tetra Pak (API) configuration object.  
 ```csharp
-public static bool TryGetTetraPakApiAuthConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self, out TetraPak.AspNet.Api.Auth.TetraPakApiConfig? config);
+public static bool TryGetTetraPakApiConfig(this Microsoft.AspNetCore.Mvc.ControllerBase self, out TetraPak.AspNet.Api.Auth.TetraPakApiConfig? config);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_self'></a>
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_self'></a>
 `self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
 The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_config'></a>
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_)_config'></a>
 `config` [TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')  
 Passes back the Tetra Pak (API) configuration object (on success).  
   
@@ -513,7 +515,7 @@ Passes back the Tetra Pak (API) configuration object (on success).
 `true` if the Tetra Pak (API) configuration object could be obtained; otherwise `false`.  
             
 #### See Also
-- [GetTetraPakApiAuthConfig(ControllerBase)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakApiAuthConfig(Microsoft_AspNetCore_Mvc_ControllerBase) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.GetTetraPakApiAuthConfig(Microsoft.AspNetCore.Mvc.ControllerBase)')
+- [GetTetraPakConfig(ControllerBase)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_GetTetraPakConfig(Microsoft_AspNetCore_Mvc_ControllerBase) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.GetTetraPakConfig(Microsoft.AspNetCore.Mvc.ControllerBase)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_UnauthorizedError(Microsoft_AspNetCore_Mvc_ControllerBase_System_Exception)'></a>
 ## ControllerBaseExtensions.UnauthorizedError(ControllerBase, Exception) Method

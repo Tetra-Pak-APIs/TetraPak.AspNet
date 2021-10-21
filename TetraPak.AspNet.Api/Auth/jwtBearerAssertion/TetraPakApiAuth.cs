@@ -77,22 +77,54 @@ namespace TetraPak.AspNet.Api.Auth
                     .AddTetraPakJwtBearerAssertion<TCache>(options);
         }
 
+        /// <summary>
+        ///   Adds Tetra Pak recommended JWT bearer assertion to the API
+        ///   (using a default cache mechanism; see
+        ///   <see cref="AddTetraPakJwtBearerAssertion{TCache}(IServiceCollection,string?,JwBearerAssertionOptions?)"/>
+        ///   for using a custom caching implementation).
+        /// </summary>
+        /// <param name="builder">
+        ///   The extended <see cref="AuthenticationBuilder"/> instance.
+        /// </param>
+        /// <param name="options">
+        ///   (optional)<br/>
+        ///   Specifies options for JWT bearer assertion. 
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="builder"/> instance.
+        /// </returns>
         public static AuthenticationBuilder AddTetraPakJwtBearerAssertion(
-            this AuthenticationBuilder a,
+            this AuthenticationBuilder builder,
             JwBearerAssertionOptions? options = null)
         {
-            return a.AddTetraPakJwtBearerAssertion<SimpleCache>(options);
+            return builder.AddTetraPakJwtBearerAssertion<SimpleCache>(options);
         }
 
+        /// <summary>
+        ///   Adds Tetra Pak recommended JWT bearer assertion to the API while specifying
+        ///   the caching implementation type.
+        /// </summary>
+        /// <param name="builder">
+        ///   The extended <see cref="AuthenticationBuilder"/> instance.
+        /// </param>
+        /// <param name="options">
+        ///   (optional)<br/>
+        ///   Specifies options for JWT bearer assertion. 
+        /// </param>
+        /// <typeparam name="TCache">
+        ///   The type of cache to be used
+        ///   (must be a reference type implementing <see cref="ITimeLimitedRepositories"/>).
+        /// </typeparam>
+        /// <returns>
+        ///   The <paramref name="builder"/> instance.
+        /// </returns>
         public static AuthenticationBuilder AddTetraPakJwtBearerAssertion<TCache>(
-            this AuthenticationBuilder a,
+            this AuthenticationBuilder builder,
             JwBearerAssertionOptions? options = null)
-            where TCache : class, ITimeLimitedRepositories
+        where TCache : class, ITimeLimitedRepositories
         {
-            var c = a.Services;
+            var c = builder.Services;
             c.TryAddSingleton<HostProvider>();
-            // c.TryAddSingleton<TetraPakApiConfig>();            obsolete
-            // c.TryAddSingleton<TetraPakConfig, TetraPakApiConfig>();
             c.AddTetraPakConfiguration<TetraPakApiConfig>();
             c.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -105,7 +137,7 @@ namespace TetraPak.AspNet.Api.Auth
                     p.GetRequiredService<HostProvider>(), 
                     p.GetRequiredService<IWebHostEnvironment>(),
                     options));
-            return a.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, _ => {});
+            return builder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, _ => {});
             
             void addCachingIfAllowed()
             {
@@ -122,8 +154,7 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 c.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
                 {
-                    var cacheLogger = p.GetService<ILogger<SimpleCache>>();
-                    var cache = new SimpleCache(cacheLogger)
+                    var cache = new SimpleCache(p.GetService<ILogger<SimpleCache>>())
                     {
                         DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
                     };

@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using TetraPak;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
+using WebAPI.Models;
 using WebAPI.services;
+
+#nullable enable
 
 namespace WebAPI.Controllers
 {
@@ -39,12 +44,15 @@ namespace WebAPI.Controllers
     public class TypedHelloWorldController : ControllerBase 
     {
         readonly HelloWorldService _helloWorldService;
+        readonly GreetingsService _greetingsService;
 
         [HttpGet]
-        public async Task<ActionResult> Get(string svc = null)
+        public async Task<ActionResult> Get(string? svc = null, string? id = null, CancellationToken? ct = null)
         {
             var userIdentity = User?.Identity;
-            this.LogTrace($"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}");
+            this.LogTrace(() => 
+                $"GET /helloworld{(string.IsNullOrEmpty(svc) ? "" : $"svc={svc}")}{(string.IsNullOrEmpty(id) ? "": $"greetingId={id}")}");
+                
             if (string.IsNullOrEmpty(svc))
                 return Ok(new 
                 { 
@@ -54,29 +62,59 @@ namespace WebAPI.Controllers
                     userId = userIdentity?.Name ?? "(unresolved)" 
                 } );
 
+            // transient API, using token exchange (TX) or client credentials (CC) ...
+            HttpQueryParameters query = id is null
+                ? null!
+                : $"id={id}";
             switch (svc.ToLowerInvariant())
             {
                 case "tx":
                     if (!await this.GetAccessTokenAsync())
-                        return this.UnauthorizedError(
+                        return this.RespondUnauthorizedError(
                             new Exception("Cannot perform Token Exchange. No access token was passed in request"));
 
                     // note This is an example of how you can use an indexer to fetch the endpoint:
-                    return await this.RespondAsync(await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"].GetAsync());
+                    return await this.RespondAsync(
+                        await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"]
+                        .GetAsync(query, ct));
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
-                    return await this.RespondAsync(await _helloWorldService.Endpoints.HelloWorldWithClientCredentials.GetAsync());
+                    return await this.RespondAsync(
+                        await _helloWorldService.Endpoints.HelloWorldWithClientCredentials
+                            .GetAsync(query, ct)
+                        );
                 
                 default:
                     return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));
             }
         }
 
+        [HttpGet, Route("greetings")]
+        public async Task<ActionResult> GetGreetings(string? id = null)
+        {
+            HttpQueryParameters query = id is { } ? $"id={id}" : null!;
+            var readOutcome = await _greetingsService.Endpoints.Greetings.GetAsync(query);
+            return await this.RespondAsync(readOutcome);
+        }
+
+        [HttpPatch, Route("greetings")]
+        public async Task<ActionResult> PatchGreeting([FromBody] GreetingModel greeting, CancellationToken ct)
+        {
+            var readOutcome = await _greetingsService.Endpoints.Greetings.GetAsync();
+            if (readOutcome)
+                return await this.RespondAsync(await _greetingsService.Endpoints.Greetings.PatchAsync(greeting));
+
+            return await this.RespondAsync(await _greetingsService.Endpoints.Greetings.PostAsync(greeting, ct));
+        }
+
         // ReSharper disable once UnusedParameter.Local
-        public TypedHelloWorldController(HelloWorldService helloWorldService) // <-- just inject the typed backend service
+        public TypedHelloWorldController(HelloWorldService helloWorldService, GreetingsService greetingsService) // <-- just inject the typed backend service
         {
             _helloWorldService = helloWorldService;
+            _greetingsService = greetingsService;
         }
     }
+
+    
 }

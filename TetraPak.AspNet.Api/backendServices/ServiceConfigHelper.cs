@@ -39,7 +39,7 @@ namespace TetraPak.AspNet.Api
             return Outcome<ActorToken>.Fail(new Exception(errorResponse.Title));
         }
         
-        public static Outcome<HttpResponseMessage> GetInvalidEndpointResponse(
+        public static HttpOutcome<HttpResponseMessage> GetInvalidEndpointResponse(
             this ServiceInvalidEndpoint url,
             HttpMethod method,
             string path,
@@ -47,20 +47,20 @@ namespace TetraPak.AspNet.Api
         {
             return GetInvalidEndpointResponse(
                 url,
-                method.ToString(),
+                method.Method,
                 path,
                 queryParameters);
         }
         
-        public static Outcome<HttpResponseMessage> GetInvalidEndpointResponse(
+        public static HttpOutcome<HttpResponseMessage> GetInvalidEndpointResponse(
             this ServiceInvalidEndpoint url,
-            string method,
+            string httpMethod,
             string path,
             string? queryParameters)
         {
             var issues = url.GetIssues();
             var errorMessage = 
-                $"Error calling service: {RequestToString(method, path, queryParameters)}{Environment.NewLine}" + 
+                $"Error calling service: {RequestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
             url.Logger.Error(new ConfigurationException(errorMessage), messageId: messageId);
@@ -69,10 +69,13 @@ namespace TetraPak.AspNet.Api
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
-            return Outcome<HttpResponseMessage>.Fail(new Exception(errorResponse.Title), responseMessage);
+            return HttpOutcome<HttpResponseMessage>.Fail(
+                new HttpMethod(httpMethod), 
+                new Exception(errorResponse.Title),
+                responseMessage);
         }
         
-        public static Outcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
+        public static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
             HttpMethod method,
             string path, 
             string? queryParameters, 
@@ -81,7 +84,7 @@ namespace TetraPak.AspNet.Api
             ILogger? logger)
         {
             return GetServiceConfigurationErrorResponse(
-                method.ToString(),
+                method.Method,
                 path,
                 queryParameters,
                 issues,
@@ -89,8 +92,8 @@ namespace TetraPak.AspNet.Api
                 logger);
         }
 
-        public static Outcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
-            string method,
+        public static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
+            string httpMethod,
             string path, 
             string? queryParameters, 
             IEnumerable<Exception> issues,
@@ -98,7 +101,7 @@ namespace TetraPak.AspNet.Api
             ILogger? logger)
         {
             var errorMessage = 
-                $"Error calling service: {RequestToString(method, path, queryParameters)}{Environment.NewLine}" + 
+                $"Error calling service: {RequestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             logger.Error(new ConfigurationException(errorMessage));
             
@@ -106,7 +109,10 @@ namespace TetraPak.AspNet.Api
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
-            return Outcome<HttpResponseMessage>.Fail(new Exception(errorResponse.Title), responseMessage);
+            return HttpOutcome<HttpResponseMessage>.Fail(
+                new HttpMethod(httpMethod),
+                new Exception(errorResponse.Title),
+                responseMessage);
         }
 
         public static string RequestToString(string method, string path, string? queryParameters)

@@ -44,5 +44,11 @@ namespace TetraPak.AspNet.Auth
         {
             return grantType is GrantType.CC or GrantType.TX;
         }
+
+        public static ClientCredentials GetClientCredentials(this IServiceAuthConfig config)
+        {
+            return new ClientCredentials(config);
+        }
+
     }
 }

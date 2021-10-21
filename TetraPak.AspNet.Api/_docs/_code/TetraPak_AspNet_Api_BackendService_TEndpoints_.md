@@ -75,7 +75,7 @@ Implements [DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPa
 ## BackendService&lt;TEndpoints&gt;.Endpoints Property
 Gets the endpoint configuration.  
 ```csharp
-public TEndpoints Endpoints { get; set; }
+public TEndpoints Endpoints { get; }
 ```
 #### Property Value
 [TEndpoints](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__TEndpoints 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.TEndpoints')
@@ -117,7 +117,7 @@ protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ## BackendService&lt;TEndpoints&gt;.ServiceName Property
 Gets the identity of the service. This identity should be unique with the runtime context.   
 ```csharp
-public string ServiceName { get; set; }
+public string ServiceName { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

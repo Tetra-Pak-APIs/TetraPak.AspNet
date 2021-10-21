@@ -26,6 +26,9 @@ namespace TetraPak.AspNet.Api
     {
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
+        const string TimerPut = "out-put";
+        const string TimerPatch = "out-patch";
+        const string TimerDelete = "out-delete";
 
         /// <inheritdoc />
         public string ServiceName { get; }
@@ -50,6 +53,7 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public AmbientData AmbientData => Endpoints.AmbientData;
 
+        /// <inheritdoc />
         public IServiceAuthConfig ParentConfig => Config;
 
         /// <inheritdoc />
@@ -70,12 +74,21 @@ namespace TetraPak.AspNet.Api
         [StateDump]
         public GrantType GrantType => Endpoints.GrantType;
 
+        /// <summary>
+        ///   Gets a client identity to be submitted when requesting authorization.
+        /// </summary>
         [StateDump]
         public string? ClientId => Endpoints.ClientId;
 
+        /// <summary>
+        ///   Gets a client secret to be submitted when requesting authorization.
+        /// </summary>
         [StateDump]
         public string? ClientSecret => Endpoints.ClientSecret;
 
+        /// <summary>
+        ///   Gets a scope to be requested for authorization.
+        /// </summary>
         [StateDump]
         public MultiStringValue Scope => Endpoints.Scope;
 
@@ -92,9 +105,20 @@ namespace TetraPak.AspNet.Api
             AuthContext authContext,
             CancellationToken? cancellationToken = null) => Endpoints.GetClientSecretAsync(authContext, cancellationToken);
 
+        /// <summary>
+        ///   Gets a scope to be requested for authorization while, optionally, specifying a default scope.
+        /// </summary>
+        /// <param name="authContext">
+        ///   Details the auth context in which the (confidential) client secrets are requested.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Allows canceling ot the operation.
+        /// </param>
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
             AuthContext authContext,
-            CancellationToken? cancellationToken = null) => Endpoints.GetScopeAsync(authContext, null, cancellationToken);
+            CancellationToken? cancellationToken = null) => Endpoints.GetScopeAsync(authContext, null, 
+            cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<MultiStringValue>> GetScopeAsync(
@@ -110,17 +134,24 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
 
-        internal void DiagnosticsStartTimer(string timerKey)
+        internal void DiagnosticsStartTimer(string? timerKey)
         {
-            (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsStartTimer(timerKey);
+            if (timerKey is { })
+            {
+                (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsStartTimer(timerKey);
+            }
         }
 
-        internal void DiagnosticsEndTimer(string timerKey)
+        internal void DiagnosticsEndTimer(string? timerKey)
         {
-            (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsEndTimer(timerKey);
+            if (timerKey is { })
+            {
+                (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsEndTimer(timerKey);
+            }
         }
 
-        public async Task<Outcome<ActorToken>> AuthenticateAsync(
+        /// <inheritdoc />
+        public async Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions clientOptions, 
             CancellationToken? cancellationToken = null)
         {
@@ -131,134 +162,268 @@ namespace TetraPak.AspNet.Api
                 clientOptions.Authorization = new BearerToken(accessTokenOutcome.Value!.Identity);
             }
             clientOptions.AuthConfig = this;
-            return await OnAuthenticateAsync(clientOptions, ct);
+            return await OnAuthorizeAsync(clientOptions, ct);
         }
 
-        public async Task<Outcome<HttpResponseMessage>> SendAsync(
+        /// <summary>
+        ///   Sends a HTTP request and returns the outcome. 
+        /// </summary>
+        /// <param name="request">
+        ///   The HTTP request to be sent.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
+        ///   Specifies options for creating a client.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Allows cancelling the operation.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        public Task<HttpOutcome<HttpResponseMessage>> SendAsync(
             HttpRequestMessage request, 
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
+            return sendAsync(request, resolveDiagnosticsTimer(request), clientOptions, cancellationToken);
+        }
+
+        async Task<HttpOutcome<HttpResponseMessage>> sendAsync(
+            HttpRequestMessage request, 
+            string? timer,
+            HttpClientOptions? clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            if (!Endpoints.IsValid)
+                return OnServiceConfigurationError(request, Endpoints.GetIssues()!, AmbientData.GetMessageId(true));
+            
+            cancellationToken ??= AmbientData.HttpContext?.RequestAborted;
+            if (cancellationToken.IsRequestCancelled())
+                return HttpOutcome<HttpResponseMessage>.Fail(
+                    HttpMethod.Post,
+                    new HttpRequestCancelledException());
+            
             var ct = cancellationToken ?? CancellationToken.None;
             clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, ct);
-            if (clientOutcome)
-                return Outcome<HttpResponseMessage>.Fail(
+            if (!clientOutcome)
+                return HttpOutcome<HttpResponseMessage>.Fail(
+                    request.Method,
                     new Exception("Could not initialize a HTTP client (see inner exception)", 
                         clientOutcome.Exception));
             
             var client = clientOutcome.Value!;
-            var response = await client.SendAsync(request, ct);
-            return response.IsSuccessStatusCode
-                ? Outcome<HttpResponseMessage>.Success(response)
-                : Outcome<HttpResponseMessage>.Fail(response);
+
+            try
+            {
+                DiagnosticsStartTimer(timer);
+                var response = await client.SendAsync(request, ct);
+                DiagnosticsEndTimer(timer);
+                return response.IsSuccessStatusCode
+                    ? HttpOutcome<HttpResponseMessage>.Success(request.Method, response)
+                    : HttpOutcome<HttpResponseMessage>.Fail(request.Method, response);
+            }
+            catch (Exception ex)
+            {
+                return requestErrorOutcome(ex, request, AmbientData.GetMessageId(true));
+            }
         }
 
-        public async Task<Outcome<HttpResponseMessage>> PostAsync(
+        static string? resolveDiagnosticsTimer(HttpRequestMessage request)
+        {
+            return request.Method.Method switch
+            {
+                "POST" => TimerPost,
+                "GET" => TimerGet,
+                "PUT" => TimerPut,
+                "PATCH" => TimerPatch,
+                "DELETE" => TimerDelete,
+                _ => null
+            };
+        }
+
+        /// <inheritdoc />
+        public Task<HttpOutcome<HttpResponseMessage>> PostAsync(
             string path,
             HttpContent content,
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
-            var ct = cancellationToken ?? CancellationToken.None;
-            clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
-            var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
-            if (!clientOutcome)
-                return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
+            var request = new HttpRequestMessage(HttpMethod.Post, path.TrimStart('/'));
+            request.Content = content;
+            return sendAsync(request, TimerPost, clientOptions, cancellationToken);
             
-            var client = clientOutcome.Value!;
-            Logger.Trace($"Sending request URI: {path}");
-            Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
             
-#if NET5_0_OR_GREATER
-            var contentString = await content.ReadAsStringAsync(ct);
-#else
-            var contentString = await content.ReadAsStringAsync();
-#endif
-            Logger.Debug($"Sending request CONTENT: {contentString}");
-            DiagnosticsStartTimer(TimerPost);
-            var response = await client.PostAsync(path.TrimStart('/'), content, ct);
-            DiagnosticsEndTimer(TimerPost);
-            return response.IsSuccessStatusCode
-                ? Outcome<HttpResponseMessage>.Success(response)
-                : Outcome<HttpResponseMessage>.Fail(response);
+//             var ct = cancellationToken ?? CancellationToken.None; obsolete
+//             clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
+//             var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
+//             if (!clientOutcome)
+//                 return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
+//             
+//             var client = clientOutcome.Value!;
+//             Logger.Trace($"Sending request URI: {path}");
+//             Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
+//             
+// #if NET5_0_OR_GREATER
+//             var contentString = await content.ReadAsStringAsync(ct);
+// #else
+//             var contentString = await content.ReadAsStringAsync();
+// #endif
+//             Logger.Debug($"POST - Sending request CONTENT: {contentString}");
+//             DiagnosticsStartTimer(TimerPost);
+//             var response = await client.PostAsync(path.TrimStart('/'), content, ct);
+//             DiagnosticsEndTimer(TimerPost);
+//             return response.IsSuccessStatusCode
+//                 ? Outcome<HttpResponseMessage>.Success(response)
+//                 : Outcome<HttpResponseMessage>.Fail(response);
         }
 
         /// <inheritdoc />
-        public async Task<Outcome<T>> GetAsync<T>(
+        public Task<HttpOutcome<HttpResponseMessage>> PutAsync(
             string path, 
-            IDictionary<string, string> queryParameters, 
-            HttpClientOptions clientOptions,
-            CancellationToken? cancellationToken = null, 
-            string? messageId = null)
+            HttpContent content, 
+            HttpClientOptions? clientOptions = null,
+            CancellationToken? cancellationToken = null)
         {
-            try
-            {
-                var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
-                if (!outcome)
-                    return Outcome<T>.Fail(outcome.Exception);
-
-                var stream = await outcome.Value!.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<T>(stream);
-                return Outcome<T>.Success(result!);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            var request = new HttpRequestMessage(HttpMethod.Put, path.TrimStart('/'));
+            request.Content = content;
+            return sendAsync(request, TimerPost, clientOptions, cancellationToken);
+            
+//             var ct = cancellationToken ?? CancellationToken.None; obsolete
+//             clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
+//             var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
+//             if (!clientOutcome)
+//                 return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
+//             
+//             var client = clientOutcome.Value!;
+//             Logger.Trace($"Sending request PUT {path}");
+//             Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
+//             
+// #if NET5_0_OR_GREATER
+//             var contentString = await content.ReadAsStringAsync(ct);
+// #else
+//             var contentString = await content.ReadAsStringAsync();
+// #endif
+//             Logger.Debug($"PUT - Sending request CONTENT: {contentString}");
+//             DiagnosticsStartTimer(TimerPost);
+//             var response = await client.PutAsync(path.TrimStart('/'), content, ct);
+//             DiagnosticsEndTimer(TimerPost);
+//             return response.IsSuccessStatusCode
+//                 ? Outcome<HttpResponseMessage>.Success(response)
+//                 : Outcome<HttpResponseMessage>.Fail(response);
         }
 
         /// <inheritdoc />
-        public async Task<Outcome<HttpResponseMessage>> GetAsync(
+        public Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
+            string path, 
+            HttpContent content,
+            HttpClientOptions? clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
+            string path, 
+            object?  data, 
+            HttpClientOptions? clientOptions = null,
+            CancellationToken? cancellationToken = null)
+        {
+            throw new NotImplementedException();
+        }
+        
+        // /// <inheritdoc />
+        // public async Task<HttpEnumOutcome<T>> GetAsync<T>(
+        //     string path, 
+        //     HttpQueryParameters queryParameters, 
+        //     HttpClientOptions? clientOptions = null,
+        //     CancellationToken? cancellationToken = null, 
+        //     string? messageId = null)
+        // {
+        //     try
+        //     {
+        //         var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
+        //         if (!outcome)
+        //             return HttpEnumOutcome<T>.Fail(HttpMethod.Get, outcome.Exception);
+        //
+        //         var stream = await outcome.Value!.Content.ReadAsStreamAsync();
+        //         var result = await JsonSerializer.DeserializeAsync<T>(stream);
+        //         return HttpEnumOutcome<T>.Success(HttpMethod.Get, result!);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Console.WriteLine(ex);
+        //         throw;
+        //     }
+        // }
+
+        /// <inheritdoc />
+        public Task<HttpOutcome<HttpResponseMessage>> GetAsync(
             string path,
-            string? queryParameters = null,
+            HttpQueryParameters? queryParameters = null,
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null,
             string? messageId = null)
         {
-            if (!Endpoints.IsValid)
-                return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues()!, messageId);
-
-            var ct = cancellationToken ?? CancellationToken.None;
-            clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
-            var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
-            if (!clientOutcome)
-                return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
-
-            var client = clientOutcome.Value!;
-            path = pathWithQueryParameters();
-            var url = $"{client.BaseAddress}{path.TrimStart('/')}";
+            // if (!Endpoints.IsValid)
+            //     return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues()!, messageId); obsolete
             
-            Logger.Trace($"Sending request URI: {url}");
-            Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
+            var useQuery = !queryParameters.IsEmpty();
+            var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
+            var request = new HttpRequestMessage(HttpMethod.Get, usePath.TrimStart('/'));
+            // request.Content = content;
+            return sendAsync(request, TimerGet, clientOptions, cancellationToken);
 
-            try
-            {
-                DiagnosticsStartTimer(TimerGet);
-                var response = await client.GetAsync(path.TrimStart('/'), ct);
-                DiagnosticsEndTimer(TimerGet);
-                return response.IsSuccessStatusCode
-                    ? Outcome<HttpResponseMessage>.Success(response)
-                    : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
-            }
-            catch (Exception ex)
-            {
-                return requestErrorOutcome(ex, HttpMethod.Get, url, messageId);
-            }
+            // var ct = cancellationToken ?? CancellationToken.None; obsolete
+            // clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
+            // var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
+            // if (!clientOutcome)
+            //     return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
+            //
+            // var client = clientOutcome.Value!;
+            // path = pathWithQueryParameters();
+            // var url = $"{client.BaseAddress}{path.TrimStart('/')}";
+            //
+            // Logger.Trace($"Sending request URI: {url}");
+            // Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
+            //
+            // try
+            // {
+            //     DiagnosticsStartTimer(TimerGet);
+            //     var response = await client.GetAsync(path.TrimStart('/'), ct);
+            //     DiagnosticsEndTimer(TimerGet);
+            //     return response.IsSuccessStatusCode
+            //         ? Outcome<HttpResponseMessage>.Success(response)
+            //         : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
+            // }
+            // catch (Exception ex)
+            // {
+            //     return requestErrorOutcome(ex, HttpMethod.Get, url, messageId);
+            // }
 
-            string pathWithQueryParameters()
-            {
-                return string.IsNullOrWhiteSpace(queryParameters) 
-                    ? path
-                    : $"{path}{queryParameters.Trim().EnsurePrefix("?")}";
-            }
+            // string pathWithQueryParameters()
+            // {
+            //     return string.IsNullOrWhiteSpace(queryParameters) 
+            //         ? path
+            //         : $"{path}{queryParameters.Trim().EnsurePrefix("?")}";
+            // }
+        }
+
+        protected virtual string OnConstructPath(string path)
+        {
+            return path != ServiceEndpoints.DefaultPath 
+                ? path 
+                : $"{Endpoints.Host}{Endpoints.BasePath}";
         }
 
         /// <inheritdoc />
-        public async Task<Outcome<T>> GetAsync<T>(
+        public async Task<HttpEnumOutcome<T>> GetAsync<T>(
             string path, 
-            string? queryParameters = null, 
+            HttpQueryParameters? queryParameters = null, 
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null, 
             string? messageId = null)
@@ -269,11 +434,11 @@ namespace TetraPak.AspNet.Api
                 var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
                 DiagnosticsEndTimer(TimerGet);
                 if (!outcome)
-                    return Outcome<T>.Fail(outcome.Exception);
+                    return HttpEnumOutcome<T>.Fail(HttpMethod.Get, outcome.Exception);
 
                 var stream = await outcome.Value!.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<T>(stream);
-                return Outcome<T>.Success(result!);
+                return HttpEnumOutcome<T>.Success(HttpMethod.Get, result!);
             }
             catch (Exception ex)
             {
@@ -282,34 +447,28 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        /// <inheritdoc />
-        public Task<Outcome<HttpResponseMessage>> GetAsync(
-            string path,
-            IDictionary<string, string> queryParameters,
-            HttpClientOptions clientOptions,
-            CancellationToken? cancellationToken = null, 
-            string? messageId = null)
-        {
-            return GetAsync(
-                path,
-                queryParameters.ToUrlQueryParameters(true),
-                clientOptions,
-                cancellationToken,
-                messageId);
-        }
+        // /// <inheritdoc />
+        // public Task<HttpOutcome<HttpResponseMessage>> GetAsync(
+        //     string path,
+        //     HttpQueryParameters? queryParameters = null,
+        //     HttpClientOptions? clientOptions = null,
+        //     CancellationToken? cancellationToken = null, 
+        //     string? messageId = null)
+        // {
+        //     return GetAsync(
+        //         path,
+        //         queryParameters?.ToString(true),
+        //         clientOptions,
+        //         cancellationToken,
+        //         messageId);
+        // }
 
         /// <summary>
         ///   Called by an internal method when it discovers a configuration issue,
         ///   allowing for a consistent response to all such issues.
         /// </summary>
-        /// <param name="method">
-        ///   The request HTTP method.
-        /// </param>
-        /// <param name="path">
-        ///   The request path.
-        /// </param>
-        /// <param name="queryParameters">
-        ///   Any request query parameters.
+        /// <param name="request">
+        ///   The ongoing request.  
         /// </param>
         /// <param name="issues">
         ///   A collection of issues found.
@@ -318,36 +477,63 @@ namespace TetraPak.AspNet.Api
         ///   (optional)<bt/>
         ///   A unique string value to be used for referencing/diagnostics purposes.
         /// </param>
-        /// <returns></returns>
-        protected virtual Outcome<HttpResponseMessage> OnServiceConfigurationError(
-            HttpMethod method,
-            string path, 
-            string? queryParameters, 
+        /// <returns>
+        ///   An <see cref="HttpEnumOutcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   one or more <see cref="HttpResponseMessage"/>s or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        protected virtual HttpOutcome<HttpResponseMessage> OnServiceConfigurationError(
+            // HttpMethod method,
+            HttpRequestMessage request,
+            // string path, 
+            // string? queryParameters, 
             IEnumerable<Exception> issues,
             string? messageId)
         {
             return ServiceConfigHelper.GetServiceConfigurationErrorResponse(
-                method,
-                path,
-                queryParameters,
+                request.Method,
+                request.RequestUri!.ToString(),
+                request.RequestUri.Query,
+                // method, obsolete
+                // path,
+                // queryParameters,
                 issues,
                 messageId,
                 Logger);
         }
         
-        Outcome<HttpResponseMessage> requestErrorOutcome(Exception exception, HttpMethod method, string url, string? messageId)
+        HttpOutcome<HttpResponseMessage> requestErrorOutcome(Exception exception, HttpRequestMessage request, string? messageId)
         {
-            Logger.Error(new Exception($"Error while performing request: {method} {url}: {exception.Message}", exception)
+            Logger.Error(
+                new Exception($"Error while performing request: {request.Method} {request.RequestUri}: {exception.Message}", exception)
                 ,messageId:messageId);
-            return Outcome<HttpResponseMessage>.Fail(exception);
+            return HttpOutcome<HttpResponseMessage>.Fail(request.Method, exception);
         }
 
-        protected virtual Task<Outcome<ActorToken>> OnAuthenticateAsync(
-            HttpClientOptions options,
+        /// <summary>
+        ///   (virtual method)<br/>
+        ///   Invoked after initial preparation by <see cref="AuthorizeAsync"/>.
+        /// </summary>
+        /// <param name="clientOptions">
+        ///   Specifies options for the client to be used during the authorization.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///   Allows canceling the authorization process.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <remarks>
+        ///   The default implementation simply calls the
+        ///   <see cref="IHttpServiceProvider.AuthorizeAsync"/> method
+        ///   of the <see cref="HttpServiceProvider"/>.
+        /// </remarks>
+        protected virtual async Task<Outcome<ActorToken>> OnAuthorizeAsync(
+            HttpClientOptions clientOptions,
             CancellationToken? cancellationToken)
         {
-            return HttpServiceProvider.AuthenticateAsync(
-                options,
+            return await HttpServiceProvider.AuthorizeAsync(
+                clientOptions,
                 cancellationToken,
                 Logger);
         }
@@ -381,14 +567,23 @@ namespace TetraPak.AspNet.Api
 
             if (string.IsNullOrWhiteSpace(Endpoints.BasePath))
             {
-                client.BaseAddress = new Uri(Endpoints.Host.EnsurePostfix("/"));
+                client.BaseAddress = new Uri(Endpoints.Host!.EnsurePostfix("/"));
                 return clientOutcome;
             }
             
-            client.BaseAddress = new Uri($"{Endpoints.Host.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/').EnsurePostfix("/")}");
+            client.BaseAddress = new Uri($"{Endpoints.Host!.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/').EnsurePostfix("/")}");
             return clientOutcome;
         }
 
+        /// <summary>
+        ///   Initializes the <see cref="BackendService{TEndpoints}"/>
+        /// </summary>
+        /// <param name="endpoints">
+        ///   The service's supported endpoint.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="endpoints"/> was <c>null</c>.
+        /// </exception>
         public BackendService(TEndpoints endpoints)
         {
             ServiceName = endpoints.SectionIdentifier;

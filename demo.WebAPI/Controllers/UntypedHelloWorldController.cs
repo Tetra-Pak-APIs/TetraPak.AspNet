@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
             {
                 case "tx":
                     if (!await this.GetAccessTokenAsync())
-                        return this.UnauthorizedError(
+                        return this.RespondUnauthorizedError(
                             new Exception("Cannot perform Token Exchange. No access token was passed in request"));
                         
                     // note This is an example of how you can use methods and names only to consume a service endpoint:

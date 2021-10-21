@@ -33,7 +33,7 @@ namespace TetraPak.AspNet.Api
         /// <param name="authenticate">
         ///     (optional; default=<c>true</c>)<br/>
         ///     Specifies whether the created client should automatically be configured.
-        ///     Set to false to avoid implicitly invoking the <see cref="AuthenticateAsync"/> method. 
+        ///     Set to false to avoid implicitly invoking the <see cref="AuthorizeAsync"/> method. 
         /// </param>
         /// <returns>
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and, on success, carrying
@@ -50,7 +50,7 @@ namespace TetraPak.AspNet.Api
         ///   Authenticates a specific service. 
         /// </summary>
         /// <param name="options">
-        ///   
+        ///   Options for obtaining a client.
         /// </param>
         /// <param name="cancellationToken">
         ///   (optional)<br/>
@@ -64,7 +64,7 @@ namespace TetraPak.AspNet.Api
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and, on success, carrying
         ///   the requested token as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
-        Task<Outcome<ActorToken>> AuthenticateAsync(
+        Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions options,
             CancellationToken? cancellationToken = null, 
             ILogger logger = null);

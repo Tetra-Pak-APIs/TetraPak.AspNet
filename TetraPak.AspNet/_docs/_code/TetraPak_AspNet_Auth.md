@@ -3,6 +3,7 @@
 
 | Classes | |
 | :--- | :--- |
+| [ClientCredentials](TetraPak_AspNet_Auth_ClientCredentials.md 'TetraPak.AspNet.Auth.ClientCredentials') | Represents a set of client credentials, to reflect a certain "configuration level"<br/>([IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig')). <br/> |
 | [ConfiguredClientCredentialsProvider](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider') | Provides client credentials from the configuration framework.<br/> |
 | [JwtBearerAssertionConfig](TetraPak_AspNet_Auth_JwtBearerAssertionConfig.md 'TetraPak.AspNet.Auth.JwtBearerAssertionConfig') | This code API enables access and manipulation for the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') (appsettings.json)<br/>sub section "JwtBearerAssertion";<br/> |
 | [JwtHelper](TetraPak_AspNet_Auth_JwtHelper.md 'TetraPak.AspNet.Auth.JwtHelper') | Provides convenience- and extension methods to assist in the use of JavaScript Web Tokens (JWT). <br/> |

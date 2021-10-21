@@ -11,21 +11,30 @@ namespace TetraPak.AspNet
     /// <typeparam name="T">
     ///   The <see cref="Type"/> of data included in response <see cref="Data"/> block.
     /// </typeparam>
-    public class ApiDataResponse<T>
+    public class ApiDataResponse<T> : IApiDataResponse
     {
+        internal const string MetaKey = "meta";
+        
+        internal const string DataKey = "data";
+        
         /// <summary>
         ///   The response meta data block. 
         /// </summary>
-        [JsonPropertyName("meta")]
+        [JsonPropertyName(MetaKey)]
         // ReSharper disable UnusedAutoPropertyAccessor.Global
         public ApiMetadata Meta { get; set; }
 
         /// <summary>
         ///   The response data block. 
         /// </summary>
-        [JsonPropertyName("data")]
+        [JsonPropertyName(DataKey)]
         public IEnumerable<T> Data { get; set; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
+
+        /// <summary>
+        ///   Returns all data items as an array of <see cref="object"/>. 
+        /// </summary>
+        public object[] GetDataAsObjectArray() => Data?.Cast<object>().ToArray();
 
 #if NET5_0_OR_GREATER
         /// <summary>
@@ -85,7 +94,7 @@ namespace TetraPak.AspNet
         /// </param>
         public ApiDataResponse(EnumOutcome<T> outcome, int totalCount = -1, string messageId = null)
         {
-            var dataArray = outcome.Value;
+            var dataArray = outcome.Value ?? Array.Empty<T>();
             var count = outcome.Count;
             totalCount = totalCount < 0 ? count : totalCount;
             if (outcome is ChunkOutcome<T> chunkOutcome)
@@ -103,93 +112,6 @@ namespace TetraPak.AspNet
         {
             Meta = new ApiMetadata { Total = 0, MessageId = messageId };
             Data = new T[0];
-        }
-    }
-
-    /// <summary>
-    ///   Used as the meta data block in <see cref="ApiDataResponse{T}"/>. 
-    /// </summary>
-    public class ApiMetadata
-    {
-        /// <summary>
-        ///   The totally number of items available to query
-        ///   (actual data returned is often only a part of available data). 
-        /// </summary>
-        [JsonPropertyName("total")]
-        // ReSharper disable UnusedAutoPropertyAccessor.Global
-        public int Total { get; set; }
-
-        /// <summary>
-        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
-        /// </summary>
-        [JsonPropertyName("id")]
-        public string MessageId { get; set; }
-        // ReSharper restore UnusedAutoPropertyAccessor.Global
-
-        /// <summary>
-        ///   Fluent API to assign the <see cref="MessageId"/> property. 
-        /// </summary>
-        /// <param name="messageId">
-        ///   The message id value.
-        /// </param>
-        /// <returns>
-        ///   <c>this</c> object.
-        /// </returns>
-        public ApiMetadata WithMessageId(string messageId)
-        {
-            MessageId = messageId;
-            return this;
-        }
-        
-        /// <summary>
-        ///   Initializes an empty <see cref="ApiMetadata"/> object. 
-        /// </summary>
-        public ApiMetadata()
-        {
-        }
-
-        /// <summary>
-        ///   Initializes a <see cref="ApiMetadata"/> object and sets the <see cref="Total"/> value.
-        /// </summary>
-        public ApiMetadata(int total)
-        {
-            Total = total;
-        }
-    }
-    
-    /// <summary>
-    ///   Derived from <see cref="ApiMetadata"/> to add "chunked" meta data attributes.
-    /// </summary>
-    public class ApiChunkedMetadata : ApiMetadata
-    {
-        /// <summary>
-        ///   The number of items in the chunk. 
-        /// </summary>
-        [JsonPropertyName("count")]
-        // ReSharper disable UnusedAutoPropertyAccessor.Global
-        public int Count { get; set; }
-
-        /// <summary>
-        ///   The number of items skipped from the total to produce the chunk
-        /// </summary>
-        [JsonPropertyName("skip")]
-        public int Skip { get; set; }
-        // ReSharper restore UnusedAutoPropertyAccessor.Global
-
-        /// <summary>
-        ///   Initializes the <see cref="ApiChunkedMetadata"/> object.
-        /// </summary>
-        /// <param name="chunk">
-        ///   Initializes the <see cref="Count"/> and <see cref="Skip"/> values.
-        /// </param>
-        /// <param name="total">
-        ///   Initializes the <see cref="total"/> value.
-        /// </param>
-        public ApiChunkedMetadata(ReadChunk chunk, int total = -1)
-        {
-            Count = chunk.Count;
-            Skip = chunk.Skip;
-            Total = total < 0 ? chunk.Count : total;
         }
     }
 }

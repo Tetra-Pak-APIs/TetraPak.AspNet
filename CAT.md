@@ -118,7 +118,9 @@ What that means is it should be a reusable "general purpose" API. To make an API
 
 Failing to design a "*business grade*" API, consistent in conventions and format, will mean client development will be costly. 
 
-On the other hand, if you follow [Tetra Pak's API guidelines][dev-portal-api-guidelines] you have a very high chance of creating a successful API as your clients might already have invested in such code components in previous projects that also consume Tetra Pak business APIs. As they are now about to consume your new shiny API, and you stick to the same design principles, conventions, and formats, that client can likely focus on adding code just to deal with the differences, which should be few indeed.
+On the other hand, if you follow [Tetra Pak's API guidelines][guidelines-api-design] you have a very high chance of creating a successful API as your clients might already have invested in such code components in previous projects that also consume Tetra Pak business APIs. As they are now about to consume your new shiny API, and you stick to the same design principles, conventions, and formats, that client can likely focus on adding code just to deal with the differences, which should be few indeed.
+
+See also: [REST API](#rest-api)
 
 ## Callback URL
 
@@ -297,6 +299,91 @@ Alias: [Authentication scheme](#authentication-scheme), [Grant](#grant)
 
 Alias: [Authentication scheme](#authentication-scheme), [Flow](#flow)
 
+## HTTP methods
+
+In any HTTP a verb must be included to describe the requested operation. In [REST APIs](#rest-api) this is how each method is to be implemented, and how to respond for typical outcomes. The following sub section presents each HTTP method with a description on how to implement it in a [RESTful API](#rest-api) and simplified  
+
+### HTTP POST
+
+Creates one or more new resource(s).
+
+```http request
+POST https://api.acme.com/traps
+
+Authorizarion: Bearer 12345677945832409djföwdnci770nlcech3nkjvpe
+Content-Length: 696
+Accept-Encoding: gzip, deflate, br
+
+[
+  {
+    "id": "487629185",
+    "name": "Instant Tunnel",
+    "description": "Apply to cliffside and tunnel will appear instantly",
+    "pictures": [
+       {
+         "url": "https://assets.acme.com/img/FFG4543HAC.png",
+         "alt": "Road runner entering instant tunnel"
+       },
+       {
+         "url": "https://assets.acme.com/img/FFG6712CCD.png",
+         "alt": "Page from manuel on how to use"
+       }
+    ]
+  },
+  {
+    "id": "876593873",
+    "name": "One Genuine Boomerang",
+    "description": "Guaranteed to return",
+    "pictures": [
+       {
+         "url": "https://assets.acme.com/img/DDG7823HAC.png",
+         "alt": "Coyote throwing boomerang"
+       }
+    ]
+  }
+]
+```
+
+#### HTTP POST response
+
+- 201 (Created): Return a list of URLs to new resources
+- 404 (Not found): URL is invalid (eg. "/traps" is not valid)
+- 409 (Conflict): One or more resources are in conflict with existing ones (eg. there is already a resource with same `id`)
+
+```http request
+201 OK
+
+{
+  "meta": {
+    "total": "2"
+  },
+  "data": [
+    "https://api.acmeindustries.com/traps/487629185",
+    "https://api.acmeindustries.com/traps/876593873"
+  ]
+}
+```
+
+```http request
+409 Conflict
+
+{
+  "title": "Id conflict",
+  "description": "Trap 487629185 already exists",
+  "type": "/docs/errors/conflict-create-traps"
+}
+```
+
+
+
+| Method | CRUD           | Response when collection (eg: /orders)                            | Response when item (eg: /order/{id})     |   |
+|--------|----------------|-------------------------------------------------------------------|------------------------------------------|---|
+| POST   | Create         | 201=created (return list of URLs to new resources)                | 201=created (return URL to new resource) |   |
+| GET    | Read           | 200=OK (return data)                                              | 200=OK (return data). 404=Not found      |   |
+| PUT    | Update/Replace | 405=Not allowed (unless possible to update/replace all resources) | 200=OK / 204=No content. 404=Not found   |   |                                                             |   |
+| PATCH    | Update/Modify | 405=Not allowed (unless possible to update/replace all resources) | 200=OK / 204=No content. 404=Not found   |   |                                                             |   |
+
+
 ## Identity
 
 In general terms an all [actors](#actor) have one or more "proofs of identity", or just "identities". In the physical world a person can hold multiple "proofs of identity", such as her driving license, passport, ID card, etc. In .NET an *identity* usually means a "claims identity" (implemented by the [ClaimsIdentity][class-ClaimsIdentity]), which supports a list of [claims](#claim).
@@ -306,6 +393,10 @@ See also: [Actor](#actor)
 As an example; In an ASP.NET API, a [`ControllerBase`][class-ControllerBase]  supports a [`User`][prop-ControllerBase-User] property, of type [ClaimsIdentity][class-ClaimsIdentity], that identifies the [actor](#actor) that initiated the current request, ***if*** that actor was successfully [authenticated](#authentication).
 
 See also: [Authentication](#authentication)
+
+## JSON
+
+-- TODO --
 
 ## JWT Bearer Assertion
 
@@ -388,6 +479,83 @@ See also: [API product](#product), [Developer portal](#developer-portal)
 
 -- TODO -- 
 
+## REST (API)
+
+REST is an acronym for "Representational State Transfer" and is a software architectural style for how to design and implement services, such as APIs. REST was formulated as a response to other styles, such as SOAP web services, back in the nineties, to improve on the following "ilities":
+
+- Scalability
+- Simplicity
+- Modifiability
+- Visibility
+- Portability
+- Reliability
+
+There are many misconceptions about REST as it is not really a technical specification byt rather a set of two "concepts" and six constraints that must be adhered to (with one exception) for a service to be called *RESTful*: 
+
+### Resource based (REST concept)
+
+To put it simple: All your *RESTful* API paths should include nouns only - never verbs. Consider these two HTTP requests: 
+
+  `GET https://api.acme.com/get-trap?id=12345678`
+
+  `GET https://api.acme.com/traps/12345678`
+
+The URL in first request contains a verb, to describe the request (`get-trap`). First of all, this is not necessary since the HTTP request already contains the same verb (`GET`). Also, as you progress and add more capabilities, such as creating resources (`GET https://api.acmeindustries.com/create-trap?id=12345678`), the HTTP method (`GET`) is now in conflict with the verb in the path (`create-trap`). Of course, you could change the HTTP method to `POST` (`POST https://api.acmeindustries.com/create-trap?id=12345678`) but it should be quite clear by now that the path-based verb is not necessary. 
+
+The second request (`GET https://api.acmeindustries.com/traps/12345678`) is resource based in how it locates the type of resources referenced (`traps`) and, in this case, a specific resource identifier (`12345678`). The HTTP method states the type of request (`GET`), which in CRUD terms can be translated to "Read". Sticking to the standardized [HTTP methods](#http-methods) is a good way to simplify your design and avoid deviations from the standard, which is always costly for clients and adds maintenance overhead for your teams.
+
+### Resource representations (REST concept)
+
+All resources, as they gets transferred from server-to-client, or client-to-server, is in some "representational state". The resource is typically represented, partially or wholly, but it's important to understand that it's a *representation* of the resource. The actual resource resides somewhere in its current full state but as a client requests it what is sent to the client is not the actual resource, but a representation of it in a certain (usually the current) state. The client might not need the whole resource for whatever user experience is being implemented so the *representational state* is often limited to just what is needed.   
+
+The format for transferring a resource/state is usually [JSON](#json) or [XLM](#xml) but this may change over time and added capabilities of the API. The actual format chosen is not a criteria for whether or not the API is to be considered *RESTful*.
+
+### Uniform Interface (REST constraint)
+
+This is one point where discussions about *REST* often becomes heated, or the lines get a bit blurred. The idea behind this constraint is to achieve what the constraint implies: *a uniform interface*. When the discussion stays theoretical opinions might differ. But what it usually means, as of 2021, is it's based off of the HTTP specification and does not deviate from it. This means a *RESTful* API is [resource based](#resource-based-rest-concept) (no verbs please in paths please!) and that it sticks to a uniform interpretation/implementation of the [HTTP methods](#http-methods) and use of response status codes.
+
+- POST = creates new resources (Success = 201 Accepted)
+- GET = reads resources (Success = 200 OK) 
+- PUT = replaces existing resource, or creates it if it does not exist (Success = )
+- PATCH = updates/replaces certain elements of an existing resource 
+- DELETE = removes an existing resource
+
+When responding to requests the *uniform interface* constraint also dictates how to interpret/implement the use of standard HTTP status codes, such as 200, 201, 404 and so on. For an API to be considered *RESTful* it is important you, as a designer/coder, doesn't use those codes differently to reflect outcome between different resource endpoints or even between different *RESTful* APIs. See [HTTP methods](#http-methods) for more details on this.
+
+Finally, for a *RESTful* API you should also stick to a uniform transfer format for you HTTP bodies, in requests and responses alike. For Tetra Pak APIs please consult the [Tetra Pak API Guidelines][guidelines-api-design-json]
+
+### Stateless (REST constraint)
+
+Simply put: The server (API) should never support or retain any kind of client state. This basically means that any state transferred from the client is only applicable to the request that transferred. As the client makes subsequent requests the server is completely oblivious as to the previous client state, unless it is also transferred in those requests. It is always the client's responsibility to maintain and transfer its state where applicable to a request.
+
+As an example, this means the client cannot "log on" to the API to create a session that are then maintained by the API as the client makes new requests. Instead, the client is responsible for getting authorized for consuming the API's resources *before* it makes its requests. As the client makes its requests it is responsible for also transferring proof of this authorization, in such a way the API can assert it.
+
+Here's how that usually plays out:
+
+1. Client request authorization from some [authority](#authority) to consume a certain service (API). If successful the [authority](#authority) responds with some sort of token to be included in requests to the service, such as a [bearer token](#bearer-token). It is now the client's responsibility to maintain this token.
+2. Client makes request to the API and adds its [security token](#bearer-token) to the request `Authorization` header.
+3. API validates the [security token](#bearer-token) and finds it to be valid (not fraudulent or expired), and authorizes the client to make its request.
+4. API processes the request but *does not retain* the [security token](#bearer-token) in any shape or form
+5. (repeat items 2 thru 4 for subsequent client requests)
+
+### Client-Server (REST constraint)
+
+A *RESTful* service must be a standalone service. It cannot rely on persistent connections to its clients or to other services it needs for its own operation. What this means is that when, as often is, your *RESTful* API needs data from other services, such as a database or even other APIs, it is in every sense itself a client. This also means that any type of session state (such as [auth](#auth)) must be managed and retained by the service itself. As always, seek to achieve a very high degree of separation of responsibility when designing your service, possible layering it to completely separate its API (service) components from its client components, making them fully independent from each others inner workings.
+
+As an example, if your API offer persistent connectivity, such as [SignalR](#signalr-protocol) for example, to support push functionality to your clients, it cannot be considered a *RESTful* service. It is therefore recommended that, when you need this type of features, separate the "API" service from the "push" service and make them independent services, running in separate processes or, indeed, on different host machines.
+
+### Cacheable (REST constraint)
+
+Quite self-explanatory; this constraint just states that all resources transferred from a *RESTful* service can be cached. The client should adhere to the caching mechanism supported by the *RESTful* service, such as meta data included in the responses that indicates how long the response can be cached, or even any type of negotiation protocol for caching of resources between the client and server. When no such information or negotiation protocol are offered the client are free to implicitly cache resources on its own discretion.
+
+### Layered System (REST constraint)
+
+The *RESTful* service must be able to collaborate as a component in a layered system, for scalability, performance and security. These days this more or less goes without saying but at the time of formulating the *REST* constraints this was considered important. Typically, even as you deploy a small *RESTful* microservice, it will be deployed "behind" a reverse proxy acting as its [sidecar](#sidecar). This is an example of a layered system. For larger services, that needs improved scalability there will also be load balancers helping out and possibly separate caching services to improve the performance.
+
+### Code on Demand (REST optional constraint)
+
+The only optional REST constraint, this one allows (but does not demand) that your *RESTful* API sends code snippets as resources (or part of resources) in its response to clients, effectively "extending" their internal logics. This can be any type of distributable code, such as JavaScript or Java applets. In reality this is rarely supported and can be considered a somewhat "exotic" feature.
+
 ## Reusable API
 
 See: [Business API](#business-api)
@@ -419,6 +587,13 @@ An [API](#api) that supports another [API](#api), resolving typical (cross-cutti
 The *sidecar* is implemented as a [reverse proxy](#reverse-proxy), usually hosted by the [API management system](#api-management-system). The *sidecar* can implement any security pattern (policy) needed by the API owner.
 
 See also: [this article](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar), [JWT bearer assertion security pattern](#jwt-bearer-assertion)
+
+## SignalR (protocol)
+
+A free and open-source software library for Microsoft ASP.NET that allows server code to send asynchronous notifications to client-side web applications. The library includes server-side and client-side JavaScript components.
+
+See also: [Microsoft's official SignalR home page][signalr-official-home]
+
 
 ## Terminus (API)
 
@@ -518,6 +693,10 @@ An [API](#api) that consumes data from other services. Building *transitive APIs
 
 See also: [Terminus API](#terminus-api)
 
+## XML
+
+-- TODO --
+
 
 [class-ClaimsIdentity]: https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsidentity
 [class-ControllerBase]: https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase
@@ -531,7 +710,8 @@ See also: [Terminus API](#terminus-api)
 
 [dev-portal]: https://developer.tetrapak.com
 [dev-portal-test]: https://developer-test.tetrapak.com
-[dev-portal-api-guidelines]: https://developer.tetrapak.com/products/api-design
+[guidelines-api-design]: https://developer.tetrapak.com/products/api-design
+[guidelines-api-design-json]: https://developer.tetrapak.com/products/api-design/json-format
 
 [nuget-tetrapak-common]: https://www.nuget.org/packages/TetraPak.Common
 
@@ -544,3 +724,4 @@ See also: [Terminus API](#terminus-api)
 [nuget-tetrapak-aspnet-api]: https://www.nuget.org/packages/TetraPak.AspNet.Api
 
 [scenario-custom-claims-transformation]: ./Scenarios.md#custom-claims-transformation
+[signalr-official-home]: https://dotnet.microsoft.com/apps/aspnet/signalr

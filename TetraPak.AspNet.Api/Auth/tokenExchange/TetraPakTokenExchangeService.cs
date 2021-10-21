@@ -60,10 +60,14 @@ namespace TetraPak.AspNet.Api.Auth
                 return cachedOutcome;
             
             using var client = new HttpClient();
-            if (args.Credentials is not BasicAuthCredentials basicAuthCredentials)
-                return Outcome<TokenExchangeResponse>.Fail(
-                    new InvalidOperationException(
-                        $"Tetra Pak token exchange expects credentials to be of type {typeof(BasicAuthCredentials)}"));
+            var credentials = args.Credentials;
+            if (credentials is not BasicAuthCredentials basicAuthCredentials)
+            {
+                basicAuthCredentials = new BasicAuthCredentials(credentials.Identity, credentials.Secret);
+            }
+                // return Outcome<TokenExchangeResponse>.Fail( obsolete
+                //     new InvalidOperationException(
+                //         $"Tetra Pak token exchange expects credentials to be of type {typeof(BasicAuthCredentials)}"));
                 
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
@@ -83,6 +87,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (!response.IsSuccessStatusCode)
                 {
                     var ex = new HttpException(response);
+                    var body = await response.Content.ReadAsStringAsync();
                     Logger.Error(ex, "Token exchange failure", GetMessageId());
                     return Outcome<TokenExchangeResponse>.Fail(ex);
                 }

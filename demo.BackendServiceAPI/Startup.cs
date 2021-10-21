@@ -1,3 +1,4 @@
+using demo.BackendServiceAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,8 +26,10 @@ namespace demo.BackendServiceAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "demo.BackendServiceAPI", Version = "v1"});
             });
-            services.AddTetraPakApiAccessTokenAuthentication();
-            services.AddTetraPakApiClaimsTransformation();
+            // services.AddTetraPakApiAccessTokenAuthentication(); obsolete
+            // services.AddTetraPakApiClaimsTransformation();
+            services.AddTetraPakJwtBearerAssertion();
+            services.AddSingleton<GreetingsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +46,7 @@ namespace demo.BackendServiceAPI
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseTetraPakApiAuthentication(env);
 
             app.UseAuthorization();
 

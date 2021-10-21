@@ -5,8 +5,8 @@
 > If you're a seasoned ASP.NET Core developer and just want to quickly integrate your web solution with Tetra Pak's Auth Services these might be faster options:*
 > - *[Web App recipe][recipe-app]: Build a small integrated web app*
 > - *[Web App Cheat Sheet][cheat-app]: Check list to quickly integrate an existing Web App*
-> - *[Web API recipe][tetra-pak-aspnet-api-recipe]: Build a small integrated web app*
-> - *[Web API Cheat Sheet][tetra-pak-aspnet-api-cheat-sheet]: Check list to quickly integrate an existing Web App*
+> - *[Web API recipe][recipe-api]: Build a small integrated web app*
+> - *[Web API Cheat Sheet][cheat-api]: Check list to quickly integrate an existing Web API*
 > 
 > *Also, if you have already started integrating your web solution but are facing issues then you might find this [troubleshooting guide][tetra-pak-aspnet-scenarios] useful.*  
  

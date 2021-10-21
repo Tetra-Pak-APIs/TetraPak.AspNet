@@ -12,17 +12,17 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [TetraPak.AspNet.IMessageIdProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IMessageIdProvider 'TetraPak.AspNet.IMessageIdProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_ServiceInvalidEndpoint(TetraPak_AspNet_AmbientData)'></a>
-## ServiceInvalidEndpoint.ServiceInvalidEndpoint(AmbientData) Constructor
+<a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_ServiceInvalidEndpoint(TetraPak_AspNet_TetraPakConfig)'></a>
+## ServiceInvalidEndpoint.ServiceInvalidEndpoint(TetraPakConfig) Constructor
 Initializes the [ServiceInvalidEndpoint](TetraPak_AspNet_Api_ServiceInvalidEndpoint.md 'TetraPak.AspNet.Api.ServiceInvalidEndpoint').  
 This constructor is mainly intended for the use by the dependency injection services.   
 ```csharp
-public ServiceInvalidEndpoint(TetraPak.AspNet.AmbientData ambientData);
+public ServiceInvalidEndpoint(TetraPak.AspNet.TetraPakConfig tetraPakConfig);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_ServiceInvalidEndpoint(TetraPak_AspNet_AmbientData)_ambientData'></a>
-`ambientData` [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')  
-Provides ambient data and configuration.  
+<a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_ServiceInvalidEndpoint(TetraPak_AspNet_TetraPakConfig)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
+Initializes [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig').  
   
   
 ### Methods
@@ -40,7 +40,7 @@ A collection of [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/S
 ## ServiceInvalidEndpoint.GetMessageId(bool) Method
 Retrieves a request message id if available.   
 ```csharp
-public string GetMessageId(bool enforce=false);
+public string? GetMessageId(bool enforce=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_ServiceInvalidEndpoint_GetMessageId(bool)_enforce'></a>

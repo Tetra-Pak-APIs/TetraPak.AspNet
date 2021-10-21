@@ -11,7 +11,7 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public class ServiceInvalidEndpoint : ServiceEndpoint, IMessageIdProvider
     {
-        IEnumerable<Exception> _issues;
+        readonly IEnumerable<Exception> _issues;
 
         /// <inheritdoc />
         public string? GetMessageId(bool enforce = false) => AmbientData.GetMessageId(enforce);
@@ -24,13 +24,13 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public IEnumerable<Exception> GetIssues() => _issues;
 
-        internal ServiceInvalidEndpoint WithInformation(string name, IEnumerable<Exception> issues)
-        {
-            Name = name;
-            StringValue = $"(name={name})"; 
-            _issues = issues;
-            return this;
-        }
+        // internal ServiceInvalidEndpoint WithInformation(string name, IEnumerable<Exception> issues) obsolete
+        // {
+        //     Name = name;
+        //     StringValue = $"(name={name})"; 
+        //     _issues = issues;
+        //     return this;
+        // }
 
         /// <summary>
         ///   Initializes the <see cref="ServiceInvalidEndpoint"/>.
@@ -45,10 +45,11 @@ namespace TetraPak.AspNet.Api
             _issues = null!;
         }
         
-        public ServiceInvalidEndpoint(string? stringValue) 
-        : base(stringValue)
+        public ServiceInvalidEndpoint(string name, IEnumerable<Exception> issues) 
+        : base($"[{name} - INVALID ENDPOINT]")
         {
-            _issues = null!;
+            Name = name;
+            _issues = issues;
         }
     }
 }

@@ -146,10 +146,10 @@ namespace TetraPak.AspNet
         public bool IsAuthIdentifier(string identifier) => CheckIsAuthIdentifier(identifier);
         
         /// <inheritdoc />
-        protected override FieldInfo? OnGetField(string fieldName)
+        protected override FieldInfo? OnGetField(string fieldName, bool inherited = false) // obsolete? (can't see this is doing anything special)
         {
             var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-            return field ?? base.OnGetField(fieldName);
+            return field ?? base.OnGetField(fieldName, inherited);
         }
 
         /// <summary>
@@ -378,7 +378,7 @@ namespace TetraPak.AspNet
         /// </summary>
         /// <see cref="GetClientIdAsync"/>
         [StateDump]
-        public virtual string ClientId
+        public virtual string? ClientId
         {
             get
             {

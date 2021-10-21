@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_sdk", "_sdk", "{F391058B-E45D-4B35-9265-420A1EB63D06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet", "TetraPak.AspNet\TetraPak.AspNet.csproj", "{63383278-E7CF-4240-9BC5-59274C2DFDE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.AspNet.Api", "TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj", "{4C00D9A1-5DD0-437B-9D14-86F429AECF43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.BackendServiceAPI", "demo.BackendServiceAPI\demo.BackendServiceAPI.csproj", "{74731394-61E3-4D4E-9916-53FCCBE98BA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.WebAPI", "demo.WebAPI\demo.WebAPI.csproj", "{5864C132-892B-4351-B71A-509103077DC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetraPak.Common", "..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj", "{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63383278-E7CF-4240-9BC5-59274C2DFDE1} = {F391058B-E45D-4B35-9265-420A1EB63D06}
+		{4C00D9A1-5DD0-437B-9D14-86F429AECF43} = {F391058B-E45D-4B35-9265-420A1EB63D06}
+		{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793} = {F391058B-E45D-4B35-9265-420A1EB63D06}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63383278-E7CF-4240-9BC5-59274C2DFDE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63383278-E7CF-4240-9BC5-59274C2DFDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63383278-E7CF-4240-9BC5-59274C2DFDE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63383278-E7CF-4240-9BC5-59274C2DFDE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C00D9A1-5DD0-437B-9D14-86F429AECF43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C00D9A1-5DD0-437B-9D14-86F429AECF43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C00D9A1-5DD0-437B-9D14-86F429AECF43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C00D9A1-5DD0-437B-9D14-86F429AECF43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74731394-61E3-4D4E-9916-53FCCBE98BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74731394-61E3-4D4E-9916-53FCCBE98BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74731394-61E3-4D4E-9916-53FCCBE98BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74731394-61E3-4D4E-9916-53FCCBE98BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5864C132-892B-4351-B71A-509103077DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5864C132-892B-4351-B71A-509103077DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5864C132-892B-4351-B71A-509103077DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5864C132-892B-4351-B71A-509103077DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D46F5EC-A67D-4C22-81C5-EC91CAA7F793}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

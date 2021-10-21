@@ -72,7 +72,7 @@ namespace TetraPak.AspNet.Api
             if (!authenticate) 
                 return Outcome<HttpClient>.Success(client);
 
-            var authOutcome = await AuthenticateAsync(options, cancellationToken, logger);
+            var authOutcome = await AuthorizeAsync(options, cancellationToken, logger);
             if (!authOutcome)
             {
                 var exception = new HttpException(
@@ -84,7 +84,7 @@ namespace TetraPak.AspNet.Api
             }
 
             var token = authOutcome.Value;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Identity);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Identity);
             return Outcome<HttpClient>.Success(client);
         }
 
@@ -95,7 +95,7 @@ namespace TetraPak.AspNet.Api
         protected ServiceDiagnostics GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(null); 
 
         /// <inheritdoc />
-        public async Task<Outcome<ActorToken>> AuthenticateAsync(
+        public async Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions options,
             CancellationToken? cancellationToken = null,
             ILogger logger = null)
@@ -256,7 +256,7 @@ namespace TetraPak.AspNet.Api
                 if (!ccOutcome)
                     throw ccOutcome.Exception;
 
-                var token = ccOutcome.Value.AccessToken;
+                var token = ccOutcome.Value!.AccessToken;
                 return Outcome<ActorToken>.Success(token);
             }
             catch (Exception ex)

@@ -46,19 +46,19 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 [ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
 No [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') service could be obtained from service locator.  
   
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)'></a>
-## ControllerExtensions.TryGetTetraPakAuthConfig(Controller, TetraPakConfig) Method
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)'></a>
+## ControllerExtensions.TryGetTetraPakConfig(Controller, TetraPakConfig) Method
 Attempts obtaining the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') instance.  
 ```csharp
-public static bool TryGetTetraPakAuthConfig(this Microsoft.AspNetCore.Mvc.Controller self, out TetraPak.AspNet.TetraPakConfig config);
+public static bool TryGetTetraPakConfig(this Microsoft.AspNetCore.Mvc.Controller self, out TetraPak.AspNet.TetraPakConfig tetraPakConfig);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_self'></a>
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_self'></a>
 `self` [Microsoft.AspNetCore.Mvc.Controller](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.Controller 'Microsoft.AspNetCore.Mvc.Controller')  
 The extended [Microsoft.AspNetCore.Mvc.Controller](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.Controller 'Microsoft.AspNetCore.Mvc.Controller') instance.  
   
-<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakAuthConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+<a name='TetraPak_AspNet_ControllerExtensions_TryGetTetraPakConfig(Microsoft_AspNetCore_Mvc_Controller_TetraPak_AspNet_TetraPakConfig)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 Passes back the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') instance if successful; otherwise `null`.   
   
 #### Returns

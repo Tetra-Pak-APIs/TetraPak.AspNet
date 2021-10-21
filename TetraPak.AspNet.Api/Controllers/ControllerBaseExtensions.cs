@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -70,6 +72,11 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   (optional)<br/>
         ///   A <see cref="ReadChunk"/> object specifying the data requested.
         /// </param>
+        /// <param name="okStatusCode">
+        ///   (optional; default=<see cref="HttpOkStatusCode.Auto"/>)<br/>
+        ///   Specifies a HTTP (successful) status code to be used (leave as <see cref="HttpOkStatusCode.Auto"/>
+        ///   to allow the <see cref="IHttpOkResponsePolicy"/> to decide, based on REST best practices.
+        /// </param>
         /// <returns>
         ///   An <see cref="OkObjectResult"/> object.
         /// </returns>
@@ -80,25 +87,54 @@ namespace TetraPak.AspNet.Api.Controllers
             this ControllerBase self, 
             object? data, 
             int totalCount = -1, 
-            ReadChunk? chunk = null)
+            ReadChunk? chunk = null,
+            HttpOkStatusCode okStatusCode = HttpOkStatusCode.Auto)
         {
             var messageId = self.GetMessageId();
+
             if (data is null)
-                return new OkObjectResult(new ApiDataResponse<object>(Array.Empty<object>(), messageId: messageId));
-            
+                return applyPolicy(
+                    new OkObjectResult(new ApiDataResponse<object>(Array.Empty<object>(), messageId: messageId)));
+
+            if (data is DynamicEntity dynamicEntity)
+            {
+                var nisse = dynamicEntityResponse();
+                return applyPolicy(
+                    new OkObjectResult(nisse));
+            }
+
             if (data.GetType().IsGenericBase(typeof(ApiDataResponse<>))) 
-                return new OkObjectResult(data);
+                return applyPolicy(
+                    new OkObjectResult(data));
             
             if (!data.IsCollection(out _, out var items, out var count))
-                return new OkObjectResult(new ApiDataResponse<object>(new[] {data}, messageId: messageId));
+                return applyPolicy(
+                    new OkObjectResult(new ApiDataResponse<object>(new[] {data}, messageId: messageId)));
             
             totalCount = totalCount < 0 ? count : totalCount;
             var array = items.EnumerableToArray();
-            return new OkObjectResult(new ApiDataResponse<object>(
+            return applyPolicy(
+                new OkObjectResult(new ApiDataResponse<object>(
                 array,
                 chunk?.Skip ?? -1, 
                 totalCount,
-                messageId));
+                messageId)));
+
+            OkObjectResult applyPolicy(OkObjectResult result)
+            {
+                if (okStatusCode != HttpOkStatusCode.Auto)
+                    return result;
+                
+                var responsePolicy = HttpOkResponsePolicyHelper.GetHttpOkResponsePolicy();
+                return responsePolicy.ApplyHttpResponsePolicy(self.HttpContext, result);
+            }
+            
+            object dynamicEntityResponse()
+            {
+                return !dynamicEntity.IsApiDataResponse(out var apiDataResponse) 
+                    ? new ApiDataResponse<object>(new[] { dynamicEntity }, messageId: messageId) 
+                    : apiDataResponse;
+            }
         }
 
         /// <summary>
@@ -150,8 +186,8 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   to be included in the response.  
         ///   </para>
         /// </remarks>
-        /// <seealso cref="RespondOk"/>
-        /// <seealso cref="RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>
+        /// <seealso cref="RespondOk(ControllerBase,HttpOkStatusCode)"/>
+        /// <seealso cref="RespondOk(ControllerBase,object?,int,TetraPak.ReadChunk?,HttpOkStatusCode)"/>
         public static async Task<ActionResult> RespondAsync<T>(
             this ControllerBase self,
             Outcome<T> outcome,
@@ -161,7 +197,10 @@ namespace TetraPak.AspNet.Api.Controllers
         {
             if (!outcome)
                 return self.RespondError(outcome.Exception);
-            
+
+            if (self.IsRequestCancelled())
+                return self.RespondCancelled();
+
             if (responseDelegate is {})
             {
                 try
@@ -189,6 +228,90 @@ namespace TetraPak.AspNet.Api.Controllers
                 totalCount, 
                 chunk);
         }
+        
+        /// <summary>
+        ///   Returns a data body with a specific HTTP status code. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="statusCode">
+        ///   The <see cref="HttpStatusCode"/> to be returned.
+        /// </param>
+        /// <param name="data">
+        ///   The <see cref="ApiDataResponse{T}"/> data to be included in the response.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondStatus<T>(
+            this ControllerBase self, 
+            HttpStatusCode statusCode,
+            ApiDataResponse<T> data)
+        {
+            return self.StatusCode((int)statusCode, data);
+        }
+
+        /// <summary>
+        ///   Returns a data body with a specific HTTP status code. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="statusCode">
+        ///   The <see cref="HttpStatusCode"/> to be returned.
+        /// </param>
+        /// <param name="outcome">
+        ///   An outcome to be transformed into the returned body.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondStatus<T>(
+            this ControllerBase self,
+            HttpStatusCode statusCode,
+            EnumOutcome<T> outcome)
+        {
+            var data = new ApiDataResponse<T>(outcome);
+            return self.RespondStatus(statusCode, data);
+        }
+
+        /// <summary>
+        ///   Returns a data body with a specific HTTP status code. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="statusCode">
+        ///   The <see cref="HttpStatusCode"/> to be returned.
+        /// </param>
+        /// <param name="outcome">
+        ///   An outcome to be transformed into the returned body.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondStatus<T>(
+            this ControllerBase self,
+            HttpStatusCode statusCode,
+            Outcome<T> outcome)
+        {
+            if (outcome)
+                return self.RespondStatus(
+                    statusCode,
+                    new ApiDataResponse<T>(EnumOutcome<T>.Success(new[] { outcome.Value! })));
+
+            if (outcome.Value is null)
+                return self.RespondStatus(
+                    statusCode,
+                    new ApiDataResponse<T>(EnumOutcome<T>.Fail(outcome.Exception)));
+
+            return self.RespondStatus(
+                statusCode,
+                new ApiDataResponse<T>(EnumOutcome<T>.Fail(
+                    new[] { outcome.Value! }, 
+                    outcome.Exception)));
+        }
 
         /// <summary>
         ///   Constructs and returns an 'OK' (HTTP status code 200) response from an <see cref="EnumOutcome{T}"/> object. 
@@ -210,25 +333,80 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="ObjectResult"/> object.
         /// </returns>
         /// <seealso cref="ApiDataResponse{T}"/>
-        /// <seealso cref="RespondOk"/>
-        /// <seealso cref="RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)"/>
-        public static OkObjectResult RespondOk<T>(this ControllerBase self, EnumOutcome<T> outcome, int totalCount = -1)
+        /// <seealso cref="RespondOk(ControllerBase,HttpOkStatusCode)"/>
+        /// <seealso cref="RespondOk(ControllerBase,object?,int,TetraPak.ReadChunk?,HttpOkStatusCode)"/>
+        public static OkObjectResult RespondOk<T>(
+            this ControllerBase self,
+            EnumOutcome<T> outcome, 
+            int totalCount = -1)
         {
-            return self.Ok(new ApiDataResponse<T>(outcome, totalCount));
+            return HttpOkResponsePolicyHelper.GetHttpOkResponsePolicy()
+                .ApplyHttpResponsePolicy(
+                    self.HttpContext, 
+                    self.Ok(new ApiDataResponse<T>(outcome, totalCount)));
         }
-        
+
         /// <summary>
-        ///   Constructs and returns an empty 'OK' (HTTP status code 200) response.
+        ///   Constructs and returns an empty "successful" response.
         /// </summary>
         /// <param name="self">
         ///   The extended <see cref="ControllerBase"/> object.
         /// </param>
+        /// <param name="statusCode">
+        ///   (optional; default=<see cref="HttpOkStatusCode.Auto"/>)<br/>
+        ///   Specifies the status code to be returned for the successful operation.
+        /// </param>
         /// <returns>
         ///   An <see cref="ObjectResult"/> object.
         /// </returns>
-        public static OkObjectResult RespondOk(this ControllerBase self)
+        public static OkObjectResult RespondOk(this ControllerBase self, HttpOkStatusCode statusCode = HttpOkStatusCode.Auto)
         {
-            return self.Ok(ApiDataResponse<object>.Empty(self.GetMessageId()));
+            return HttpOkResponsePolicyHelper.GetHttpOkResponsePolicy()
+                .ApplyHttpResponsePolicy(
+                    self.HttpContext,
+                    self.Ok(ApiDataResponse<object>.Empty(self.GetMessageId())));
+        }
+
+        /// <summary>
+        ///   Constructs and returns a 'Created' (HTTP status code 201) response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="urls">
+        ///   One or more URLs to locate the created resource(8). 
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondCreatedOk(this ControllerBase self, params string[] urls)
+        {
+            if (!urls.Any())
+                return self.StatusCode((int)HttpStatusCode.Created);
+
+            var data = new ApiDataResponse<string>(EnumOutcome<string>.Success(urls));
+            return self.RespondStatus(HttpStatusCode.Created, data);
+        }
+
+        /// <summary>
+        ///   Constructs and returns a 'Accepted' (HTTP status code 201) response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="urls">
+        ///   One or more URLs to locate the created resource(8). 
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondAcceptedOk(this ControllerBase self, params string[] urls)
+        {
+            if (!urls.Any())
+                return self.StatusCode((int)HttpStatusCode.Accepted);
+
+            var data = new ApiDataResponse<string>(EnumOutcome<string>.Success(urls));
+            return self.RespondStatus(HttpStatusCode.Accepted, data);
         }
 
         /// <summary>
@@ -247,7 +425,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondErrorExpectedQueryParameter(
+        public static ActionResult RespondExpectedQueryParameterError(
             this ControllerBase self, 
             string queryParameterName, 
             string? example = null)
@@ -270,7 +448,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult UnauthorizedError(this ControllerBase self, Exception error)
+        public static ActionResult RespondUnauthorizedError(this ControllerBase self, Exception error)
         {
             return self.RespondError(HttpStatusCode.Unauthorized, error);
         }
@@ -289,7 +467,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
         /// <seealso cref="RespondError(Microsoft.AspNetCore.Mvc.ControllerBase,System.Exception)"/>
-        public static ActionResult InternalServerError(this ControllerBase self, Exception error)
+        public static ActionResult RespondInternalServerError(this ControllerBase self, Exception error)
         {
             return self.RespondError(HttpStatusCode.InternalServerError, error);
         }
@@ -309,11 +487,11 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </returns>
         /// <remarks>
         ///   This method will automatically look for an HTTP status code in the <paramref name="error"/>.
-        ///   If none can be resolved the <see cref="InternalServerError"/> method is invoked, to
+        ///   If none can be resolved the <see cref="RespondInternalServerError"/> method is invoked, to
         ///   produce a generic status code of 500 (<see cref="HttpStatusCode.InternalServerError"/>).
         /// </remarks>
         /// <seealso cref="RespondError(ControllerBase,HttpStatusCode,Exception)"/>
-        /// <seealso cref="InternalServerError"/>
+        /// <seealso cref="RespondInternalServerError"/>
         public static ActionResult RespondError(this ControllerBase self, Exception error)
         {
             if (error is HttpException httpException)
@@ -323,7 +501,7 @@ namespace TetraPak.AspNet.Api.Controllers
                     new ApiErrorResponse(error.Message, self.GetMessageId()));
             }
 
-            return self.InternalServerError(error);
+            return self.RespondInternalServerError(error);
         }
 
         /// <summary>
@@ -357,6 +535,37 @@ namespace TetraPak.AspNet.Api.Controllers
                 (int) status,
                 errorResponse);
         }
+
+        /// <summary>
+        ///   Constructs and returns a "Bad Request" error response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="message">
+        ///   A textual message describing the issue.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondBadRequestError(this ControllerBase self, string message)
+            => self.RespondError(HttpStatusCode.BadRequest, new Exception(message));
+        
+
+        /// <summary>
+        ///   Constructs and returns a "Bad Request" error response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="error">
+        ///   An <see cref="Exception"/> describing the issue.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondBadRequestError(this ControllerBase self, Exception error)
+            => self.RespondError(HttpStatusCode.BadRequest, error); 
 
         /// <summary>
         ///   Gets a backend service of a specified <see cref="Type"/> (implementing <see cref="IBackendService"/>).
@@ -395,7 +604,7 @@ namespace TetraPak.AspNet.Api.Controllers
             string? serviceName = null) 
             where TBackendService : IBackendService
         {
-            var outcome = self.GetService<TBackendService>(serviceName);
+            var outcome = self.GetBackendService<TBackendService>(serviceName);
             if (outcome)
                 return outcome.Value!;
             
@@ -506,12 +715,38 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
+        /// <seealso cref="LogTrace(ControllerBase,Func{string},string?)"/>
         public static void LogTrace(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config?.Logger.Trace(message, messageId);
+            config!.Logger.Trace(message, messageId);
+        }
+        
+        /// <summary>
+        ///   Safely submits a message to the logs with log level <see cref="LogLevel.Trace"/>. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="messageHandler">
+        ///   A message handler (only invoked when <see cref="LogLevel.Trace"/> is enabled).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
+        /// <remarks>
+        ///   If no logging is configured the call will simply be ignored.
+        /// </remarks>
+        /// <seealso cref="LogTrace(ControllerBase,string,string?)"/>
+        public static void LogTrace(this ControllerBase self, Func<string> messageHandler, string? messageId = null)
+        {
+            if (!self.TryGetTetraPakApiConfig(out var config))
+                return;
+            
+            config!.Logger.Trace(messageHandler, messageId);
         }
 
         /// <summary>
@@ -530,12 +765,38 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
+        /// <seealso cref="LogDebug(ControllerBase,Func{string},string?)"/>
         public static void LogDebug(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config?.Logger.Debug(message, messageId);
+            config!.Logger.Debug(message, messageId);
+        }
+        
+        /// <summary>
+        ///   Safely submits a message to the logs with log level <see cref="LogLevel.Debug"/>. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="messageHandler">
+        ///   A message handler (only invoked when <see cref="LogLevel.Debug"/> is enabled).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
+        /// <remarks>
+        ///   If no logging is configured the call will simply be ignored.
+        /// </remarks>
+        /// <seealso cref="LogDebug(ControllerBase,string,string?)"/>
+        public static void LogDebug(this ControllerBase self, Func<string> messageHandler, string? messageId = null)
+        {
+            if (!self.TryGetTetraPakApiConfig(out var config))
+                return;
+            
+            config!.Logger.Debug(messageHandler, messageId);
         }
 
         /// <summary>
@@ -554,12 +815,38 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
+        /// <seealso cref="LogInformation(ControllerBase,Func{string},string?)"/>
         public static void LogInformation(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config?.Logger.Information(message, messageId);
+            config!.Logger.Information(message, messageId);
+        }
+        
+        /// <summary>
+        ///   Safely submits a message to the logs with log level <see cref="LogLevel.Information"/>. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="messageHandler">
+        ///   A message handler (only invoked when <see cref="LogLevel.Information"/> is enabled).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
+        /// <remarks>
+        ///   If no logging is configured the call will simply be ignored.
+        /// </remarks>
+        /// <seealso cref="LogInformation(ControllerBase,string,string?)"/>
+        public static void LogInformation(this ControllerBase self, Func<string> messageHandler, string? messageId = null)
+        {
+            if (!self.TryGetTetraPakApiConfig(out var config))
+                return;
+            
+            config!.Logger.Information(messageHandler, messageId);
         }
 
         /// <summary>
@@ -578,12 +865,38 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
+        /// <seealso cref="LogWarning(ControllerBase,Func{string},string?)"/>
         public static void LogWarning(this ControllerBase self, string message, string? messageId = null)
         {
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config?.Logger.Warning(message, messageId);
+            config!.Logger.Warning(message, messageId);
+        }
+        
+        /// <summary>
+        ///   Safely submits a message to the logs with log level <see cref="LogLevel.Warning"/>. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="messageHandler">
+        ///   A message handler (only invoked when <see cref="LogLevel.Warning"/> is enabled).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
+        /// <remarks>
+        ///   If no logging is configured the call will simply be ignored.
+        /// </remarks>
+        /// <seealso cref="LogWarning(ControllerBase,string,string?)"/>
+        public static void LogWarning(this ControllerBase self, Func<string> messageHandler, string? messageId = null)
+        {
+            if (!self.TryGetTetraPakApiConfig(out var config))
+                return;
+            
+            config!.Logger.Warning(messageHandler, messageId);
         }
 
         /// <summary>
@@ -605,6 +918,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   If no logging is configured the call will simply be ignored.
         /// </remarks>
+        /// <seealso cref="LogError(ControllerBase,Exception,Func{string},string?)"/>
         public static void LogError(
             this ControllerBase self,
             Exception exception, 
@@ -615,6 +929,38 @@ namespace TetraPak.AspNet.Api.Controllers
                 return;
             
             config?.Logger.Error(exception, message, messageId);
+        }
+        
+        /// <summary>
+        ///   Safely submits a message to the logs with log level <see cref="LogLevel.Error"/>. 
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="exception">
+        ///   The exception to be logged.
+        /// </param>
+        /// <param name="messageHandler">
+        ///   A message handler (only invoked when <see cref="LogLevel.Error"/> is enabled).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
+        /// <remarks>
+        ///   If no logging is configured the call will simply be ignored.
+        /// </remarks>
+        /// <seealso cref="LogError(ControllerBase,Exception,string,string?)"/>
+        public static void LogError(
+            this ControllerBase self,
+            Exception exception, 
+            Func<string> messageHandler, 
+            string? messageId = null)
+        {
+            if (!self.TryGetTetraPakApiConfig(out var config))
+                return;
+            
+            config!.Logger.Error(exception, messageHandler, messageId);
         }
 
         /// <summary>
@@ -680,6 +1026,39 @@ namespace TetraPak.AspNet.Api.Controllers
             {
                 return Outcome<ApiErrorResponse>.Fail(ex);
             }
+        }
+
+        /// <summary>
+        ///   Constructs a resource locator for a specific resource id.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended controller.
+        /// </param>
+        /// <param name="id">
+        ///   The resource id.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="string"/> resource locator.
+        /// </returns>
+        public static ResourceLocator ResourceLocatorForId(this ControllerBase self, string id)
+            => self.Request.ResourceLocatorForId(id);
+        
+        
+        /// <summary>
+        ///   Constructs a resource locator for a specific resource id.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended HTTP request.
+        /// </param>
+        /// <param name="id">
+        ///   The resource id.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="string"/> resource locator.
+        /// </returns>
+        public static ResourceLocator ResourceLocatorForId(this HttpRequest self, string id)
+        {
+            return new ResourceLocator($"{self.Path}/{id}");
         }
     }
 }

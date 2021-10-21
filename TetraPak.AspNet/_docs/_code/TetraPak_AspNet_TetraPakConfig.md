@@ -102,10 +102,12 @@ public string? CallbackPath { get; set; }
 ## TetraPakConfig.ClientId Property
 Gets a configured client id at this configuration level.  
 ```csharp
-public virtual string ClientId { get; set; }
+public virtual string? ClientId { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [ClientId](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_ClientId 'TetraPak.AspNet.Auth.IServiceAuthConfig.ClientId')  
   
 <a name='TetraPak_AspNet_TetraPakConfig_ClientSecret'></a>
 ## TetraPakConfig.ClientSecret Property
@@ -115,6 +117,8 @@ public virtual string? ClientSecret { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [ClientSecret](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_ClientSecret 'TetraPak.AspNet.Auth.IServiceAuthConfig.ClientSecret')  
 #### See Also
 - [GetClientSecretAsync(AuthContext, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_GetClientSecretAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')
   
@@ -206,7 +210,7 @@ Implements [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNe
 Specifies the source for identity claims (see [TetraPakIdentitySource](TetraPak_AspNet_Auth_TetraPakIdentitySource.md 'TetraPak.AspNet.Auth.TetraPakIdentitySource')),  
 such as [RemoteService](TetraPak_AspNet_Auth_TetraPakIdentitySource.md#TetraPak_AspNet_Auth_TetraPakIdentitySource_RemoteService 'TetraPak.AspNet.Auth.TetraPakIdentitySource.RemoteService') or [IdToken](TetraPak_AspNet_Auth_TetraPakIdentitySource.md#TetraPak_AspNet_Auth_TetraPakIdentitySource_IdToken 'TetraPak.AspNet.Auth.TetraPakIdentitySource.IdToken')).  
 ```csharp
-public TetraPak.AspNet.Auth.TetraPakIdentitySource IdentitySource { get; set; }
+public TetraPak.AspNet.Auth.TetraPakIdentitySource IdentitySource { get; }
 ```
 #### Property Value
 [TetraPakIdentitySource](TetraPak_AspNet_Auth_TetraPakIdentitySource.md 'TetraPak.AspNet.Auth.TetraPakIdentitySource')
@@ -365,6 +369,8 @@ public TetraPak.MultiStringValue Scope { get; set; }
 ```
 #### Property Value
 [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
+
+Implements [Scope](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_Scope 'TetraPak.AspNet.Auth.IServiceAuthConfig.Scope')  
 #### See Also
 - [GetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_GetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakConfig.GetScopeAsync(TetraPak.AspNet.AuthContext, TetraPak.MultiStringValue?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')
   
@@ -396,6 +402,26 @@ public string UserInformationUrl { get; }
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
   
 ### Methods
+<a name='TetraPak_AspNet_TetraPakConfig_CheckIsAuthIdentifier(string)'></a>
+## TetraPakConfig.CheckIsAuthIdentifier(string) Method
+Examines a textual identifier and returns a value to indicate whether it is considered  
+one of the identifiers reserved for 'auth' purposes.  
+```csharp
+public static bool CheckIsAuthIdentifier(string identifier);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakConfig_CheckIsAuthIdentifier(string)_identifier'></a>
+`identifier` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The textual identifier being examined.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [identifier](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_CheckIsAuthIdentifier(string)_identifier 'TetraPak.AspNet.TetraPakConfig.CheckIsAuthIdentifier(string).identifier') is considered a reserved 'auth' identifier;  
+              otherwise `false`.  
+            
+#### See Also
+- [IsAuthIdentifier(string)](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_IsAuthIdentifier(string) 'TetraPak.AspNet.TetraPakConfig.IsAuthIdentifier(string)')
+  
 <a name='TetraPak_AspNet_TetraPakConfig_GetAuthorityUrlAsync()'></a>
 ## TetraPakConfig.GetAuthorityUrlAsync() Method
 An alternative method of getting the authority URL from the discovery document, allowing for  
@@ -452,7 +478,7 @@ Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](Tetr
 <a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string)'></a>
 ## TetraPakConfig.GetConfiguredValue(string) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
-unaffected by delegates or other internal types of logic.  
+unaffected by delegates or other (internal) logic.  
 ```csharp
 public string? GetConfiguredValue(string key);
 ```
@@ -525,6 +551,29 @@ public System.Threading.Tasks.Task<string?> GetUserInformationUrlAsync();
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 The user information resource locator.  
   
+<a name='TetraPak_AspNet_TetraPakConfig_IsAuthIdentifier(string)'></a>
+## TetraPakConfig.IsAuthIdentifier(string) Method
+Examines a string and returns a value to indicate whether the value identifies  
+an attribute used for auth configuration. This is to ensure there is no risk of confusing  
+services or endpoints with such attributes.   
+```csharp
+public bool IsAuthIdentifier(string identifier);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakConfig_IsAuthIdentifier(string)_identifier'></a>
+`identifier` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The identifier being examined.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [identifier](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_IsAuthIdentifier(string)_identifier 'TetraPak.AspNet.TetraPakConfig.IsAuthIdentifier(string).identifier') matches an auth configuration attribute; otherwise `false`.   
+            
+
+Implements [IsAuthIdentifier(string)](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_IsAuthIdentifier(string) 'TetraPak.AspNet.Auth.IServiceAuthConfig.IsAuthIdentifier(string)')  
+### Remarks
+Examples of auth identifiers: "`ConfigPath`", "`GrantType`",  
+"`ClientId`", "`ClientSecret`", "`Scope`".  
+  
 <a name='TetraPak_AspNet_TetraPakConfig_OnGetClientIdAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## TetraPakConfig.OnGetClientIdAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
 Gets a client id.  
@@ -562,6 +611,21 @@ Enables operation cancellation.
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+  
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string)'></a>
+## TetraPakConfig.OnGetField(string) Method
+Obtains a [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo') object for a specified field.  
+```csharp
+protected override System.Reflection.FieldInfo? OnGetField(string fieldName);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string)_fieldName'></a>
+`fieldName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Identifies the requested field.  
+  
+#### Returns
+[System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo')  
+A [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo') object.  
   
 <a name='TetraPak_AspNet_TetraPakConfig_OnGetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_)'></a>
 ## TetraPakConfig.OnGetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;) Method

@@ -16,6 +16,7 @@ namespace TetraPak.AspNet.Api
         static IDictionary<string, BackendService<ServiceEndpoints>>? s_genericServicesIndex;
         static IDictionary<Type, IBackendService>? s_typedServicesIndex;
         static IDictionary<Type, ServiceEndpoints>? s_typedEndpointsIndex;
+        readonly IServiceProvider _serviceProvider;
 
         public Outcome<IBackendService> ResolveService(Type serviceType, string? serviceName = null)
         {
@@ -37,7 +38,7 @@ namespace TetraPak.AspNet.Api
             IBackendService? typedService;
             if (serviceType.TryGetGenericBase(typeof(BackendService<>), out var genericBase, false))
             {
-                // only the endpoints is typed ...
+                // only the endpoints are typed ...
                 var endpointsType = genericBase.GetGenericArguments()[0];
                 if (!s_typedEndpointsIndex!.TryGetValue(endpointsType, out var endpoints))
                     return Outcome<IBackendService>.Fail(
@@ -163,7 +164,8 @@ namespace TetraPak.AspNet.Api
                     if (!endpointsIndex.TryGetValue(endpointsType, out var configuredEndpoints))
                     {
                         if (!servicesIndex.TryGetValue(serviceName, out var configuredService))
-                            throw new ConfigurationException($"Cannot configure service {type}. Service '{serviceName}' was not configured");
+                            throw new ConfigurationException(
+                                $"Cannot configure service {type}. Service '{serviceName}' was not configured");
 
                         configuredEndpoints = ServiceEndpoints.MakeTypedEndpoints(endpointsType, configuredService.Endpoints);
                     }
@@ -174,8 +176,6 @@ namespace TetraPak.AspNet.Api
                 return index;
             }
         }
-
-        
 
         class ServicesIndexResult
         {
@@ -194,7 +194,7 @@ namespace TetraPak.AspNet.Api
             var index = new Dictionary<string, BackendService<ServiceEndpoints>>();
             foreach (var section in serviceConfigs)
             {
-                var endpoints = new ServiceEndpoints(tetraPakConfig, config, httpServiceProvider, section.Key);
+                var endpoints = new ServiceEndpoints(tetraPakConfig, config, httpServiceProvider, section);
                 var service = new BackendService<ServiceEndpoints>(endpoints);
                 index.Add(service.ServiceName, service);
             }
@@ -223,26 +223,5 @@ namespace TetraPak.AspNet.Api
                 ? controllerType.Name[..^suffix.Length] 
                 : controllerType.Name;
         }
-    }
-
-    /// <summary>
-    ///   Classes implementing this contract are able to resolve backend services.
-    /// </summary>
-    public interface ITetraPackServiceProvider
-    {
-        /// <summary>
-        ///   Resolves a service, based on its type and (optionally) service name
-        /// </summary>
-        /// <param name="serviceType">
-        /// </param>
-        /// <param name="serviceName">
-        ///   Specifies a configured service. This is required if <paramref name="serviceType"/>
-        ///   if just a generic backend service. 
-        /// </param>
-        /// <returns>
-        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        ///   a <see cref="IBackendService"/> or, on failure, an <see cref="Exception"/>.
-        /// </returns>
-        Outcome<IBackendService> ResolveService(Type serviceType, string? serviceName = null);
     }
 }

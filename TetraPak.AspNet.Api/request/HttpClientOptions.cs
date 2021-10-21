@@ -1,3 +1,4 @@
+#nullable enable
 using System.Net.Http;
 using TetraPak.AspNet.Auth;
 
@@ -8,7 +9,7 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public class HttpClientOptions
     {
-        internal string MessageId { get; private set; }
+        internal string? MessageId { get; private set; }
         
         /// <summary>
         ///   Gets or sets a value specifying whether the requested <see cref="HttpClient"/> should be
@@ -19,17 +20,17 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets or sets an authentication header value to be used for the requested client.
         /// </summary>
-        public ActorToken Authorization { get; set; }
+        public ActorToken? Authorization { get; set; }
 
         /// <summary>
         ///   A custom <see cref="HttpMessageHandler"/> to be used by the requested <see cref="HttpClient"/>.
         /// </summary>
-        public HttpMessageHandler MessageHandler { get; set; }
+        public HttpMessageHandler? MessageHandler { get; set; }
 
         /// <summary>
         ///   Gets or sets the configuration required for authenticating the client. 
         /// </summary>
-        public IServiceAuthConfig AuthConfig { get; set; }
+        public IServiceAuthConfig? AuthConfig { get; set; }
 
         internal HttpClientOptions WithMessageId(string messageId)
         {
@@ -40,12 +41,18 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Fluid API for assigning the <see cref="Authorization"/> property value.
         /// </summary>
-        public HttpClientOptions WithAuthorization(ActorToken authorization)
+        public HttpClientOptions WithAuthorization(ActorToken? authorization)
         {
             Authorization = authorization;
             return this;
         }
 
+        /// <summary>
+        ///   Initializes the <see cref="HttpClientOptions"/>.
+        /// </summary>
+        /// <param name="isClientTransient">
+        ///   Initializes <see cref="IsClientTransient"/>.
+        /// </param>
         public HttpClientOptions(bool isClientTransient = true)
         {
             IsClientTransient = isClientTransient;

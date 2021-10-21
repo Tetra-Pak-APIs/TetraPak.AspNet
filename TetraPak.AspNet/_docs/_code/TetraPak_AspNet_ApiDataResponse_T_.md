@@ -3,7 +3,8 @@
 ## ApiDataResponse&lt;T&gt; Class
 Represents a standardized Tetra Pak API data response.  
 ```csharp
-public class ApiDataResponse<T>
+public class ApiDataResponse<T> :
+TetraPak.AspNet.IApiDataResponse
 ```
 #### Type parameters
 <a name='TetraPak_AspNet_ApiDataResponse_T__T'></a>
@@ -12,6 +13,8 @@ The [System.Type](https://docs.microsoft.com/en-us/dotnet/api/System.Type 'Syste
   
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; ApiDataResponse&lt;T&gt;  
+
+Implements [IApiDataResponse](TetraPak_AspNet_IApiDataResponse.md 'TetraPak.AspNet.IApiDataResponse')  
 ### Constructors
 <a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string)'></a>
 ## ApiDataResponse&lt;T&gt;.ApiDataResponse(EnumOutcome&lt;T&gt;, int, string) Constructor

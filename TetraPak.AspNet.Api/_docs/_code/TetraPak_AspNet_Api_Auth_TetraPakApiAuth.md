@@ -192,5 +192,5 @@ public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseTetraPakJwtAut
 #### Returns
 [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
 #### See Also
-- [AddTetraPakJwtBearerAssertion(IServiceCollection, string?, JwBearerAssertionOptions?)](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_) 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection, string?, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)')
+- [UseTetraPakApiAuthentication(IApplicationBuilder, IWebHostEnvironment)](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakApiAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment) 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.UseTetraPakApiAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder, Microsoft.AspNetCore.Hosting.IWebHostEnvironment)')
   

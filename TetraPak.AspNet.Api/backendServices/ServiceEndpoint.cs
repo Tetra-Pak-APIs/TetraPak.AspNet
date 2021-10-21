@@ -16,6 +16,11 @@ using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api
 {
+    /// <summary>
+    ///   Represents a single service endpoint (<see cref="BackendService{TEndpoints}"/>).
+    /// </summary>
+    /// <seealso cref="ServiceEndpoints"/>
+    /// <seealso cref="BackendService{TEndpoints}"/>
     [JsonConverter(typeof(JsonStringValueSerializer<ServiceEndpoint>))]
     [DebuggerDisplay("{" + nameof(StringValue) + "}")]
     public class ServiceEndpoint : IStringValue, IServiceAuthConfig, IAccessTokenProvider
@@ -29,20 +34,24 @@ namespace TetraPak.AspNet.Api
         ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
         /// </summary>
         protected ServiceEndpoints? Parent { get; private set; }
-        
+
+        /// <inheritdoc />
         public IServiceAuthConfig? ParentConfig => Parent;
 
         /// <inheritdoc />
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
-        public string StringValue { get; protected set; }
+        public string StringValue { get;}
 
         /// <inheritdoc />
-        public ConfigPath? ConfigPath => $"{Parent?.ConfigPath}{ConfigPath.Separator}{Name}";
+        public ConfigPath? ConfigPath => $"{Parent?.ConfigPath}{ConfigPath.ConfigDefaultSeparator}{Name}";
 
         internal IBackendService? Service { get; set; }
 
+        /// <summary>
+        ///   Options used for constructing HTTP clients.
+        /// </summary>
         public virtual HttpClientOptions ClientOptions => new() { AuthConfig = this };
 
         /// <summary>
@@ -51,7 +60,7 @@ namespace TetraPak.AspNet.Api
         public HttpContext? HttpContext => AmbientData.HttpContext;
         
         /// <summary>
-        ///   Gets the name of the service endpoint URL (as specified in the configuration).
+        ///   Gets the name of the service endpoint (as specified in the configuration).
         /// </summary>
         [StateDump]
         public string Name { get; internal set; }
@@ -71,6 +80,7 @@ namespace TetraPak.AspNet.Api
         /// </summary>
         public ILogger? Logger => AmbientData.Logger;
 
+        /// <inheritdoc />
         public IConfiguration Configuration { get; private set; }
 
         /// <inheritdoc />
@@ -80,7 +90,8 @@ namespace TetraPak.AspNet.Api
             get => _grantType is null or GrantType.Inherited ? Parent!.GrantType : _grantType.Value;
             set => _grantType = value;
         }
-        
+
+        /// <inheritdoc />
         [StateDump]
         public string? ClientId
         {
@@ -88,6 +99,7 @@ namespace TetraPak.AspNet.Api
             set => _clientId = value?.Trim() ?? null!;
         }
 
+        /// <inheritdoc />
         [StateDump]
         public string? ClientSecret
         {
@@ -95,6 +107,7 @@ namespace TetraPak.AspNet.Api
             set => _clientSecret = value?.Trim() ?? null!;
         }
 
+        /// <inheritdoc />
         [StateDump]
         public MultiStringValue? Scope
         {
@@ -204,10 +217,7 @@ namespace TetraPak.AspNet.Api
         /// <returns>
         ///   A hash code for the current value.
         /// </returns>
-        public override int GetHashCode()
-        {
-            return (StringValue is {} ? StringValue.GetHashCode() : 0);
-        }
+        public override int GetHashCode() => StringValue.GetHashCode();
 
         /// <summary>
         ///   Comparison operator overload.
@@ -233,7 +243,8 @@ namespace TetraPak.AspNet.Api
             Parent = parent ?? throw new ArgumentNullException(nameof(parent));
             return this;
         }
-        
+
+        /// <inheritdoc />
         public string GetConfiguredValue(string key) => Configuration[key];
 
         internal ServiceEndpoint WithConfig(TetraPakConfig tetraPakConfig, IConfiguration config)
@@ -294,6 +305,9 @@ namespace TetraPak.AspNet.Api
         protected ServiceEndpoint(TetraPakConfig tetraPakConfig)
         {
             TetraPakConfig = tetraPakConfig;
+            StringValue = null!;
+            Name = null!;
+            Configuration = null!;
         }
     }
 }

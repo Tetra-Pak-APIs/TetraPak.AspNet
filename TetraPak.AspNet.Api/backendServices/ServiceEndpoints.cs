@@ -23,6 +23,8 @@ namespace TetraPak.AspNet.Api
         IServiceAuthConfig,
         IEnumerable<KeyValuePair<string, ServiceEndpoint>>
     {
+        internal const string DefaultPath = "/"; 
+        
         // ReSharper disable NotAccessedField.Local
         GrantType? _grantType; 
         string? _host;
@@ -35,27 +37,59 @@ namespace TetraPak.AspNet.Api
         Dictionary<string, ServiceEndpoint> _endpoints;
         List<Exception>? _issues;
 
+        /// <summary>
+        ///   Gets the Tetra Pak integration configuration.
+        /// </summary>
         public TetraPakConfig TetraPakConfig { get; private set; }
         
+        /// <summary>
+        ///   Returns a value indicating whether the collection of endpoints are valid as a whole (no issues found).
+        /// </summary>
+        /// <seealso cref="GetIssues"/>
         public bool IsValid => _issues is null;
 
+        /// <summary>
+        ///   Gets all issues found during initialization (typically related to configuration).
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Exception>? GetIssues() => _issues;
         
+        /// <summary>
+        ///   Gets the service auth configuration.
+        /// </summary>
         public IServiceAuthConfig ServiceAuthConfig { get; private set; }
         
+        /// <summary>
+        ///   Gets an provider of HTTP services, such as clients.
+        /// </summary>
         public IHttpServiceProvider HttpServiceProvider { get; private set; }
 
+        /// <summary>
+        ///   Gets a globally available <see cref="IConfiguration"/> instance.
+        /// </summary>
         public IConfiguration Configuration => ServiceAuthConfig.Configuration;
 
+        /// <summary>
+        ///   Gets an <see cref="AmbientData"/> object.
+        /// </summary>
         public AmbientData AmbientData => ServiceAuthConfig.AmbientData;
 
+        /// <summary>
+        ///   Gets the parent configuration level.
+        /// </summary>
         public IServiceAuthConfig ParentConfig => ServiceAuthConfig;
 
         /// <inheritdoc />
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         internal TetraPakConfig Config => ((ServiceAuthConfig) ServiceAuthConfig).Config;
-        
+
+        /// <summary>
+        ///   Gets or sets the type of grant used for request authorization.
+        /// </summary>
+        /// <exception cref="ConfigurationException">
+        ///   The configured value was incorrect (could not be parsed into <see cref="GrantType"/>).
+        /// </exception>
         [StateDump]
         public virtual GrantType GrantType
         {
@@ -78,6 +112,9 @@ namespace TetraPak.AspNet.Api
             set => _grantType = value;
         }
 
+        /// <summary>
+        ///   Gets or sets a client identity to be submitted when requesting authorization.
+        /// </summary>
         [StateDump]
         public virtual string? ClientId
         {
@@ -92,6 +129,9 @@ namespace TetraPak.AspNet.Api
             set => _clientId = value?.Trim() ?? null!;
         }
 
+        /// <summary>
+        ///   Gets or sets a client secret to be submitted when requesting authorization.
+        /// </summary>
         [StateDump]
         public virtual string? ClientSecret
         {
@@ -106,6 +146,9 @@ namespace TetraPak.AspNet.Api
             set => _clientSecret = value?.Trim() ?? null!;
         }
 
+        /// <summary>
+        ///   Gets or sets a scope to be requested for authorization.
+        /// </summary>
         [StateDump]
         public virtual MultiStringValue Scope
         {
@@ -186,6 +229,7 @@ namespace TetraPak.AspNet.Api
         
         internal bool IsDelegated => Config.IsDelegated;
 
+        /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
         {
             foreach (var (key, value) in _endpoints)
@@ -210,10 +254,22 @@ namespace TetraPak.AspNet.Api
             =>
             getServiceEndpoint(propertyName);
         
+        /// <summary>
+        ///   Gets a named endpoint (<see cref="ServiceEndpoint"/>).
+        /// </summary>
+        /// <param name="endpointName">
+        ///   The name of the endpoint.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="endpointName"/> was unassigned (<c>null</c> or just whitespace).
+        /// </exception>
         public ServiceEndpoint this[string endpointName] => getServiceEndpoint(endpointName);
 
-        ServiceEndpoint getServiceEndpoint(string endpointName)
+        ServiceEndpoint getServiceEndpoint(string? endpointName)
         {
+            if (string.IsNullOrWhiteSpace(endpointName))
+                throw new ArgumentNullException(nameof(endpointName));
+                
             if (_endpoints.TryGetValue(endpointName, out var endpoint)) 
                 return endpoint;
             
@@ -274,24 +330,28 @@ namespace TetraPak.AspNet.Api
             return true;
         }
 
-        Dictionary<string, ServiceEndpoint> initializeEndpoints(TetraPakConfig tetraPakConfig)
+        Dictionary<string, ServiceEndpoint> initialize(TetraPakConfig tetraPakConfig)
         {
             var type = GetType();
             var children = Section!.GetChildren();
             var endpoints = new Dictionary<string, ServiceEndpoint>();
+            string name;
+            PropertyInfo? property;
+            ServiceEndpoint endpoint;
             foreach (var child in children)
             {
-                var name = child.Key;
+                name = child.Key;
                 if (isReservedIdentifier(name))
                     continue;
 
-                var property = type.GetProperty(name);
+                property = type.GetProperty(name);
                 var stringValue = child.Value;
-                ServiceEndpoint endpoint;
                 if (stringValue is { })
                 {
-                    endpoint = new ServiceEndpoint(stringValue).WithIdentity(name, this).WithConfig(tetraPakConfig, child);
-                    addEndpoint(endpoint, property);
+                    endpoint = new ServiceEndpoint(stringValue)
+                        .WithIdentity(name, this)
+                        .WithConfig(tetraPakConfig, child);
+                    addEndpoint(endpoint);
                     continue;
                 }
 
@@ -299,12 +359,28 @@ namespace TetraPak.AspNet.Api
                     continue;
                 
                 endpoint = configureServiceEndpoint(child);
-                addEndpoint(endpoint, property);
+                addEndpoint(endpoint);
             }
+
+            if (endpoints.Any()) 
+                return endpoints;
+            
+            // the service is just one endpoint (URL) ...
+            name = Section.Key;
+            if (!Uri.TryCreate(Section.Value, UriKind.Absolute, out var uri))
+                throw new ConfigurationException($"Invalid backend service value: {Section.Value} (expected absolute URI)");
+
+            Host = $"{uri.Scheme}://{uri.Authority}";
+            BasePath = uri.AbsolutePath;
+            property = type.GetProperty(name);
+            endpoint = new ServiceEndpoint(DefaultPath)
+                .WithIdentity(Section.Key, this)
+                .WithConfig(tetraPakConfig, Section);
+            addEndpoint(endpoint);
 
             return endpoints;
             
-            void addEndpoint(ServiceEndpoint url, PropertyInfo? property)
+            void addEndpoint(ServiceEndpoint url)
             {
                 if (!endpoints.ContainsKey(url.Name))
                 {
@@ -353,21 +429,7 @@ namespace TetraPak.AspNet.Api
                 .WithConfig(TetraPakConfig, section);
         }
 
-        public ServiceEndpoints(
-            TetraPakConfig tetraPakConfig,
-            IServiceAuthConfig serviceAuthConfig, 
-            IHttpServiceProvider httpServiceProvider,
-            string serviceName)
-        : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, serviceName)
-        {
-            TetraPakConfig = tetraPakConfig; 
-            ServiceAuthConfig = serviceAuthConfig;
-            HttpServiceProvider = httpServiceProvider;
-            validate(serviceName);
-            _endpoints = initializeEndpoints(tetraPakConfig);
-        }
-
-        internal static ServiceEndpoints MakeTypedEndpoints(
+        internal static ServiceEndpoints MakeTypedEndpoints( // obsolete
             Type endpointsType,
             ServiceEndpoints configuredEndpoints)
         {
@@ -381,16 +443,49 @@ namespace TetraPak.AspNet.Api
 
             throw new InvalidOperationException($"Failed to construct service endpoints {endpointsType}. Could not find a parameterless ctor");
         }
-
+        
         internal ServiceEndpoints Initialize(ServiceEndpoints configuredEndpoints)
         {
             ServiceAuthConfig = configuredEndpoints.ServiceAuthConfig;
             BackendService = configuredEndpoints.BackendService;
             HttpServiceProvider = configuredEndpoints.HttpServiceProvider;
+            Host = configuredEndpoints.Host;
+            BasePath = configuredEndpoints.BasePath;
+            Section = configuredEndpoints.Section;
             _endpoints = configuredEndpoints._endpoints;
             return this;
         }
 
+        /// <summary>
+        ///   Initializes the <see cref="ServiceEndpoint"/>.
+        /// </summary>
+        /// <param name="tetraPakConfig">
+        ///   Initializes <see cref="TetraPakConfig"/>.
+        /// </param>
+        /// <param name="serviceAuthConfig">
+        ///   Initializes <see cref="ServiceAuthConfig"/>.
+        /// </param>
+        /// <param name="httpServiceProvider">
+        ///   Initializes <see cref="HttpServiceProvider"/>.
+        /// </param>
+        /// <param name="section">
+        ///   The service configuration section.
+        /// </param>
+        internal ServiceEndpoints(
+            TetraPakConfig tetraPakConfig,
+            IServiceAuthConfig serviceAuthConfig, 
+            IHttpServiceProvider httpServiceProvider,
+            IConfigurationSection section)
+        : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, section.Key)
+        {
+            TetraPakConfig = tetraPakConfig; 
+            ServiceAuthConfig = serviceAuthConfig;
+            HttpServiceProvider = httpServiceProvider;
+            var serviceName = section.Key;
+            validate(serviceName);
+            _endpoints = initialize(tetraPakConfig);
+        }
+        
         /// <summary>
         ///   To be used by automatic initialization (see <see cref="TetraPakServiceHelper.AddTetraPakServices"/>).
         /// </summary>

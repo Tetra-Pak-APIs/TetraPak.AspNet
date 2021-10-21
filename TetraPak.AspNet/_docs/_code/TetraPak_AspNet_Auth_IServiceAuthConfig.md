@@ -18,6 +18,24 @@ TetraPak.AspNet.AmbientData AmbientData { get; }
 #### Property Value
 [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData')
   
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_ClientId'></a>
+## IServiceAuthConfig.ClientId Property
+Gets a configured client id at this configuration level.  
+```csharp
+string? ClientId { get; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_ClientSecret'></a>
+## IServiceAuthConfig.ClientSecret Property
+Gets a configured client secret at this configuration level.  
+```csharp
+string? ClientSecret { get; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_ConfigPath'></a>
 ## IServiceAuthConfig.ConfigPath Property
 Gets the configuration path.  
@@ -56,6 +74,15 @@ TetraPak.AspNet.Auth.IServiceAuthConfig? ParentConfig { get; }
 ```
 #### Property Value
 [IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig')
+  
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_Scope'></a>
+## IServiceAuthConfig.Scope Property
+Gets an authorization scope at this configuration level.  
+```csharp
+TetraPak.MultiStringValue? Scope { get; }
+```
+#### Property Value
+[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
   
 ### Methods
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetClientIdAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
@@ -99,7 +126,7 @@ Cancellation token for cancellation the operation.
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string)'></a>
 ## IServiceAuthConfig.GetConfiguredValue(string) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
-unaffected by delegates or other internal types of logic.  
+unaffected by delegates or other (internal) logic.  
 ```csharp
 string? GetConfiguredValue(string key);
 ```

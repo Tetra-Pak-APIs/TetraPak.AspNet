@@ -81,7 +81,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </returns>
         protected ActionResult RespondErrorExpectedQueryParameter(string queryParameterName, string? example = null)
         {
-            return ControllerBaseExtensions.RespondErrorExpectedQueryParameter(this, queryParameterName, example);
+            return ControllerBaseExtensions.RespondExpectedQueryParameterError(this, queryParameterName, example);
         }
 
         /// <summary>

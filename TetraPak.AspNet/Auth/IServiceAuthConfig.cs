@@ -19,6 +19,22 @@ namespace TetraPak.AspNet.Auth
         ///   The configured (textual) value could not be parsed into a <see cref="GrantType"/> (enum) value. 
         /// </exception>
         GrantType GrantType { get; }
+        
+        /// <summary>
+        ///   Gets a configured client id at this configuration level.
+        /// </summary>
+        /// <see cref="GetClientIdAsync"/>
+        string? ClientId { get; }
+        
+        /// <summary>
+        ///   Gets a configured client secret at this configuration level.
+        /// </summary>
+        string? ClientSecret { get; }
+
+        /// <summary>
+        ///   Gets an authorization scope at this configuration level.
+        /// </summary>
+        MultiStringValue? Scope { get; }
 
         /// <summary>
         ///   Gets a client id.
@@ -65,7 +81,7 @@ namespace TetraPak.AspNet.Auth
 
         /// <summary>
         ///   Gets a "raw" configured value, as it is specified within the <see cref="IConfiguration"/> sources,
-        ///   unaffected by delegates or other internal types of logic.
+        ///   unaffected by delegates or other (internal) logic.
         /// </summary>
         /// <param name="key">
         ///   Identifies the requested value.

@@ -15,39 +15,39 @@ Derived
 
 Implements [TetraPak.IStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.IStringValue 'TetraPak.IStringValue'), [TetraPak.AspNet.Auth.IServiceAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig'), [TetraPak.AspNet.Auth.IAccessTokenProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IAccessTokenProvider 'TetraPak.AspNet.Auth.IAccessTokenProvider')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string)'></a>
-## ServiceEndpoint.ServiceEndpoint(string) Constructor
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string_)'></a>
+## ServiceEndpoint.ServiceEndpoint(string?) Constructor
 Initializes the value.  
 ```csharp
-public ServiceEndpoint(string stringValue);
+public ServiceEndpoint(string? stringValue);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string)_stringValue'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string_)_stringValue'></a>
 `stringValue` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The new value's string representation (will automatically be parsed).  
   
 #### Exceptions
 [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
-The [stringValue](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string)_stringValue 'TetraPak.AspNet.Api.ServiceEndpoint.ServiceEndpoint(string).stringValue') string representation was incorrectly formed.  
+The [stringValue](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(string_)_stringValue 'TetraPak.AspNet.Api.ServiceEndpoint.ServiceEndpoint(string?).stringValue') string representation was incorrectly formed.  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(TetraPak_AspNet_AmbientData)'></a>
-## ServiceEndpoint.ServiceEndpoint(AmbientData) Constructor
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(TetraPak_AspNet_TetraPakConfig)'></a>
+## ServiceEndpoint.ServiceEndpoint(TetraPakConfig) Constructor
 Initializes an [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')
 ```csharp
-protected ServiceEndpoint(TetraPak.AspNet.AmbientData ambientData);
+protected ServiceEndpoint(TetraPak.AspNet.TetraPakConfig tetraPakConfig);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(TetraPak_AspNet_AmbientData)_ambientData'></a>
-`ambientData` [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')  
-Provides ambient data and configuration.  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ServiceEndpoint(TetraPak_AspNet_TetraPakConfig)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
+Initializes [TetraPakConfig](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_TetraPakConfig 'TetraPak.AspNet.Api.ServiceEndpoint.TetraPakConfig').  
   
   
 ### Properties
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_AmbientData'></a>
 ## ServiceEndpoint.AmbientData Property
-Gets an object to provide access to ambient data.  
+Gets the ambient data object.  
 ```csharp
-public TetraPak.AspNet.AmbientData AmbientData { get; set; }
+public TetraPak.AspNet.AmbientData AmbientData { get; }
 ```
 #### Property Value
 [TetraPak.AspNet.AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.AmbientData 'TetraPak.AspNet.AmbientData')
@@ -83,7 +83,7 @@ Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspN
 ## ServiceEndpoint.HttpContext Property
 Gets the current [HttpContext](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_HttpContext 'TetraPak.AspNet.Api.ServiceEndpoint.HttpContext') instance.  
 ```csharp
-public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
+public Microsoft.AspNetCore.Http.HttpContext? HttpContext { get; }
 ```
 #### Property Value
 [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')
@@ -92,7 +92,7 @@ public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; }
 ## ServiceEndpoint.Logger Property
 Gets a logging provider.  
 ```csharp
-public Microsoft.Extensions.Logging.ILogger Logger { get; }
+public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
@@ -115,6 +115,26 @@ protected TetraPak.AspNet.Api.ServiceEndpoints? Parent { get; set; }
 #### Property Value
 [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints')
   
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_StringValue'></a>
+## ServiceEndpoint.StringValue Property
+The value's string representation.  
+```csharp
+public string StringValue { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [StringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.IStringValue.StringValue 'TetraPak.IStringValue.StringValue')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_TetraPakConfig'></a>
+## ServiceEndpoint.TetraPakConfig Property
+Gets the Tetra Pak integration configuration.  
+```csharp
+public TetraPak.AspNet.TetraPakConfig? TetraPakConfig { get; set; }
+```
+#### Property Value
+[TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')
+  
 ### Methods
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_Equals(object_)'></a>
 ## ServiceEndpoint.Equals(object?) Method
@@ -132,20 +152,20 @@ An object to compare to this value.
 `true` if the specified object is equal to the current version; otherwise `false`.  
             
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_Equals(TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
-## ServiceEndpoint.Equals(ServiceEndpoint?) Method
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_equals(TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
+## ServiceEndpoint.equals(ServiceEndpoint?) Method
 Determines whether the specified value is equal to the current value.  
 ```csharp
-public bool Equals(TetraPak.AspNet.Api.ServiceEndpoint? other);
+private bool equals(TetraPak.AspNet.Api.ServiceEndpoint? other);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_Equals(TetraPak_AspNet_Api_ServiceEndpoint_)_other'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_equals(TetraPak_AspNet_Api_ServiceEndpoint_)_other'></a>
 `other` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
 A [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') value to compare to this value.  
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-`true` if [other](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_Equals(TetraPak_AspNet_Api_ServiceEndpoint_)_other 'TetraPak.AspNet.Api.ServiceEndpoint.Equals(TetraPak.AspNet.Api.ServiceEndpoint?).other') is equal to the current value; otherwise `false`.  
+`true` if [other](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_equals(TetraPak_AspNet_Api_ServiceEndpoint_)_other 'TetraPak.AspNet.Api.ServiceEndpoint.equals(TetraPak.AspNet.Api.ServiceEndpoint?).other') is equal to the current value; otherwise `false`.  
             
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_GetAccessTokenAsync(bool)'></a>
@@ -273,24 +293,24 @@ Examples of auth identifiers: "`ConfigPath`", "`GrantType`",
 ## ServiceEndpoint.ToString() Method
 Returns a string that represents the current object.
 ```csharp
-public override string? ToString();
+public override string ToString();
 ```
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A string that represents the current object.
   
 ### Operators
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
-## ServiceEndpoint.operator ==(ServiceEndpoint, ServiceEndpoint?) Operator
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
+## ServiceEndpoint.operator ==(ServiceEndpoint?, ServiceEndpoint?) Operator
 Comparison operator overload.  
 ```csharp
-public static bool operator ==(TetraPak.AspNet.Api.ServiceEndpoint left, TetraPak.AspNet.Api.ServiceEndpoint? right);
+public static bool operator ==(TetraPak.AspNet.Api.ServiceEndpoint? left, TetraPak.AspNet.Api.ServiceEndpoint? right);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
 `left` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Equality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
 `right` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
 #### Returns
@@ -329,17 +349,17 @@ A [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.
 [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
 The [stringValue](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_op_ImplicitTetraPak_AspNet_Api_ServiceEndpoint(string)_stringValue 'TetraPak.AspNet.Api.ServiceEndpoint.op_Implicit TetraPak.AspNet.Api.ServiceEndpoint(string).stringValue') string representation was incorrectly formed.  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
-## ServiceEndpoint.operator !=(ServiceEndpoint, ServiceEndpoint?) Operator
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)'></a>
+## ServiceEndpoint.operator !=(ServiceEndpoint?, ServiceEndpoint?) Operator
 Comparison operator overload.  
 ```csharp
-public static bool operator !=(TetraPak.AspNet.Api.ServiceEndpoint left, TetraPak.AspNet.Api.ServiceEndpoint? right);
+public static bool operator !=(TetraPak.AspNet.Api.ServiceEndpoint? left, TetraPak.AspNet.Api.ServiceEndpoint? right);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_left'></a>
 `left` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_op_Inequality(TetraPak_AspNet_Api_ServiceEndpoint__TetraPak_AspNet_Api_ServiceEndpoint_)_right'></a>
 `right` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
   
 #### Returns
