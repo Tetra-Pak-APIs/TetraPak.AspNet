@@ -379,7 +379,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondCreatedOk(this ControllerBase self, params string[] urls)
+        public static ActionResult RespondOkCreated(this ControllerBase self, params string[] urls)
         {
             if (!urls.Any())
                 return self.StatusCode((int)HttpStatusCode.Created);
@@ -400,7 +400,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondAcceptedOk(this ControllerBase self, params string[] urls)
+        public static ActionResult RespondOkAccepted(this ControllerBase self, params string[] urls)
         {
             if (!urls.Any())
                 return self.StatusCode((int)HttpStatusCode.Accepted);
@@ -425,7 +425,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondExpectedQueryParameterError(
+        public static ActionResult RespondErrorExpectedQueryParameter(
             this ControllerBase self, 
             string queryParameterName, 
             string? example = null)
@@ -448,7 +448,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondUnauthorizedError(this ControllerBase self, Exception error)
+        public static ActionResult RespondErrorUnauthorized(this ControllerBase self, Exception error)
         {
             return self.RespondError(HttpStatusCode.Unauthorized, error);
         }
@@ -467,7 +467,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
         /// <seealso cref="RespondError(Microsoft.AspNetCore.Mvc.ControllerBase,System.Exception)"/>
-        public static ActionResult RespondInternalServerError(this ControllerBase self, Exception error)
+        public static ActionResult RespondErrorInternalServer(this ControllerBase self, Exception error)
         {
             return self.RespondError(HttpStatusCode.InternalServerError, error);
         }
@@ -487,11 +487,11 @@ namespace TetraPak.AspNet.Api.Controllers
         /// </returns>
         /// <remarks>
         ///   This method will automatically look for an HTTP status code in the <paramref name="error"/>.
-        ///   If none can be resolved the <see cref="RespondInternalServerError"/> method is invoked, to
+        ///   If none can be resolved the <see cref="RespondErrorInternalServer"/> method is invoked, to
         ///   produce a generic status code of 500 (<see cref="HttpStatusCode.InternalServerError"/>).
         /// </remarks>
         /// <seealso cref="RespondError(ControllerBase,HttpStatusCode,Exception)"/>
-        /// <seealso cref="RespondInternalServerError"/>
+        /// <seealso cref="RespondErrorInternalServer"/>
         public static ActionResult RespondError(this ControllerBase self, Exception error)
         {
             if (error is HttpException httpException)
@@ -501,7 +501,7 @@ namespace TetraPak.AspNet.Api.Controllers
                     new ApiErrorResponse(error.Message, self.GetMessageId()));
             }
 
-            return self.RespondInternalServerError(error);
+            return self.RespondErrorInternalServer(error);
         }
 
         /// <summary>
@@ -548,8 +548,23 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondBadRequestError(this ControllerBase self, string message)
+        public static ActionResult RespondErrorBadRequest(this ControllerBase self, string message)
             => self.RespondError(HttpStatusCode.BadRequest, new Exception(message));
+        
+        /// <summary>
+        ///   Constructs and returns a "Not Found" error response.
+        /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/> object.
+        /// </param>
+        /// <param name="message">
+        ///   A textual message describing the issue.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="ActionResult"/> object.
+        /// </returns>
+        public static ActionResult RespondErrorNotFound(this ControllerBase self, string message)
+            => self.RespondError(HttpStatusCode.NotFound, new Exception(message));
         
 
         /// <summary>
@@ -564,7 +579,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An <see cref="ActionResult"/> object.
         /// </returns>
-        public static ActionResult RespondBadRequestError(this ControllerBase self, Exception error)
+        public static ActionResult RespondErrorBadRequest(this ControllerBase self, Exception error)
             => self.RespondError(HttpStatusCode.BadRequest, error); 
 
         /// <summary>

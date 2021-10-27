@@ -12,18 +12,21 @@ using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
     ///   Implements base functionality for providing HTTP clients
     ///   to be used when consuming configured backend services. 
     /// </summary>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class HttpServiceProvider : IHttpServiceProvider, ITetraPakDiagnosticsProvider
     {
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
         readonly IHttpContextAccessor _httpContextAccessor;
-        readonly HttpClientOptions _singletonClientOptions;
-        HttpClient _singletonClient;
+        readonly HttpClientOptions? _singletonClientOptions;
+        HttpClient? _singletonClient;
         readonly TetraPakConfig _config;
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace TetraPak.AspNet.Api
         protected IClientCredentialsService ClientCredentialsService { get; }
 
         /// <inheritdoc />
-        public string GetMessageId(bool enforce = false) => _config.AmbientData.GetMessageId();
+        public string? GetMessageId(bool enforce = false) => _config.AmbientData.GetMessageId();
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
@@ -51,15 +54,15 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger Logger => _config.Logger;
+        protected ILogger? Logger => _config.Logger;
 
-        public HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions);
+        public HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions!);
         
         /// <inheritdoc />
         public virtual async Task<Outcome<HttpClient>> GetClientAsync(
-            HttpClientOptions options = null,
+            HttpClientOptions? options = null,
             CancellationToken? cancellationToken = null,
-            ILogger logger = null,
+            ILogger? logger = null,
             bool authenticate = true)
         {
             var transient = options?.IsClientTransient ?? true;
@@ -92,20 +95,20 @@ namespace TetraPak.AspNet.Api
 
         void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
 
-        protected ServiceDiagnostics GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(null); 
+        protected ServiceDiagnostics? GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(null); 
 
         /// <inheritdoc />
         public async Task<Outcome<ActorToken>> AuthorizeAsync(
-            HttpClientOptions options,
+            HttpClientOptions? options,
             CancellationToken? cancellationToken = null,
-            ILogger logger = null)
+            ILogger? logger = null)
         {
             const string TimerNameTx = "out-auth-tx";
             const string TimerNameCc = "out-auth-cc";
             
             try
             {
-                switch (options?.AuthConfig.GrantType)
+                switch (options?.AuthConfig?.GrantType)
                 {
                     case GrantType.TokenExchange:
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameTx);
@@ -128,7 +131,6 @@ namespace TetraPak.AspNet.Api
                         throw new NotSupportedException($"Cannot authenticate with no specified grant type");
                     
                     case GrantType.Inherited:
-                    case null:
                         throw unexpectedMethod();
                     
                     default:
@@ -148,7 +150,7 @@ namespace TetraPak.AspNet.Api
                         "Error when authenticating HTTP client. Unexpected auth mechanism: (null)")
                     : new ArgumentOutOfRangeException(
                         nameof(options),
-                        $"Error when authenticating HTTP client. Unexpected auth mechanism: {options.AuthConfig.GrantType}");
+                        $"Error when authenticating HTTP client. Unexpected auth mechanism: {options.AuthConfig?.GrantType}");
             }
         }
 
@@ -173,9 +175,12 @@ namespace TetraPak.AspNet.Api
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnTokenExchangeAuthenticationAsync(
             IServiceAuthConfig authConfig,
-            ActorToken accessToken,
+            ActorToken? accessToken,
             CancellationToken? cancellationToken)
         {
+            if (accessToken is null)
+                return Outcome<ActorToken>.Fail(new InvalidOperationException("Expected an access token for token exchange"));
+            
             try
             {
                 var ct = cancellationToken ?? CancellationToken.None;
@@ -272,15 +277,15 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public Task<ITokenExchangeService> GetTokenExchangeService() => Task.FromResult(TokenExchangeService);
 
-        public ILogger GetLogger() => Logger;
+        public ILogger? GetLogger() => Logger;
 
         public HttpServiceProvider(
             ITokenExchangeService tokenExchangeService,
             IClientCredentialsService clientCredentialsService,
             IHttpContextAccessor httpContextAccessor,
             TetraPakConfig config,
-            Func<HttpClientOptions,HttpClient> singletonClientFactory = null, 
-            HttpClientOptions singletonClientOptions = null)
+            Func<HttpClientOptions,HttpClient>? singletonClientFactory = null, 
+            HttpClientOptions? singletonClientOptions = null)
         {
             TokenExchangeService = tokenExchangeService ?? throw new ArgumentNullException(nameof(tokenExchangeService));
             ClientCredentialsService = clientCredentialsService;

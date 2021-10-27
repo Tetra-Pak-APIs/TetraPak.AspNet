@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
@@ -40,9 +42,9 @@ namespace TetraPak.AspNet.Api
         ///   the requested client as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
         Task<Outcome<HttpClient>> GetClientAsync(
-            HttpClientOptions options = null,
+            HttpClientOptions? options = null,
             CancellationToken? cancellationToken = null,
-            ILogger logger = null,
+            ILogger? logger = null,
             bool authenticate = true);
 
 
@@ -67,12 +69,14 @@ namespace TetraPak.AspNet.Api
         Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions options,
             CancellationToken? cancellationToken = null, 
-            ILogger logger = null);
+            ILogger? logger = null);
 
         /// <summary>
         ///   Acquires a token exchange service.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        ///   A <see cref="ITokenExchangeService"/>.
+        /// </returns>
         Task<ITokenExchangeService> GetTokenExchangeService();
     }
 

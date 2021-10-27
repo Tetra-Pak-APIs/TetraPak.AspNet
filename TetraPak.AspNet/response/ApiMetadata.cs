@@ -18,7 +18,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </summary>
-        [JsonPropertyName("id")]
+        [JsonPropertyName("messageId")]
         public string MessageId { get; set; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
 
