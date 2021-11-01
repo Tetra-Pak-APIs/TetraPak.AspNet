@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -713,7 +714,7 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryParseEnum<TEnum>(string stringValue, out TEnum value) 
+        public static bool TryParseEnum<TEnum>(string stringValue, [NotNullWhen(true)] out TEnum value) 
         where TEnum : struct
         {
             value = default;

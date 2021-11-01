@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Diagnostics;
 
+#nullable enable
+
 namespace TetraPak.AspNet.diagnostics
 {
     public static class ServiceDiagnosticsHelper
@@ -22,18 +24,18 @@ namespace TetraPak.AspNet.diagnostics
             return diagnostics;
         }
         
-        public static ServiceDiagnostics GetDiagnostics(this HttpContext self, ILogger logger)
+        public static ServiceDiagnostics? GetDiagnostics(this HttpContext self)
         {
             return self.GetValue<ServiceDiagnostics>(KeyDiagnostics);
         }
 
-        public static void StartDiagnosticsTime(this HttpContext self, string timeKey, ILogger logger = null) 
-            => self.GetDiagnostics(logger)?.StartTimer(timeKey);
+        public static void StartDiagnosticsTime(this HttpContext self, string timeKey) 
+            => self.GetDiagnostics()?.StartTimer(timeKey);
         
-        public static long? EndDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true, ILogger logger = null) 
-            => self.GetDiagnostics(logger)?.GetElapsedMs(timeKey, stopTimer);
+        public static long? EndDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true) 
+            => self.GetDiagnostics()?.GetElapsedMs(timeKey, stopTimer);
         
-        public static ServiceDiagnostics End(this ServiceDiagnostics self, ILogger logger)
+        public static ServiceDiagnostics End(this ServiceDiagnostics self)
         {
             if (self is null)
                 return null;

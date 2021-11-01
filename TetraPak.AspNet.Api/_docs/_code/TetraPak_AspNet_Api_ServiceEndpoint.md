@@ -1,6 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api](TetraPak_AspNet_Api.md 'TetraPak.AspNet.Api')
 ## ServiceEndpoint Class
+Represents a single service endpoint ([BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')).  
 ```csharp
 public class ServiceEndpoint :
 TetraPak.IStringValue,
@@ -54,6 +55,37 @@ public TetraPak.AspNet.AmbientData AmbientData { get; }
 
 Implements [AmbientData](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.AmbientData 'TetraPak.AspNet.Auth.IServiceAuthConfig.AmbientData')  
   
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ClientId'></a>
+## ServiceEndpoint.ClientId Property
+Gets a configured client id at this configuration level.  
+```csharp
+public string? ClientId { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [ClientId](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.ClientId 'TetraPak.AspNet.Auth.IServiceAuthConfig.ClientId')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ClientOptions'></a>
+## ServiceEndpoint.ClientOptions Property
+Options used for constructing HTTP clients.  
+```csharp
+public virtual TetraPak.AspNet.HttpClientOptions ClientOptions { get; }
+```
+#### Property Value
+[TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ClientSecret'></a>
+## ServiceEndpoint.ClientSecret Property
+Gets a configured client secret at this configuration level.  
+```csharp
+public string? ClientSecret { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+
+Implements [ClientSecret](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.ClientSecret 'TetraPak.AspNet.Auth.IServiceAuthConfig.ClientSecret')  
+  
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_ConfigPath'></a>
 ## ServiceEndpoint.ConfigPath Property
 Gets the configuration path.  
@@ -64,6 +96,17 @@ public TetraPak.Configuration.ConfigPath? ConfigPath { get; }
 [TetraPak.Configuration.ConfigPath](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Configuration.ConfigPath 'TetraPak.Configuration.ConfigPath')
 
 Implements [ConfigPath](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.ConfigPath 'TetraPak.AspNet.Auth.IServiceAuthConfig.ConfigPath')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_Configuration'></a>
+## ServiceEndpoint.Configuration Property
+Gets the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') instance used to populate the properties.  
+```csharp
+public Microsoft.Extensions.Configuration.IConfiguration Configuration { get; set; }
+```
+#### Property Value
+[Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration')
+
+Implements [Configuration](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.Configuration 'TetraPak.AspNet.Auth.IServiceAuthConfig.Configuration')  
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_GrantType'></a>
 ## ServiceEndpoint.GrantType Property
@@ -99,7 +142,7 @@ public Microsoft.Extensions.Logging.ILogger? Logger { get; }
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_Name'></a>
 ## ServiceEndpoint.Name Property
-Gets the name of the service endpoint URL (as specified in the configuration).  
+Gets the name of the service endpoint (as specified in the configuration).  
 ```csharp
 public string Name { get; set; }
 ```
@@ -115,11 +158,33 @@ protected TetraPak.AspNet.Api.ServiceEndpoints? Parent { get; set; }
 #### Property Value
 [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints')
   
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_ParentConfig'></a>
+## ServiceEndpoint.ParentConfig Property
+Gets a declaring configuration (when this configuration is a sub configuration).  
+```csharp
+public TetraPak.AspNet.Auth.IServiceAuthConfig? ParentConfig { get; }
+```
+#### Property Value
+[TetraPak.AspNet.Auth.IServiceAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig')
+
+Implements [ParentConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.ParentConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig.ParentConfig')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_Scope'></a>
+## ServiceEndpoint.Scope Property
+Gets an authorization scope at this configuration level.  
+```csharp
+public TetraPak.MultiStringValue? Scope { get; set; }
+```
+#### Property Value
+[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
+
+Implements [Scope](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.Scope 'TetraPak.AspNet.Auth.IServiceAuthConfig.Scope')  
+  
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_StringValue'></a>
 ## ServiceEndpoint.StringValue Property
 The value's string representation.  
 ```csharp
-public string StringValue { get; set; }
+public string StringValue { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -229,6 +294,24 @@ Cancellation token for cancellation the operation.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 
 Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync#TetraPak_AspNet_Auth_IServiceAuthConfig_GetClientSecretAsync_TetraPak_AspNet_AuthContext,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext,System.Nullable{System.Threading.CancellationToken})')  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string)'></a>
+## ServiceEndpoint.GetConfiguredValue(string) Method
+Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
+unaffected by delegates or other (internal) logic.  
+```csharp
+public string GetConfiguredValue(string key);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string)_key'></a>
+`key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Identifies the requested value.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') when a value is configured; otherwise `null`.  
+
+Implements [GetConfiguredValue(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String)')  
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_GetHashCode()'></a>
 ## ServiceEndpoint.GetHashCode() Method
@@ -365,3 +448,6 @@ public static bool operator !=(TetraPak.AspNet.Api.ServiceEndpoint? left, TetraP
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
   
+#### See Also
+- [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints')
+- [BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')

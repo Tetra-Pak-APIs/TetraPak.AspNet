@@ -8,23 +8,30 @@ public static class TetraPakApiAuth
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakApiAuth  
 ### Methods
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakApiAccessTokenAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
-## TetraPakApiAuth.AddTetraPakApiAccessTokenAuthentication(IServiceCollection) Method
-Configures a basic authentication scheme for Tetra Pak minted access tokens.  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_AspNetCore_Authentication_AuthenticationBuilder_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)'></a>
+## TetraPakApiAuth.AddTetraPakJwtBearerAssertion(AuthenticationBuilder, JwBearerAssertionOptions?) Method
+Adds Tetra Pak recommended JWT bearer assertion to the API while specifying  
+the caching implementation type.  
 ```csharp
-public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakApiAccessTokenAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);
+public static Microsoft.AspNetCore.Authentication.AuthenticationBuilder AddTetraPakJwtBearerAssertion(this Microsoft.AspNetCore.Authentication.AuthenticationBuilder builder, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakApiAccessTokenAuthentication(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services'></a>
-`services` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The dependency injection service collection.  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_AspNetCore_Authentication_AuthenticationBuilder_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_builder'></a>
+`builder` [Microsoft.AspNetCore.Authentication.AuthenticationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.AuthenticationBuilder 'Microsoft.AspNetCore.Authentication.AuthenticationBuilder')  
+The extended [Microsoft.AspNetCore.Authentication.AuthenticationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.AuthenticationBuilder 'Microsoft.AspNetCore.Authentication.AuthenticationBuilder') instance.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_AspNetCore_Authentication_AuthenticationBuilder_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_options'></a>
+`options` [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions')  
+(optional)<br/>  
+Specifies options for JWT bearer assertion.   
   
 #### Returns
-[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+[Microsoft.AspNetCore.Authentication.AuthenticationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.AuthenticationBuilder 'Microsoft.AspNetCore.Authentication.AuthenticationBuilder')  
+The [builder](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_AspNetCore_Authentication_AuthenticationBuilder_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_builder 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.AspNetCore.Authentication.AuthenticationBuilder, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?).builder') instance.  
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)'></a>
 ## TetraPakApiAuth.AddTetraPakJwtBearerAssertion(IServiceCollection, string?, JwBearerAssertionOptions?) Method
-Configures the app service for Jwt Bearer Authentication.  
+Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.  
 ```csharp
 public static Microsoft.AspNetCore.Authentication.AuthenticationBuilder AddTetraPakJwtBearerAssertion(this Microsoft.Extensions.DependencyInjection.IServiceCollection c, string? defaultScheme=null, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions? options=null);
 ```
@@ -39,36 +46,6 @@ A [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.mic
 Specifies the default authentication scheme.    
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_options'></a>
-`options` [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions')  
-Options governing how/what to validate JWT bearer tokens.   
-  
-#### Returns
-[Microsoft.AspNetCore.Authentication.AuthenticationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Authentication.AuthenticationBuilder 'Microsoft.AspNetCore.Authentication.AuthenticationBuilder')  
-The [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection') instance.  
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)'></a>
-## TetraPakApiAuth.AddTetraPakJwtBearerAssertion&lt;TCache&gt;(IServiceCollection, string?, JwBearerAssertionOptions?) Method
-Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.  
-```csharp
-public static Microsoft.AspNetCore.Authentication.AuthenticationBuilder AddTetraPakJwtBearerAssertion<TCache>(this Microsoft.Extensions.DependencyInjection.IServiceCollection c, string? defaultScheme=null, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions? options=null)
-    where TCache : class, TetraPak.Caching.ITimeLimitedRepositories;
-```
-#### Type parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_TCache'></a>
-`TCache`  
-Specifies a class for implementing caching (must implement [TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')).  
-  
-#### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_c'></a>
-`c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-A [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection'), to be configured for the requested auth flow.  
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_defaultScheme'></a>
-`defaultScheme` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional; default="Bearer")<br/>  
-Specifies the default authentication scheme.    
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion_TCache_(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)_options'></a>
 `options` [JwBearerAssertionOptions](TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions.md 'TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions')  
 Options governing how/what to validate JWT bearer tokens.   
   

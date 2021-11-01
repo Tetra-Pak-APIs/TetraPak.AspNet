@@ -18,9 +18,11 @@ namespace TetraPak.AspNet.Api.Auth
     ///   A default service to support the client credentials grant type.
     /// </summary>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class TetraPakClientCredentialsService : IClientCredentialsService
+    public class TetraPakClientCredentialsGrantService : IClientCredentialsGrantService
     {
         readonly TetraPakConfig _config;
+        // readonly IHttpServiceProvider _httpServiceProvider; obsolete
+        readonly IHttpClientProvider _httpClientProvider;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
 
@@ -59,7 +61,14 @@ namespace TetraPak.AspNet.Api.Auth
                         return cachedOutcome;
                 }
                 
-                using var client = new HttpClient();
+                var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
+                if (!clientOutcome)
+                    return Outcome<ClientCredentialsResponse>.Fail(
+                        new ConfigurationException(
+                            "Client credentials service failed to obtain a HTTP client (see inner exception)", 
+                            clientOutcome.Exception));
+                
+                using var client = clientOutcome.Value!;
                 client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
                 var formsValues = new Dictionary<string, string>
                 {
@@ -214,13 +223,26 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         /// <summary>
-        ///   
+        ///   Initializes the <see cref="TetraPakClientCredentialsGrantService"/>.
         /// </summary>
-        /// <param name="config"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public TetraPakClientCredentialsService(TetraPakConfig config)
+        /// <param name="tetraPakConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
+        /// <param name="httpClientProvider">
+        ///   A HttpClient factory.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   Any parameter was <c>null</c>.
+        /// </exception>
+        public TetraPakClientCredentialsGrantService(
+            TetraPakConfig tetraPakConfig, 
+            IHttpClientProvider httpClientProvider
+            // IHttpServiceProvider httpServiceProvider obsolete
+            )
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _config = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
+            _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
+            // _httpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); obsolte
         }
     }
 }

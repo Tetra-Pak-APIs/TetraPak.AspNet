@@ -11,7 +11,7 @@ using TetraPak.AspNet.Auth;
 namespace TetraPak.AspNet.Api
 {
     // todo consider merging the code in ServiceInfo into TetraPakServiceFactory
-    class TetraPakServiceProvider2 : ITetraPackServiceProvider
+    class TetraPakDownstreamServiceProvider2 : IDownstreamServiceProvider
     {
         static IDictionary<string, BackendService<ServiceEndpoints>>? s_genericServicesIndex;
         static IDictionary<Type, IBackendService>? s_typedServicesIndex;
@@ -68,12 +68,15 @@ namespace TetraPak.AspNet.Api
             var p = serviceCollection.BuildServiceProvider();
             var tetraPakConfig = p.GetRequiredService<TetraPakConfig>();
             var serviceAuthConfig = p.GetRequiredService<IServiceAuthConfig>();
-            var httpServiceProvider = p.GetRequiredService<IHttpServiceProvider>();
+            // var httpServiceProvider = p.GetRequiredService<IHttpServiceProvider>(); obsolete
+            var httpClientProvider = p.GetRequiredService<IHttpClientProvider>();
+            var authorizationService = p.GetRequiredService<IAuthorizationService>();
             
             var servicesIndex = indexGenericServicesFromConfiguration(
                 tetraPakConfig,
                 serviceAuthConfig, 
-                httpServiceProvider);
+                httpClientProvider,
+                authorizationService);
             if (servicesIndex is null)
                 throw new ConfigurationException("Backend services was not configured");
 
@@ -83,22 +86,10 @@ namespace TetraPak.AspNet.Api
 
             var indexResult = addTypedServices(serviceCollection, asm, servicesIndex);
             indexResult.GenericServicesIndex = servicesIndex;
-            // configureTypedServices(serviceCollection, indexResult);
             foreach (var typedEndpoints in indexResult.TypedEndpointsIndex!.Values)
             {
                 serviceCollection.TryAddSingleton(typedEndpoints.GetType(), _ => typedEndpoints);
             }
-
-            // foreach (var type in indexResult.TypedServicesIndex.Keys)           
-            // {
-            //     serviceCollection.TryAddSingleton(type);
-            //
-            // }
-            
-            // foreach (var typedService in indexResult.TypedServicesIndex!.Values)
-            // {
-            //     serviceCollection.TryAddSingleton(typedService.GetType(), _ => typedService);
-            // }
 
             s_genericServicesIndex = indexResult.GenericServicesIndex;
             s_typedEndpointsIndex = indexResult.TypedEndpointsIndex;
@@ -196,7 +187,7 @@ namespace TetraPak.AspNet.Api
                                 $"Cannot configure service {type}. Service '{serviceName}' was not configured");
 
                         configuredEndpoints = ServiceEndpoints.MakeTypedEndpoints(endpointsType, configuredService.Endpoints);
-                        c.TryAddSingleton(endpointsType, provider => configuredEndpoints);
+                        c.TryAddSingleton(endpointsType, _ => configuredEndpoints);
                     }
 
                     c.TryAddSingleton(type);
@@ -217,14 +208,16 @@ namespace TetraPak.AspNet.Api
         static IDictionary<string, BackendService<ServiceEndpoints>> indexGenericServicesFromConfiguration(
             TetraPakConfig tetraPakConfig,
             IServiceAuthConfig config, 
-            IHttpServiceProvider httpServiceProvider)
+            IHttpClientProvider httpClientProvider,
+            IAuthorizationService authorizationService)
+            // IHttpServiceProvider httpServiceProvider) obsolete
         {
             var children = config.Configuration.GetChildren();
             var serviceConfigs = children.Where(s => !config.IsAuthIdentifier(s.Key));
             var index = new Dictionary<string, BackendService<ServiceEndpoints>>();
             foreach (var section in serviceConfigs)
             {
-                var endpoints = new ServiceEndpoints(tetraPakConfig, config, httpServiceProvider, section);
+                var endpoints = new ServiceEndpoints(tetraPakConfig, config, httpClientProvider, authorizationService, section);
                 var service = new BackendService<ServiceEndpoints>(endpoints);
                 index.Add(service.ServiceName, service);
             }
@@ -254,7 +247,7 @@ namespace TetraPak.AspNet.Api
                 : controllerType.Name;
         }
 
-        public TetraPakServiceProvider2(IServiceProvider serviceProvider)
+        public TetraPakDownstreamServiceProvider2(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

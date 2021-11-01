@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Server.IIS.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
 {
-    public static class ContextAuthHelper
+    static class ContextAuthHelper
     {
-        public static bool TryReadAuthorization(
+        internal static bool TryReadAuthorization(
             this MessageReceivedContext context,
-            OpenIdConnectOptions options,
+            OpenIdConnectOptions oidcOptions,
             TetraPakConfig config,
             ILogger logger, 
-            out string authorization)
+            [NotNullWhen(true)] out string authorization)
         {
             authorization = context.Request.Headers[config.AuthorizationHeader];
             var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
@@ -32,7 +32,7 @@ namespace TetraPak.AspNet.Auth
             {
                 logger.Debug($"Received JWT: \n{jwt.ToDebugString()}");
                 logger.Debug($"Environment: {config.Environment}");
-                logger.Debug($"Discovery document URL: {options.MetadataAddress}");
+                logger.Debug($"Discovery document URL: {oidcOptions.MetadataAddress}");
                 return true;
             }
             
@@ -40,12 +40,12 @@ namespace TetraPak.AspNet.Auth
             return true;
         }
 
-        public static bool IsClientSecretRequired(this GrantType grantType)
+        internal static bool IsClientSecretRequired(this GrantType grantType)
         {
             return grantType is GrantType.CC or GrantType.TX;
         }
 
-        public static ClientCredentials GetClientCredentials(this IServiceAuthConfig config)
+        internal static ClientCredentials GetClientCredentials(this IServiceAuthConfig config)
         {
             return new ClientCredentials(config);
         }

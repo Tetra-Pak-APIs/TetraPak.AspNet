@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api.Auth](TetraPak_AspNet_Api_Auth.md 'TetraPak.AspNet.Api.Auth')
 ## TokenExchangeResponse Class
-Represents the response from a successful token exchange request (see [ITokenExchangeService.ExchangeAsync](https://docs.microsoft.com/en-us/dotnet/api/ITokenExchangeService.ExchangeAsync 'ITokenExchangeService.ExchangeAsync')).  
+Represents the response from a successful token exchange request (see [ITokenExchangeGrantService.ExchangeAsync](https://docs.microsoft.com/en-us/dotnet/api/ITokenExchangeGrantService.ExchangeAsync 'ITokenExchangeGrantService.ExchangeAsync')).  
 ```csharp
 public class TokenExchangeResponse
 ```

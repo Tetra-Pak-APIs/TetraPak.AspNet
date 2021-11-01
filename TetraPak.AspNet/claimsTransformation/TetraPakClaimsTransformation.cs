@@ -35,7 +35,6 @@ namespace TetraPak.AspNet
         /// </summary>
         protected IClientCredentialsProvider? ClientCredentials { get; private set; }
 
-
         /// <summary>
         ///   Gets the current HTTP context.
         /// </summary>

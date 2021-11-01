@@ -29,7 +29,7 @@ namespace TetraPak.AspNet
         /// </returns>
         /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig)"/>
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
-        public static ActorToken GetAccessToken(this HttpRequest self, TetraPakConfig config) 
+        public static ActorToken? GetAccessToken(this HttpRequest self, TetraPakConfig config) 
             => self.HttpContext.GetAccessToken(config);
 
         /// <summary>
@@ -41,10 +41,13 @@ namespace TetraPak.AspNet
         /// </returns>
         /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
         /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig, bool)"/>
-        public static ActorToken GetAccessToken(this HttpContext self, TetraPakConfig config)
+        public static ActorToken? GetAccessToken(this HttpContext self, TetraPakConfig config)
         {
             var task = GetAccessTokenAsync(self, config);
-            return task.ConfigureAwait(false).GetAwaiter().GetResult();
+            var outcome = task.ConfigureAwait(false).GetAwaiter().GetResult();
+            return outcome
+                ? outcome.Value
+                : null;
         }
         
         /// <summary>
@@ -87,7 +90,7 @@ namespace TetraPak.AspNet
             bool forceStandardHeader = false)
         {
             if (self is null)
-                return Task.FromResult(Outcome<ActorToken>.Fail(new Exception($"No HTTP context available")));
+                return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("No HTTP context available")));
             
             var headerKey = AmbientData.Keys.AccessToken;
             if (self.Items.TryGetValue(headerKey, out var o) && o is string s && ActorToken.TryParse(s, out var actorToken))
@@ -96,8 +99,8 @@ namespace TetraPak.AspNet
             headerKey = forceStandardHeader || config?.AuthorizationHeader is null
                 ? HeaderNames.Authorization
                 : config.AuthorizationHeader;
-            s = self.Request.Headers[headerKey].FirstOrDefault();
-            if (s is {} && ActorToken.TryParse(s, out actorToken))
+            var ss = self.Request.Headers[headerKey].FirstOrDefault();
+            if (ss is {} && ActorToken.TryParse(ss, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
             var messageId = self.Request.GetMessageId(config);
@@ -114,7 +117,7 @@ namespace TetraPak.AspNet
         ///   otherwise <c>null</c>.
         /// </returns>
         /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpContext,TetraPakConfig)"/>
-        public static ActorToken GetIdentityToken(this HttpRequest self, TetraPakConfig config) 
+        public static ActorToken? GetIdentityToken(this HttpRequest self, TetraPakConfig config) 
             => self.HttpContext.GetIdentityToken(config);
 
         /// <summary>
@@ -134,10 +137,13 @@ namespace TetraPak.AspNet
         ///   otherwise <c>null</c>.
         /// </returns>
         /// <seealso cref="GetIdentityToken(Microsoft.AspNetCore.Http.HttpRequest,TetraPakConfig)"/>
-        public static ActorToken GetIdentityToken(this HttpContext self, TetraPakConfig? config = null)
+        public static ActorToken? GetIdentityToken(this HttpContext self, TetraPakConfig? config = null)
         {
             var task = GetIdentityTokenAsync(self, config);
-            return task.ConfigureAwait(false).GetAwaiter().GetResult();
+            var outcome = task.ConfigureAwait(false).GetAwaiter().GetResult();
+            return outcome
+                ? outcome.Value
+                : null;
         }
         
         /// <summary>
@@ -300,7 +306,7 @@ namespace TetraPak.AspNet
         /// </returns>
         public static ServiceDiagnosticsLevel GetDiagnosticsLevel(
             this HttpRequest request,
-            ILogger logger,
+            ILogger? logger,
             ServiceDiagnosticsLevel useDefault = ServiceDiagnosticsLevel.None)
         {
             if (!request.Headers.TryGetValue(Headers.ServiceDiagnostics, out var values))
@@ -453,6 +459,22 @@ namespace TetraPak.AspNet
         /// </returns>
         public static bool IsEndpointProtected(this HttpContext self) => self.GetEndpoint().IsAuthorizationRequired();
 
+        /// <summary>
+        ///   Obtains a value from a specified <see cref="HttpRequest"/> element (such as headers or query). 
+        /// </summary>
+        /// <param name="request">
+        ///   The extended <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="element">
+        ///   The element to obtain the value from.
+        /// </param>
+        /// <param name="key">
+        ///   Identifies the requested value. 
+        /// </param>
+        /// <returns>
+        ///   The requested value (a <see cref="string"/>) if found by the <paramref name="element"/>;
+        ///   otherwise <c>null</c>.  
+        /// </returns>
         public static string? GetItemValue(this HttpRequest request, HttpRequestElement element, string key)
             => element switch
             {
@@ -464,8 +486,24 @@ namespace TetraPak.AspNet
                     : null,
                 _ => null
             };
-        
-        
+
+        /// <summary>
+        ///   Examines a <see cref="HttpRequest"/> applying a criteria (<see cref="HttpComparison"/>)
+        ///   and returns a value to indicate whether it is a match. 
+        /// </summary>
+        /// <param name="request">
+        ///   The extended <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="criteria">
+        ///   Specifies the criteria.
+        /// </param>
+        /// <param name="comparison">
+        ///   Specifies how to compare <see cref="string"/>s.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if <paramref name="criteria"/> results in a match; otherwise <c>false</c>.
+        /// </returns>
+        /// <seealso cref="IsMatch(HttpComparison,HttpRequest,StringComparison)"/>
         public static bool IsMatch(
             this HttpRequest request,
             HttpComparison criteria, 
@@ -474,6 +512,22 @@ namespace TetraPak.AspNet
             return criteria.IsMatch(request, comparison);
         }
         
+        /// <summary>
+        ///   Applies a criteria to a <see cref="HttpRequest"/>
+        ///   and returns a value to indicate whether it is a match.
+        /// </summary>
+        /// <param name="criteria">
+        ///   The extended <see cref="HttpComparison"/> criteria.
+        /// </param>        /// <param name="request">
+        ///   The <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="comparison">
+        ///   Specifies how to compare <see cref="string"/>s.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if <paramref name="criteria"/> results in a match; otherwise <c>false</c>.
+        /// </returns>
+        /// <seealso cref="IsMatch(HttpRequest,HttpComparison,StringComparison)"/>
         public static bool IsMatch(
             this HttpComparison criteria, 
             HttpRequest request, 
@@ -481,6 +535,5 @@ namespace TetraPak.AspNet
         {
             return criteria.IsMatch(request, comparison);
         }
-
     }
 }

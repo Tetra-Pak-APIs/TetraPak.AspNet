@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,7 +71,10 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>true</c> 
         /// </returns>
-        public static bool TryGetTetraPakConfig(this Controller self, out TetraPakConfig tetraPakConfig)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static bool TryGetTetraPakConfig(
+            this Controller self, 
+            [NotNullWhen(true)] out TetraPakConfig tetraPakConfig)
         {
             tetraPakConfig = self.HttpContext.RequestServices.GetService<TetraPakConfig>();
             return tetraPakConfig is {};

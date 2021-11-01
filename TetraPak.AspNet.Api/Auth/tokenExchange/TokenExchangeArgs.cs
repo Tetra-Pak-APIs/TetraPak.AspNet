@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>
-    ///   Provides the options to be used for a token exchange process (see <see cref="ITokenExchangeService.ExchangeAsync"/>).
+    ///   Provides the options to be used for a token exchange process (see <see cref="ITokenExchangeGrantService.ExchangeAsync"/>).
     ///   See https://tools.ietf.org/id/draft-ietf-oauth-token-exchange-19.html for more details,
     /// </summary>
     public class TokenExchangeArgs

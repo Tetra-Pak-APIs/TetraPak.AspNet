@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -42,28 +43,41 @@ namespace TetraPak.AspNet.Auth
         public static DateTime? Expires(this JwtSecurityToken jwt) => jwt.Payload.Exp?.EpochToDateTime();
 
         /// <summary>
-        ///   Parses a JWT token and returns a <see cref="JwtSecurityToken"/> from the content.
+        ///   Tries parsing a <see cref="string"/> as a JWT token.
         /// </summary>
-        public static bool TryParseToJwtSecurityToken(this string s, out JwtSecurityToken jwtSecurityToken, ILogger logger = null)
+        /// <param name="stringValue">
+        ///   The <see cref="string"/> to be parsed.
+        /// </param>
+        /// <param name="jwtSecurityToken">
+        ///   On success; passes the <see cref="JwtSecurityToken"/> (<c>null</c> on failure). 
+        /// </param>
+        /// <param name="logger">
+        ///   (optional)<br/>
+        ///   A logger provider used for diagnostics purposes.
+        /// </param>
+        public static bool TryParseToJwtSecurityToken(
+            this string stringValue,
+            [NotNullWhen(true)] out JwtSecurityToken jwtSecurityToken, 
+            ILogger logger = null)
         {
             jwtSecurityToken = null;
-            if (s is null)
+            if (stringValue is null)
                 return false;
 
-            var isBearer = s.StartsWith(
+            var isBearer = stringValue.StartsWith(
                 BearerToken.Qualifier, 
                 StringComparison.InvariantCultureIgnoreCase);
             
             try
             {
-                var token = isBearer ? s[BearerToken.Qualifier.Length..].Trim() : s.Trim();
+                var token = isBearer ? stringValue[BearerToken.Qualifier.Length..].Trim() : stringValue.Trim();
                 var handler = new JwtSecurityTokenHandler();
                 jwtSecurityToken = handler.ReadJwtToken(token);
                 return true;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Failed when parsing JWT Security Token from string value: {s}");
+                logger.Error(ex, $"Failed when parsing JWT Security Token from string value: {stringValue}");
                 return false;
             }
         }

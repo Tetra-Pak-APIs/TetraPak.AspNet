@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
@@ -6,17 +6,17 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
 {
-    public static class ContextHelper
+    static class ContextHelper
     {
-        public static bool TryReadCustomAuthorization(
+        internal static bool TryReadCustomAuthorization(
             this MessageReceivedContext context,
             JwtBearerOptions options,
             TetraPakApiConfig config,
             ILogger logger, 
-            out ActorToken token)
+            [NotNullWhen(true)] out ActorToken token)
         {
             using (logger?.BeginScope($"Looking for authorization in header: {config.AuthorizationHeader}"))
-            {
+            {  
                 var messageId = context.Request.GetMessageId(config);
                 if (!config.IsCustomAuthorizationHeader)
                 {

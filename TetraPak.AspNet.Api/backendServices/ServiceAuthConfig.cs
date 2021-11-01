@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualBasic;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
 using TetraPak.Logging;
@@ -141,8 +140,6 @@ namespace TetraPak.AspNet.Api
         public ServiceInvalidEndpoint GetInvalidEndpoint(string endpointName, IEnumerable<Exception> issues)
         {
             return new ServiceInvalidEndpoint(endpointName, issues);
-            // return ServiceProvider.GetRequiredService<ServiceInvalidEndpoint>() obsolete
-            //                       .WithInformation(endpointName, issues);
         }
         
         public ServiceAuthConfig(

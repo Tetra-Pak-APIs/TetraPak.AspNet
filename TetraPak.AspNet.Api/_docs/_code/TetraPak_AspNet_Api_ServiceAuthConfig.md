@@ -101,7 +101,7 @@ Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](http
 <a name='TetraPak_AspNet_Api_ServiceAuthConfig_GetConfiguredValue(string)'></a>
 ## ServiceAuthConfig.GetConfiguredValue(string) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
-unaffected by delegates or other internal types of logic.  
+unaffected by delegates or other (internal) logic.  
 ```csharp
 public string? GetConfiguredValue(string key);
 ```

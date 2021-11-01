@@ -75,7 +75,7 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 <a name='TetraPak_AspNet_Api_Controllers_BusinessApiController_Ok(object_)'></a>
 ## BusinessApiController.Ok(object?) Method
 Overrides the [Microsoft.AspNetCore.Mvc.ControllerBase.Ok](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase.Ok 'Microsoft.AspNetCore.Mvc.ControllerBase.Ok') method to instead invoke the  
-[RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)')  
+[ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)](https://docs.microsoft.com/en-us/dotnet/api/ControllerBaseExtensions.RespondOk#ControllerBaseExtensions_RespondOk_Microsoft_AspNetCore_Mvc_ControllerBase,object?,int,TetraPak_ReadChunk?_ 'ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)')  
 method.  
 ```csharp
 public override Microsoft.AspNetCore.Mvc.OkObjectResult Ok(object? data);
@@ -186,7 +186,7 @@ An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotn
 <a name='TetraPak_AspNet_Api_Controllers_BusinessApiController_RespondOk_T_(TetraPak_EnumOutcome_T__int)'></a>
 ## BusinessApiController.RespondOk&lt;T&gt;(EnumOutcome&lt;T&gt;, int) Method
 Responds with standard format, reflecting a successful request.  
-This method just wraps the [RespondOk(ControllerBase, object?, int, ReadChunk?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?)').   
+This method just wraps the [ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)](https://docs.microsoft.com/en-us/dotnet/api/ControllerBaseExtensions.RespondOk#ControllerBaseExtensions_RespondOk_Microsoft_AspNetCore_Mvc_ControllerBase,object?,int,TetraPak_ReadChunk?_ 'ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase,object?,int,TetraPak.ReadChunk?)').   
 ```csharp
 protected Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk<T>(TetraPak.EnumOutcome<T> outcome, int totalCount=-1);
 ```

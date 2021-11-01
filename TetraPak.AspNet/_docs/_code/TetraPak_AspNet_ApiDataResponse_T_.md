@@ -73,3 +73,14 @@ A unique string value for tracking a request/response (mainly for diagnostics pu
 [TetraPak.AspNet.ApiDataResponse&lt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;')[T](TetraPak_AspNet_ApiDataResponse_T_.md#TetraPak_AspNet_ApiDataResponse_T__T 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;.T')[&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;')  
 A [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;') object.  
   
+<a name='TetraPak_AspNet_ApiDataResponse_T__GetDataAsObjectArray()'></a>
+## ApiDataResponse&lt;T&gt;.GetDataAsObjectArray() Method
+Returns all data items as an array of [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object').   
+```csharp
+public object[] GetDataAsObjectArray();
+```
+#### Returns
+[System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+
+Implements [GetDataAsObjectArray()](TetraPak_AspNet_IApiDataResponse.md#TetraPak_AspNet_IApiDataResponse_GetDataAsObjectArray() 'TetraPak.AspNet.IApiDataResponse.GetDataAsObjectArray()')  
+  

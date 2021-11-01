@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Api.Auth
     ///   Implementors of this interface are able to acquire a token using the
     ///   OAuth Client Credentials grant. 
     /// </summary>
-    public interface IClientCredentialsService
+    public interface IClientCredentialsGrantService
     {
         /// <summary>
         ///   Requests a token using the OAuth Client Credentials grant.   

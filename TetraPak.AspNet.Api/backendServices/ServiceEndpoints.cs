@@ -2,12 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.diagnostics;
+using TetraPak.AspNet.Diagnostics;
 using TetraPak.Configuration;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
@@ -21,6 +24,10 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public class ServiceEndpoints : ConfigurationSection, 
         IServiceAuthConfig,
+        IAccessTokenProvider,
+        IHttpClientProvider,
+        IAuthorizationService,
+        ITetraPakDiagnosticsProvider,
         IEnumerable<KeyValuePair<string, ServiceEndpoint>>
     {
         internal const string DefaultPath = "/"; 
@@ -36,11 +43,14 @@ namespace TetraPak.AspNet.Api
         
         Dictionary<string, ServiceEndpoint> _endpoints;
         List<Exception>? _issues;
+        readonly IAuthorizationService _authorizationService;
+        readonly IHttpClientProvider _httpClientProvider;
+
 
         /// <summary>
         ///   Gets the Tetra Pak integration configuration.
         /// </summary>
-        public TetraPakConfig TetraPakConfig { get; private set; }
+        public TetraPakConfig TetraPakConfig { get; }
         
         /// <summary>
         ///   Returns a value indicating whether the collection of endpoints are valid as a whole (no issues found).
@@ -59,10 +69,11 @@ namespace TetraPak.AspNet.Api
         /// </summary>
         public IServiceAuthConfig ServiceAuthConfig { get; private set; }
         
-        /// <summary>
-        ///   Gets an provider of HTTP services, such as clients.
-        /// </summary>
-        public IHttpServiceProvider HttpServiceProvider { get; private set; }
+        // /// <summary> obsolete
+        // ///   Gets an provider of HTTP services, such as clients.
+        // /// </summary>
+        // public IHttpServiceProvider HttpServiceProvider { get; private set; }
+        
 
         /// <summary>
         ///   Gets a globally available <see cref="IConfiguration"/> instance.
@@ -83,6 +94,19 @@ namespace TetraPak.AspNet.Api
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         internal TetraPakConfig Config => ((ServiceAuthConfig) ServiceAuthConfig).Config;
+        
+        /// <inheritdoc />
+        public Task<Outcome<HttpClient>> GetHttpClientAsync(HttpClientOptions? options = null,
+            CancellationToken? cancellationToken = null)
+            => _httpClientProvider.GetHttpClientAsync(options, cancellationToken);
+
+        /// <inheritdoc />
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
+            => AmbientData.GetAccessTokenAsync(forceStandardHeader); 
+
+        /// <inheritdoc />
+        public Task<Outcome<ActorToken>> AuthorizeAsync(HttpClientOptions options, CancellationToken? cancellationToken = null) 
+            => _authorizationService.AuthorizeAsync(options, cancellationToken);
 
         /// <summary>
         ///   Gets or sets the type of grant used for request authorization.
@@ -228,6 +252,10 @@ namespace TetraPak.AspNet.Api
         internal IBackendService? BackendService { get; set; }
         
         internal bool IsDelegated => Config.IsDelegated;
+        
+        public void DiagnosticsStartTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.StartTimer(timerKey);
+
+        public void DiagnosticsEndTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.GetElapsedMs(timerKey);
 
         /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
@@ -448,7 +476,7 @@ namespace TetraPak.AspNet.Api
         {
             ServiceAuthConfig = configuredEndpoints.ServiceAuthConfig;
             BackendService = configuredEndpoints.BackendService;
-            HttpServiceProvider = configuredEndpoints.HttpServiceProvider;
+            // HttpServiceProvider = configuredEndpoints.HttpServiceProvider; obsolete
             Host = configuredEndpoints.Host;
             BasePath = configuredEndpoints.BasePath;
             Section = configuredEndpoints.Section;
@@ -465,8 +493,11 @@ namespace TetraPak.AspNet.Api
         /// <param name="serviceAuthConfig">
         ///   Initializes <see cref="ServiceAuthConfig"/>.
         /// </param>
-        /// <param name="httpServiceProvider">
-        ///   Initializes <see cref="HttpServiceProvider"/>.
+        /// <param name="httpClientProvider">
+        ///   A Http Client factory.
+        /// </param>
+        /// <param name="authorizationService">
+        ///   Allows client authorization.
         /// </param>
         /// <param name="section">
         ///   The service configuration section.
@@ -474,13 +505,17 @@ namespace TetraPak.AspNet.Api
         internal ServiceEndpoints(
             TetraPakConfig tetraPakConfig,
             IServiceAuthConfig serviceAuthConfig, 
-            IHttpServiceProvider httpServiceProvider,
+            IHttpClientProvider httpClientProvider,
+            IAuthorizationService authorizationService,
+            // IHttpServiceProvider httpServiceProvider, obsolete
             IConfigurationSection section)
         : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, section.Key)
         {
+            _authorizationService = authorizationService;
             TetraPakConfig = tetraPakConfig; 
             ServiceAuthConfig = serviceAuthConfig;
-            HttpServiceProvider = httpServiceProvider;
+            _httpClientProvider = httpClientProvider;
+            // HttpServiceProvider = httpServiceProvider; obsolete
             var serviceName = section.Key;
             validate(serviceName);
             _endpoints = initialize(tetraPakConfig);

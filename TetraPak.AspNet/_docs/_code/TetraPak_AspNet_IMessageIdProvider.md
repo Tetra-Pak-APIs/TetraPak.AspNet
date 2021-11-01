@@ -1,6 +1,8 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## IMessageIdProvider Interface
+Classes implementing this interface are able to obtain/enforce a message id  
+(used for tracking events related to a specific request/response roundtrip).   
 ```csharp
 public interface IMessageIdProvider
 ```

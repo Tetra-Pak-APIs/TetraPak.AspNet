@@ -612,16 +612,21 @@ Enables operation cancellation.
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   
-<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string)'></a>
-## TetraPakConfig.OnGetField(string) Method
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string_bool)'></a>
+## TetraPakConfig.OnGetField(string, bool) Method
 Obtains a [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo') object for a specified field.  
 ```csharp
-protected override System.Reflection.FieldInfo? OnGetField(string fieldName);
+protected override System.Reflection.FieldInfo? OnGetField(string fieldName, bool inherited=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string)_fieldName'></a>
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string_bool)_fieldName'></a>
 `fieldName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the requested field.  
+  
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetField(string_bool)_inherited'></a>
+`inherited` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`false`)<br/>  
+Specifies whether to look for the field in base type(s).  
   
 #### Returns
 [System.Reflection.FieldInfo](https://docs.microsoft.com/en-us/dotnet/api/System.Reflection.FieldInfo 'System.Reflection.FieldInfo')  

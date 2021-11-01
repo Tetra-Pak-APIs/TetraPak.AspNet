@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -178,7 +179,7 @@ namespace TetraPak.AspNet
         protected static bool TryGetConfiguredValue(
             string key, 
             AuthContext context, 
-            out string? value, 
+            [NotNullWhen(true)] out string? value, 
             bool fallbackToParentValue = false)
         {
             return tryGetConfiguredValueTraversed(context.AuthConfig, out value);

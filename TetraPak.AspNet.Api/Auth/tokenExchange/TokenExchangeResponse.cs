@@ -3,7 +3,7 @@
 namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>
-    ///   Represents the response from a successful token exchange request (see <see cref="ITokenExchangeService.ExchangeAsync"/>).
+    ///   Represents the response from a successful token exchange request (see <see cref="ITokenExchangeGrantService.ExchangeAsync"/>).
     /// </summary>
     public class TokenExchangeResponse
     {

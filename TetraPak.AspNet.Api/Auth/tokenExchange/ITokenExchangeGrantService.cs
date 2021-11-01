@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Api.Auth
     /// <summary>
     ///   Implementors of this interface can be used for exchanging access tokens.  
     /// </summary>
-    public interface ITokenExchangeService
+    public interface ITokenExchangeGrantService 
     {
         /// <summary>
         ///   Exchanges a specified access token for a new, to be used for consuming a service.
@@ -33,12 +33,12 @@ namespace TetraPak.AspNet.Api.Auth
             ActorToken accessToken, 
             CancellationToken cancellationToken);
 
-        /// <summary>
-        ///   Creates a <see cref="AuthenticationHeaderValue"/> from a <see cref="TokenExchangeResponse"/>. 
-        /// </summary>
-        /// <param name="tokenExchangeResponse">
-        ///   A response from a token exchange.  
-        /// </param>
-        AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse);
+        // /// <summary>   
+        // ///   Creates a <see cref="AuthenticationHeaderValue"/> from a <see cref="TokenExchangeResponse"/>. obsolete
+        // /// </summary>
+        // /// <param name="tokenExchangeResponse">
+        // ///   A response from a token exchange.  
+        // /// </param>
+        // AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse);
     }
 }

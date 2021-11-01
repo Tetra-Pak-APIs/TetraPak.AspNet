@@ -4,7 +4,7 @@
 // using System.Threading.Tasks;
 // using Microsoft.Extensions.Logging;
 //
-// namespace tetrapak.api.common.request failed_experiment
+// namespace tetrapak.api.common.request failed_experiment obsolete
 // {
 //     /// <summary>
 //     ///   A <see cref="IHttpClientProvider"/> that also raises requesting/responded events for all round trips. 

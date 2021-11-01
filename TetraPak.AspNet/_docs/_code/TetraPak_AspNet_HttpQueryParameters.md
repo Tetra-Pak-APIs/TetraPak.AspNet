@@ -73,15 +73,6 @@ public int Count { get; }
 
 Implements [Count](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.ICollection-1.Count 'System.Collections.Generic.ICollection`1.Count')  
   
-<a name='TetraPak_AspNet_HttpQueryParameters_IsEmpty'></a>
-## HttpQueryParameters.IsEmpty Property
-Gets a value indicating whether there are any query parameters.   
-```csharp
-public bool IsEmpty { get; }
-```
-#### Property Value
-[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
-  
 <a name='TetraPak_AspNet_HttpQueryParameters_IsReadOnly'></a>
 ## HttpQueryParameters.IsReadOnly Property
 Gets a value indicating whether the [System.Collections.Generic.ICollection&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.ICollection-1 'System.Collections.Generic.ICollection`1') is read-only.
@@ -160,10 +151,12 @@ protected virtual System.Collections.Generic.IEnumerable<System.Collections.Gene
 #### Parameters
 <a name='TetraPak_AspNet_HttpQueryParameters_OnParse(string_)_stringValue'></a>
 `stringValue` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') to be parsed.  
   
 #### Returns
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.Collections.Generic.KeyValuePair&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
-A collection of [System.Collections.Generic.KeyValuePair&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2'), representing the   
+A collection of [System.Collections.Generic.KeyValuePair&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2'), representing the key/value pairs  
+found in the [stringValue](TetraPak_AspNet_HttpQueryParameters.md#TetraPak_AspNet_HttpQueryParameters_OnParse(string_)_stringValue 'TetraPak.AspNet.HttpQueryParameters.OnParse(string?).stringValue').  
   
 <a name='TetraPak_AspNet_HttpQueryParameters_ToString()'></a>
 ## HttpQueryParameters.ToString() Method
@@ -190,4 +183,33 @@ Specifies whether to prepend the result with the [Qualifier](TetraPak_AspNet_Htt
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') that represents the current object.  
+  
+### Operators
+<a name='TetraPak_AspNet_HttpQueryParameters_op_Implicitstring_(TetraPak_AspNet_HttpQueryParameters_)'></a>
+## HttpQueryParameters.implicit operator string?(HttpQueryParameters?) Operator
+Implicitly converts a [HttpQueryParameters](TetraPak_AspNet_HttpQueryParameters.md 'TetraPak.AspNet.HttpQueryParameters') object  
+into its [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') representation.  
+```csharp
+public static string? implicit operator string?(TetraPak.AspNet.HttpQueryParameters? queryParameters);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpQueryParameters_op_Implicitstring_(TetraPak_AspNet_HttpQueryParameters_)_queryParameters'></a>
+`queryParameters` [HttpQueryParameters](TetraPak_AspNet_HttpQueryParameters.md 'TetraPak.AspNet.HttpQueryParameters')  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+  
+<a name='TetraPak_AspNet_HttpQueryParameters_op_ImplicitTetraPak_AspNet_HttpQueryParameters(string)'></a>
+## HttpQueryParameters.implicit operator HttpQueryParameters(string) Operator
+Implicitly converts a string representation of HTTP query parameters into  
+a [HttpQueryParameters](TetraPak_AspNet_HttpQueryParameters.md 'TetraPak.AspNet.HttpQueryParameters') object.   
+```csharp
+public static TetraPak.AspNet.HttpQueryParameters implicit operator HttpQueryParameters(string s);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpQueryParameters_op_ImplicitTetraPak_AspNet_HttpQueryParameters(string)_s'></a>
+`s` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+  
+#### Returns
+[HttpQueryParameters](TetraPak_AspNet_HttpQueryParameters.md 'TetraPak.AspNet.HttpQueryParameters')  
   

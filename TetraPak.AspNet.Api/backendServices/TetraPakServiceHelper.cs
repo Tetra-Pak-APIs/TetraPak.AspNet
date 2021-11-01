@@ -36,21 +36,22 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="collection"/>.
         /// </returns>
         public static IServiceCollection AddTetraPakServices(this IServiceCollection collection) 
-            // bool addBackendServices = true)
         {
+            collection.AddTetraPakConfiguration();
             collection.TryAddSingleton<IServiceAuthConfig>(p =>
             {
                 var parentConfig = p.GetRequiredService<TetraPakConfig>();
                 return new ServiceAuthConfig(p, parentConfig);
             });
-            collection.TryAddTransient<AmbientData>();
-            collection.TryAddSingleton<TetraPakServiceProvider>();
-            collection.TryAddSingleton<ITetraPackServiceProvider,TetraPakServiceProvider2>();
-            // c.AddTetraPakServiceEndpointTypes(); obsolete
-            collection.TryAddSingleton<IHttpServiceProvider,HttpServiceProvider>();
+            collection.AddAmbientData();
             collection.AddTetraPakTokenExchangeService();
             collection.AddTetraPakClientCredentialsService();
-            TetraPakServiceProvider2.InitializeServices(collection);
+            
+            collection.TryAddSingleton<TetraPakDownstreamServiceProvider2>();
+            collection.TryAddSingleton<IDownstreamServiceProvider,TetraPakDownstreamServiceProvider2>();
+            collection.TryAddSingleton<IHttpClientProvider,TetraPakApiHttpClientProvider>();
+            collection.TryAddSingleton<IAuthorizationService,TetraPakApiAuthorizationService>();
+            TetraPakDownstreamServiceProvider2.InitializeServices(collection);
             // if (addBackendServices)
             // {
             //     // register all API gateway controllers and corresponding services,
@@ -139,7 +140,7 @@ namespace TetraPak.AspNet.Api
                     if (diagnostics is null)
                         return Task.CompletedTask;
 
-                    diagnostics.End(logger);
+                    ServiceDiagnosticsHelper.End(diagnostics);
                     var timers = diagnostics.GetValues(ServiceDiagnostics.TimerPrefix).ToArray();
                     var timerNameIndex = ServiceDiagnostics.TimerPrefix.Length + 1;
                     var sb = new StringBuilder();

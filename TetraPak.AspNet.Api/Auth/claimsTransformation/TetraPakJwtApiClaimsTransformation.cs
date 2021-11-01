@@ -25,7 +25,7 @@ namespace TetraPak.AspNet.Api.Auth
     {
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
-        protected ITokenExchangeService TokenExchangeService { get; private set; }
+        protected ITokenExchangeGrantService TokenExchangeGrantService { get; private set; }
 
         
         /// <inheritdoc />
@@ -55,7 +55,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var subjectToken = isBearerToken
                     ? bearerToken.Value
                     : accessTokenOutcome.Value!.ToString();
-                var txOutcome = await TokenExchangeService.ExchangeAccessTokenAsync(
+                var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(
                     credentials, 
                     subjectToken, 
                     cancellationToken);
@@ -101,7 +101,7 @@ namespace TetraPak.AspNet.Api.Auth
         internal override void OnInitialize(IServiceProvider provider)
         {
             base.OnInitialize(provider);
-            TokenExchangeService = provider.GetRequiredService<ITokenExchangeService>();
+            TokenExchangeGrantService = provider.GetRequiredService<ITokenExchangeGrantService>();
         }
     }
 }

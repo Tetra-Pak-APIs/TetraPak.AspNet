@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
     [Authorize]
     public class HelloWorldController : ControllerBase
     {
-        readonly ITokenExchangeService _tokenExchangeService;
+        readonly ITokenExchangeGrantService _tokenExchangeGrantService;
         readonly TetraPakConfig _tetraPakConfig;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
 
             var credentials = new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret);
             var ct = new CancellationToken();
-            var txOutcome = await _tokenExchangeService.ExchangeAccessTokenAsync(credentials, actorTokenOutcome!, ct);
+            var txOutcome = await _tokenExchangeGrantService.ExchangeAccessTokenAsync(credentials, actorTokenOutcome!, ct);
             if (!txOutcome)
                 return this.RespondErrorInternalServer(new ConfigurationException("Service is incorrectly configured"));
 
@@ -94,15 +94,15 @@ namespace WebAPI.Controllers
         /// <param name="tetraPakConfig">
         ///   The Tetra Pak integration configuration.
         /// </param>
-        /// <param name="tokenExchangeService">
+        /// <param name="tokenExchangeGrantService">
         ///   A token exchange service.
         ///   This service becomes available for dependency injection when you call
         ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection,string?,TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)"/> (see <see cref="Startup.ConfigureServices"/>).
         /// </param>
-        public HelloWorldController(TetraPakConfig tetraPakConfig, ITokenExchangeService tokenExchangeService)
+        public HelloWorldController(TetraPakConfig tetraPakConfig, ITokenExchangeGrantService tokenExchangeGrantService)
         {
             _tetraPakConfig = tetraPakConfig;
-            _tokenExchangeService = tokenExchangeService;
+            _tokenExchangeGrantService = tokenExchangeGrantService;
         }
     }
 
@@ -112,7 +112,7 @@ namespace WebAPI.Controllers
     [Authorize]
     public class OrdersController : ControllerBase
     {
-        readonly IClientCredentialsService _clientCredentialsService;
+        readonly IClientCredentialsGrantService _clientCredentialsGrantService;
         readonly IOrdersService _ordersService;
 
         [HttpGet]
@@ -127,7 +127,7 @@ namespace WebAPI.Controllers
             }
             else
             {
-                Outcome<ClientCredentialsResponse> ccOutcome = await _clientCredentialsService.AcquireTokenAsync();
+                Outcome<ClientCredentialsResponse> ccOutcome = await _clientCredentialsGrantService.AcquireTokenAsync();
                 if (!ccOutcome)
                     return this.RespondErrorUnauthorized(ccOutcome.Exception);
 
@@ -144,9 +144,9 @@ namespace WebAPI.Controllers
             throw new NotImplementedException();
         }
 
-        public OrdersController(IClientCredentialsService clientCredentialsService, IOrdersService ordersService)
+        public OrdersController(IClientCredentialsGrantService clientCredentialsGrantService, IOrdersService ordersService)
         {
-            _clientCredentialsService = clientCredentialsService;
+            _clientCredentialsGrantService = clientCredentialsGrantService;
             _ordersService = ordersService;
         }
     }

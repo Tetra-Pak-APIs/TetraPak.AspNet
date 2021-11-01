@@ -21,7 +21,7 @@ namespace TetraPak.AspNet.Api
     ///   The <see cref="Type"/> of service endpoints.
     /// </typeparam>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class BackendService<TEndpoints> : IBackendService
+    public class BackendService<TEndpoints> : IBackendService, IAccessTokenProvider
     where TEndpoints : ServiceEndpoints
     {
         const string TimerGet = "out-get";
@@ -39,11 +39,17 @@ namespace TetraPak.AspNet.Api
         // ReSharper disable MemberCanBePrivate.Global
         public TEndpoints Endpoints { get; }
 
-        /// <summary>
-        ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
-        ///   used to consumer the backend service.
-        /// </summary>
-        protected IHttpServiceProvider HttpServiceProvider => Endpoints.HttpServiceProvider;
+        // /// <summary>
+        // ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
+        // ///   used to consumer the backend service.
+        // /// </summary>
+        // protected IHttpServiceProvider HttpServiceProvider => Endpoints.HttpServiceProvider; obsolete
+
+        // /// <summary>
+        // ///   Gets a delegate used to provide a <see cref="HttpClient"/>,
+        // ///   used to consumer the backend service.
+        // /// </summary>
+        // protected IHttpClientProvider HttpClientProvider => Endpoints.HttpClientProvider;
 
         /// <summary>
         ///   Gets logging provider.  
@@ -127,6 +133,9 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null)
             => Endpoints.GetScopeAsync(authContext, useDefault, cancellationToken);
         
+        /// <inheritdoc />
+        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
+            => Endpoints.GetAccessTokenAsync(forceStandardHeader);
         
         /// <inheritdoc />
         public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
@@ -138,7 +147,7 @@ namespace TetraPak.AspNet.Api
         {
             if (timerKey is { })
             {
-                (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsStartTimer(timerKey);
+                Endpoints.DiagnosticsStartTimer(timerKey);
             }
         }
 
@@ -146,7 +155,7 @@ namespace TetraPak.AspNet.Api
         {
             if (timerKey is { })
             {
-                (HttpServiceProvider as ITetraPakDiagnosticsProvider)?.DiagnosticsEndTimer(timerKey);
+                Endpoints.DiagnosticsEndTimer(timerKey);
             }
         }
 
@@ -156,10 +165,10 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null)
         {
             var ct = cancellationToken ?? CancellationToken.None;
-            var accessTokenOutcome  = await HttpServiceProvider.GetAccessTokenAsync(Config);
+            var accessTokenOutcome  = await GetAccessTokenAsync();
             if (accessTokenOutcome)
             {
-                clientOptions.Authorization = new BearerToken(accessTokenOutcome.Value!.Identity);
+                clientOptions.ActorToken = new BearerToken(accessTokenOutcome.Value!.Identity);
             }
             clientOptions.AuthConfig = this;
             return await OnAuthorizeAsync(clientOptions, ct);
@@ -200,14 +209,22 @@ namespace TetraPak.AspNet.Api
             if (!Endpoints.IsValid)
                 return OnServiceConfigurationError(request, Endpoints.GetIssues()!, AmbientData.GetMessageId(true));
             
-            cancellationToken ??= AmbientData.HttpContext?.RequestAborted;
+            cancellationToken ??= AmbientData.HttpContext?.RequestAborted ?? CancellationToken.None;
             if (cancellationToken.IsRequestCancelled())
                 return HttpOutcome<HttpResponseMessage>.Fail(
                     HttpMethod.Post,
                     new HttpRequestCancelledException());
             
             var ct = cancellationToken ?? CancellationToken.None;
-            clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
+
+            var accessTokenOutcome = await GetAccessTokenAsync();
+            if (!accessTokenOutcome)
+                return HttpOutcome<HttpResponseMessage>.Fail(
+                    request.Method,
+                    new Exception("Could not initialize a HTTP client. No access token available", 
+                        accessTokenOutcome.Exception));
+            
+            clientOptions ??= DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!);
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, ct);
             if (!clientOutcome)
                 return HttpOutcome<HttpResponseMessage>.Fail(
@@ -524,18 +541,14 @@ namespace TetraPak.AspNet.Api
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         /// <remarks>
-        ///   The default implementation simply calls the
-        ///   <see cref="IHttpServiceProvider.AuthorizeAsync"/> method
-        ///   of the <see cref="HttpServiceProvider"/>.
+        ///   The default implementation simply calls <see cref="Endpoints"/>'
+        ///   internal <see cref="IAuthorizationService"/>
         /// </remarks>
         protected virtual async Task<Outcome<ActorToken>> OnAuthorizeAsync(
             HttpClientOptions clientOptions,
             CancellationToken? cancellationToken)
         {
-            return await HttpServiceProvider.AuthorizeAsync(
-                clientOptions,
-                cancellationToken,
-                Logger);
+            return await Endpoints.AuthorizeAsync(clientOptions, cancellationToken);
         }
 
         /// <summary>
@@ -557,7 +570,7 @@ namespace TetraPak.AspNet.Api
             HttpClientOptions clientOptions, 
             CancellationToken? cancellationToken)
         {
-            var clientOutcome = await HttpServiceProvider.GetClientAsync(clientOptions, cancellationToken, Logger);
+            var clientOutcome = await Endpoints.GetHttpClientAsync(clientOptions, cancellationToken);
             if (!clientOutcome)
                 return Outcome<HttpClient>.Fail(clientOutcome.Exception);
 

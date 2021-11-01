@@ -16,8 +16,11 @@ namespace TetraPak.AspNet.Api.Auth
     /// <summary>
     ///   Use this service for easy token exchange.
     /// </summary>
-    public class TetraPakTokenExchangeService : ITokenExchangeService, IMessageIdProvider
+    public class TetraPakTokenExchangeGrantService : ITokenExchangeGrantService, IMessageIdProvider
     {
+        readonly IHttpClientProvider _httpClientProvider;
+
+        // readonly IHttpServiceProvider _httpServiceProvider; obsolete
         const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
 
         /// <summary>
@@ -55,19 +58,23 @@ namespace TetraPak.AspNet.Api.Auth
             TokenExchangeArgs args, 
             CancellationToken cancellationToken)
         {
-            var cachedOutcome = await getCached(args.Credentials);
+            var cachedOutcome = await getCached(args.SubjectToken);
             if (cachedOutcome)
                 return cachedOutcome;
-            
-            using var client = new HttpClient();
+
+            var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
+            if (!clientOutcome)
+                return Outcome<TokenExchangeResponse>.Fail(
+                    new ConfigurationException(
+                        "Token exchange service failed to obtain a HTTP client (see inner exception)", 
+                        clientOutcome.Exception));
+
+            using var client = clientOutcome.Value!;
             var credentials = args.Credentials;
             if (credentials is not BasicAuthCredentials basicAuthCredentials)
             {
                 basicAuthCredentials = new BasicAuthCredentials(credentials.Identity, credentials.Secret);
             }
-                // return Outcome<TokenExchangeResponse>.Fail( obsolete
-                //     new InvalidOperationException(
-                //         $"Tetra Pak token exchange expects credentials to be of type {typeof(BasicAuthCredentials)}"));
                 
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
@@ -87,7 +94,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (!response.IsSuccessStatusCode)
                 {
                     var ex = new HttpException(response);
-                    var body = await response.Content.ReadAsStringAsync();
+                    var body = await response.Content.ReadAsStringAsync(); // obsolete?
                     Logger.Error(ex, "Token exchange failure", GetMessageId());
                     return Outcome<TokenExchangeResponse>.Fail(ex);
                 }
@@ -101,7 +108,7 @@ namespace TetraPak.AspNet.Api.Auth
                     await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream,
                         cancellationToken: cancellationToken);
 
-                await cache(args.Credentials, responseBody!);
+                await cache(args.SubjectToken, responseBody!);
                 return Outcome<TokenExchangeResponse>.Success(responseBody!);
             }
             catch (Exception ex)
@@ -110,22 +117,24 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
-        async Task<Outcome<TokenExchangeResponse>> getCached(Credentials credentials)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        async Task<Outcome<TokenExchangeResponse>> getCached(ActorToken accessToken)
         {
             if (Cache is null)
                 return Outcome<TokenExchangeResponse>.Fail(new Exception($"Caching is not supported"));
                 
-            var key = credentials.Identity;
+            var key = accessToken.Identity;
             return await Cache.GetAsync<TokenExchangeResponse>(CacheRepository, key);
         }
 
-        async Task cache(Credentials credentials, TokenExchangeResponse response)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        async Task cache(ActorToken accessToken, TokenExchangeResponse response)
         {
             if (Cache is null)
                 return;
 
             var lifespan = response.GetLifespan();
-            await Cache.AddAsync(CacheRepository, credentials.Identity, response, lifespan);
+            await Cache.AddAsync(CacheRepository, accessToken.Identity, response, lifespan);
         }
 
         /// <inheritdoc />
@@ -136,20 +145,28 @@ namespace TetraPak.AspNet.Api.Auth
         }
 
         /// <summary>
-        ///   Initializes the <see cref="TetraPakTokenExchangeService"/>.
+        ///   Initializes the <see cref="TetraPakTokenExchangeGrantService"/>.
         /// </summary>
         /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
+        /// <param name="httpClientProvider">
+        ///   A HttpClient factory.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="config"/> was unassigned.
         /// </exception>
-        /// <exception cref="ConfigurationException">
-        ///   The <see cref="AmbientData.Config"/> instance was not of type <see cref="TetraPakApiConfig"/>.
+        /// <exception cref="ArgumentNullException">
+        ///   Any parameter was <c>null</c>.
         /// </exception>
-        public TetraPakTokenExchangeService(TetraPakConfig config)
+        public TetraPakTokenExchangeGrantService(TetraPakConfig config,
+            IHttpClientProvider httpClientProvider
+            // IHttpServiceProvider httpServiceProvider obsolete
+            )
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
+            _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
+            // _httpServiceProvider = httpServiceProvider; obsolete
         }
     }
 }

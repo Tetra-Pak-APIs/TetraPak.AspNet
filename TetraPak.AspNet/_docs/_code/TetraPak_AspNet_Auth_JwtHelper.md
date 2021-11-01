@@ -39,19 +39,23 @@ public static string ToDebugString(this System.IdentityModel.Tokens.Jwt.JwtSecur
   
 <a name='TetraPak_AspNet_Auth_JwtHelper_TryParseToJwtSecurityToken(string_System_IdentityModel_Tokens_Jwt_JwtSecurityToken_Microsoft_Extensions_Logging_ILogger)'></a>
 ## JwtHelper.TryParseToJwtSecurityToken(string, JwtSecurityToken, ILogger) Method
-Parses a JWT token and returns a [System.IdentityModel.Tokens.Jwt.JwtSecurityToken](https://docs.microsoft.com/en-us/dotnet/api/System.IdentityModel.Tokens.Jwt.JwtSecurityToken 'System.IdentityModel.Tokens.Jwt.JwtSecurityToken') from the content.  
+Tries parsing a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') as a JWT token.  
 ```csharp
-public static bool TryParseToJwtSecurityToken(this string s, out System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtSecurityToken, Microsoft.Extensions.Logging.ILogger logger=null);
+public static bool TryParseToJwtSecurityToken(this string stringValue, out System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtSecurityToken, Microsoft.Extensions.Logging.ILogger logger=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Auth_JwtHelper_TryParseToJwtSecurityToken(string_System_IdentityModel_Tokens_Jwt_JwtSecurityToken_Microsoft_Extensions_Logging_ILogger)_s'></a>
-`s` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+<a name='TetraPak_AspNet_Auth_JwtHelper_TryParseToJwtSecurityToken(string_System_IdentityModel_Tokens_Jwt_JwtSecurityToken_Microsoft_Extensions_Logging_ILogger)_stringValue'></a>
+`stringValue` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') to be parsed.  
   
 <a name='TetraPak_AspNet_Auth_JwtHelper_TryParseToJwtSecurityToken(string_System_IdentityModel_Tokens_Jwt_JwtSecurityToken_Microsoft_Extensions_Logging_ILogger)_jwtSecurityToken'></a>
 `jwtSecurityToken` [System.IdentityModel.Tokens.Jwt.JwtSecurityToken](https://docs.microsoft.com/en-us/dotnet/api/System.IdentityModel.Tokens.Jwt.JwtSecurityToken 'System.IdentityModel.Tokens.Jwt.JwtSecurityToken')  
+On success; passes the [System.IdentityModel.Tokens.Jwt.JwtSecurityToken](https://docs.microsoft.com/en-us/dotnet/api/System.IdentityModel.Tokens.Jwt.JwtSecurityToken 'System.IdentityModel.Tokens.Jwt.JwtSecurityToken') (`null` on failure).   
   
 <a name='TetraPak_AspNet_Auth_JwtHelper_TryParseToJwtSecurityToken(string_System_IdentityModel_Tokens_Jwt_JwtSecurityToken_Microsoft_Extensions_Logging_ILogger)_logger'></a>
 `logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
+(optional)<br/>  
+A logger provider used for diagnostics purposes.  
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  

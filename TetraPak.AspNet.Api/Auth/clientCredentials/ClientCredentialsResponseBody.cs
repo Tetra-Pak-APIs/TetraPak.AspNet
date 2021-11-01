@@ -4,7 +4,7 @@ namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>
     ///   Represents the response from a successful client credentials request
-    ///   (see <see cref="IClientCredentialsService.AcquireTokenAsync"/>).
+    ///   (see <see cref="IClientCredentialsGrantService.AcquireTokenAsync"/>).
     /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
     class ClientCredentialsResponseBody

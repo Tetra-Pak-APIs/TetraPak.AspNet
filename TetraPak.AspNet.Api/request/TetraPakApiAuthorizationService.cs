@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -16,92 +15,30 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
-    /// <summary>
-    ///   Implements base functionality for providing HTTP clients
-    ///   to be used when consuming configured backend services. 
-    /// </summary>
-    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class HttpServiceProvider : IHttpServiceProvider, ITetraPakDiagnosticsProvider
+    public class TetraPakApiAuthorizationService : IAuthorizationService, ITetraPakDiagnosticsProvider
     {
-        readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
+        readonly TetraPakConfig _tetraPakConfig;
         readonly IHttpContextAccessor _httpContextAccessor;
-        readonly HttpClientOptions? _singletonClientOptions;
-        HttpClient? _singletonClient;
-        readonly TetraPakConfig _config;
+
+        ILogger? Logger => _tetraPakConfig.Logger;
 
         /// <summary>
-        ///   Gets a <see cref="ITokenExchangeService"/> for acquiring a token to be used
+        ///   Gets a <see cref="ITokenExchangeGrantService"/> for acquiring a token to be used
         ///   with clients consuming services.  
         /// </summary>
-        protected ITokenExchangeService TokenExchangeService { get; }
+        ITokenExchangeGrantService TokenExchangeGrantService { get; }
 
         /// <summary>
-        ///   Gets a <see cref="IClientCredentialsService"/> for acquiring a token to be used
+        ///   Gets a <see cref="IClientCredentialsGrantService"/> for acquiring a token to be used
         ///   with clients consuming services.
         /// </summary>
-        protected IClientCredentialsService ClientCredentialsService { get; }
+        IClientCredentialsGrantService ClientCredentialsGrantService { get; }
 
-        /// <inheritdoc />
-        public string? GetMessageId(bool enforce = false) => _config.AmbientData.GetMessageId();
+        string? getMessageId(bool enforce = false) => _tetraPakConfig.AmbientData.GetMessageId(enforce);
 
-        /// <inheritdoc />
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false) 
-            => _config.AmbientData.GetAccessTokenAsync(forceStandardHeader);
-
-        public Task<Outcome<ActorToken>> GetAccessTokenAsync(TetraPakConfig config) 
-            => _httpContextAccessor.HttpContext.GetAccessTokenAsync(config);
-
-        /// <summary>
-        ///   Gets a logging provider.
-        /// </summary>
-        protected ILogger? Logger => _config.Logger;
-
-        public HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions!);
-        
-        /// <inheritdoc />
-        public virtual async Task<Outcome<HttpClient>> GetClientAsync(
-            HttpClientOptions? options = null,
-            CancellationToken? cancellationToken = null,
-            ILogger? logger = null,
-            bool authenticate = true)
-        {
-            var transient = options?.IsClientTransient ?? true;
-            var client = transient
-                ? options?.MessageHandler is {} 
-                    ? new HttpClient(options.MessageHandler) 
-                    : new HttpClient()
-                : SingletonClient;
-
-            if (!authenticate) 
-                return Outcome<HttpClient>.Success(client);
-
-            var authOutcome = await AuthorizeAsync(options, cancellationToken, logger);
-            if (!authOutcome)
-            {
-                var exception = new HttpException(
-                    HttpStatusCode.Unauthorized, 
-                    "Failed to authenticate an HTTP client", 
-                    authOutcome.Exception);
-                Logger.Error(exception, messageId: GetMessageId());
-                return Outcome<HttpClient>.Fail(exception);
-            }
-
-            var token = authOutcome.Value;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Identity);
-            return Outcome<HttpClient>.Success(client);
-        }
-
-        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => GetDiagnostics()?.StartTimer(timerKey);
-
-        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
-
-        protected ServiceDiagnostics? GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(null); 
-
-        /// <inheritdoc />
         public async Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions? options,
-            CancellationToken? cancellationToken = null,
-            ILogger? logger = null)
+            CancellationToken? cancellationToken = null)
         {
             const string TimerNameTx = "out-auth-tx";
             const string TimerNameCc = "out-auth-cc";
@@ -114,7 +51,7 @@ namespace TetraPak.AspNet.Api
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameTx);
                         var outcome = await OnTokenExchangeAuthenticationAsync(
                             options.AuthConfig,
-                            options.Authorization,
+                            options.ActorToken,
                             cancellationToken);
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameTx);
                         return outcome;
@@ -153,7 +90,7 @@ namespace TetraPak.AspNet.Api
                         $"Error when authenticating HTTP client. Unexpected auth mechanism: {options.AuthConfig?.GrantType}");
             }
         }
-
+        
         /// <summary>
         ///   This method is called to acquire a token using the Token Exchange grant type. 
         /// </summary>
@@ -184,7 +121,7 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var ct = cancellationToken ?? CancellationToken.None;
-                              var context = new AuthContext(GrantType.TokenExchange, authConfig);
+                var context = new AuthContext(GrantType.TokenExchange, authConfig);
                 var idOutcome = await authConfig.GetClientIdAsync(context);
                 if (!idOutcome)
                     throw new ConfigurationException("Token exchange error: No client id was provided");
@@ -198,7 +135,7 @@ namespace TetraPak.AspNet.Api
                 var clientSecret = secretOutcome.Value;
             
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
-                var txOutcome = await TokenExchangeService.ExchangeAccessTokenAsync(credentials, accessToken, ct);
+                var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(credentials, accessToken, ct);
                 if (!txOutcome)
                     throw txOutcome.Exception;
 
@@ -210,7 +147,7 @@ namespace TetraPak.AspNet.Api
                 var exception = new HttpException(
                     HttpStatusCode.Unauthorized,
                     "Token exchanged failed (see inner exception)", ex);
-                Logger.Error(exception, messageId: GetMessageId());
+                Logger.Error(exception, messageId: getMessageId());
                 return Outcome<ActorToken>.Fail(exception);
             }
         }
@@ -257,7 +194,7 @@ namespace TetraPak.AspNet.Api
                     
                 var scope = scopeOutcome.Value;
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
-                var ccOutcome = await ClientCredentialsService.AcquireTokenAsync(ct, credentials, scope);
+                var ccOutcome = await ClientCredentialsGrantService.AcquireTokenAsync(ct, credentials, scope);
                 if (!ccOutcome)
                     throw ccOutcome.Exception;
 
@@ -269,45 +206,27 @@ namespace TetraPak.AspNet.Api
                 var exception = new HttpException(
                     HttpStatusCode.Unauthorized,
                     "Client credentials authentication failed (see inner exception)", ex);
-                Logger.Error(exception, GetMessageId());
+                Logger.Error(exception, getMessageId());
                 return Outcome<ActorToken>.Fail(exception);
             }
         }
         
-        /// <inheritdoc />
-        public Task<ITokenExchangeService> GetTokenExchangeService() => Task.FromResult(TokenExchangeService);
+        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => GetDiagnostics()?.StartTimer(timerKey);
 
-        public ILogger? GetLogger() => Logger;
+        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
+        
+        protected ServiceDiagnostics? GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(); 
 
-        public HttpServiceProvider(
-            ITokenExchangeService tokenExchangeService,
-            IClientCredentialsService clientCredentialsService,
+        public TetraPakApiAuthorizationService(
+            TetraPakConfig tetraPakConfig,
             IHttpContextAccessor httpContextAccessor,
-            TetraPakConfig config,
-            Func<HttpClientOptions,HttpClient>? singletonClientFactory = null, 
-            HttpClientOptions? singletonClientOptions = null)
+            ITokenExchangeGrantService tokenExchangeGrantService,
+            IClientCredentialsGrantService clientCredentialsGrantService)
         {
-            TokenExchangeService = tokenExchangeService ?? throw new ArgumentNullException(nameof(tokenExchangeService));
-            ClientCredentialsService = clientCredentialsService;
-            _config = config ?? throw new ArgumentNullException(nameof(config));
-            _singletonClientFactory = singletonClientFactory ?? (_ => new SingletonHttpClient());
+            _tetraPakConfig = tetraPakConfig;
             _httpContextAccessor = httpContextAccessor;
-            _singletonClientOptions = singletonClientOptions;
+            TokenExchangeGrantService = tokenExchangeGrantService ?? throw new ArgumentNullException(nameof(tokenExchangeGrantService));
+            ClientCredentialsGrantService = clientCredentialsGrantService;
         }
-    }
-
-    public class SingletonHttpClient : HttpClient
-    {
-        protected override void Dispose(bool disposing)
-        {
-            // ignore disposing
-        }
-    }
-
-    public interface ITetraPakDiagnosticsProvider
-    {
-        void DiagnosticsStartTimer(string timerKey);
-
-        void DiagnosticsEndTimer(string timerKey);
     }
 }

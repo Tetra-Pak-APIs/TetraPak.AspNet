@@ -262,25 +262,26 @@ namespace TetraPak.AspNet.Auth
 
             void addCachingIfAllowed()
             {
-                if (tetraPakConfig is null || !tetraPakConfig.IsCachingAllowed)
-                    return;
-
-                if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
+                if (tetraPakConfig is { IsCachingAllowed: true })
                 {
-                    services.TryAddSingleton<ITimeLimitedRepositories, TCache>();
-                    return;
+                    services.AddTetraPakCaching();
                 }
-                
-                services.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
-                {
-                    var cacheLogger = p.GetService<ILogger<SimpleCache>>();
-                    var cache = new SimpleCache(cacheLogger)
-                    {
-                        DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
-                    };
-                    var cacheConfig = tetraPakConfig.Caching.WithCache(cache);
-                    return cache.WithConfiguration(cacheConfig);
-                });
+                // if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
+                // {
+                //     services.TryAddSingleton<ITimeLimitedRepositories, TCache>(); obsolete
+                //     return;
+                // }
+                //
+                // services.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
+                // {
+                //     var cacheLogger = p.GetService<ILogger<SimpleCache>>();
+                //     var cache = new SimpleCache(cacheLogger)
+                //     {
+                //         DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
+                //     };
+                //     var cacheConfig = tetraPakConfig.Caching.WithCache(cache);
+                //     return cache.WithConfiguration(cacheConfig);
+                // });
             }
         }
 

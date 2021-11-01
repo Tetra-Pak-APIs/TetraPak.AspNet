@@ -1,5 +1,9 @@
 ﻿namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Classes implementing this interface are able to obtain/enforce a message id
+    ///   (used for tracking events related to a specific request/response roundtrip). 
+    /// </summary>
     public interface IMessageIdProvider
     {
         /// <summary>

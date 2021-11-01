@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -52,7 +53,7 @@ namespace TetraPak.AspNet.Api.Controllers
                         "Cannot get access token. Failed when trying to obtain a "+
                         $" configuration ({typeof(TetraPakApiConfig)})")));
                 
-            return self.HttpContext.Request.GetAccessTokenAsync(config!);
+            return self.HttpContext.Request.GetAccessTokenAsync(config);
         }
 
         /// <summary>
@@ -736,7 +737,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Trace(message, messageId);
+            config.Logger.Trace(message, messageId);
         }
         
         /// <summary>
@@ -761,7 +762,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Trace(messageHandler, messageId);
+            config.Logger.Trace(messageHandler, messageId);
         }
 
         /// <summary>
@@ -786,7 +787,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Debug(message, messageId);
+            config.Logger.Debug(message, messageId);
         }
         
         /// <summary>
@@ -811,7 +812,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Debug(messageHandler, messageId);
+            config.Logger.Debug(messageHandler, messageId);
         }
 
         /// <summary>
@@ -836,7 +837,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Information(message, messageId);
+            config.Logger.Information(message, messageId);
         }
         
         /// <summary>
@@ -861,7 +862,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Information(messageHandler, messageId);
+            config.Logger.Information(messageHandler, messageId);
         }
 
         /// <summary>
@@ -886,7 +887,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Warning(message, messageId);
+            config.Logger.Warning(message, messageId);
         }
         
         /// <summary>
@@ -911,7 +912,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Warning(messageHandler, messageId);
+            config.Logger.Warning(messageHandler, messageId);
         }
 
         /// <summary>
@@ -943,7 +944,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config?.Logger.Error(exception, message, messageId);
+            config.Logger.Error(exception, message, messageId);
         }
         
         /// <summary>
@@ -975,7 +976,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (!self.TryGetTetraPakApiConfig(out var config))
                 return;
             
-            config!.Logger.Error(exception, messageHandler, messageId);
+            config.Logger.Error(exception, messageHandler, messageId);
         }
 
         /// <summary>
@@ -991,7 +992,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   <c>true</c> if the Tetra Pak (API) configuration object could be obtained; otherwise <c>false</c>.
         /// </returns>
         /// <seealso cref="GetTetraPakConfig"/>
-        public static bool TryGetTetraPakApiConfig(this ControllerBase self, out TetraPakApiConfig? config)
+        public static bool TryGetTetraPakApiConfig(this ControllerBase self, [NotNullWhen(true)] out TetraPakApiConfig? config)
         {
             config = self.HttpContext.RequestServices.GetService<TetraPakApiConfig>();
             return config is {};

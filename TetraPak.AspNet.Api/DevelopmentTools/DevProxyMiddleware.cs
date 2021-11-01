@@ -28,6 +28,9 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         readonly TetraPakConfig _config;
         readonly HttpComparison? _isMutedWhenCriteria;
 
+        readonly IHttpClientProvider _httpClientProvider;
+        // readonly IHttpServiceProvider _httpService; obsolete
+
         ITimeLimitedRepositories? Cache => _config.Cache;
         
         ILogger? Logger => _config.Logger;
@@ -146,7 +149,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
             var expires = jwtBearerToken.ToJwtSecurityToken().Expires();
             var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
-            await Cache.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, customLifeSpan: lifespan);
+            await Cache.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, lifespan);
         }
 
         async void configureTokenCache()
@@ -167,6 +170,13 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         {
             try
             {
+                var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
+                if (!clientOutcome)
+                    return Outcome<ActorToken>.Fail(
+                        new ConfigurationException(
+                            "Token exchange failed to obtain a HTTP client (see inner exception)", 
+                            clientOutcome.Exception));
+                
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await client.GetAsync(_url);
@@ -208,9 +218,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public DevProxyMiddleware(TetraPakConfig config, string url, HttpComparison? isMutedWhenCriteria)
+        public DevProxyMiddleware(TetraPakConfig config, IHttpClientProvider httpClientProvider, string url,
+            HttpComparison? isMutedWhenCriteria)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _httpClientProvider = httpClientProvider;
             _url = string.IsNullOrWhiteSpace(url) 
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;

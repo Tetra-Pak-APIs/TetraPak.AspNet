@@ -50,6 +50,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     return app;
 
                 var logger = app.ApplicationServices.GetService<ILogger<DevProxyMiddleware>>();
+                var httpClientProvider = app.ApplicationServices.GetRequiredService<IHttpClientProvider>();
                 s_isDevProxyAllowed = env.IsLocalHost();
                 if (!s_isDevProxyAllowed)
                 {
@@ -65,7 +66,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     return app;
                 }
 
-                var proxyMiddleware = new DevProxyMiddleware(tetraPakConfig, proxyUrl, isMutedWhen);
+                var proxyMiddleware = new DevProxyMiddleware(tetraPakConfig, httpClientProvider, proxyUrl, isMutedWhen);
                 app.Use(async (context, next) =>
                 {
                     await proxyMiddleware.InvokeAsync(context);
