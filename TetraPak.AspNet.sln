@@ -62,9 +62,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.TetraPak.AspNet", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.Acme.Common", "demos\demo.Acme.Common\demo.Acme.Common.csproj", "{9179A475-2A01-4965-A82D-588269B246E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.AcmeProducts", "demos\demo.AcmeProducts\demo.AcmeProducts.csproj", "{1B6F0A84-33DD-4EDD-9F0F-9CFC2E431204}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.Api.AcmeProducts", "demos\demo.Api.AcmeProducts\demo.Api.AcmeProducts.csproj", "{1B6F0A84-33DD-4EDD-9F0F-9CFC2E431204}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.AcmeAssets", "demos\demo.AcmeAssets\demo.AcmeAssets.csproj", "{28785986-AFDE-4128-BA2A-3FF4E68FB87B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo.Api.AcmeAssets", "demos\demo.Api.AcmeAssets\demo.Api.AcmeAssets.csproj", "{28785986-AFDE-4128-BA2A-3FF4E68FB87B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

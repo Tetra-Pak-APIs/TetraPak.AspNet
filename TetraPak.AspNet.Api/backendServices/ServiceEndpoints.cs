@@ -43,9 +43,6 @@ namespace TetraPak.AspNet.Api
         
         Dictionary<string, ServiceEndpoint> _endpoints;
         List<Exception>? _issues;
-        readonly IAuthorizationService _authorizationService;
-        readonly IHttpClientProvider _httpClientProvider;
-
 
         /// <summary>
         ///   Gets the Tetra Pak integration configuration.
@@ -68,13 +65,11 @@ namespace TetraPak.AspNet.Api
         ///   Gets the service auth configuration.
         /// </summary>
         public IServiceAuthConfig ServiceAuthConfig { get; private set; }
-        
-        // /// <summary> obsolete
-        // ///   Gets an provider of HTTP services, such as clients.
-        // /// </summary>
-        // public IHttpServiceProvider HttpServiceProvider { get; private set; }
-        
 
+        internal IHttpClientProvider HttpClientProvider { get; set; }
+        
+        internal IAuthorizationService AuthorizationService { get; set; }
+        
         /// <summary>
         ///   Gets a globally available <see cref="IConfiguration"/> instance.
         /// </summary>
@@ -94,11 +89,13 @@ namespace TetraPak.AspNet.Api
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         internal TetraPakConfig Config => ((ServiceAuthConfig) ServiceAuthConfig).Config;
+
+        internal CancellationToken? ContextCancellationToken => AmbientData.HttpContext?.RequestAborted;
         
         /// <inheritdoc />
         public Task<Outcome<HttpClient>> GetHttpClientAsync(HttpClientOptions? options = null,
             CancellationToken? cancellationToken = null)
-            => _httpClientProvider.GetHttpClientAsync(options, cancellationToken);
+            => HttpClientProvider.GetHttpClientAsync(options, cancellationToken);
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
@@ -106,7 +103,7 @@ namespace TetraPak.AspNet.Api
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> AuthorizeAsync(HttpClientOptions options, CancellationToken? cancellationToken = null) 
-            => _authorizationService.AuthorizeAsync(options, cancellationToken);
+            => AuthorizationService.AuthorizeAsync(options, cancellationToken);
 
         /// <summary>
         ///   Gets or sets the type of grant used for request authorization.
@@ -457,7 +454,7 @@ namespace TetraPak.AspNet.Api
                 .WithConfig(TetraPakConfig, section);
         }
 
-        internal static ServiceEndpoints MakeTypedEndpoints( // obsolete
+        internal static ServiceEndpoints MakeTypedEndpoints( 
             Type endpointsType,
             ServiceEndpoints configuredEndpoints)
         {
@@ -476,7 +473,8 @@ namespace TetraPak.AspNet.Api
         {
             ServiceAuthConfig = configuredEndpoints.ServiceAuthConfig;
             BackendService = configuredEndpoints.BackendService;
-            // HttpServiceProvider = configuredEndpoints.HttpServiceProvider; obsolete
+            AuthorizationService = configuredEndpoints.AuthorizationService;
+            HttpClientProvider = configuredEndpoints.HttpClientProvider;
             Host = configuredEndpoints.Host;
             BasePath = configuredEndpoints.BasePath;
             Section = configuredEndpoints.Section;
@@ -493,7 +491,7 @@ namespace TetraPak.AspNet.Api
         /// <param name="serviceAuthConfig">
         ///   Initializes <see cref="ServiceAuthConfig"/>.
         /// </param>
-        /// <param name="httpClientProvider">
+        /// <param name="httpHttpClientProvider">
         ///   A Http Client factory.
         /// </param>
         /// <param name="authorizationService">
@@ -505,17 +503,15 @@ namespace TetraPak.AspNet.Api
         internal ServiceEndpoints(
             TetraPakConfig tetraPakConfig,
             IServiceAuthConfig serviceAuthConfig, 
-            IHttpClientProvider httpClientProvider,
+            IHttpClientProvider httpHttpClientProvider,
             IAuthorizationService authorizationService,
-            // IHttpServiceProvider httpServiceProvider, obsolete
             IConfigurationSection section)
         : base(serviceAuthConfig.Configuration, serviceAuthConfig.AmbientData.Logger, section.Key)
         {
-            _authorizationService = authorizationService;
+            AuthorizationService = authorizationService;
             TetraPakConfig = tetraPakConfig; 
             ServiceAuthConfig = serviceAuthConfig;
-            _httpClientProvider = httpClientProvider;
-            // HttpServiceProvider = httpServiceProvider; obsolete
+            HttpClientProvider = httpHttpClientProvider;
             var serviceName = section.Key;
             validate(serviceName);
             _endpoints = initialize(tetraPakConfig);

@@ -85,8 +85,9 @@ namespace TetraPak.AspNet.Api
             return await service.GetAsync(
                 serviceEndpoint!,
                 queryParameters,
-                clientOptions 
-                    ?? serviceEndpoint.ClientOptions.WithAuthorization((await serviceEndpoint.GetAccessTokenAsync()).Value),
+                clientOptions ?? serviceEndpoint.ClientOptions.WithAuthorization(
+                        (await serviceEndpoint.GetAccessTokenAsync()).Value, 
+                        serviceEndpoint.AuthorizationService),
                 cancellationToken);
         }
 
@@ -172,8 +173,9 @@ namespace TetraPak.AspNet.Api
             return await service.PostAsync(
                 serviceEndpoint!, 
                 content, 
-                clientOptions 
-                    ?? serviceEndpoint.ClientOptions.WithAuthorization((await serviceEndpoint.GetAccessTokenAsync()).Value),
+                clientOptions ?? serviceEndpoint.ClientOptions.WithAuthorization(
+                    (await serviceEndpoint.GetAccessTokenAsync()).Value,
+                    serviceEndpoint.AuthorizationService),
                 cancellationToken);
         }
 
@@ -249,8 +251,9 @@ namespace TetraPak.AspNet.Api
             return await service.PostAsync(
                 serviceEndpoint!, 
                 content, 
-                clientOptions 
-                    ?? serviceEndpoint.ClientOptions.WithAuthorization((await serviceEndpoint.GetAccessTokenAsync()).Value),
+                clientOptions ?? serviceEndpoint.ClientOptions.WithAuthorization(
+                    (await serviceEndpoint.GetAccessTokenAsync()).Value,
+                    serviceEndpoint.AuthorizationService),
                 cancellationToken);
         }
 
@@ -326,10 +329,11 @@ namespace TetraPak.AspNet.Api
             return await service.PatchAsync(
                 serviceEndpoint!, 
                 content, 
-                clientOptions 
-                    ?? serviceEndpoint.ClientOptions.WithAuthorization((await serviceEndpoint.GetAccessTokenAsync()).Value),
+                clientOptions ?? serviceEndpoint.ClientOptions.WithAuthorization(
+                    (await serviceEndpoint.GetAccessTokenAsync()).Value,
+                    serviceEndpoint.AuthorizationService),
                 cancellationToken);
-        }
+        }   
 
         /// <summary>
         ///   Sends an HTTP PATCH message to the specified <see cref="ServiceEndpoint"/>

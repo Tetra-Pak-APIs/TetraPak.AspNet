@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,6 @@ namespace TetraPak.AspNet.Api.Auth
     {
         readonly IHttpClientProvider _httpClientProvider;
 
-        // readonly IHttpServiceProvider _httpServiceProvider; obsolete
         const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
 
         /// <summary>
@@ -137,12 +135,12 @@ namespace TetraPak.AspNet.Api.Auth
             await Cache.AddAsync(CacheRepository, accessToken.Identity, response, lifespan);
         }
 
-        /// <inheritdoc />
-        public virtual AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse)
-        {
-            var accessToken = tokenExchangeResponse.AccessToken;
-            return new AuthenticationHeaderValue("Bearer", accessToken);
-        }
+        // /// <inheritdoc /> obsolete
+        // public virtual AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse)
+        // {
+        //     var accessToken = tokenExchangeResponse.AccessToken;
+        //     return new AuthenticationHeaderValue("Bearer", accessToken);
+        // }
 
         /// <summary>
         ///   Initializes the <see cref="TetraPakTokenExchangeGrantService"/>.
@@ -159,14 +157,10 @@ namespace TetraPak.AspNet.Api.Auth
         /// <exception cref="ArgumentNullException">
         ///   Any parameter was <c>null</c>.
         /// </exception>
-        public TetraPakTokenExchangeGrantService(TetraPakConfig config,
-            IHttpClientProvider httpClientProvider
-            // IHttpServiceProvider httpServiceProvider obsolete
-            )
+        public TetraPakTokenExchangeGrantService(TetraPakConfig config, IHttpClientProvider httpClientProvider)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
-            // _httpServiceProvider = httpServiceProvider; obsolete
         }
     }
 }

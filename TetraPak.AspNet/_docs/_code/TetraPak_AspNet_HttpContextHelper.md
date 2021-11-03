@@ -12,7 +12,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ## HttpContextHelper.GetAccessToken(HttpContext, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig config);
+public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)_self'></a>
@@ -32,7 +32,7 @@ otherwise `null`.
 ## HttpContextHelper.GetAccessToken(HttpRequest, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
+public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
@@ -116,22 +116,22 @@ The Tetra Pak integration configuration.
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger_TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)'></a>
-## HttpContextHelper.GetDiagnosticsLevel(HttpRequest, ILogger, ServiceDiagnosticsLevel) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger__TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)'></a>
+## HttpContextHelper.GetDiagnosticsLevel(HttpRequest, ILogger?, ServiceDiagnosticsLevel) Method
 Gets a telemetry level from the request (if any).  
 ```csharp
-public static TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel GetDiagnosticsLevel(this Microsoft.AspNetCore.Http.HttpRequest request, Microsoft.Extensions.Logging.ILogger logger, TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel useDefault=TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel.None);
+public static TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel GetDiagnosticsLevel(this Microsoft.AspNetCore.Http.HttpRequest request, Microsoft.Extensions.Logging.ILogger? logger, TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel useDefault=TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel.None);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger_TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_request'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger__TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger_TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_logger'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger__TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_logger'></a>
 `logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
 A logger provider.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger_TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_useDefault'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetDiagnosticsLevel(Microsoft_AspNetCore_Http_HttpRequest_Microsoft_Extensions_Logging_ILogger__TetraPak_AspNet_Diagnostics_ServiceDiagnosticsLevel)_useDefault'></a>
 `useDefault` [TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel 'TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel')  
 A default telemetry level to be returned when no level was specified, or when  
 the specified telemetry level could not be successfully parsed.    
@@ -144,7 +144,7 @@ A [TetraPak.AspNet.Diagnostics.ServiceDiagnosticsLevel](https://docs.microsoft.c
 ## HttpContextHelper.GetIdentityToken(HttpContext, TetraPakConfig?) Method
 Returns the request identity token, or `null` if unavailable.  
 ```csharp
-public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig? config=null);
+public static TetraPak.ActorToken? GetIdentityToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig? config=null);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig_)_self'></a>
@@ -169,7 +169,7 @@ otherwise `null`.
 ## HttpContextHelper.GetIdentityToken(HttpRequest, TetraPakConfig) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken GetIdentityToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
+public static TetraPak.ActorToken? GetIdentityToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpContextHelper_GetIdentityToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
@@ -207,6 +207,30 @@ If not the identity token is assumed to be carried by the header named as [IdTok
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') object representing the request's identity token if one can be obtained;  
 otherwise `null`.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_GetItemValue(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpRequestElement_string)'></a>
+## HttpContextHelper.GetItemValue(HttpRequest, HttpRequestElement, string) Method
+Obtains a value from a specified [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') element (such as headers or query).   
+```csharp
+public static string? GetItemValue(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.HttpRequestElement element, string key);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_GetItemValue(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpRequestElement_string)_request'></a>
+`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_GetItemValue(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpRequestElement_string)_element'></a>
+`element` [HttpRequestElement](TetraPak_AspNet_HttpRequestElement.md 'TetraPak.AspNet.HttpRequestElement')  
+The element to obtain the value from.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_GetItemValue(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpRequestElement_string)_key'></a>
+`key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Identifies the requested value.   
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The requested value (a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')) if found by the [element](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetItemValue(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpRequestElement_string)_element 'TetraPak.AspNet.HttpContextHelper.GetItemValue(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.HttpRequestElement, string).element');  
+otherwise `null`.    
   
 <a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)'></a>
 ## HttpContextHelper.GetMessageId(HttpRequest, TetraPakConfig?, bool) Method
@@ -308,6 +332,60 @@ The extended [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 `true` if an endpoint is resolved and protected.   
             
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)'></a>
+## HttpContextHelper.IsMatch(HttpRequest, HttpComparison, StringComparison) Method
+Examines a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') applying a criteria ([HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison'))  
+and returns a value to indicate whether it is a match.   
+```csharp
+public static bool IsMatch(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.HttpComparison criteria, System.StringComparison comparison=System.StringComparison.InvariantCulture);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_request'></a>
+`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_criteria'></a>
+`criteria` [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')  
+Specifies the criteria.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_comparison'></a>
+`comparison` [System.StringComparison](https://docs.microsoft.com/en-us/dotnet/api/System.StringComparison 'System.StringComparison')  
+Specifies how to compare [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.HttpComparison, System.StringComparison).criteria') results in a match; otherwise `false`.  
+            
+#### See Also
+- [IsMatch(HttpComparison, HttpRequest, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.HttpComparison, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison)')
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)'></a>
+## HttpContextHelper.IsMatch(HttpComparison, HttpRequest, StringComparison) Method
+Applies a criteria to a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+and returns a value to indicate whether it is a match.  
+```csharp
+public static bool IsMatch(this TetraPak.AspNet.HttpComparison criteria, Microsoft.AspNetCore.Http.HttpRequest request, System.StringComparison comparison=System.StringComparison.InvariantCulture);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria'></a>
+`criteria` [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')  
+The extended [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison') criteria.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_request'></a>
+`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+The [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_comparison'></a>
+`comparison` [System.StringComparison](https://docs.microsoft.com/en-us/dotnet/api/System.StringComparison 'System.StringComparison')  
+Specifies how to compare [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.HttpComparison, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison).criteria') results in a match; otherwise `false`.  
+            
+#### See Also
+- [IsMatch(HttpRequest, HttpComparison, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.HttpComparison, System.StringComparison)')
   
 <a name='TetraPak_AspNet_HttpContextHelper_RespondAsync(Microsoft_AspNetCore_Http_HttpContext_System_Net_HttpStatusCode_object__System_Threading_CancellationToken)'></a>
 ## HttpContextHelper.RespondAsync(HttpContext, HttpStatusCode, object?, CancellationToken) Method

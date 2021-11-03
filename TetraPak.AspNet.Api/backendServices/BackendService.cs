@@ -203,13 +203,13 @@ namespace TetraPak.AspNet.Api
         async Task<HttpOutcome<HttpResponseMessage>> sendAsync(
             HttpRequestMessage request, 
             string? timer,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null)
+            HttpClientOptions? clientOptions,
+            CancellationToken? cancellationToken)
         {
             if (!Endpoints.IsValid)
                 return OnServiceConfigurationError(request, Endpoints.GetIssues()!, AmbientData.GetMessageId(true));
             
-            cancellationToken ??= AmbientData.HttpContext?.RequestAborted ?? CancellationToken.None;
+            cancellationToken ??= Endpoints.ContextCancellationToken ?? CancellationToken.None;
             if (cancellationToken.IsRequestCancelled())
                 return HttpOutcome<HttpResponseMessage>.Fail(
                     HttpMethod.Post,
@@ -224,7 +224,7 @@ namespace TetraPak.AspNet.Api
                     new Exception("Could not initialize a HTTP client. No access token available", 
                         accessTokenOutcome.Exception));
             
-            clientOptions ??= DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!);
+            clientOptions ??= DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!, Endpoints.AuthorizationService);
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, ct);
             if (!clientOutcome)
                 return HttpOutcome<HttpResponseMessage>.Fail(
@@ -386,48 +386,10 @@ namespace TetraPak.AspNet.Api
             CancellationToken? cancellationToken = null,
             string? messageId = null)
         {
-            // if (!Endpoints.IsValid)
-            //     return OnServiceConfigurationError(HttpMethod.Get, path, queryParameters, Endpoints.GetIssues()!, messageId); obsolete
-            
             var useQuery = !queryParameters.IsEmpty();
             var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
             var request = new HttpRequestMessage(HttpMethod.Get, usePath.TrimStart('/'));
-            // request.Content = content;
             return sendAsync(request, TimerGet, clientOptions, cancellationToken);
-
-            // var ct = cancellationToken ?? CancellationToken.None; obsolete
-            // clientOptions ??= DefaultClientOptions.WithAuthorization(await HttpServiceProvider.GetAccessTokenAsync());
-            // var clientOutcome = await OnGetHttpClientAsync(clientOptions ?? DefaultClientOptions, ct); 
-            // if (!clientOutcome)
-            //     return Outcome<HttpResponseMessage>.Fail(clientOutcome.Exception);
-            //
-            // var client = clientOutcome.Value!;
-            // path = pathWithQueryParameters();
-            // var url = $"{client.BaseAddress}{path.TrimStart('/')}";
-            //
-            // Logger.Trace($"Sending request URI: {url}");
-            // Logger.Trace($"Sending request HEADERS: {client.DefaultRequestHeaders.Concat()}");
-            //
-            // try
-            // {
-            //     DiagnosticsStartTimer(TimerGet);
-            //     var response = await client.GetAsync(path.TrimStart('/'), ct);
-            //     DiagnosticsEndTimer(TimerGet);
-            //     return response.IsSuccessStatusCode
-            //         ? Outcome<HttpResponseMessage>.Success(response)
-            //         : Outcome<HttpResponseMessage>.Fail(new HttpException(response));
-            // }
-            // catch (Exception ex)
-            // {
-            //     return requestErrorOutcome(ex, HttpMethod.Get, url, messageId);
-            // }
-
-            // string pathWithQueryParameters()
-            // {
-            //     return string.IsNullOrWhiteSpace(queryParameters) 
-            //         ? path
-            //         : $"{path}{queryParameters.Trim().EnsurePrefix("?")}";
-            // }
         }
 
         protected virtual string OnConstructPath(string path)

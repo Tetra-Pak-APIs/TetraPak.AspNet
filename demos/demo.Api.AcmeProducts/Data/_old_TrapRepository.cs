@@ -9,7 +9,7 @@
 // using TetraPak;
 // using TetraPak.AspNet;
 //
-// namespace demo.AcmeProducts.Data
+// namespace demo.Api.AcmeProducts.Data
 // {
 //     public class _old_TrapRepository : SimpleRepository<Product>
 //     {

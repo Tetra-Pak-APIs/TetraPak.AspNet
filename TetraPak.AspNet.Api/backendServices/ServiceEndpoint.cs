@@ -180,6 +180,8 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => AmbientData.GetAccessTokenAsync(forceStandardHeader);
+
+        internal IAuthorizationService AuthorizationService => Parent!.AuthorizationService;
         
         #region .  Equality  .
 

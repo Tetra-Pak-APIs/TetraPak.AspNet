@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +45,7 @@ namespace WebAPI.Controllers
         readonly GreetingsService _greetingsService;
 
         [HttpGet]
-        public async Task<ActionResult> Get(string? svc = null, string? id = null, CancellationToken? ct = null)
+        public async Task<ActionResult> Get(string? svc = null, string? id = null)
         {
             var userIdentity = User?.Identity;
             this.LogTrace(() => 
@@ -75,13 +74,13 @@ namespace WebAPI.Controllers
                     // note This is an example of how you can use an indexer to fetch the endpoint:
                     return await this.RespondAsync(
                         await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"]
-                        .GetAsync(query, ct));
+                        .GetAsync(query));
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
                     return await this.RespondAsync(
                         await _helloWorldService.Endpoints.HelloWorldWithClientCredentials
-                            .GetAsync(query, ct)
+                            .GetAsync(query)
                         );
                 
                 default:

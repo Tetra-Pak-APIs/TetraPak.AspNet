@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -6,32 +7,55 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.diagnostics;
+using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 
 #nullable enable
 
 namespace TetraPak.AspNet
 {
-    public abstract class TetraPakHttpClientProvider : IHttpClientProvider //, IMessageIdProvider //, IAuthorizationService obsolete
+    /// <summary>
+    ///   A base implementation of the <see cref="IHttpClientProvider"/>.  
+    /// </summary>
+    public class TetraPakHttpClientProvider : IHttpClientProvider, ITetraPakDiagnosticsProvider
     {
+        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) =>
+            GetDiagnostics()?.StartTimer(timerKey);
+
+        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) =>
+            GetDiagnostics()?.GetElapsedMs(timerKey);
+
+        /// <summary>
+        ///   Returns a <see cref="ServiceDiagnostics"/> object if available; otherwise <c>null</c>. 
+        /// </summary>
+        /// <returns></returns>
+        protected ServiceDiagnostics? GetDiagnostics() => HttpContext?.GetDiagnostics();
+
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;
         readonly HttpClientOptions? _singletonClientOptions;
         HttpClient? _singletonClient;
+        static readonly List<IHttpClientDecorator> s_decorators = new();
+        readonly IAuthorizationService? _authorizationService;
 
+        /// <summary>
+        ///   Gets the Tetra Pak integration configuration.
+        /// </summary>
         protected TetraPakConfig TetraPakConfig { get; }
-        
-        protected IHttpContextAccessor HttpContextAccessor { get; }
 
-        // /// <summary>
-        // ///   Gets a value that indicates whether the service can authorize the clients it produces.
-        // /// </summary>
-        // protected abstract bool CanAuthorizeClient { get; } obsolete
-        
+        /// <summary>
+        ///   Provides access to th current <see cref="HttpContext"/>.
+        /// </summary>
+        protected HttpContext? HttpContext => TetraPakConfig.AmbientData.HttpContext;
+
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
         protected ILogger? Logger => TetraPakConfig.Logger;
         
+        /// <summary>
+        ///   The singleton instance (if applicable) of the <see cref="HttpClient"/>.
+        /// </summary>
         protected HttpClient SingletonClient => _singletonClient ??= _singletonClientFactory(_singletonClientOptions!);
 
         string? getMessageId(bool enforce) => TetraPakConfig.AmbientData.GetMessageId(enforce);
@@ -49,9 +73,14 @@ namespace TetraPak.AspNet
                 : SingletonClient;
 
             if (options?.AuthorizationService is null) 
-                return Outcome<HttpClient>.Success(client);
+                return await OnDecorateClient(client, s_decorators.ToArray());
 
-            var authOutcome = await OnAuthorizeClientAsync(options, cancellationToken);
+            var authService = options.AuthorizationService ?? _authorizationService;
+            if (authService is null)
+                return Outcome<HttpClient>.Fail(
+                    new ConfigurationException($"Cannot authorize client. A {nameof(IAuthorizationService)} is not available"));
+
+            var authOutcome = await authService.AuthorizeAsync(options, cancellationToken);
             if (!authOutcome)
             {
                 var exception = new HttpException(
@@ -61,44 +90,93 @@ namespace TetraPak.AspNet
                 Logger.Error(exception, messageId: getMessageId(false));
                 return Outcome<HttpClient>.Fail(exception);
             }
-
             var token = authOutcome.Value;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Identity);
+
+            return await OnDecorateClient(client, s_decorators.ToArray());
+        }
+
+        /// <summary>
+        ///   Called internally (from <see cref="GetHttpClientAsync"/>) to decorate the produced client before
+        ///   it gets consumed.
+        /// </summary>
+        /// <param name="client">
+        ///   The <see cref="HttpClient"/> to be decorated.
+        /// </param>
+        /// <param name="decorators">
+        ///   All decorators to be invoked.
+        /// </param>
+        protected virtual async Task<Outcome<HttpClient>> OnDecorateClient(HttpClient client, IHttpClientDecorator[] decorators)
+        {
+            for (var i = 0; i < decorators.Length; i++)
+            {
+                var decorator = decorators[i];
+                try
+                {
+                    var outcome = await decorator.DecorateAsync(client);
+                    if (!outcome)
+                    {
+                        Logger.Warning($"Http client decorator {decorator} failed: {outcome.Exception.Message}");
+                    }
+
+                    client = outcome.Value ?? client;
+                }
+                catch (Exception ex)
+                {
+                    ex = new Exception($"Http client decorator {decorator} crashed (see inner exception)", ex);
+                    Logger.Error(ex, messageId: getMessageId(true));
+                    return Outcome<HttpClient>.Fail(ex);
+                }
+            }
             return Outcome<HttpClient>.Success(client);
         }
-        
-        /// <summary>
-        ///   Called internally to authorize this service as a client.
-        /// </summary>
-        /// <param name="options">
-        ///   Options, describing the client. 
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
-        /// </param>
-        /// <returns>
-        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
-        /// </returns>
-        protected abstract Task<Outcome<ActorToken>> OnAuthorizeClientAsync(
-            HttpClientOptions options,
-            CancellationToken? cancellationToken = null);
 
+        /// <summary>
+        ///   Adds a custom <see cref="HttpClient"/> decorator.
+        /// </summary>
+        /// <remarks>
+        ///   All registered client decorators will be automatically invoked when a client is being requested
+        ///   to allow applying custom logic before the client is being consumed.  
+        /// </remarks>
+        public static void AddDecorator(IHttpClientDecorator decorator)
+        {
+            if (s_decorators.Contains(decorator))
+                throw new InvalidOperationException("Http Client decorator was already added");
+            
+            s_decorators.Add(decorator);
+        }
+
+        /// <summary>
+        ///   Initializes the <see cref="TetraPakHttpClientProvider"/>.
+        /// </summary>
+        /// <param name="tetraPakConfig">
+        ///   The Tetra Pak integration configuration.
+        /// </param>
+        /// <param name="singletonClientFactory">
+        ///   (optional)<br/>
+        ///   A custom factory to be used for producing singleton <see cref="HttpClient"/>s. 
+        /// </param>
+        /// <param name="singletonClientOptions">
+        ///   (optional)<br/>
+        ///   Options to be used by a custom <paramref name="singletonClientFactory"/>.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   The <paramref name="tetraPakConfig"/> was <c>null</c>.
+        /// </exception>
         public TetraPakHttpClientProvider(
-            IHttpContextAccessor httpContextAccessor,
             TetraPakConfig tetraPakConfig,
+            IAuthorizationService? authorizationService = null,
             Func<HttpClientOptions,HttpClient>? singletonClientFactory = null, 
             HttpClientOptions? singletonClientOptions = null)
         {
             TetraPakConfig = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
+            _authorizationService = authorizationService;
             _singletonClientFactory = singletonClientFactory ?? (_ => new SingletonHttpClient());
-            HttpContextAccessor = httpContextAccessor;
             _singletonClientOptions = singletonClientOptions;
         }
     }
     
-    public class SingletonHttpClient : HttpClient
+    class SingletonHttpClient : HttpClient
     {
         protected override void Dispose(bool disposing)
         {

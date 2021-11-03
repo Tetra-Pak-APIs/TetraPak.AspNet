@@ -9,8 +9,6 @@ namespace TetraPak.AspNet
     /// </summary>
     public class HttpClientOptions
     {
-        internal string? MessageId { get; private set; }
-
         /// <summary>
         ///   Gets or sets a value specifying whether the requested <see cref="HttpClient"/> should be
         ///   transient (otherwise a singleton instance till be returned). 
@@ -30,38 +28,58 @@ namespace TetraPak.AspNet
         
         /// <summary>
         ///   A custom <see cref="HttpMessageHandler"/> to be used by the requested <see cref="HttpClient"/>.
+        ///   Can be assigned with <see cref="WithMessageHandler"/>.
         /// </summary>
-        public HttpMessageHandler? MessageHandler { get; set; }
+        /// <seealso cref="WithMessageHandler"/>
+        public HttpMessageHandler? MessageHandler { get; private set; }
 
         /// <summary>
         ///   Gets or sets the configuration required for authenticating the client. 
         /// </summary>
         public IServiceAuthConfig? AuthConfig { get; set; }
 
-        internal HttpClientOptions WithMessageId(string messageId)
+        /// <summary>
+        ///   Fluid API for assigning a (custom) <see cref="HttpMessageHandler"/> to the requested
+        ///   HTTP client.
+        /// </summary>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
+        /// <seealso cref="MessageHandler"/>
+        public HttpClientOptions WithMessageHandler(HttpMessageHandler messageHandler)
         {
-            MessageId = messageId;
+            MessageHandler = messageHandler;
             return this;
         }
-
+        
         /// <summary>
-        ///   Fluid API for assigning the <see cref="ActorToken"/> property value.
+        ///   Fluid API for requesting client authorization.
         /// </summary>
-        public HttpClientOptions WithAuthorization(ActorToken? authorization)
+        /// <param name="actorToken">
+        ///   The actor token of the current request.
+        /// </param>
+        /// <param name="authorizationService">
+        ///   (optional)<br/>
+        ///   A (custom) authorization service to be used for authorizing the requested client.
+        /// </param>
+        public HttpClientOptions WithAuthorization(
+            ActorToken actorToken, 
+            IAuthorizationService? authorizationService = null)
         {
-            ActorToken = authorization;
-            return this;
-        }
-
-        /// <summary>
-        ///   (Fluid API)<br/>
-        ///   Assigns the <see cref="AuthorizationService"/> and returns <c>this</c>.
-        /// </summary>
-        public HttpClientOptions WithAuthorizationService(IAuthorizationService authorizationService)
-        {
+            ActorToken = actorToken;
             AuthorizationService = authorizationService;
             return this;
         }
+
+        // /// <summary>
+        // ///   (Fluid API)<br/>
+        // ///   Assigns the <see cref="AuthorizationService"/> and returns <c>this</c>. obsolete
+        // /// </summary>
+        // public HttpClientOptions WithAuthorizationService(IAuthorizationService authorizationService)
+        // {
+        //     AuthorizationService = authorizationService;
+        //     return this;
+        // }
 
         /// <summary>
         ///   Initializes the <see cref="HttpClientOptions"/>.

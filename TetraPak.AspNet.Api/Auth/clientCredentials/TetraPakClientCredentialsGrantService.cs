@@ -21,7 +21,6 @@ namespace TetraPak.AspNet.Api.Auth
     public class TetraPakClientCredentialsGrantService : IClientCredentialsGrantService
     {
         readonly TetraPakConfig _config;
-        // readonly IHttpServiceProvider _httpServiceProvider; obsolete
         readonly IHttpClientProvider _httpClientProvider;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
@@ -236,13 +235,10 @@ namespace TetraPak.AspNet.Api.Auth
         /// </exception>
         public TetraPakClientCredentialsGrantService(
             TetraPakConfig tetraPakConfig, 
-            IHttpClientProvider httpClientProvider
-            // IHttpServiceProvider httpServiceProvider obsolete
-            )
+            IHttpClientProvider httpClientProvider)
         {
             _config = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
             _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
-            // _httpServiceProvider = httpServiceProvider ?? throw new ArgumentNullException(nameof(httpServiceProvider)); obsolte
         }
     }
 }

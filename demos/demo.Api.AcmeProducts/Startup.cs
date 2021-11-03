@@ -1,15 +1,13 @@
-using demo.Acme.Seeding;
-using demo.AcmeAssets.Data;
+using demo.AcmeProducts.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
 
-namespace demo.AcmeAssets
+namespace demo.AcmeProducts
 {
     public class Startup
     {
@@ -19,17 +17,10 @@ namespace demo.AcmeAssets
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "demo.AcmeAssets", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "demo.Api.AcmeProducts", Version = "v1" });
             });
-            services.AddSingleton(p =>
-            {
-                // create and seed the simple repository ...
-                var repo = new AssetsRepository(p.GetService<ILogger<AssetsRepository>>());
-                repo.Seed(AssetsSeeder.GetAssetsSeed());
-                return repo;
-            });
-
             services.AddTetraPakJwtBearerAssertion();
+            services.AddRepositories();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,15 +30,15 @@ namespace demo.AcmeAssets
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "demo.AcmeAssets v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "demo.Api.AcmeProducts v1"));
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseTetraPakAuthentication(env);
             
+            app.UseTetraPakAuthentication(env);
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

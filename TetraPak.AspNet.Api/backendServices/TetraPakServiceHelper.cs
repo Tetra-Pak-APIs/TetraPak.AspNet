@@ -49,8 +49,8 @@ namespace TetraPak.AspNet.Api
             
             collection.TryAddSingleton<TetraPakDownstreamServiceProvider2>();
             collection.TryAddSingleton<IDownstreamServiceProvider,TetraPakDownstreamServiceProvider2>();
-            collection.TryAddSingleton<IHttpClientProvider,TetraPakApiHttpClientProvider>();
-            collection.TryAddSingleton<IAuthorizationService,TetraPakApiAuthorizationService>();
+            collection.AddTetraPakHttpClientProvider();
+            collection.AddTetraPakAuthorizationService<TetraPakApiAuthorizationService>();
             TetraPakDownstreamServiceProvider2.InitializeServices(collection);
             // if (addBackendServices)
             // {

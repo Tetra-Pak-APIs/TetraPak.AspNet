@@ -1,6 +1,7 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## TetraPakHttpClientProvider Class
+An abstract base implementation of the [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider').    
 ```csharp
 public abstract class TetraPakHttpClientProvider :
 TetraPak.AspNet.IHttpClientProvider
@@ -9,7 +10,46 @@ TetraPak.AspNet.IHttpClientProvider
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakHttpClientProvider  
 
 Implements [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider')  
+### Constructors
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)'></a>
+## TetraPakHttpClientProvider.TetraPakHttpClientProvider(IHttpContextAccessor, TetraPakConfig, Func&lt;HttpClientOptions,HttpClient&gt;?, HttpClientOptions?) Constructor
+Initializes the [TetraPakHttpClientProvider](TetraPak_AspNet_TetraPakHttpClientProvider.md 'TetraPak.AspNet.TetraPakHttpClientProvider').  
+```csharp
+public TetraPakHttpClientProvider(Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor, TetraPak.AspNet.TetraPakConfig tetraPakConfig, System.Func<TetraPak.AspNet.HttpClientOptions,System.Net.Http.HttpClient>? singletonClientFactory=null, TetraPak.AspNet.HttpClientOptions? singletonClientOptions=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_httpContextAccessor'></a>
+`httpContextAccessor` [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor')  
+Provides access to the current [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').   
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+The Tetra Pak integration configuration.  
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_singletonClientFactory'></a>
+`singletonClientFactory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  
+(optional)<br/>  
+A custom factory to be used for producing singleton [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')s.   
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_singletonClientOptions'></a>
+`singletonClientOptions` [HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions')  
+(optional)<br/>  
+Options to be used by a custom [singletonClientFactory](TetraPak_AspNet_TetraPakHttpClientProvider.md#TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_singletonClientFactory 'TetraPak.AspNet.TetraPakHttpClientProvider.TetraPakHttpClientProvider(Microsoft.AspNetCore.Http.IHttpContextAccessor, TetraPak.AspNet.TetraPakConfig, System.Func&lt;TetraPak.AspNet.HttpClientOptions,System.Net.Http.HttpClient&gt;?, TetraPak.AspNet.HttpClientOptions?).singletonClientFactory').  
+  
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+The [tetraPakConfig](TetraPak_AspNet_TetraPakHttpClientProvider.md#TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(Microsoft_AspNetCore_Http_IHttpContextAccessor_TetraPak_AspNet_TetraPakConfig_System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)_tetraPakConfig 'TetraPak.AspNet.TetraPakHttpClientProvider.TetraPakHttpClientProvider(Microsoft.AspNetCore.Http.IHttpContextAccessor, TetraPak.AspNet.TetraPakConfig, System.Func&lt;TetraPak.AspNet.HttpClientOptions,System.Net.Http.HttpClient&gt;?, TetraPak.AspNet.HttpClientOptions?).tetraPakConfig') was `null`.  
+  
 ### Properties
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_HttpContextAccessor'></a>
+## TetraPakHttpClientProvider.HttpContextAccessor Property
+Provides access to th current [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
+```csharp
+protected Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; }
+```
+#### Property Value
+[Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor')
+  
 <a name='TetraPak_AspNet_TetraPakHttpClientProvider_Logger'></a>
 ## TetraPakHttpClientProvider.Logger Property
 Gets a logging provider.  
@@ -19,7 +59,39 @@ protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
   
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_SingletonClient'></a>
+## TetraPakHttpClientProvider.SingletonClient Property
+The singleton instance (if applicable) of the [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient').  
+```csharp
+protected System.Net.Http.HttpClient SingletonClient { get; }
+```
+#### Property Value
+[System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakConfig'></a>
+## TetraPakHttpClientProvider.TetraPakConfig Property
+Gets the Tetra Pak integration configuration.  
+```csharp
+protected TetraPak.AspNet.TetraPakConfig TetraPakConfig { get; }
+```
+#### Property Value
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
+  
 ### Methods
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_AddDecorator(TetraPak_AspNet_IHttpClientDecorator)'></a>
+## TetraPakHttpClientProvider.AddDecorator(IHttpClientDecorator) Method
+Adds a custom [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') decorator.  
+```csharp
+public static void AddDecorator(TetraPak.AspNet.IHttpClientDecorator decorator);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_AddDecorator(TetraPak_AspNet_IHttpClientDecorator)_decorator'></a>
+`decorator` [IHttpClientDecorator](TetraPak_AspNet_IHttpClientDecorator.md 'TetraPak.AspNet.IHttpClientDecorator')  
+  
+### Remarks
+All registered client decorators will be automatically invoked when a client is being requested  
+to allow applying custom logic before the client is being consumed.    
+  
 <a name='TetraPak_AspNet_TetraPakHttpClientProvider_GetHttpClientAsync(TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
 ## TetraPakHttpClientProvider.GetHttpClientAsync(HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method
 Creates and returns a (configured) [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') for use with a specific service.   
@@ -64,4 +136,23 @@ Allows cancelling the operation.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_OnDecorateClient(System_Net_Http_HttpClient_TetraPak_AspNet_IHttpClientDecorator__)'></a>
+## TetraPakHttpClientProvider.OnDecorateClient(HttpClient, IHttpClientDecorator[]) Method
+Called internally (from [GetHttpClientAsync(HttpClientOptions?, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakHttpClientProvider.md#TetraPak_AspNet_TetraPakHttpClientProvider_GetHttpClientAsync(TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakHttpClientProvider.GetHttpClientAsync(TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')) to decorate the produced client before  
+it gets consumed.  
+```csharp
+protected virtual System.Threading.Tasks.Task<TetraPak.Outcome<System.Net.Http.HttpClient>> OnDecorateClient(System.Net.Http.HttpClient client, TetraPak.AspNet.IHttpClientDecorator[] decorators);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_OnDecorateClient(System_Net_Http_HttpClient_TetraPak_AspNet_IHttpClientDecorator__)_client'></a>
+`client` [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')  
+The [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') to be decorated.  
+  
+<a name='TetraPak_AspNet_TetraPakHttpClientProvider_OnDecorateClient(System_Net_Http_HttpClient_TetraPak_AspNet_IHttpClientDecorator__)_decorators'></a>
+`decorators` [IHttpClientDecorator](TetraPak_AspNet_IHttpClientDecorator.md 'TetraPak.AspNet.IHttpClientDecorator')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+All decorators to be invoked.  
+  
+#### Returns
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   

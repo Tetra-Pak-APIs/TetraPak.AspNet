@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
@@ -17,24 +18,29 @@ namespace TetraPak.AspNet.Api
 {
     public class TetraPakApiAuthorizationService : IAuthorizationService, ITetraPakDiagnosticsProvider
     {
-        readonly TetraPakConfig _tetraPakConfig;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IServiceProvider _provider;
 
-        ILogger? Logger => _tetraPakConfig.Logger;
+        ILogger? Logger => TetraPakConfig.Logger;
+
+        TetraPakConfig TetraPakConfig => _provider.GetRequiredService<TetraPakConfig>();
 
         /// <summary>
         ///   Gets a <see cref="ITokenExchangeGrantService"/> for acquiring a token to be used
         ///   with clients consuming services.  
         /// </summary>
-        ITokenExchangeGrantService TokenExchangeGrantService { get; }
+        ITokenExchangeGrantService TokenExchangeGrantService 
+            => _provider.GetRequiredService<ITokenExchangeGrantService>();
 
         /// <summary>
         ///   Gets a <see cref="IClientCredentialsGrantService"/> for acquiring a token to be used
         ///   with clients consuming services.
         /// </summary>
-        IClientCredentialsGrantService ClientCredentialsGrantService { get; }
+        IClientCredentialsGrantService ClientCredentialsGrantService
+            => _provider.GetRequiredService<IClientCredentialsGrantService>();
 
-        string? getMessageId(bool enforce = false) => _tetraPakConfig.AmbientData.GetMessageId(enforce);
+        string? getMessageId(bool enforce = false) => TetraPakConfig.AmbientData.GetMessageId(enforce);
+        
+        HttpContext? HttpContext => TetraPakConfig.AmbientData.HttpContext;
 
         public async Task<Outcome<ActorToken>> AuthorizeAsync(
             HttpClientOptions? options,
@@ -140,7 +146,7 @@ namespace TetraPak.AspNet.Api
                     throw txOutcome.Exception;
 
                 var token = txOutcome.Value!.AccessToken;
-                return Outcome<ActorToken>.Success(token);
+                return Outcome<ActorToken>.Success(token!);
             }
             catch (Exception ex)
             {
@@ -215,18 +221,11 @@ namespace TetraPak.AspNet.Api
 
         void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
         
-        protected ServiceDiagnostics? GetDiagnostics() => _httpContextAccessor.HttpContext.GetDiagnostics(); 
+        protected ServiceDiagnostics? GetDiagnostics() => HttpContext?.GetDiagnostics(); 
 
-        public TetraPakApiAuthorizationService(
-            TetraPakConfig tetraPakConfig,
-            IHttpContextAccessor httpContextAccessor,
-            ITokenExchangeGrantService tokenExchangeGrantService,
-            IClientCredentialsGrantService clientCredentialsGrantService)
+        public TetraPakApiAuthorizationService(IServiceProvider provider)
         {
-            _tetraPakConfig = tetraPakConfig;
-            _httpContextAccessor = httpContextAccessor;
-            TokenExchangeGrantService = tokenExchangeGrantService ?? throw new ArgumentNullException(nameof(tokenExchangeGrantService));
-            ClientCredentialsGrantService = clientCredentialsGrantService;
+            _provider = provider;
         }
     }
 }
