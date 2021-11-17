@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
@@ -78,14 +78,17 @@ namespace TetraPak.AspNet
             var authService = options.AuthorizationService ?? _authorizationService;
             if (authService is null)
                 return Outcome<HttpClient>.Fail(
-                    new ConfigurationException($"Cannot authorize client. A {nameof(IAuthorizationService)} is not available"));
+                    new ServerConfigurationException($"Cannot authorize client. A {nameof(IAuthorizationService)} is not available"));
 
+            var grantType = options.AuthConfig?.GrantType ?? GrantType.None;
+            if (grantType == GrantType.None) 
+                return await OnDecorateClient(client, s_decorators.ToArray());
+            
             var authOutcome = await authService.AuthorizeAsync(options, cancellationToken);
             if (!authOutcome)
             {
-                var exception = new HttpException(
-                    HttpStatusCode.Unauthorized, 
-                    "Failed to authenticate an HTTP client", 
+                var exception = ServerException.Unauthorized(
+                    "Failed to authenticate an HTTP client",
                     authOutcome.Exception);
                 Logger.Error(exception, messageId: getMessageId(false));
                 return Outcome<HttpClient>.Fail(exception);
@@ -151,6 +154,10 @@ namespace TetraPak.AspNet
         /// </summary>
         /// <param name="tetraPakConfig">
         ///   The Tetra Pak integration configuration.
+        /// </param>
+        /// <param name="authorizationService">
+        ///   (optional)<br/>
+        ///   A (custom) authorization service to be invoked instead of amy default service. 
         /// </param>
         /// <param name="singletonClientFactory">
         ///   (optional)<br/>

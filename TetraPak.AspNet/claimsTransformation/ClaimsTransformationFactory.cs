@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TetraPak.AspNet
@@ -13,9 +14,12 @@ namespace TetraPak.AspNet
 
         protected abstract ITetraPakClaimsTransformation OnGetClaimsTransformation(IServiceProvider serviceProvider);
 
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        /// <summary>
+        ///   NOT SUPPORTED! DO NOT INVOKE!
+        /// </summary>
+        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal, CancellationToken? cancellationToken)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

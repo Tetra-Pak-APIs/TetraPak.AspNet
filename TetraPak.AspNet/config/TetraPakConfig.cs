@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -83,6 +82,7 @@ namespace TetraPak.AspNet
         string? _userInfoUrl;
         string? _authDomain;
         int? _refreshThresholdSeconds;
+        bool? _trimHostInResponses;
         static  DiscoveryDocument? s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
 
@@ -92,7 +92,12 @@ namespace TetraPak.AspNet
         protected IServiceProvider ServiceProvider { get; }
 
         /// <summary>
-        ///   Gets configuration for how to validate JWT tokens.  
+        ///   Gets logging configuration.  
+        /// </summary>
+        public TetraPakLoggingConfiguration Logging { get; }
+        
+        /// <summary>
+        ///   Gets JWT validation options.  
         /// </summary>
         public JwtBearerAssertionConfig JwtBearerAssertion { get; }
         
@@ -167,7 +172,7 @@ namespace TetraPak.AspNet
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         [StateDump]
-        public string AuthorizationHeader
+        public string? AuthorizationHeader
         {
             get => GetFromFieldThenSection(HeaderNames.Authorization)!; 
             set
@@ -358,7 +363,7 @@ namespace TetraPak.AspNet
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.None, 
-                (string value, out GrantType grantType) =>
+                (string? value, out GrantType grantType) =>
                 {
                     if (string.IsNullOrWhiteSpace(value))
                     {
@@ -367,7 +372,7 @@ namespace TetraPak.AspNet
                     }
                     
                     if (!TryParseEnum(value, out grantType) || grantType == GrantType.Inherited)
-                        throw new ConfigurationException($"Invalid auth method: '{value}' ({DefaultSectionIdentifier}.{nameof(GrantType)})");
+                        throw new ServerConfigurationException($"Invalid auth method: '{value}' ({DefaultSectionIdentifier}.{nameof(GrantType)})");
 
                     return true;
                 });
@@ -384,7 +389,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetClientIdAsync(new AuthContext(GrantType, this)).Result;
-                return outcome ? outcome.Value! : throw new ConfigurationException("Client id could not be resolved");
+                return outcome ? outcome.Value! : throw new ServerConfigurationException("Client id could not be resolved");
             }
             set => _clientId = value;
         }
@@ -415,7 +420,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
-                return outcome ? outcome.Value! : throw new ConfigurationException("Scope could not be resolved");
+                return outcome ? outcome.Value! : throw new ServerConfigurationException("Scope could not be resolved");
             }
             set => _clientSecret = value;
         }
@@ -458,7 +463,7 @@ namespace TetraPak.AspNet
                 var value = GetFromFieldThenSection<string>(propertyName: nameof(ClientId));
                 return value is { }
                     ? Outcome<string>.Success(value)
-                    : Outcome<string>.Fail(new ConfigurationException("Client id could not be resolved"));
+                    : Outcome<string>.Fail(new ServerConfigurationException("Client id could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
@@ -486,7 +491,7 @@ namespace TetraPak.AspNet
                 var secret = GetFromFieldThenSection<string>(propertyName: nameof(ClientSecret));
                 return secret is {} 
                     ? Outcome<string>.Success(secret)
-                    : Outcome<string>.Fail(new ConfigurationException("Client secret could not be resolved"));
+                    : Outcome<string>.Fail(new ServerConfigurationException("Client secret could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
@@ -552,6 +557,18 @@ namespace TetraPak.AspNet
         {
             get => GetFromFieldThenSection(DefaultCallbackPath);
             set => _callbackPath = value?.Trim();
+        }
+        
+        /// <summary>
+        ///   Gets a value that specifies whether to always remove the host element from relationship URLs
+        ///   based on this endpoint. If not specified in configuration the value will fall back to the
+        ///   configuration service level (the endpoint "parent" section). 
+        /// </summary>
+        [StateDump]
+        public bool TrimHostInResponses 
+        {
+            get => GetFromFieldThenSection(true);
+            set => _trimHostInResponses = value;
         }
         
         /// <summary>
@@ -714,7 +731,7 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryParseEnum<TEnum>(string stringValue, [NotNullWhen(true)] out TEnum value) 
+        public static bool TryParseEnum<TEnum>(string stringValue, out TEnum value) 
         where TEnum : struct
         {
             value = default;
@@ -792,7 +809,7 @@ namespace TetraPak.AspNet
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
-                        Logger.TraceAsync(this);
+                        Logger.TraceTetraPakConfigAsync(this);
                         return done(discoveryDocument);
                     }
                 }
@@ -925,6 +942,7 @@ namespace TetraPak.AspNet
             }
             Environment = resolveRuntimeEnvironment(); // just avoiding calling a virtual method from ctor
             var logger = serviceProvider.GetService<ILogger<TetraPakConfig>>();
+            Logging = new TetraPakLoggingConfiguration(Section!, logger);
             JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();

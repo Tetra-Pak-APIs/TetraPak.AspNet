@@ -13,7 +13,7 @@ namespace TetraPak.AspNet.Debugging
     /// <summary>
     ///   Contains convenience/extension methods to assist with logging. 
     /// </summary>
-    public  static partial class WebLoggerHelper
+    public static partial class WebLoggerHelper
     {
         static bool s_isAssemblyVersionsAlreadyLogged;
         static bool s_isAuthConfigAlreadyLogged;
@@ -80,22 +80,22 @@ namespace TetraPak.AspNet.Debugging
             }
         }
 
-        /// <summary>
-        ///   Gets the lowest <see cref="LogLevel"/> defined for the logger provider. 
-        /// </summary>
-        /// <param name="logger">
-        ///   The logger provider.
-        /// </param>
-        /// <returns>
-        ///   A <see cref="LogLevel"/> value.
-        /// </returns>
-        public static LogLevel GetLowestLogLevel(this ILogger logger)
-        {
-            var min = typeof(ILogger).GetEnumValues().Cast<int>().ToList().Min();
-            return (LogLevel) min;
-        }
+        // /// <summary>
+        // ///   Gets the lowest <see cref="LogLevel"/> defined for the logger provider. 
+        // /// </summary>
+        // /// <param name="logger">
+        // ///   The logger provider.
+        // /// </param>
+        // /// <returns>
+        // ///   A <see cref="LogLevel"/> value.
+        // /// </returns>
+        // public static LogLevel GetLowestLogLevel(this ILogger logger) obsolete?
+        // {
+        //     var min = typeof(ILogger).GetEnumValues().Cast<int>().ToList().Min();
+        //     return (LogLevel) min;
+        // }
         
-        public static void TraceAsync(this ILogger logger, TetraPakConfig config, bool justOnce = true)
+        public static void TraceTetraPakConfigAsync(this ILogger logger, TetraPakConfig config, bool justOnce = true)
         {
             // ReSharper disable once InconsistentNaming
             const int Indent = 3;

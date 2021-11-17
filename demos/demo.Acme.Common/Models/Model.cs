@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using TetraPak;
 
 namespace demo.Acme.Models
 {
     public class Model
     {
-        [Required, Key]
-        public string Id { get; }
+        [Key]
+        public string? Id { get; }
 
         bool equals(Model other)
         {
@@ -22,13 +21,13 @@ namespace demo.Acme.Models
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return Id?.GetHashCode() ?? 0;
         }
 
         [JsonConstructor]
         public Model(string? id)
         {
-            Id  = id ?? new RandomString();
+            Id  = id;
         }
     }
 }

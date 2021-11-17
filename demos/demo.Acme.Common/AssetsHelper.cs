@@ -10,8 +10,8 @@ namespace demo.Acme
     {
         public static Outcome<AssetsComparison> IsEqual(this IEnumerable<Asset> self, IEnumerable<Asset> other)
         {
-            var selfDict = self.ToImmutableDictionary(asset => asset.Id);
-            var otherDict = other.ToImmutableDictionary(asset => asset.Id);
+            var selfDict = self.ToImmutableDictionary(asset => asset.Id!);
+            var otherDict = other.ToImmutableDictionary(asset => asset.Id!);
 
             if (selfDict.Count != otherDict.Count)
                 return Outcome<AssetsComparison>.Fail();
@@ -47,8 +47,20 @@ namespace demo.Acme
 
         public static void UpdateFrom(this Asset self, Asset other)
         {
-            self.Description = other.Description;
-            self.Url = other.Url;
+            if (!string.IsNullOrEmpty(other.Description))
+            {
+                self.Description = other.Description;
+            }
+
+            if (!string.IsNullOrEmpty(other.Url))
+            {
+                self.Url = other.Url;
+            }
+            
+            if (!string.IsNullOrEmpty(other.MimeType))
+            {
+                self.MimeType = other.MimeType;
+            }
         }
     }
 }

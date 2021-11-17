@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api.Auth
@@ -36,6 +37,10 @@ namespace TetraPak.AspNet.Api.Auth
                 var accessTokenOutcome = await base.OnGetAccessTokenAsync(cancellationToken);
                 if (!accessTokenOutcome)
                     return accessTokenOutcome;
+
+                var token = accessTokenOutcome.Value;
+                if (token!.IsSystemIdentityToken())
+                    return Outcome<ActorToken>.Fail(ServerException.BadRequest("Claims transformation not supported for system identity"));
                 
                 // try getting a cached exchanged token ... 
                 var accessToken = accessTokenOutcome.Value;
@@ -43,7 +48,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (cachedOutcome)
                     return cachedOutcome;
                 
-                // exchange token for 
+                // authorize using token exchange (replace token with TX outcome) ...  
                 var ccOutcome = await GetClientCredentials();
                 if (!ccOutcome)
                     return Outcome<ActorToken>.Fail(ccOutcome.Exception);
@@ -74,7 +79,7 @@ namespace TetraPak.AspNet.Api.Auth
             catch (Exception ex)
             {
                 ex = new Exception($"Claims transformation failure: {ex.Message}", ex);
-                Logger.Error(ex);
+                Logger.Error(ex, GetMessageId());
                 return Outcome<ActorToken>.Fail(ex);
             }
         }

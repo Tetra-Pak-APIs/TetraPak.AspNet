@@ -188,10 +188,10 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <seealso cref="GetAsync{T}(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
+        /// <seealso cref="GetAsync{T}(string,HttpQuery,HttpClientOptions,Nullable{CancellationToken},string)"/>
         Task<HttpOutcome<HttpResponseMessage>> GetAsync(
             string path,
-            HttpQueryParameters? queryParameters = null,
+            HttpQuery? queryParameters = null,
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null,
             string? messageId = null);
@@ -223,10 +223,10 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <seealso cref="GetAsync(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
+        /// <seealso cref="GetAsync(string,HttpQuery,HttpClientOptions,Nullable{CancellationToken},string)"/>
         Task<HttpEnumOutcome<T>> GetAsync<T>(
             string path,
-            HttpQueryParameters? queryParameters = null, 
+            HttpQuery? queryParameters = null, 
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null,
             string? messageId = null);

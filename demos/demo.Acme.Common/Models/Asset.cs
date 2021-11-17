@@ -8,21 +8,20 @@ namespace demo.Acme.Models
         /// <summary>
         ///   Gets or sets a description og the assets.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
         
         /// <summary>
         ///   (required)<br/>
         ///   Gets or sets the asset universal resource locator.  
         /// </summary>
-        [Required]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         /// <summary>
         ///   (required)<br/>
         ///   Gets or sets the asset MIME type.  
         /// </summary>
         [Required]
-        public string MimeType { get; set; }
+        public string? MimeType { get; set; }
 
         public override string ToString()
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
@@ -18,22 +19,27 @@ namespace TetraPak.AspNet
         readonly IServiceProvider _provider;
         ILogger? _logger;
         static IServiceCollection? s_services;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
+            var cancellationToken = _httpContextAccessor.HttpContext?.RequestAborted;
             foreach (var info in s_claimsTransformations)
             {
+                if (cancellationToken?.IsCancellationRequested ?? false)
+                    break;
+                    
                 ITetraPakClaimsTransformation? claimsTransformation; 
                 if (info.ClaimsTransformationFactory is { })
                 {
                     claimsTransformation = info.ClaimsTransformationFactory.GetClaimsTransformation(_provider);
-                    principal = await claimsTransformation.TransformAsync(principal);
+                    principal = await claimsTransformation.TransformAsync(principal, cancellationToken);
                     continue;
                 }
 
                 try
                 {
-                    claimsTransformation = _provider.GetService(info.Type) as ITetraPakClaimsTransformation;
+                    claimsTransformation = _provider.GetService(info.Type!) as ITetraPakClaimsTransformation;
                     switch (claimsTransformation)
                     {
                         case null:
@@ -46,7 +52,7 @@ namespace TetraPak.AspNet
                             tetraPakClaimsTransformation.OnInitialize(_provider);
                             break;
                     }
-                    principal = await claimsTransformation.TransformAsync(principal);
+                    principal = await claimsTransformation.TransformAsync(principal, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -101,10 +107,11 @@ namespace TetraPak.AspNet
             s_claimsTransformations.Add(new ClaimsTransformationFactoryInfo(factory));
         }
         
-        public TetraPakClaimsTransformationDispatcher()
+        public TetraPakClaimsTransformationDispatcher(IHttpContextAccessor httpContextAccessor)
         {
             // bug This is a hack to circumvent a weird problem where an injected IServiceProvider cannot resolve the registered Tetra Pak Claims Transformation services
             _provider = s_services.BuildServiceProvider();
+            _httpContextAccessor = httpContextAccessor;
         }
 
         static TetraPakClaimsTransformationDispatcher()

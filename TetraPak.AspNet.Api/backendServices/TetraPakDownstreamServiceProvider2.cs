@@ -78,7 +78,7 @@ namespace TetraPak.AspNet.Api
                 httpClientProvider,
                 authorizationService);
             if (servicesIndex is null)
-                throw new ConfigurationException("Backend services was not configured");
+                throw new ServerConfigurationException("Backend services was not configured");
 
             Assembly[] asm = assemblies is null || !assemblies.Any()
                 ? new[] { Assembly.GetEntryAssembly()! }
@@ -130,7 +130,7 @@ namespace TetraPak.AspNet.Api
                                       ?? resolveFromTypeName(type, "Endpoints");
                     
                     if (!servicesIndex.TryGetValue(serviceName, out var service))
-                        throw new ConfigurationException($"Cannot configure service endpoints {type}. Service '{serviceName}' was not configured");
+                        throw new ServerConfigurationException($"Cannot configure service endpoints {type}. Service '{serviceName}' was not configured");
 
                     var endpoints = endpointsIndex[type] = ServiceEndpoints.MakeTypedEndpoints(type, service.Endpoints);
                     endpoints.ClearBackendService();
@@ -183,7 +183,7 @@ namespace TetraPak.AspNet.Api
                     if (!endpointsIndex.TryGetValue(endpointsType, out var configuredEndpoints))
                     {
                         if (!servicesIndex.TryGetValue(serviceName, out var configuredService))
-                            throw new ConfigurationException(
+                            throw new ServerConfigurationException(
                                 $"Cannot configure service {type}. Service '{serviceName}' was not configured");
 
                         configuredEndpoints = ServiceEndpoints.MakeTypedEndpoints(endpointsType, configuredService.Endpoints);

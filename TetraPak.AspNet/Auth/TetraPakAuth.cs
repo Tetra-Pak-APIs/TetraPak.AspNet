@@ -75,7 +75,7 @@ namespace TetraPak.AspNet.Auth
             var logger = tetraPakConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
             if (tetraPakConfig is null)
             {
-                logger.Error(new ConfigurationException($"Cannot resolve service: {typeof(TetraPakConfig)}"));
+                logger.Error(new ServerConfigurationException($"Cannot resolve service: {typeof(TetraPakConfig)}"));
                 return;
             }
 
@@ -293,7 +293,7 @@ namespace TetraPak.AspNet.Auth
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakConfig>() 
-                             ?? throw new ConfigurationException($"Service location failed: {typeof(TetraPakConfig)}");
+                             ?? throw new ServerConfigurationException($"Service location failed: {typeof(TetraPakConfig)}");
             var logger = authConfig.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
 
             services.AddAuthentication(options =>

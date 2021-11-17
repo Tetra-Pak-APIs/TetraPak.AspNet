@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TetraPak.AspNet.Api.Auth;
-using TetraPak.AspNet.Auth;
 
 namespace demo.AcmeAssets
 {
@@ -21,14 +20,18 @@ namespace demo.AcmeAssets
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "demo.Api.AcmeAssets", Version = "v1" });
             });
+            // create a simple file repository, to allow uploading more files ...
+            services.AddSingleton<FilesRepository>();
+
+            // create and seed the simple assets repository ...
             services.AddSingleton(p =>
             {
-                // create and seed the simple repository ...
                 var repo = new AssetsRepository(p.GetService<ILogger<AssetsRepository>>());
                 repo.Seed(AssetsSeeder.GetAssetsSeed());
                 return repo;
             });
-
+            
+            // enable Tetra Pak's JWT bearer assertion mechanism ...
             services.AddTetraPakJwtBearerAssertion();
         }
 
@@ -46,7 +49,8 @@ namespace demo.AcmeAssets
 
             app.UseRouting();
 
-            app.UseTetraPakAuthentication(env);
+            // activate Tetra Pak's API authentication mechanism ...
+            app.UseTetraPakApiAuthentication(env);
             
             app.UseAuthorization();
 

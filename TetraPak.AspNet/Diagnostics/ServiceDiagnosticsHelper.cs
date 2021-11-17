@@ -10,7 +10,7 @@ namespace TetraPak.AspNet.diagnostics
     {
         const string KeyDiagnostics = "_tp_diag";
         
-        public static ServiceDiagnostics BeginDiagnostics(this HttpContext self, ILogger logger)
+        public static ServiceDiagnostics? BeginDiagnostics(this HttpContext self, ILogger? logger)
         {
             var level = self.Request.GetDiagnosticsLevel(logger);
             if (level == ServiceDiagnosticsLevel.None)
@@ -35,10 +35,10 @@ namespace TetraPak.AspNet.diagnostics
         public static long? EndDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true) 
             => self.GetDiagnostics()?.GetElapsedMs(timeKey, stopTimer);
         
-        public static ServiceDiagnostics End(this ServiceDiagnostics self)
+        public static ServiceDiagnostics End(this ServiceDiagnostics? self)
         {
             if (self is null)
-                return null;
+                return null!;
 
             self.End();
             return self;

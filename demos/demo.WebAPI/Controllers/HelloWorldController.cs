@@ -5,10 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TetraPak;
 using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
+using TetraPak.Logging;
 using WebAPI.Models;
 using WebAPI.spike_customAuthScheme;
 
@@ -23,6 +25,8 @@ namespace WebAPI.Controllers
     {
         readonly ITokenExchangeGrantService _tokenExchangeGrantService;
         readonly TetraPakConfig _tetraPakConfig;
+
+        ILogger? Logger => _tetraPakConfig.Logger;
 
         /// <summary>
         ///   <para>
@@ -48,7 +52,11 @@ namespace WebAPI.Controllers
             var ct = new CancellationToken();
             var txOutcome = await _tokenExchangeGrantService.ExchangeAccessTokenAsync(credentials, actorTokenOutcome!, ct);
             if (!txOutcome)
-                return this.RespondErrorInternalServer(new ConfigurationException("Service is incorrectly configured"));
+            {
+                var ex = new ServerConfigurationException(innerException: txOutcome.Exception);
+                Logger.Error(ex, messageId: this.GetMessageId(true));
+                return this.RespondErrorInternalServer(ex);
+            }
 
             var apiAccessToken = txOutcome.Value!.AccessToken;
             using var client = new HttpClient();
@@ -99,7 +107,9 @@ namespace WebAPI.Controllers
         ///   This service becomes available for dependency injection when you call
         ///   <see cref="TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection,string?,TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)"/> (see <see cref="Startup.ConfigureServices"/>).
         /// </param>
-        public HelloWorldController(TetraPakConfig tetraPakConfig, ITokenExchangeGrantService tokenExchangeGrantService)
+        public HelloWorldController(
+            TetraPakConfig tetraPakConfig, 
+            ITokenExchangeGrantService tokenExchangeGrantService)
         {
             _tetraPakConfig = tetraPakConfig;
             _tokenExchangeGrantService = tokenExchangeGrantService;

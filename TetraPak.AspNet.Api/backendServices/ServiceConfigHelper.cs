@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
+using HttpMethod=Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 #nullable enable
 
@@ -30,7 +31,7 @@ namespace TetraPak.AspNet.Api
                 $"Error calling service: {RequestToString("(Authorize)", url.StringValue, null)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
-            url.Logger.Error(new ConfigurationException(errorMessage), messageId: messageId);
+            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
@@ -47,7 +48,7 @@ namespace TetraPak.AspNet.Api
         {
             return GetInvalidEndpointResponse(
                 url,
-                method.Method,
+                method.ToStringVerb(),
                 path,
                 queryParameters);
         }
@@ -63,34 +64,34 @@ namespace TetraPak.AspNet.Api
                 $"Error calling service: {RequestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
-            url.Logger.Error(new ConfigurationException(errorMessage), messageId: messageId);
+            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
             return HttpOutcome<HttpResponseMessage>.Fail(
-                new HttpMethod(httpMethod), 
+                httpMethod.ToHttpMethod(), 
                 new Exception(errorResponse.Title),
                 responseMessage);
         }
         
-        public static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
-            HttpMethod method,
-            string path, 
-            string? queryParameters, 
-            IEnumerable<Exception> issues,
-            string? messageId,
-            ILogger? logger)
-        {
-            return GetServiceConfigurationErrorResponse(
-                method.Method,
-                path,
-                queryParameters,
-                issues,
-                messageId,
-                logger);
-        }
+        // public static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
+        //     HttpMethod method,
+        //     string path, 
+        //     string? queryParameters, 
+        //     IEnumerable<Exception> issues,
+        //     string? messageId,
+        //     ILogger? logger)
+        // {
+        //     return GetServiceConfigurationErrorResponse(
+        //         method,
+        //         path,
+        //         queryParameters,
+        //         issues,
+        //         messageId,
+        //         logger);
+        // }
 
         public static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
             string httpMethod,
@@ -103,14 +104,14 @@ namespace TetraPak.AspNet.Api
             var errorMessage = 
                 $"Error calling service: {RequestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
-            logger.Error(new ConfigurationException(errorMessage));
+            logger.Error(new ServerConfigurationException(errorMessage));
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
             var body = JsonSerializer.Serialize(errorResponse);
             responseMessage.Content = new StringContent(body);
             return HttpOutcome<HttpResponseMessage>.Fail(
-                new HttpMethod(httpMethod),
+                httpMethod.ToHttpMethod(),
                 new Exception(errorResponse.Title),
                 responseMessage);
         }

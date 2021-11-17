@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
 
@@ -21,6 +22,7 @@ namespace demo.AcmeProducts
             });
             services.AddTetraPakJwtBearerAssertion();
             services.AddRepositories();
+            services.AddTetraPakServices();              // <-- add this _after_ services.AddControllers() to support backend Tetra Pak services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

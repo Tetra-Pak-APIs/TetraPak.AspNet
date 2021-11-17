@@ -29,7 +29,9 @@ namespace TetraPak.AspNet.Api
         string? _clientId;
         string? _clientSecret;
         MultiStringValue? _scope;
-
+        MultiStringValue? _methods;
+        bool? _trimHostInResponses;
+        
         /// <summary>
         ///   Gets the service declaring the endpoint (a <see cref="ServiceEndpoint"/> object).
         /// </summary>
@@ -83,6 +85,16 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public IConfiguration Configuration { get; private set; }
 
+        /// <summary>
+        ///   Gets or sets a (comma separated) list of allowed HTTP methods.
+        /// </summary>
+        [StateDump]
+        public MultiStringValue Methods
+        {
+            get => _methods ?? Parent!.Methods ?? new MultiStringValue("GET");
+            set => _methods = HttpContextHelper.ValidateHttpMethods(value);
+        }
+
         /// <inheritdoc />
         [StateDump]
         public GrantType GrantType
@@ -113,6 +125,18 @@ namespace TetraPak.AspNet.Api
         {
             get => GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result!;
             set => _scope = value!;
+        }
+
+        /// <summary>
+        ///   Gets a value that specifies whether to always remove the host element from relationship URLs
+        ///   based on this endpoint. If not specified in configuration the value will fall back to the
+        ///   configuration service level (the endpoint "parent" section). 
+        /// </summary>
+        [StateDump]
+        public bool TrimHostInResponses
+        {
+            get => _trimHostInResponses ?? Parent!.TrimHostInResponses;
+            set => _trimHostInResponses = value;
         }
 
         /// <inheritdoc />
@@ -182,7 +206,9 @@ namespace TetraPak.AspNet.Api
             => AmbientData.GetAccessTokenAsync(forceStandardHeader);
 
         internal IAuthorizationService AuthorizationService => Parent!.AuthorizationService;
-        
+
+        public string GetAbsolutePath(bool trimHost) => (trimHost ? Parent!.BasePath : $"{Parent!.Host}{Parent!.BasePath}")!;
+
         #region .  Equality  .
 
         /// <summary>
@@ -265,6 +291,10 @@ namespace TetraPak.AspNet.Api
             
             _scope = config.GetChildren()
                 .FirstOrDefault(i => i.Key.Equals("scope", StringComparison.InvariantCultureIgnoreCase))?.Value;
+
+            var methods = config.GetChildren()
+                .FirstOrDefault(i => i.Key.Equals("methods", StringComparison.InvariantCultureIgnoreCase))?.Value;
+            _methods = HttpContextHelper.ValidateHttpMethod(methods);
 
             return this;
         }

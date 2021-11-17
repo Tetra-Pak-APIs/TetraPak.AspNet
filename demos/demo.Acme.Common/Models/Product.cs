@@ -36,7 +36,7 @@ namespace demo.Acme.Models
         /// <summary>
         ///   Gets or sets a collection of assets (identities). 
         /// </summary>
-        public virtual IEnumerable<string> AssetIds { get; set; }
+        public IEnumerable<string> AssetIds { get; set; }
 
         public Product(string id) : base(id)
         {

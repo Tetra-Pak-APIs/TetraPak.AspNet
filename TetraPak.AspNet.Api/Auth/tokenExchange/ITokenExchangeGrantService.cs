@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Documentations;
 
 namespace TetraPak.AspNet.Api.Auth
 {
@@ -27,17 +29,26 @@ namespace TetraPak.AspNet.Api.Auth
         ///   On success the value also carries the requested result; otherwise a <see cref="Exception"/> might
         ///   be carried instead.
         /// </returns>
+        /// <remarks>
+        ///   <para>
+        ///   Please note that (as of 2021-11-01) Tetra Pak auth services does not allow Token Exchange for
+        ///   non-human identities (a.k.a. "system identities").
+        ///   </para>
+        ///   <para>
+        ///   What this means is that if you pass an <paramref name="accessToken"/>
+        ///   that was ultimately issued from a Client Credentials Grant the token exchange will fail
+        ///   with a <c>400 Bad Request</c>.
+        ///   You can examine the <paramref name="accessToken"/> using the
+        ///   extension method <see cref="JwtHelper.IsSystemIdentityToken(ActorToken)"/>.
+        ///   </para>
+        ///   <para>
+        ///   For more details please see article using the link found in this constant:
+        ///   <see cref="Docs.DevPortal.TokenExchangeSubjectTokenTypes"/>  
+        ///   </para>
+        /// </remarks>
         Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
             Credentials credentials,
             ActorToken accessToken, 
             CancellationToken cancellationToken);
-
-        // /// <summary>   
-        // ///   Creates a <see cref="AuthenticationHeaderValue"/> from a <see cref="TokenExchangeResponse"/>. obsolete
-        // /// </summary>
-        // /// <param name="tokenExchangeResponse">
-        // ///   A response from a token exchange.  
-        // /// </param>
-        // AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse);
     }
 }

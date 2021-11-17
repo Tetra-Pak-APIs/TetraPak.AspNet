@@ -52,11 +52,6 @@ namespace WebAPI
         {
             if (env.IsDevelopment())
             {
-                app.Use((context, func) =>
-                {
-                    context.Request.Headers.Add("my-header", "Hello World!");
-                    return func();
-                });
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Demo demo.WebAPI v1"));

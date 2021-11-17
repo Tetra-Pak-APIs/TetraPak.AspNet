@@ -5,6 +5,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Diagnostics;
@@ -20,17 +22,21 @@ namespace TetraPak.AspNet
     /// </summary>
     public static class HttpContextHelper
     {
-        /// <summary>
-        ///   Returns the request access token, or <c>null</c> if unavailable. 
-        /// </summary>
-        /// <returns>
-        ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
-        ///   otherwise <c>null</c>.
-        /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
-        public static ActorToken? GetAccessToken(this HttpRequest self, TetraPakConfig config) 
-            => self.HttpContext.GetAccessToken(config);
+        static readonly IDictionary<HttpMethod, string> s_httpMethodToStringVerbMap = new Dictionary<HttpMethod, string>
+        {
+            [HttpMethod.Connect] = HttpVerbs.Connect,
+            [HttpMethod.Custom] = HttpVerbs.Custom,
+            [HttpMethod.Delete] = HttpVerbs.Delete,
+            [HttpMethod.Get] = HttpVerbs.Get,
+            [HttpMethod.Head] = HttpVerbs.Head,
+            [HttpMethod.Options] = HttpVerbs.Options,
+            [HttpMethod.Patch] = HttpVerbs.Patch,
+            [HttpMethod.Post] = HttpVerbs.Post,
+            [HttpMethod.Put] = HttpVerbs.Put,
+            [HttpMethod.Trace] = HttpVerbs.Trace
+        };
+
+        static readonly IDictionary<string, HttpMethod> s_httpStringVerbToMethodMap = s_httpMethodToStringVerbMap.ToInverted();
 
         /// <summary>
         ///   Returns the request access token, or <c>null</c> if unavailable. 
@@ -39,11 +45,23 @@ namespace TetraPak.AspNet
         ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
         ///   otherwise <c>null</c>.
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig, bool)"/>
-        public static ActorToken? GetAccessToken(this HttpContext self, TetraPakConfig config)
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest)"/>
+        public static ActorToken? GetAccessToken(this HttpRequest self) 
+            => self.HttpContext.GetAccessToken();
+
+        /// <summary>
+        ///   Returns the request access token, or <c>null</c> if unavailable. 
+        /// </summary>
+        /// <returns>
+        ///   An <see cref="ActorToken"/> instance representing the request's access token if one can be obtained;
+        ///   otherwise <c>null</c>.
+        /// </returns>
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, bool)"/>
+        public static ActorToken? GetAccessToken(this HttpContext self)
         {
-            var task = GetAccessTokenAsync(self, config);
+            var task = GetAccessTokenAsync(self);
             var outcome = task.ConfigureAwait(false).GetAwaiter().GetResult();
             return outcome
                 ? outcome.Value
@@ -58,19 +76,16 @@ namespace TetraPak.AspNet
         ///   holds the access token in its <see cref="Outcome{T}.Value"/> property. On failure the outcome 
         ///   declares the problem via its <see cref="Outcome.Exception"/> property. 
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig, bool)"/>
-        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self, TetraPakConfig config)
-            => self.HttpContext.GetAccessTokenAsync(config);
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpContext,bool)"/>
+        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this HttpRequest self)
+            => self.HttpContext.GetAccessTokenAsync();
 
         /// <summary>
         ///   Tries obtaining an access token from the request. 
         /// </summary>
         /// <param name="self">
         ///   The <see cref="HttpContext"/>.
-        /// </param>
-        /// <param name="config">
-        ///   A Tetra Pak configuration object.
         /// </param>
         /// <param name="forceStandardHeader">
         ///   (optional; default=<c>false</c>)<br/>
@@ -82,11 +97,10 @@ namespace TetraPak.AspNet
         ///   holds the access token in its <see cref="Outcome{T}.Value"/> property. On failure the outcome 
         ///   declares the problem via its <see cref="Outcome.Exception"/> property. 
         /// </returns>
-        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPakConfig)"/>
-        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest, TetraPakConfig)"/>
+        /// <seealso cref="GetAccessToken(Microsoft.AspNetCore.Http.HttpContext)"/>
+        /// <see cref="GetAccessTokenAsync(Microsoft.AspNetCore.Http.HttpRequest)"/>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(
-            this HttpContext? self, 
-            TetraPakConfig? config, 
+            this HttpContext? self,
             bool forceStandardHeader = false)
         {
             if (self is null)
@@ -96,15 +110,16 @@ namespace TetraPak.AspNet
             if (self.Items.TryGetValue(headerKey, out var o) && o is string s && ActorToken.TryParse(s, out var actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            headerKey = forceStandardHeader || config?.AuthorizationHeader is null
+            var tetraPakConfig = self.RequestServices.GetRequiredService<TetraPakConfig>();
+            headerKey = forceStandardHeader || tetraPakConfig.AuthorizationHeader is null
                 ? HeaderNames.Authorization
-                : config.AuthorizationHeader;
+                : tetraPakConfig.AuthorizationHeader;
             var ss = self.Request.Headers[headerKey].FirstOrDefault();
             if (ss is {} && ActorToken.TryParse(ss, out actorToken))
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
-            var messageId = self.Request.GetMessageId(config);
-            config?.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'", messageId);
+            var messageId = self.Request.GetMessageId(tetraPakConfig);
+            tetraPakConfig.Logger.Warning($"Could not find an access token. Was looking for header '{headerKey}'", messageId);
             
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found")));
         }
@@ -182,13 +197,10 @@ namespace TetraPak.AspNet
         /// <param name="self">
         ///   The <see cref="HttpContext"/>.
         /// </param>
-        /// <param name="config">
-        ///   The Tetra Pak integration configuration.
-        /// </param>
         /// <returns>
         ///   
         /// </returns>
-        public static async Task<EnumOutcome<ActorToken>> GetActorTokensAsync(this HttpContext? self, TetraPakConfig config)
+        public static async Task<EnumOutcome<ActorToken>> GetActorTokensAsync(this HttpContext? self)
         {
             if (self is null)
                 return EnumOutcome<ActorToken>.Fail(new Exception("No HTTP context available"));
@@ -198,12 +210,12 @@ namespace TetraPak.AspNet
             {
                 // the context is still in auth flow; use different mechanism ...
                 var tokenList = new List<ActorToken>();
-                var accessTokenOutcome = await self.GetAccessTokenAsync(config);
+                var accessTokenOutcome = await self.GetAccessTokenAsync();
                 if (accessTokenOutcome)
                 {
                     tokenList.Add(accessTokenOutcome.Value!);
                 }
-                var idTokenOutcome = await self.GetIdentityTokenAsync(config);
+                var idTokenOutcome = await self.GetIdentityTokenAsync();
                 if (idTokenOutcome)
                 {
                     tokenList.Add(idTokenOutcome.Value!);
@@ -535,5 +547,132 @@ namespace TetraPak.AspNet
         {
             return criteria.IsMatch(request, comparison);
         }
+        
+        /// <summary>
+        ///   Validates a <see cref="string"/> as a HTTP method (verb) and throws a <see cref="FormatException"/>
+        ///   if it is not recognised.  
+        /// </summary>
+        /// <param name="value">
+        ///   The <see cref="string"/> to be validated.
+        /// </param>
+        /// <param name="allowNull">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether the exception is also thrown when <paramref name="value"/> is <c>null</c>. 
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="value"/> (can be <c>null</c> if <paramref name="allowNull"/> is set).
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="value"/> was unassigned (<c>null</c>) and <paramref name="allowNull"/> was not set.
+        /// </exception>
+        /// <exception cref="FormatException">
+        ///   <paramref name="value"/> was not recognized as a HTTP method.
+        /// </exception>
+        public static string ValidateHttpMethod(string? value, bool allowNull = true)
+        {
+            var test = value?.Trim().ToUpper();
+            switch (value)
+            {
+                case "GET":
+                case "POST":
+                case "PUT":
+                case "PATCH":
+                case "DELETE":
+                case "HEAD":
+                case "OPTIONS":
+                case "TRACE":
+                case "CONNECT":
+                    return test!;
+                
+                case null:
+                    if (allowNull)
+                        return null!;
+                     
+                    throw new ArgumentNullException(nameof(value));
+
+                default:
+                    throw new FormatException($"Invalid HTTP method: {value}");
+            }
+        }
+
+        /// <summary>
+        ///   Validates the items of a <see cref="MultiStringValue"/> as HTTP methods (verbs)
+        ///   and returns them (on success) or throws a <see cref="FormatException"/> (on failure).  
+        /// </summary>
+        /// <param name="value">
+        ///   The <see cref="MultiStringValue"/> to be validated.
+        /// </param>
+        /// <param name="allowNull">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether the exception is also thrown when <paramref name="value"/> is <c>null</c>. 
+        /// </param>
+        /// <returns>
+        ///   The <paramref name="value"/> (can be <c>null</c> if <paramref name="allowNull"/> is set).
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="value"/> was unassigned (<c>null</c>) and <paramref name="allowNull"/> was not set.
+        /// </exception>
+        /// <exception cref="FormatException">
+        ///   <paramref name="value"/> was not recognized as a HTTP method.
+        /// </exception>
+        public static MultiStringValue? ValidateHttpMethods(MultiStringValue? value, bool allowNull = true)
+        {
+            if (value is null || value.IsEmpty)
+            {
+                if (allowNull)
+                    return null;
+            }
+
+            var verbs = new List<string>();
+            foreach (var item in value!.Items!)
+            {
+                verbs.Add(ValidateHttpMethod(item));
+            }
+
+            return new MultiStringValue(verbs.ToArray());
+        }
+
+        /// <summary>
+        ///   Casts a collection of <see cref="HttpMethod"/> enum values into a collection of
+        ///   equivalent <see cref="string"/> values.
+        /// </summary>
+        /// <param name="methods">
+        ///   The enum values to be cast into <see cref="string"/>s.
+        /// </param>
+        /// <returns>
+        ///   An array of <see cref="string"/>.
+        /// </returns>
+        public static string[] ToStringVerbs(this IEnumerable<HttpMethod> methods)
+        {
+            return methods.Select(m => s_httpMethodToStringVerbMap[m]).ToArray();
+        }
+
+        /// <summary>
+        ///   Casts a <see cref="HttpMethod"/> enum value into its equivalent <see cref="string"/> value.
+        /// </summary>
+        /// <param name="httpMethod">
+        ///   The <see cref="HttpMethod"/> value to be cast.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="string"/> value.
+        /// </returns>
+        /// <exception cref="KeyNotFoundException">
+        ///   The <see cref="HttpMethod"/> is not recognized.
+        /// </exception>
+        public static string ToStringVerb(this HttpMethod httpMethod) => s_httpMethodToStringVerbMap[httpMethod];
+
+        /// <summary>
+        ///   Casts the <see cref="string"/> representation of a HTTP method into a <see cref="HttpMethod"/>. 
+        /// </summary>
+        /// <param name="stringVerb">
+        ///   The textual HTTP method (verb) string representation.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="HttpMethod"/> value.
+        /// </returns>
+        /// <exception cref="KeyNotFoundException">
+        ///   The <paramref name="stringVerb"/> value is not a recognized HTTP method.
+        /// </exception>
+        public static HttpMethod ToHttpMethod(this string stringVerb) => s_httpStringVerbToMethodMap[stringVerb];
     }
 }

@@ -88,6 +88,17 @@ namespace TetraPak.AspNet.Auth
         }
 
         /// <summary>
+        ///   OBSOLETE!
+        ///   This method will be removed in future versions.
+        ///   Please use <see cref="UseTetraPakClientAuthentication"/> instead.
+        /// </summary>
+        [Obsolete("This method will be removed in future versions. Please use UseTetraPakClientAuthentication instead")]
+        public static void UseTetraPakAuthentication(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseTetraPakClientAuthentication(env);
+        }
+        
+        /// <summary>
         ///   Configures Tetra Pak specific auth behavior.
         /// </summary>
         /// <param name="app">
@@ -96,7 +107,7 @@ namespace TetraPak.AspNet.Auth
         /// <param name="env">
         ///   Provides information about the hosting environment. 
         /// </param>
-        public static void UseTetraPakAuthentication(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void UseTetraPakClientAuthentication(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             if (config.IsMessageIdEnabled)
@@ -104,5 +115,6 @@ namespace TetraPak.AspNet.Auth
                 app.UseTetraPakMessageId();
             }
         }
+
     }
 }

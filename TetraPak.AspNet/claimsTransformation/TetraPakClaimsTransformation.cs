@@ -16,7 +16,7 @@ namespace TetraPak.AspNet
     /// <summary>
     ///   A basic (abstract) implementation of the <see cref="ITetraPakClaimsTransformation"/> interface.
     /// </summary>
-    public abstract class TetraPakClaimsTransformation : ITetraPakClaimsTransformation
+    public abstract class TetraPakClaimsTransformation : ITetraPakClaimsTransformation, IMessageIdProvider
     {
         /// <summary>
         ///   Gets or sets the global (static) default service scope to be used for all
@@ -39,7 +39,7 @@ namespace TetraPak.AspNet
         ///   Gets the current HTTP context.
         /// </summary>
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        protected HttpContext? Context { get; private set; }
+        protected HttpContext? HttpContext { get; private set; }
 
         /// <summary>
         ///   Gets a logger provider.
@@ -62,13 +62,16 @@ namespace TetraPak.AspNet
         protected ITimeLimitedRepositories? Cache => TetraPakConfig?.Cache;
         
         /// <inheritdoc />
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        public string? GetMessageId(bool enforce = false) => TetraPakConfig?.AmbientData.GetMessageId();
+        
+        /// <inheritdoc />
+        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal, CancellationToken? cancellationToken)
         {
             var clone = principal.Clone();
-            return OnTransformAsync(clone);
+            return OnTransformAsync(clone, cancellationToken);
         }
         
-                /// <summary>
+        /// <summary>
         ///   Invoked from <see cref="OnTransformAsync"/> to acquire an identity token.
         /// </summary>
         /// <param name="cancellationToken">
@@ -96,33 +99,38 @@ namespace TetraPak.AspNet
 
             if (string.IsNullOrWhiteSpace(TetraPakConfig!.ClientId))
                 return Outcome<Credentials>.Fail(
-                    new ConfigurationException("Could not obtain client id from configuration"));
+                    new ServerConfigurationException("Could not obtain client id from configuration"));
 
             return string.IsNullOrWhiteSpace(TetraPakConfig.ClientSecret)
                 ? Outcome<Credentials>.Fail(
-                    new ConfigurationException("Could not obtain client secret from configuration"))
+                    new ServerConfigurationException("Could not obtain client secret from configuration"))
                 : Outcome<Credentials>.Success(
                     new Credentials(TetraPakConfig.ClientId, TetraPakConfig.ClientSecret));
         }
-        
+
         /// <summary>
         ///   (Must be overridden)<br/>
         ///   Invoked, internally, to decorate the context <see cref="ClaimsPrincipal"/>.
         ///   Please note that the <paramref name="principal"/> is a cloned instance of the
-        ///   <see cref="ClaimsPrincipal"/> attached to <see cref="Context"/>.
+        ///   <see cref="ClaimsPrincipal"/> attached to <see cref="HttpContext"/>.
         /// </summary>
         /// <param name="principal">
         ///   The (incoming) <see cref="ClaimsPrincipal"/>.
         /// </param>
+        /// <param name="cancellationToken">
+        ///   Allows cancelling the operation.
+        /// </param>
         /// <returns>
         ///   A <see cref="ClaimsPrincipal"/> object.
         /// </returns>
-        protected abstract Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal);
+        protected abstract Task<ClaimsPrincipal> OnTransformAsync(
+            ClaimsPrincipal principal, 
+            CancellationToken? cancellationToken);
         
         internal virtual void OnInitialize(IServiceProvider provider)
         {
             var httpAccessor = provider.GetService<IHttpContextAccessor>();  
-            Context = httpAccessor?.HttpContext; 
+            HttpContext = httpAccessor?.HttpContext; 
             TetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
             IdentitySource = TetraPakConfig.IdentitySource; 
             UserInformation = provider.GetRequiredService<TetraPakUserInformation>();

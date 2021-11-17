@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
+#nullable enable
+
 // NOTE Disabled compiler warning about use of async with no await in body:
 #pragma warning disable 1998
 
@@ -48,7 +50,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// </returns>
         /// <exception cref="InvalidOperationException">
         ///   Required configuration was not provided; such as <see cref="ReadDiscoveryDocumentArgs.MasterSourceUrl"/>
-        ///   or <see cref="ReadDiscoveryDocumentArgs.Config"/>.
+        ///   or <see cref="ReadDiscoveryDocumentArgs.TetraPakConfig"/>.
         /// </exception>
         /// <seealso cref="ReadDocumentPolicy"/>
         public static async Task<Outcome<DiscoveryDocument>> ReadAsync(ReadDiscoveryDocumentArgs args)
@@ -59,7 +61,7 @@ namespace TetraPak.AspNet.OpenIdConnect
                 if (args.MasterSourceUrl is null)
                     throw new InvalidOperationException($"Cannot read discovery document from master source. Missing {nameof(ReadDiscoveryDocumentArgs.MasterSourceUrl)}");
                 
-                var outcome = await readMasterAsync(args.MasterSourceUrl, args.Logger, args.Timeout);
+                var outcome = await readMasterAsync(args.MasterSourceUrl, args.Logger, args.Timeout, args.GetMessageId());
                 if (outcome)
                     return outcome;
             }
@@ -73,10 +75,10 @@ namespace TetraPak.AspNet.OpenIdConnect
 
             if ((policy & ReadDocumentPolicy.Default) == ReadDocumentPolicy.Default)
             {
-                if (args.Config is null)
-                    throw new InvalidOperationException($"Cannot read discovery document from master source. Missing {nameof(ReadDiscoveryDocumentArgs.Config)}");
+                if (args.TetraPakConfig is null)
+                    throw new InvalidOperationException($"Cannot read discovery document from master source. Missing {nameof(ReadDiscoveryDocumentArgs.TetraPakConfig)}");
                     
-                return Outcome<DiscoveryDocument>.Success(GetDefault(args.Config));
+                return Outcome<DiscoveryDocument>.Success(GetDefault(args.TetraPakConfig));
             }
 
             return Outcome<DiscoveryDocument>.Fail(new Exception($"Could not read {typeof(DiscoveryDocument)} (policy={args.Policy})"));
@@ -154,10 +156,10 @@ namespace TetraPak.AspNet.OpenIdConnect
             return document;
         }
         
-        static async Task<Outcome<DiscoveryDocument>> readMasterAsync(
-            string url,
-            ILogger logger = null,
-            TimeSpan? timeout = null)
+        static async Task<Outcome<DiscoveryDocument>> readMasterAsync(string url,
+            ILogger? logger = null,
+            TimeSpan? timeout = null, 
+            string? messageId = null)
         {
             try
             {
@@ -169,18 +171,19 @@ namespace TetraPak.AspNet.OpenIdConnect
                 var response = await client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    logger.Warning($"Failed to download discovery document. Status: {(int) response.StatusCode} {response.ReasonPhrase}");
+                    logger.Warning(() => 
+                        $"Failed to download discovery document. Status: {(int) response.StatusCode} {response.ReasonPhrase}");
                     return Outcome<DiscoveryDocument>.Fail();
                 }
 
                 var stream = await response.Content.ReadAsStreamAsync();
                 var discoveryDocument = await JsonSerializer.DeserializeAsync<DiscoveryDocument>(stream);
-                logger.Trace($"Successfully downloaded discovery document from {url}");
-                return Outcome<DiscoveryDocument>.Success(discoveryDocument);
+                logger.Trace($"Successfully downloaded discovery document from {url}", messageId);
+                return Outcome<DiscoveryDocument>.Success(discoveryDocument!);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to download discovery document");
+                logger.Error(ex, "Failed to download discovery document", messageId);
                 return Outcome<DiscoveryDocument>.Fail(new Exception("Failed to download discovery document", ex));
             }
         }
@@ -226,7 +229,9 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///   Gets or sets the Tetra Pak integration configuration.
         /// </summary>
-        public TetraPakConfig Config { get; set; }
+        public TetraPakConfig TetraPakConfig { get; set; }
+
+        internal string? GetMessageId() => TetraPakConfig.AmbientData.GetMessageId();
 
         /// <summary>
         ///   Gets or sets a local (file) path for locally caching the <see cref="DiscoveryDocument"/>. 
@@ -263,7 +268,7 @@ namespace TetraPak.AspNet.OpenIdConnect
             {
                 MasterSourceUrl = config.DiscoveryDocumentUrl,
                 Logger = config.Logger,
-                Config = config,
+                TetraPakConfig = config,
                 Timeout = timeout,
                 Policy = fallbackPolicy,
                 LocalCachePath = string.IsNullOrWhiteSpace(localCachePath) 
@@ -290,7 +295,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         {
             return new ReadDiscoveryDocumentArgs
             {
-                Config = config,
+                TetraPakConfig = config,
                 Logger = config.Logger
             };
         }

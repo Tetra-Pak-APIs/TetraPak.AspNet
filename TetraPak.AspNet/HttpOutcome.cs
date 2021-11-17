@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+
+// using System.Net.Http;
 
 #nullable enable
 
@@ -17,7 +19,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the HTTP request method used.
         /// </summary>
-        public string Method { get; }
+        public HttpMethod Method { get; }
 
         /// <summary>
         ///   Creates and returns a successful outcome with a requested value.
@@ -56,7 +58,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate failure.
         /// </returns>
-        public static HttpOutcome<T> Fail(HttpMethod method, T value) => new(false, method, value);
+        public static HttpOutcome<T> Fail(HttpMethod method, T value) 
+            => new(false, method, value);
 
         /// <summary>
         ///   Creates and returns a failed outcome that carries an <see cref="Exception"/>.
@@ -70,7 +73,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate failure.
         /// </returns>
-        public static HttpOutcome<T> Fail(HttpMethod method, Exception exception) => new(false, method, default!, exception);
+        public static HttpOutcome<T> Fail(HttpMethod method, Exception exception) 
+            => new(false, method, default!, exception);
 
         /// <summary>
         ///   Creates and returns a failed outcome that carries an <see cref="Exception"/> as well as a value.
@@ -87,7 +91,8 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate failure.
         /// </returns>
-        public static HttpOutcome<T> Fail(HttpMethod method, Exception exception, T value) => new(false, method, value, exception);
+        public static HttpOutcome<T> Fail(HttpMethod method, Exception exception, T value) 
+            => new(false, method, value, exception);
 
         /// <summary>
         ///   Initializes the <see cref="HttpOutcome{T}"/> object.
@@ -107,7 +112,7 @@ namespace TetraPak.AspNet
         protected HttpOutcome(bool result, HttpMethod method, T value, Exception? exception = null) 
         : base(result, value, exception)
         {
-            Method = method.Method;
+            Method = method;
         }
     }
 
@@ -122,7 +127,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the HTTP request method used.
         /// </summary>
-        public string Method { get; }
+        public HttpMethod Method { get; }
 
         /// <summary>
         ///   Creates and returns a successful outcome with a requested value.
@@ -141,7 +146,7 @@ namespace TetraPak.AspNet
         ///   a value of type <typeparamref name="T"/>.
         /// </returns>
         public static HttpEnumOutcome<T> Success(HttpMethod method, IReadOnlyCollection<T> value, int totalCount = 0) 
-            => new HttpEnumOutcome<T>(true, method, value, totalCount == 0 ? value.Count : totalCount);
+            => new(true, method, value, totalCount == 0 ? value.Count : totalCount);
         
         /// <summary>
         ///   Creates and returns a successful outcome with a requested value.
@@ -209,10 +214,10 @@ namespace TetraPak.AspNet
         /// </returns>
         /// <returns></returns>
         public static HttpEnumOutcome<T> Fail(HttpMethod method, T[] value, Exception exception) 
-            => new HttpEnumOutcome<T>(false, method, value, 0, exception);
+            => new(false, method, value, 0, exception);
         
         public static HttpEnumOutcome<T> Fail(HttpMethod method, T singleValue, Exception exception) 
-            => new HttpEnumOutcome<T>(false, method, new[] { singleValue }, 0, exception);
+            => new(false, method, new[] { singleValue }, 0, exception);
         
         /// <summary>
         ///   Initialises the <see cref="HttpEnumOutcome{T}"/> object. 
@@ -239,7 +244,7 @@ namespace TetraPak.AspNet
             Exception? exception = null)
         : base(result, value, totalCount, exception)
         {
-            Method = method.Method;
+            Method = method;
         }
     }
 }

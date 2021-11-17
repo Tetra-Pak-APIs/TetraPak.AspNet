@@ -20,8 +20,9 @@ namespace TetraPak.AspNet.Auth
 
             if (!logger.IsEnabled(LogLevel.Debug))
                 return isTokenAvailable;
-            
-            logger.Debug($"Received message: {context.Request.Path.Value}");
+
+            var messageId = config.AmbientData.GetMessageId();
+            logger.Debug($"Received message: {context.Request.Path.Value}", messageId);
             if (!isTokenAvailable)
             {
                 logger.Debug($"No authorization found");
@@ -30,13 +31,13 @@ namespace TetraPak.AspNet.Auth
 
             if (isJwtToken)
             {
-                logger.Debug($"Received JWT: \n{jwt.ToDebugString()}");
-                logger.Debug($"Environment: {config.Environment}");
-                logger.Debug($"Discovery document URL: {oidcOptions.MetadataAddress}");
+                logger.Debug($"Received JWT: \n{jwt.ToDebugString()}", messageId);
+                logger.Debug($"Environment: {config.Environment}", messageId);
+                logger.Debug($"Discovery document URL: {oidcOptions.MetadataAddress}", messageId);
                 return true;
             }
             
-            logger.Debug($"Received token: \n{authorization}");
+            logger.Debug($"Received token: \n{authorization}", messageId);
             return true;
         }
 

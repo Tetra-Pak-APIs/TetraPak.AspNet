@@ -49,7 +49,7 @@ namespace demo.Acme.Models
             foreach (var assetId in assetIds)
             {
                 if (!hashSet.Contains(assetId))
-                    return EnumOutcome<string>.Fail(new ResourceNotFoundException($"Asset {assetId} not found"));
+                    return EnumOutcome<string>.Fail(ServerException.NotFound($"Asset {assetId} not found"));
             }
 
             foreach (var assetId in assetIds)

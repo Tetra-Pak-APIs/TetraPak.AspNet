@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
                 } );
 
             // transient API, using token exchange (TX) or client credentials (CC) ...
-            HttpQueryParameters query = id is null
+            HttpQuery query = id is null
                 ? null!
                 : $"id={id}";
             switch (svc.ToLowerInvariant())

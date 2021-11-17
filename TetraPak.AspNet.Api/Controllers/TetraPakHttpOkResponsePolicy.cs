@@ -1,7 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.Controllers
 {
@@ -10,6 +16,8 @@ namespace TetraPak.AspNet.Api.Controllers
     /// </summary>
     public class TetraPakHttpOkResponsePolicy : IHttpOkResponsePolicy
     {
+        static readonly Dictionary<Type, PropertyInfo> s_resourceKeyProperties = new();
+
         /// <summary>
         ///   Gets or sets a value that specifies whether a "Created" (single) resource will be
         ///   reflected in response body (not in the "Locator" header). The default is <c>false</c>,
@@ -66,7 +74,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 }
 
                 return response.Value.IsCollectionOf<object>(out var items) 
-                    ? tryApplyLocatorsInBody(items.ToArray())
+                    ? tryApplyLocatorsInBody(items!.ToArray())
                     : tryApplyLocatorHeader(response.Value);
             }
 
@@ -92,19 +100,36 @@ namespace TetraPak.AspNet.Api.Controllers
             }
         }
 
-        protected virtual bool OnTryResolveResourceId(object resource, out string id)
+        protected virtual bool OnTryResolveResourceId(object resource, out string? id)
         {
-            if (resource is IUniquelyIdentifiable identifiable)
-            {
-                id = identifiable.GetUniqueIdentity()?.ToString();
-                return !string.IsNullOrEmpty(id);
-            }
-
-            // todo resolve resource id from [Key] attribute
-            id = null;
-            return false;
+            if (resource is not IUniquelyIdentifiable identifiable) 
+                return tryResolveResourceKey(resource, out id);
+            
+            id = identifiable.GetUniqueIdentity()?.ToString();
+            return !string.IsNullOrEmpty(id);
         }
 
-       
+        static bool tryResolveResourceKey(object resource, out string? key)
+        {
+            // tries to resolve a [Key] property (caches the resolution) and returns the value of that property
+            key = null;
+            var type = resource.GetType();
+            lock (s_resourceKeyProperties)
+            {
+                if (!s_resourceKeyProperties.TryGetValue(type, out var property))
+                {
+                    var nisse = type.GetProperties(); //nisse
+                    property = type.GetProperties().FirstOrDefault(i 
+                        => i.CanRead && i.GetCustomAttribute<KeyAttribute>() is { });
+                    if (property is null)
+                        return false;
+
+                    s_resourceKeyProperties.Add(type, property);
+                }
+
+                key = property.GetValue(resource) as string;
+                return true;
+            }
+        }
     }
 }

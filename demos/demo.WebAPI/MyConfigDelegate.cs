@@ -35,18 +35,17 @@ namespace WebAPI
 
     public class MySecretsProvider : ITetraPakSecretsProvider
     {
-        public async Task<Outcome<string>> GetSecretStringAsync(DynamicPath path)
+        public Task<Outcome<string>> GetSecretStringAsync(DynamicPath path)
         {
             if (path == Secrets.ClientIdUri)
-                return getClientIdAsync(path);
-            
-            if (path == Secrets.ClientIdUri)
-                return getClientSecretAsync(path);
-            
-            return Outcome<string>.Fail(new ArgumentOutOfRangeException(nameof(path)));
+                return Task.FromResult(getClientIdAsync(path));
+
+            return Task.FromResult(path == Secrets.ClientIdUri 
+                ? getClientSecretAsync(path) 
+                : Outcome<string>.Fail(new ArgumentOutOfRangeException(nameof(path))));
         }
 
-        Outcome<string> getClientIdAsync(DynamicPath path)
+        static Outcome<string> getClientIdAsync(DynamicPath path)
         {
             /*
              in reality you might have a need to obtain different client ids here, and do so
@@ -55,13 +54,13 @@ namespace WebAPI
             return Outcome<string>.Success("-my-client-id-");
         }
 
-        Outcome<string> getClientSecretAsync(DynamicPath path)
+        static Outcome<string> getClientSecretAsync(DynamicPath path)
         {
             /*
              in reality you might have a need to obtain different client ids here, and do so
              from a secure persistent store somewhere, such as an Azure Key Vault
             */
-            return Outcome<string>.Success("-m4-c7i3nt-s3cr3t");
+            return Outcome<string>.Success("-m4-c1i3n7-s3cr37");
         }
     }
 }

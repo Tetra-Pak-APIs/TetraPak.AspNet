@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Auth;
 
 namespace TetraPak.AspNet.Identity
 {
@@ -36,6 +37,10 @@ namespace TetraPak.AspNet.Identity
             var loader = new UserInformationProvider(AmbientData);
             try
             {
+                // there's no point in calling the remote service for system identities (it will fail) ...
+                if (accessToken.Identity.IsSystemIdentityToken())
+                    return Outcome<UserInformation>.Fail(ServerException.BadRequest("Cannot obtain user information for system identity"));
+                
                 var userInformation = await loader.GetUserInformationAsync(accessToken);
                 return Outcome<UserInformation>.Success(userInformation);
             }

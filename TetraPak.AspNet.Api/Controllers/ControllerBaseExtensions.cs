@@ -26,13 +26,20 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <summary>
         ///   Gets a unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </summary>
+        /// <param name="self">
+        ///   The extended <see cref="ControllerBase"/>.
+        /// </param>
+        /// <param name="enforce">
+        ///   (optional; default=false)<br/>
+        ///   When set, a random unique string will be generated and attached to the request.
+        /// </param>
         // ReSharper disable once MemberCanBePrivate.Global
-        public static string? GetMessageId(this ControllerBase self)
+        public static string? GetMessageId(this ControllerBase self, bool enforce = false)
         {
             if (self is BusinessApiController apiController)
                 return apiController.MessageId;
 
-            return self.HttpContext.Request.GetMessageId(null!);
+            return self.HttpContext.Request.GetMessageId(null!, enforce);
         }
 
         /// <summary>
@@ -45,16 +52,8 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this ControllerBase self)
-        {
-            if (!self.TryGetTetraPakApiConfig(out var config))
-                return Task.FromResult(Outcome<ActorToken>.Fail(
-                    new Exception(
-                        "Cannot get access token. Failed when trying to obtain a "+
-                        $" configuration ({typeof(TetraPakApiConfig)})")));
-                
-            return self.HttpContext.Request.GetAccessTokenAsync(config);
-        }
+        public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this ControllerBase self) 
+            => self.HttpContext.Request.GetAccessTokenAsync();
 
         /// <summary>
         ///   Creates an <see cref="OkObjectResult"/> object that produces an Status 200 OK response.
@@ -98,11 +97,7 @@ namespace TetraPak.AspNet.Api.Controllers
                     new OkObjectResult(new ApiDataResponse<object>(Array.Empty<object>(), messageId: messageId)));
 
             if (data is DynamicEntity dynamicEntity)
-            {
-                var nisse = dynamicEntityResponse();
-                return applyPolicy(
-                    new OkObjectResult(nisse));
-            }
+                return applyPolicy(new OkObjectResult(dynamicEntityResponse()));
 
             if (data.GetType().IsGenericBase(typeof(ApiDataResponse<>))) 
                 return applyPolicy(
@@ -168,7 +163,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   <para>
         ///   This method automatically resolves whether the outcome is a success or failure and constructs
-        ///   a well-formed response, as per Tetra Pak API recommendations, from it. Relying on this method
+        ///   a well-formed response, adhering to Tetra Pak API recommendations. Relying on this method
         ///   for constructing responses will relieve you from having to write the corresponding boiler plate
         ///   code yourself. Also, should Tetra Pak recommendations change you can simply upgrade the SDK
         ///   tp stay current. 
@@ -495,12 +490,10 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <seealso cref="RespondErrorInternalServer"/>
         public static ActionResult RespondError(this ControllerBase self, Exception error)
         {
-            if (error is HttpException httpException)
-            {
+            if (error is ServerException httpException)
                 return self.StatusCode(
                     (int) httpException.StatusCode, 
                     new ApiErrorResponse(error.Message, self.GetMessageId()));
-            }
 
             return self.RespondErrorInternalServer(error);
         }
@@ -600,7 +593,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   A backend service object of type <typeparamref name="TBackendService"/>.
         /// </returns>
-        /// <exception cref="ConfigurationException">
+        /// <exception cref="ServerConfigurationException">
         ///   The backend service could not be resolved.
         ///   Please ensure you haven't misspelled it in service configuration. 
         /// </exception>
@@ -625,9 +618,9 @@ namespace TetraPak.AspNet.Api.Controllers
                 return outcome.Value!;
             
             if (string.IsNullOrEmpty(serviceName))
-                throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
+                throw new ServerConfigurationException($"Could not resolve a backend service for controller {self}");
             
-            throw new ConfigurationException(
+            throw new ServerConfigurationException(
                 $"Could not resolve a backend service \"{serviceName}\" "+
                 $"for controller {self} ");
         }
@@ -693,7 +686,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An object implementing the <see cref="IBackendService"/> contract.
         /// </returns>
-        /// <exception cref="ConfigurationException">
+        /// <exception cref="ServerConfigurationException">
         ///   The backend service could not be resolved.
         ///   Please ensure you haven't misspelled it in service configuration. 
         /// </exception>
@@ -710,9 +703,9 @@ namespace TetraPak.AspNet.Api.Controllers
                 return outcome.Value!;
 
             if (string.IsNullOrEmpty(serviceName))
-                throw new ConfigurationException($"Could not resolve a backend service for controller {self}");
+                throw new ServerConfigurationException($"Could not resolve a backend service for controller {self}");
             
-            throw new ConfigurationException($"Could not resolve a backend service \"{serviceName}\" for controller {self} ");
+            throw new ServerConfigurationException($"Could not resolve a backend service \"{serviceName}\" for controller {self} ");
         }
 
         /// <summary>
@@ -1009,7 +1002,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   A Tetra Pak (API) configuration object.
         /// </returns>
         /// <seealso cref="TryGetTetraPakApiConfig"/>
-        /// <exception cref="ConfigurationException">
+        /// <exception cref="ServerConfigurationException">
         ///   The Tetra Pak (API) configuration object could not be obtained
         /// </exception>
         public static TetraPakConfig? GetTetraPakConfig(this ControllerBase self)
@@ -1020,7 +1013,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (self is BusinessApiController apiController)
                 return apiController.GetConfig();
                 
-            throw new ConfigurationException($"Could not retrieve a {typeof(TetraPakApiConfig)} instance");
+            throw new ServerConfigurationException($"Could not retrieve a {typeof(TetraPakApiConfig)} instance");
         }
         
         static Outcome<ApiErrorResponse> tryParseTetraPakErrorResponse(string s)

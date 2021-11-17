@@ -8,21 +8,21 @@ namespace Tests.TetraPak.AspNet
         [Fact]
         public void IsEmpty()
         {
-            var qp = new HttpQueryParameters();
+            var qp = new HttpQuery();
             Assert.True(qp.IsEmpty());
             qp.Add("a", "aa");
             Assert.False(qp.IsEmpty());
-            qp = new HttpQueryParameters { ["a"] = "aa" };
+            qp = new HttpQuery { ["a"] = "aa" };
             Assert.False(qp.IsEmpty());
         }
 
         [Fact]
         public void StringValue()
         {
-            var qp = new HttpQueryParameters { { "a", "aa" } };
+            var qp = new HttpQuery { { "a", "aa" } };
             Assert.Equal("a=aa", qp.StringValue);
             Assert.Equal("?a=aa", qp.ToString(true));
-            qp = new HttpQueryParameters { ["a"] = null, ["b"] = "bb" };
+            qp = new HttpQuery { ["a"] = null, ["b"] = "bb" };
             Assert.Equal("a&b=bb", qp.StringValue);
             Assert.Equal("?a&b=bb", qp.ToString(true));
         }
@@ -30,7 +30,7 @@ namespace Tests.TetraPak.AspNet
         [Fact]
         public void TypeCast()
         {
-            HttpQueryParameters qp = "  ? a=aa & b = bb";
+            HttpQuery qp = "  ? a=aa & b = bb";
             Assert.True(qp.TryGetValue("a", out var value));
             Assert.Equal("aa", value);
             Assert.True(qp.TryGetValue("b", out value));
@@ -41,7 +41,7 @@ namespace Tests.TetraPak.AspNet
         [Fact]
         public void ContainsKey()
         {
-            var qp = new HttpQueryParameters { ["a"] = "aa", ["b"] = "bb" };
+            var qp = new HttpQuery { ["a"] = "aa", ["b"] = "bb" };
             Assert.True(qp.ContainsKey("a"));
             Assert.True(qp.ContainsKey("b"));
             Assert.False(qp.ContainsKey("c"));

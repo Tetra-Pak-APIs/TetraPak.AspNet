@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
+using TetraPak.AspNet.Documentations;
 using TetraPak.Logging;
 
 #nullable enable
@@ -40,9 +41,11 @@ namespace TetraPak.AspNet
         }
 
         /// <inheritdoc />
-        protected override async Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal)
+        protected override async Task<ClaimsPrincipal> OnTransformAsync(
+            ClaimsPrincipal principal, 
+            CancellationToken? cancellationToken)
         {
-            Logger.TraceAsync(TetraPakConfig);
+            Logger.TraceTetraPakConfigAsync(TetraPakConfig);
             Outcome<CachedClaimsPrincipal> cachedOutcome;
 
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))
@@ -50,28 +53,66 @@ namespace TetraPak.AspNet
                 cachedOutcome = await tryGetCachedPrincipalAsync(principal);
                 if (cachedOutcome)
                 {
-                    Logger.Debug($"Claims Principal with id '{cachedOutcome.Value!.Id}' was already resolved (cached)");
+                    Logger.Debug(
+                        $"Claims Principal with id '{cachedOutcome.Value!.Id}' was already resolved (cached)", 
+                        GetMessageId());
                     return cachedOutcome.Value.Principal;
                 }
 
-                var _ = new CancellationToken();
-                switch (IdentitySource)
+                await getFromSource(IdentitySource);
+            }
+            
+            return principal;
+
+            async Task getFromSource(TetraPakIdentitySource identitySource)
+            {
+                var ct = cancellationToken ?? new CancellationToken();
+                switch (identitySource)
                 {
                     case TetraPakIdentitySource.IdToken:
-                        Logger.Debug("Source = Id Token");
-                        var idTokenOutcome = await OnGetIdTokenAsync(_);
+                        Logger.Debug("Source = Id Token", GetMessageId());
+                        var idTokenOutcome = await OnGetIdTokenAsync(ct);
                         if (idTokenOutcome)
-                            return mapFromIdToken(idTokenOutcome.Value!);
+                        {
+                            mapFromIdToken(idTokenOutcome.Value!);
+                            return;
+                        }
 
-                        Logger.Warning("Could not populate identity from id token. No id token was available");
+                        Logger.Warning(
+                            "Could not populate identity from id token. No id token was available",
+                            GetMessageId());
                         break;
             
                     case TetraPakIdentitySource.RemoteService:
-                        var accessTokenOutcome = await OnGetAccessTokenAsync(_);
-                        if (accessTokenOutcome)
-                            return await mapFromRemoteServiceAsync(accessTokenOutcome.Value);
-                        
-                        Logger.Warning("Could not populate identity from API. No access token was available");
+                        // first get the "raw" access token to check whether it's issued for a system identity ...
+                        var accessTokenOutcome = await HttpContext.GetAccessTokenAsync();
+                        if (!accessTokenOutcome)
+                        {
+                            Logger.Warning(
+                                $"Could not construct identity from remote service. {accessTokenOutcome.Exception.Message}", 
+                                GetMessageId());
+                            break;
+                        }
+                        if (accessTokenOutcome.Value!.IsSystemIdentityToken())
+                        {
+                            Logger.Warning(
+                                $"Automatically skips constructing identity from remote service for system identity ({Docs.PleaseSee(Docs.SdkRepo.ClaimsTransformationWithSystemIdentity)}).", 
+                                GetMessageId());
+                            await getFromSource(TetraPakIdentitySource.IdToken);
+                            break;
+                        }
+
+                        // now get the "transformed" access token (allow token exchange/whatever) to be used for authorized access to user information ... 
+                        accessTokenOutcome = await OnGetAccessTokenAsync(ct);
+                        if (!accessTokenOutcome)
+                        {
+                            Logger.Warning(
+                                $"Could not construct identity from remote service. {accessTokenOutcome.Exception.Message}", 
+                                GetMessageId());
+                            break;
+                        }
+
+                        await mapFromRemoteServiceAsync(accessTokenOutcome.Value!);
                         break;
             
                     default:
@@ -79,19 +120,17 @@ namespace TetraPak.AspNet
                             $"Cannot transform claims principal from unsupported source: '{TetraPakConfig!.IdentitySource}'");
                 }
             }
-        
-            return principal;
-
-            ClaimsPrincipal mapFromIdToken(ActorToken token)
+            
+            void mapFromIdToken(ActorToken token)
             {
                 foreach (var identity in principal.Identities)
                 {
                     if (identity is not { AuthenticationType: AuthenticationTypes.Federation } claimsIdentity)
-                        return principal; // not the "Federation" identity 
+                        return; // not the "Federation" identity 
 
                     var jwtHandler = new JwtSecurityTokenHandler(); 
                     if (!jwtHandler.CanReadToken(token.Identity))
-                        return principal; // not a JWT token; skip transformation
+                        return; // not a JWT token; skip transformation
                         
                     var jwt = jwtHandler.ReadJwtToken(token.Identity);
                     var mappedClaims = new List<Claim>();
@@ -106,10 +145,9 @@ namespace TetraPak.AspNet
                     claimsIdentity.AddClaims(mappedClaims);
                     claimsIdentity.AddClaim(new Claim(claimsIdentity.NameClaimType, jwt.Subject));
                 }
-                return principal;
             }
             
-            async Task<ClaimsPrincipal> mapFromRemoteServiceAsync(string accessToken)
+            async Task mapFromRemoteServiceAsync(string accessToken)
             {
                 Logger.Trace("Fetches identity from Tetra Pak User Information Service");
                 var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken);
@@ -117,12 +155,13 @@ namespace TetraPak.AspNet
                 {
                     Logger.Error(
                         userInfoOutcome.Exception, 
-                        $"Could not obtain identity claims from Tetra Pak's User Information services: {userInfoOutcome.Exception.Message}");
-                    return principal;
+                        $"Could not obtain identity claims from Tetra Pak's User Information services: {userInfoOutcome.Exception.Message}",
+                        GetMessageId());
+                    return ;
                 }
 
                 if (principal.Identity is not ClaimsIdentity identity)
-                    return principal;
+                    return;
 
                 identity.BootstrapContext = "(api)";
                 var claims = userInfoOutcome.Value!.ToDictionary().MapTo(pair =>
@@ -134,18 +173,16 @@ namespace TetraPak.AspNet
                         : new Claim(toKey, claimValue);
                 });
                 identity.AddClaims(claims);
-                return await cachePrincipalAsync(cachedOutcome.Value, principal);
+                await cachePrincipalAsync(cachedOutcome.Value, principal);
             }
         }
 
-        async Task<ClaimsPrincipal> cachePrincipalAsync(CachedClaimsPrincipal? cachedClaimsPrincipal, ClaimsPrincipal claimsPrincipal)
+        async Task cachePrincipalAsync(CachedClaimsPrincipal? cachedClaimsPrincipal, ClaimsPrincipal claimsPrincipal)
         {
             var cachedId = cachedClaimsPrincipal?.Id; 
-            if (Cache is null || cachedId is null)
-                return claimsPrincipal;
+            if (Cache is null || cachedId is null) return;
 
             await Cache.AddAsync(CacheRepositories.ClaimsPrincipals, cachedId, claimsPrincipal);
-            return claimsPrincipal;
         }
 
         async Task<Outcome<CachedClaimsPrincipal>> tryGetCachedPrincipalAsync(ClaimsPrincipal principal)
@@ -176,7 +213,7 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Can be invoked to acquire an access token from the <see cref="TetraPakClaimsTransformation.Context"/>.
+        ///   Can be invoked to acquire an access token from the <see cref="TetraPakClaimsTransformation.HttpContext"/>.
         /// </summary>
         /// <param name="cancellationToken">
         ///   A <see cref="CancellationToken"/> object used to allow operation cancellation.
@@ -191,7 +228,7 @@ namespace TetraPak.AspNet
         static IDictionary<string,string> makeClaimsMap()
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var dictionary = jwtTokenHandler.OutboundClaimTypeMap.ToInverted();
+            var dictionary = jwtTokenHandler.OutboundClaimTypeMap.ToInverted<string,string>();
             if (!dictionary.ContainsKey("sub"))
             {
                 dictionary.Add("sub", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");

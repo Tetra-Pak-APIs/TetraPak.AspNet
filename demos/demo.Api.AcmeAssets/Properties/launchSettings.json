@@ -20,7 +20,7 @@
     "demo.AcmeAssets": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5006;http://localhost:5005",
       "environmentVariables": {

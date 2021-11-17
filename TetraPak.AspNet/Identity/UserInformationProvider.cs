@@ -21,7 +21,7 @@ namespace TetraPak.AspNet.Identity
         readonly AmbientData _ambientData;
         readonly ITimeLimitedRepositories _cache;
         
-        TetraPakConfig Config => _ambientData.Config;
+        TetraPakConfig Config => _ambientData.TetraPakConfig;
         
         string CacheRepository => $"{nameof(UserInformationProvider)}-{_instanceId}"; 
         
@@ -66,7 +66,7 @@ namespace TetraPak.AspNet.Identity
                         return userInformation;
                 }
             }
-
+            
             Logger?.Trace("Obtains discovery document");
             var discoOutcome = await Config.GetDiscoveryDocumentAsync();
             if (!discoOutcome)
@@ -98,13 +98,13 @@ namespace TetraPak.AspNet.Identity
                 {
                     try
                     {
-                        var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
+                        var webRequest = (HttpWebRequest) WebRequest.Create(userInfoUri);
                         var bearerToken = accessToken.ToBearerToken();
-                        request.Method = "GET";
-                        request.Accept = "*/*";
-                        request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
-                        Logger?.TraceAsync(request);
-                        var response = await request.GetResponseAsync();
+                        webRequest.Method = "GET";
+                        webRequest.Accept = "*/*";
+                        webRequest.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
+                        Logger?.TraceWebRequestAsync(webRequest);
+                        var response = await webRequest.GetResponseAsync();
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(
                                                  "Unexpected error: No response when requesting user information.");

@@ -32,7 +32,7 @@ namespace TetraPak.AspNet
         public static IApplicationBuilder UseTetraPakMessageId(this IApplicationBuilder app)
         {
             var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
-            config.Logger.Debug("Support for messageId in request/response flows was injected");
+            config.Logger.Information("Support for messageId in request/response flows was injected");
             app.Use(async (context, func) =>
             {
                 var ambientData = context.RequestServices.GetRequiredService<AmbientData>();

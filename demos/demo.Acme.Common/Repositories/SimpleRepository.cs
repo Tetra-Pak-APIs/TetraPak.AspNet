@@ -11,6 +11,12 @@ using TetraPak.Logging;
 
 namespace demo.Acme.Repositories
 {
+    /// <summary>
+    ///   A simple memory-based repository, for demonstraion/POC purposes.
+    /// </summary>
+    /// <typeparam name="T">
+    ///   The type of items supported by the repository.
+    /// </typeparam>
     public abstract class SimpleRepository<T> where T : Model
     {
         IDictionary<string, T> _items;
@@ -34,12 +40,14 @@ namespace demo.Acme.Repositories
         /// <see cref="ItemTypeName"/>
         protected virtual string OnGetItemTypeName() => typeof(T).Name;
 
-        ILogger Logger { get; }
+        ILogger? Logger { get; }
 
         /// <summary>
         ///   Seeds the <see cref="SimpleRepository{T}"/> with a collection of items.
         /// </summary>
-        public void Seed(IEnumerable<T> items) => _items = items.ToDictionary(i => i.Id);
+        public void Seed(IEnumerable<T> items) => _items = items
+            .Where(i => !string.IsNullOrWhiteSpace(i.Id))
+            .ToDictionary(i => i.Id!);
 
         protected bool IsInitializing { get; private set; }
 
@@ -116,17 +124,22 @@ namespace demo.Acme.Repositories
         {
             await SimulateSlowRepositoryAsync(cancellation);
 
-            if (string.IsNullOrEmpty(item.Id) && _items.ContainsKey(item.Id))
+            var newItemOutcome = await OnMakeNewItemAsync(item);
+            if (!newItemOutcome)
+                return Outcome<string>.Fail(newItemOutcome.Exception);
+
+            var newItem = newItemOutcome.Value!;
+            var newId = newItem.Id!;
+            if (string.IsNullOrEmpty(item.Id) && _items.ContainsKey(newId))
                 return Outcome<string>.Fail(
                     new IdentityConflictException(item.Id, 
                         $"{ItemTypeName} with identity '{item.Id}' was already posted"));
 
-            var newId = new RandomString();
-            _items.Add(newId, OnMakeNewItem(item));
+            _items.Add(newId, newItem);
             return Outcome<string>.Success(newId);
         }
 
-        protected abstract T OnMakeNewItem(T source);
+        protected abstract Task<Outcome<T>> OnMakeNewItemAsync(T source);
 
         /// <summary>
         ///   Reads one or more items from the repository.
@@ -165,8 +178,7 @@ namespace demo.Acme.Repositories
                     continue;
                 }
                 if (failOnMissing)
-                    return EnumOutcome<T>.Fail(
-                        new ResourceNotFoundException($"{ItemTypeName} with id '{id}' was not found"));
+                    return EnumOutcome<T>.Fail(ServerException.NotFound($"{ItemTypeName} with id '{id}' was not found"));
             }
 
             return result.Count == 0
@@ -199,6 +211,9 @@ namespace demo.Acme.Repositories
         {
             await SimulateSlowRepositoryAsync(cancellation);
 
+            if (string.IsNullOrWhiteSpace(item.Id))
+                return await CreateAsync(item);
+            
             if (_items.TryGetValue(item.Id, out _))
                 return await ReplaceAsync(item); 
                 
@@ -224,6 +239,10 @@ namespace demo.Acme.Repositories
         {
             await SimulateSlowRepositoryAsync(cancellation);
             
+            if (string.IsNullOrWhiteSpace(item.Id))
+                return Outcome<string>.Fail(
+                    ServerException.BadRequest($"Item must contain a valid identity ('{nameof(Model.Id)}')'"));
+            
             if (!_items.TryGetValue(item.Id, out var existing))
                 return Outcome<string>.Fail(
                     new ArgumentOutOfRangeException(
@@ -231,7 +250,7 @@ namespace demo.Acme.Repositories
                         $"Repository does not contain asset '{item.Id}'"));
 
             _items[item.Id] = item;
-            return Outcome<string>.Success(existing.Id);
+            return Outcome<string>.Success(existing.Id!);
         }
 
         /// <summary>
@@ -251,6 +270,10 @@ namespace demo.Acme.Repositories
         {
             await SimulateSlowRepositoryAsync(cancellation);
             
+            if (string.IsNullOrWhiteSpace(item.Id))
+                return Outcome<string>.Fail(
+                    ServerException.BadRequest($"Item must contain a valid identity ({nameof(Model.Id)})'"));
+            
             if (!_items.TryGetValue(item.Id, out var existing))
                 return Outcome<string>.Fail(
                     new ArgumentOutOfRangeException(
@@ -258,7 +281,7 @@ namespace demo.Acme.Repositories
                         $"Repository does not contain asset '{item.Id}'"));
 
             await OnUpdateItemAsync(existing, item);
-            return Outcome<string>.Success(existing.Id);
+            return Outcome<string>.Success(existing.Id!);
         }
 
         /// <summary>
@@ -289,9 +312,11 @@ namespace demo.Acme.Repositories
         {
             await SimulateSlowRepositoryAsync(cancellation);
             
+            if (string.IsNullOrWhiteSpace(id))
+                return Outcome<string>.Fail(ServerException.BadRequest("Expected an item id"));
+            
             if (!await ContainsAsync(id))
-                return Outcome<string>.Fail(
-                    new ResourceNotFoundException($"Could not remove {ItemTypeName} '{id}'. Item was not found"));
+                return Outcome<string>.Fail(ServerException.NotFound($"Could not remove {ItemTypeName} '{id}'. Item was not found"));
 
             _items.Remove(id);
             return Outcome<string>.Success(id);
@@ -331,7 +356,7 @@ namespace demo.Acme.Repositories
 
         
         
-        public SimpleRepository(ILogger logger)
+        public SimpleRepository(ILogger? logger)
         {
             Logger = logger;
             _items = new Dictionary<string, T>();

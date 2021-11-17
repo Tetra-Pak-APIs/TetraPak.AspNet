@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using TetraPak.AspNet.Api.DevelopmentTools;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 
 #nullable enable
 
@@ -168,13 +169,14 @@ namespace TetraPak.AspNet.Api.Auth
             this IApplicationBuilder app,
             IWebHostEnvironment env)
         {
-            app.UseTetraPakAuthentication(env);
+            app.UseTetraPakTraceRequestAsync();
+            app.UseTetraPakClientAuthentication(env);
             
-            var config = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
-            var proxyUrl = config.JwtBearerAssertion.DevProxy;
-            var mutedWhen = config.JwtBearerAssertion.DevProxyIsMutedWhen;
+            var tetraPakConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
+            var proxyUrl = tetraPakConfig.JwtBearerAssertion.DevProxy;
             if (!string.IsNullOrEmpty(proxyUrl))
             {
+                var mutedWhen = tetraPakConfig.JwtBearerAssertion.DevProxyIsMutedWhen;
                 app.UseLocalDevProxy(env, proxyUrl, mutedWhen);
             }
             app.Use((context, func) =>

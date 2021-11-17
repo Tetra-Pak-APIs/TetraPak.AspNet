@@ -4,12 +4,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Api.Controllers;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.DataTransfers;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 
@@ -195,15 +197,15 @@ namespace TetraPak.AspNet.Api
         {
             if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<TBackendService>.Fail(
-                    new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
                 
-            var outcome = tetraPakApiConfig!.BackendServiceProvider?.ResolveService(
+            var outcome = tetraPakApiConfig.BackendServiceProvider?.ResolveService(
                 typeof(TBackendService),
                 serviceName);
             if (outcome is null)
                 return Outcome<TBackendService>.Fail(
-                    new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
                 
             if (!outcome)
@@ -225,15 +227,15 @@ namespace TetraPak.AspNet.Api
         {
             if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<IBackendService>.Fail(
-                    new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
 
-            var outcome = tetraPakApiConfig!.BackendServiceProvider?.ResolveService(
+            var outcome = tetraPakApiConfig.BackendServiceProvider?.ResolveService(
                 typeof(BackendService<TEndpoints>), 
                 serviceName);
             if (outcome is null)
                 return Outcome<IBackendService>.Fail(
-                    new ConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
 
             return outcome;
@@ -251,5 +253,18 @@ namespace TetraPak.AspNet.Api
         /// <returns>  
         /// </returns>
         public static ServiceEndpoint Endpoint(this IBackendService service, string name) => service.GetEndpoint(name);
+
+        public static DtoRelationshipLocator GetRelLocatorFor(this ServiceEndpoint self, params string[] keys) 
+            => self.GetRelLocatorFor(keys, null, Array.Empty<HttpMethod>());
+
+        public static DtoRelationshipLocator GetRelLocatorFor(
+            this ServiceEndpoint self, 
+            string[]? keys, 
+            HttpQuery? query,
+            HttpMethod[]? methods)
+        {
+            var path = HateoasHelper.BuildPath(self.GetAbsolutePath(self.TrimHostInResponses), keys, query);
+            return new DtoRelationshipLocator(path, methods.EnsureGet());
+        }
     }
 }

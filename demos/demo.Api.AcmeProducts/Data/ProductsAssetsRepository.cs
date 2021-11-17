@@ -5,17 +5,18 @@ using System.Threading.Tasks;
 using demo.Acme.Models;
 using demo.Acme.Repositories;
 using Microsoft.Extensions.Logging;
+using TetraPak;
 
 namespace demo.AcmeProducts.Data
 {
     /// <summary>
-    ///   This repository is for demonstration purposes only and holds (one-to-many) relationships
-    ///   between <see cref="Product"/>s and <see cref="Asset"/> items.
+    ///   This repository is for demonstration purposes only and holds Products->Assets (one-to-many) relationships.
     /// </summary>
     public class ProductsAssetsRepository : SimpleRepository<ProductAssetEntry>
     {
-        protected override ProductAssetEntry OnMakeNewItem(ProductAssetEntry source) 
-            => new(source.Id, source.ProductId, source.AssetId);
+        protected override Task<Outcome<ProductAssetEntry>> OnMakeNewItemAsync(ProductAssetEntry source)
+            => Task.FromResult(
+                Outcome<ProductAssetEntry>.Success(new (source.Id, source.ProductId, source.AssetId)));
 
         protected override Task OnUpdateItemAsync(ProductAssetEntry target, ProductAssetEntry source)
         {

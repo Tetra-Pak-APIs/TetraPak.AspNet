@@ -2,12 +2,14 @@
 using demo.Acme.Models;
 using demo.Acme.Repositories;
 using Microsoft.Extensions.Logging;
+using TetraPak;
 
 namespace demo.AcmeProducts.Data
 {
     public class ProductCategoriesRepository : SimpleRepository<Category>
     {
-        protected override Category OnMakeNewItem(Category source) => new(source.Id);
+        protected override Task<Outcome<Category>> OnMakeNewItemAsync(Category source) 
+            => Task.FromResult(Outcome<Category>.Success(new (source.Id!)));
 
         protected override Task OnUpdateItemAsync(Category target, Category source)
         {

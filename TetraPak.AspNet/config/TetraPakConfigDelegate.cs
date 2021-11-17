@@ -90,7 +90,7 @@ namespace TetraPak.AspNet
             var clientSecretOutcome = await _secretsProvider.GetSecretStringAsync(Secrets.ClientSecretUri);
             if (!clientIdOutcome && authContext.GrantType.IsClientSecretRequired())
                 return Outcome<Credentials>.Fail(
-                    new ConfigurationException(
+                    new ServerConfigurationException(
                         $"Could not resolve a client secret for grant type: {grantType.ToString()}"));
 
             var clientSecret = clientSecretOutcome.Value!;
@@ -102,13 +102,13 @@ namespace TetraPak.AspNet
             var clientId = _authConfig.GetConfiguredValue(nameof(TetraPakConfig.ClientId));
             if (string.IsNullOrWhiteSpace(clientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
-                    new ConfigurationException($"{nameof(TetraPakConfig.ClientId)} value is missing "+
+                    new ServerConfigurationException($"{nameof(TetraPakConfig.ClientId)} value is missing "+
                                                "(or empty) in Tetra Pak configuration")));
             
             var clientSecret = _authConfig.GetConfiguredValue(nameof(TetraPakConfig.ClientSecret));
             if (string.IsNullOrWhiteSpace(clientSecret) && grantType.IsClientSecretRequired())
                 return Task.FromResult(Outcome<Credentials>.Fail(
-                    new ConfigurationException($"{nameof(TetraPakConfig.ClientSecret)} value is missing "+
+                    new ServerConfigurationException($"{nameof(TetraPakConfig.ClientSecret)} value is missing "+
                                                "(or empty) in Tetra Pak configuration")));
 
             return Task.FromResult(Outcome<Credentials>.Success(new Credentials(clientId, clientSecret)));

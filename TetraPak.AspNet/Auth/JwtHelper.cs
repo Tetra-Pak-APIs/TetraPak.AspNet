@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Auth
 {
@@ -56,11 +59,11 @@ namespace TetraPak.AspNet.Auth
         ///   A logger provider used for diagnostics purposes.
         /// </param>
         public static bool TryParseToJwtSecurityToken(
-            this string stringValue,
-            [NotNullWhen(true)] out JwtSecurityToken jwtSecurityToken, 
-            ILogger logger = null)
+            this string? stringValue,
+            [NotNullWhen(true)] out JwtSecurityToken? jwtSecurityToken, 
+            ILogger? logger = null)
         {
-            jwtSecurityToken = null;
+            jwtSecurityToken = null!;
             if (stringValue is null)
                 return false;
 
@@ -80,6 +83,49 @@ namespace TetraPak.AspNet.Auth
                 logger.Error(ex, $"Failed when parsing JWT Security Token from string value: {stringValue}");
                 return false;
             }
+        }
+
+        /// <summary>
+        ///   Examines a string and returns a value that indicates whether it is a security token that
+        ///   represents a system identity (as opposed to an identity supported by an identity provider).
+        ///   This is often the case when the client is an autonomous service, such as a web job,
+        ///   that was authorized via a Client Credential Grant. 
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if the string is a token that represents a system identity; otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        ///   This information is needed by the <see cref="TetraPakJwtClaimsTransformation"/> service so as
+        ///   to not waste time on trying to obtain identity claims from Tetra Pak's User Information services.
+        /// </remarks>
+        /// <seealso cref="IsSystemIdentityToken(ActorToken)"/>
+        public static bool IsSystemIdentityToken(this string stringValue) 
+            => stringValue.TryParseToJwtSecurityToken(out var jwt) && isSystemIdentityToken(jwt);
+
+        /// <summary>
+        ///   Examines a token and returns a value that indicates whether the token represents a system identity
+        ///   (as opposed to an identity supported by an identity provider). This is often the case when the
+        ///   client is an autonomous service, such as a web job, that was authorized via a Client Credential Grant. 
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if the token represents a system identity; otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        ///   This information is needed by the <see cref="TetraPakJwtClaimsTransformation"/> service so as
+        ///   to not waste time on trying to obtain identity claims from Tetra Pak's User Information services.
+        /// </remarks>
+        /// <seealso cref="IsSystemIdentityToken(string)"/>
+        public static bool IsSystemIdentityToken(this ActorToken actorToken) 
+            => isSystemIdentityToken(actorToken.ToJwtSecurityToken());
+
+        static bool isSystemIdentityToken(JwtSecurityToken? jwt)
+        {
+            if (jwt is null)
+                return false;
+                
+            const StringComparison Comparison = StringComparison.InvariantCultureIgnoreCase;
+            var userTypeClaim = jwt.Claims.FirstOrDefault(i => i.Type.Equals("userType", Comparison));
+            return userTypeClaim is { } && userTypeClaim.Value.Equals("system", Comparison);
         }
     }
 }

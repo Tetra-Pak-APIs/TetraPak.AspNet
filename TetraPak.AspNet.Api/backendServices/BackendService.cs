@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
 using TetraPak.Logging;
+using HttpMethod=Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 #nullable enable
 
@@ -217,18 +218,23 @@ namespace TetraPak.AspNet.Api
             
             var ct = cancellationToken ?? CancellationToken.None;
 
+            var httpMethod = request.Method.Method.ToHttpMethod();
             var accessTokenOutcome = await GetAccessTokenAsync();
-            if (!accessTokenOutcome)
+            var grantType = clientOptions?.AuthConfig?.GrantType ?? DefaultClientOptions.AuthConfig?.GrantType ?? GrantType.None;
+            if (!accessTokenOutcome && grantType != GrantType.None)
                 return HttpOutcome<HttpResponseMessage>.Fail(
-                    request.Method,
+                    httpMethod,
                     new Exception("Could not initialize a HTTP client. No access token available", 
                         accessTokenOutcome.Exception));
+
+            clientOptions ??= accessTokenOutcome
+                ? DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!, Endpoints.AuthorizationService)
+                : DefaultClientOptions;
             
-            clientOptions ??= DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!, Endpoints.AuthorizationService);
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, ct);
             if (!clientOutcome)
                 return HttpOutcome<HttpResponseMessage>.Fail(
-                    request.Method,
+                    httpMethod,
                     new Exception("Could not initialize a HTTP client (see inner exception)", 
                         clientOutcome.Exception));
             
@@ -240,8 +246,8 @@ namespace TetraPak.AspNet.Api
                 var response = await client.SendAsync(request, ct);
                 DiagnosticsEndTimer(timer);
                 return response.IsSuccessStatusCode
-                    ? HttpOutcome<HttpResponseMessage>.Success(request.Method, response)
-                    : HttpOutcome<HttpResponseMessage>.Fail(request.Method, response);
+                    ? HttpOutcome<HttpResponseMessage>.Success(httpMethod, response)
+                    : HttpOutcome<HttpResponseMessage>.Fail(httpMethod, response);
             }
             catch (Exception ex)
             {
@@ -269,7 +275,8 @@ namespace TetraPak.AspNet.Api
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, path.TrimStart('/'));
+            var post = new System.Net.Http.HttpMethod(HttpVerbs.Post); 
+            var request = new HttpRequestMessage(post, path.TrimStart('/'));
             request.Content = content;
             return sendAsync(request, TimerPost, clientOptions, cancellationToken);
             
@@ -305,7 +312,8 @@ namespace TetraPak.AspNet.Api
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, path.TrimStart('/'));
+            var put = new System.Net.Http.HttpMethod(HttpVerbs.Put); 
+            var request = new HttpRequestMessage(put, path.TrimStart('/'));
             request.Content = content;
             return sendAsync(request, TimerPost, clientOptions, cancellationToken);
             
@@ -381,14 +389,15 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public Task<HttpOutcome<HttpResponseMessage>> GetAsync(
             string path,
-            HttpQueryParameters? queryParameters = null,
+            HttpQuery? queryParameters = null,
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null,
             string? messageId = null)
         {
             var useQuery = !queryParameters.IsEmpty();
             var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
-            var request = new HttpRequestMessage(HttpMethod.Get, usePath.TrimStart('/'));
+            var get = new System.Net.Http.HttpMethod(HttpVerbs.Get); 
+            var request = new HttpRequestMessage(get, usePath.TrimStart('/'));
             return sendAsync(request, TimerGet, clientOptions, cancellationToken);
         }
 
@@ -402,7 +411,7 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public async Task<HttpEnumOutcome<T>> GetAsync<T>(
             string path, 
-            HttpQueryParameters? queryParameters = null, 
+            HttpQuery? queryParameters = null, 
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null, 
             string? messageId = null)
@@ -461,20 +470,14 @@ namespace TetraPak.AspNet.Api
         ///   one or more <see cref="HttpResponseMessage"/>s or, on failure, an <see cref="Exception"/>.
         /// </returns>
         protected virtual HttpOutcome<HttpResponseMessage> OnServiceConfigurationError(
-            // HttpMethod method,
             HttpRequestMessage request,
-            // string path, 
-            // string? queryParameters, 
             IEnumerable<Exception> issues,
             string? messageId)
         {
             return ServiceConfigHelper.GetServiceConfigurationErrorResponse(
-                request.Method,
+                request.Method.Method,
                 request.RequestUri!.ToString(),
                 request.RequestUri.Query,
-                // method, obsolete
-                // path,
-                // queryParameters,
                 issues,
                 messageId,
                 Logger);
@@ -485,7 +488,8 @@ namespace TetraPak.AspNet.Api
             Logger.Error(
                 new Exception($"Error while performing request: {request.Method} {request.RequestUri}: {exception.Message}", exception)
                 ,messageId:messageId);
-            return HttpOutcome<HttpResponseMessage>.Fail(request.Method, exception);
+            var httpMethod = request.Method.Method.ToHttpMethod();
+            return HttpOutcome<HttpResponseMessage>.Fail(httpMethod, exception);
         }
 
         /// <summary>

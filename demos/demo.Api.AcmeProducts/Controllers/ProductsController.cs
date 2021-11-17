@@ -1,11 +1,19 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using demo.Acme.DTO;
 using demo.Acme.Models;
 using demo.AcmeProducts.Data;
-using Microsoft.AspNetCore.Authorization;
+using demo.AcmeProducts.DTO;
+using demo.AcmeProducts.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using TetraPak;
+using TetraPak.AspNet;
+using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Controllers;
+using TetraPak.AspNet.DataTransfers;
 
 namespace demo.AcmeProducts.Controllers
 {
@@ -16,18 +24,23 @@ namespace demo.AcmeProducts.Controllers
     {
         readonly ProductsRepository _productsRepository;
         readonly ProductCategoriesRepository _categoriesRepository;
+        readonly AssetsService _assetsService;
 
         #region .  Products  .
 
-        [HttpGet]
-        public async Task<ActionResult> GetProducts(string? id = null, [FromQuery] string? cat = null)
+        [HttpGet, Route("{id?}")]
+        public async Task<ActionResult> GetProducts(
+            string? id = null, 
+            [FromQuery] string? cat = null, 
+            [FromQuery] string? assets = null)
         {
             var cats = (MultiStringValue)cat;
+            var assetsRelLevel = RelationshipLevelHelper.Parse(assets);
             if (string.IsNullOrEmpty(id))
                 return await this.RespondAsync(
                     cats.IsEmpty
-                        ? await _productsRepository.ReadAsync()
-                        : await _productsRepository.ReadWhereCategoriesAsync(cats));
+                        ? await mapDtoAsync(await _productsRepository.ReadAsync(), assetsRelLevel)
+                        : await mapDtoAsync(await _productsRepository.ReadWhereCategoriesAsync(cats), assetsRelLevel));
             
             if (!cats.IsEmpty)
                 // passing id AND category is bad form ...
@@ -35,10 +48,10 @@ namespace demo.AcmeProducts.Controllers
                 
             var ids = (MultiStringValue)id;
             return await this.RespondAsync(ids.IsEmpty
-                ? await _productsRepository.ReadAsync(cancellation: HttpContext.RequestAborted)
-                : await _productsRepository.ReadAsync(ids.Items, cancellation: HttpContext.RequestAborted));
+                ? await mapDtoAsync(await _productsRepository.ReadAsync(cancellation: HttpContext.RequestAborted), assetsRelLevel)
+                : await mapDtoAsync(await _productsRepository.ReadAsync(ids.Items, cancellation: HttpContext.RequestAborted), assetsRelLevel)); 
         }
-        
+
         [HttpPost]
         public async Task<ActionResult> PostProduct([FromBody] Product? product)
         {
@@ -107,13 +120,83 @@ namespace demo.AcmeProducts.Controllers
             return await this.RespondAsync(await _categoriesRepository.DeleteAsync(categories));
         }
         #endregion
+        
+        async Task<EnumOutcome<ProductDTO>> mapDtoAsync(EnumOutcome<Product> productsOutcome, RelationshipLevel assetsRelLevel)
+        {
+            if (!productsOutcome)
+                return EnumOutcome<ProductDTO>.Fail(productsOutcome.Exception);
+
+            List<ProductDTO> list = new();
+            foreach (var product in productsOutcome.Value!)
+            {
+                // get relationships for 'self', 'Categories' and 'Assets' ...  
+                var productDto = new ProductDTO(product,
+                    new DtoHrefRelationship(
+                        "self",
+                        this.GetRelLocatorForSelf(HttpMethod.Get)),
+                    new DtoHrefRelationship(
+                        "categories",
+                        this.GetRelLocatorForDefaultAction<CategoriesController>()),
+                    assetsRelLevel switch
+                    {
+                        RelationshipLevel.None => null!,
+                        RelationshipLevel.Links => new DtoHrefRelationship(
+                            "assets",
+                            product.AssetIds.Select(i => _assetsService.Endpoints.Assets.GetRelLocatorFor(i))),
+                        RelationshipLevel.Entities => null!,
+                        _ => throw new NotSupportedException("this shouldn't happen but keeps compiler happy")
+                    });
+                if (assetsRelLevel == RelationshipLevel.Entities)
+                {
+                    var assetsOutcome = await getAssetsDtoAsync(product);
+                    if (assetsOutcome)
+                    {
+                        productDto.SetValue("assets", assetsOutcome.Value!.Data);
+                    }
+                }
+                
+                list.Add(productDto);
+            }
+            
+            return EnumOutcome<ProductDTO>.Success(list);
+        }
+
+        Task<HttpOutcome<ApiDataResponse<AssetDTO>>> getAssetsDtoAsync(Product product)
+        {
+            return _assetsService.Endpoints.Assets.GetAsync<AssetDTO>(
+                product.AssetIds,
+                requestOptions: RequestOptions.Default.WithCancellation(HttpContext.RequestAborted));
+        }
 
         public ProductsController(
             ProductsRepository productsProductsRepository, 
-            ProductCategoriesRepository categoriesRepository)
+            ProductCategoriesRepository categoriesRepository,
+            AssetsService assetsService)
         {
             _productsRepository = productsProductsRepository;
             _categoriesRepository = categoriesRepository;
+            _assetsService = assetsService;
+        }
+    }
+
+    enum RelationshipLevel
+    {
+        None,
+        Links,
+        Entities
+    }
+
+    static class RelationshipLevelHelper
+    {
+        public static RelationshipLevel Parse(string? s, RelationshipLevel useDefault = RelationshipLevel.Links)
+        {
+            s = s?.Trim();
+            if (string.IsNullOrEmpty(s))
+                return useDefault;
+
+            return Enum.TryParse<RelationshipLevel>(s, true, out var value)
+                ? value
+                : useDefault;
         }
     }
 }

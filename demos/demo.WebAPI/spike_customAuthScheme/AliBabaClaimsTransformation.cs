@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using TetraPak;
 using TetraPak.AspNet;
@@ -9,13 +10,15 @@ namespace WebAPI.spike_customAuthScheme
     {
         public bool IsSecretRevealedAsClaim { get; }
 
-        protected override async Task<ClaimsPrincipal> OnTransformAsync(ClaimsPrincipal principal)
+        protected override async Task<ClaimsPrincipal> OnTransformAsync(
+            ClaimsPrincipal principal,
+            CancellationToken? cancellationToken)
         {
             if (!IsSecretRevealedAsClaim)
                 return principal;
             
             // get the token and try parsing it as Basic Auth Credentials ...
-            var tokenOutcome = await Context.GetAccessTokenAsync(TetraPakConfig);
+            var tokenOutcome = await HttpContext.GetAccessTokenAsync(/*TetraPakConfig obsolete */);
             if (!tokenOutcome)
                 return principal;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,7 +112,7 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpClient"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <exception cref="ConfigurationException">
+        /// <exception cref="ServerConfigurationException">
         ///   There where issues with the configured options, such as client id/secret.
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnTokenExchangeAuthenticationAsync(
@@ -130,13 +129,13 @@ namespace TetraPak.AspNet.Api
                 var context = new AuthContext(GrantType.TokenExchange, authConfig);
                 var idOutcome = await authConfig.GetClientIdAsync(context);
                 if (!idOutcome)
-                    throw new ConfigurationException("Token exchange error: No client id was provided");
+                    throw new ServerConfigurationException("Token exchange error: No client id was provided");
 
                 var clientId = idOutcome.Value;
                 
                 var secretOutcome = await authConfig.GetClientSecretAsync(context);
                 if (!secretOutcome)
-                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                    throw new ServerConfigurationException("Token exchange error: No client secret was provided");
                     
                 var clientSecret = secretOutcome.Value;
             
@@ -150,9 +149,7 @@ namespace TetraPak.AspNet.Api
             }
             catch (Exception ex)
             {
-                var exception = new HttpException(
-                    HttpStatusCode.Unauthorized,
-                    "Token exchanged failed (see inner exception)", ex);
+                var exception = ServerException.Unauthorized("Token exchanged failed (see inner exception)", ex);
                 Logger.Error(exception, messageId: getMessageId());
                 return Outcome<ActorToken>.Fail(exception);
             }
@@ -171,7 +168,7 @@ namespace TetraPak.AspNet.Api
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpClient"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <exception cref="ConfigurationException">
+        /// <exception cref="ServerConfigurationException">
         ///   There where issues with the configured options, such as client id/secret.
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnClientCredentialsAuthenticationAsync(
@@ -184,19 +181,19 @@ namespace TetraPak.AspNet.Api
                 var context = new AuthContext(GrantType.TokenExchange, authConfig);
                 var idOutcome = await authConfig.GetClientIdAsync(context);
                 if (!idOutcome)
-                    throw new ConfigurationException("Token exchange error: No client id was provided");
+                    throw new ServerConfigurationException("Token exchange error: No client id was provided");
 
                 var clientId = idOutcome.Value;
 
                 var secretOutcome = await authConfig.GetClientSecretAsync(context);
                 if (!secretOutcome)
-                    throw new ConfigurationException("Token exchange error: No client secret was provided");
+                    throw new ServerConfigurationException("Token exchange error: No client secret was provided");
                     
                 var clientSecret = secretOutcome.Value;
 
                 var scopeOutcome = await authConfig.GetScopeAsync(context);
                 if (!scopeOutcome)
-                    throw new ConfigurationException("Token exchange error: No scope was provided");
+                    throw new ServerConfigurationException("Token exchange error: No scope was provided");
                     
                 var scope = scopeOutcome.Value;
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
@@ -209,8 +206,7 @@ namespace TetraPak.AspNet.Api
             }
             catch (Exception ex)
             {
-                var exception = new HttpException(
-                    HttpStatusCode.Unauthorized,
+                var exception = ServerException.Unauthorized(
                     "Client credentials authentication failed (see inner exception)", ex);
                 Logger.Error(exception, getMessageId());
                 return Outcome<ActorToken>.Fail(exception);

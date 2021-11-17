@@ -17,6 +17,7 @@ namespace demo.Acme.Seeding
             public const string LegMuscleVitamins2 = "W6UsM9Wkg3rQZ4WH";
             public const string GiantMouseTrap = "8bN3sv6aRXbdEvFr";
             public const string ArtificialRock1 = "ssXy5eCMJcERgZxF";
+            public const string ArtificialRock2 = "bReoBu2QQAECLhez";
             public const string ExplodingGolfBalls = "If1EmvOpRtfdcb78";
             public const string DiyTornadoKit = "WXvqigweIFd3V0NS";
             public const string DehydratedBoulders = "E7SQw0WEGimRdqnt";
@@ -78,11 +79,11 @@ namespace demo.Acme.Seeding
                 },
                 new(Id.ArtificialRock1)
                 {
-                    Description = "",
+                    Description = "Opened product crate",
                     Url = "https://storage.googleapis.com/thehundreds/media/2018/09/artifial-rock-acme.png",
                     MimeType = MediaTypePng
                 },
-                new(Id.ArtificialRock1)
+                new(Id.ArtificialRock2)
                 {
                     Description = "Customer wearing product",
                     Url = "https://acme.com/catalog/acmeartificial.jpg",

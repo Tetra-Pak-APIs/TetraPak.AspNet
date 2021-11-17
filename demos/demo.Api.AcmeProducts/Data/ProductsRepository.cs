@@ -21,20 +21,21 @@ namespace demo.AcmeProducts.Data
                 => p.ProductCategories.ContainsAny(categories, StringComparison.InvariantCultureIgnoreCase), cancel);
             return products.Any()
                 ? EnumOutcome<Product>.Success(products)
-                : EnumOutcome<Product>.Fail(new ResourceNotFoundException("No products found for specified categories"));
+                : EnumOutcome<Product>.Fail(ServerException.NotFound("No products found for specified categories"));
         }
 
-        protected override Product OnMakeNewItem(Product source)
+        protected override Task<Outcome<Product>> OnMakeNewItemAsync(Product source)
         {
             var newId = string.IsNullOrEmpty(source.Id) ? new RandomString() : source.Id;
-            return new Product(newId)
-            {
-                ProductCategories = source.ProductCategories,
-                Name = source.Name,
-                Description = source.Description,
-                Price = source.Price,
-                AssetIds = source.AssetIds
-            };
+            return Task.FromResult(Outcome<Product>.Success(
+                new (newId)
+                {
+                    ProductCategories = source.ProductCategories,
+                    Name = source.Name,
+                    Description = source.Description,
+                    Price = source.Price,
+                    AssetIds = source.AssetIds
+                }));
         }
 
         protected override Task OnUpdateItemAsync(Product target, Product source)

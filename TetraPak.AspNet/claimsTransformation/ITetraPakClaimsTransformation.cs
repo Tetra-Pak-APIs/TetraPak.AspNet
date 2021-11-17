@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TetraPak.AspNet
@@ -15,9 +16,12 @@ namespace TetraPak.AspNet
         /// <param name="principal">
         ///   The <see cref="ClaimsPrincipal"/> to transform.
         /// </param>
+        /// <param name="cancellationToken">
+        ///   Allows cancelling the operation.
+        /// </param>
         /// <returns>
         ///   The transformed principal.
         /// </returns>
-        Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal);
+        Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal, CancellationToken? cancellationToken);
     }
 }

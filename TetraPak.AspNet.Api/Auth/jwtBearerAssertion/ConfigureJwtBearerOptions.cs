@@ -36,7 +36,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Provides access to the Tetra Pak configuration.
         /// </summary>
-        public TetraPakApiConfig Config => _options.Config;
+        public TetraPakApiConfig TetraPakConfig => _options.Config;
 
         /// <summary>
         ///   Gets a logger provider. 
@@ -48,8 +48,8 @@ namespace TetraPak.AspNet.Api.Auth
         {
             using (Logger?.BeginScope("Configures JWT Bearer Assertion"))
             {
-                options.MetadataAddress = Config.DiscoveryDocumentUrl;
-                options.Authority = Config.AuthorityUrl;
+                options.MetadataAddress = TetraPakConfig.DiscoveryDocumentUrl;
+                options.Authority = TetraPakConfig.AuthorityUrl;
                 if (string.IsNullOrWhiteSpace(options.Authority))
                 {
                     const string DiagnosticsMessage =
@@ -69,20 +69,20 @@ namespace TetraPak.AspNet.Api.Auth
                     ValidateLifetime = false,
 #else
                     ValidateAudience = true,
-                    ValidateIssuer = !string.IsNullOrWhiteSpace(Config.JwtBearerAssertion.Issuer),
-                    ValidateLifetime = Config.JwtBearerAssertion.ValidateLifetime
+                    ValidateIssuer = !string.IsNullOrWhiteSpace(TetraPakConfig.JwtBearerAssertion.Issuer),
+                    ValidateLifetime = TetraPakConfig.JwtBearerAssertion.ValidateLifetime
 #endif
                 };
 
                 if (options.TokenValidationParameters.ValidateAudience)
                 {
-                    options.TokenValidationParameters.ValidAudience = resolveAudience(Config.JwtBearerAssertion.Audience);
+                    options.TokenValidationParameters.ValidAudience = resolveAudience(TetraPakConfig.JwtBearerAssertion.Audience);
                     Logger?.Information($"Audience={options.TokenValidationParameters.ValidAudience}");
                 }
 
                 if (options.TokenValidationParameters.ValidateIssuer)
                 {
-                    options.TokenValidationParameters.ValidIssuer = Config.JwtBearerAssertion.Issuer;
+                    options.TokenValidationParameters.ValidIssuer = TetraPakConfig.JwtBearerAssertion.Issuer;
                     Logger?.Information($"Issuer={options.TokenValidationParameters.ValidIssuer}");
                 }
 
@@ -90,20 +90,21 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = async context =>
+                    OnMessageReceived = context =>
                     {
                         context.HttpContext.StartDiagnosticsTime(TimerName);
-                        Logger.DebugAssembliesInUse();
-                        await Logger.TraceAsync(context.Request);
-                        if (context.TryReadCustomAuthorization(options, Config, Logger, out var token))
+                        Logger.DebugAssembliesInUse(); // todo Consider moving log-dumping assemblies-in-use to middleware  
+                        //await Logger.TraceHttpRequestAsync(context.Request); obsolete (this is now done by middleware)
+                        if (context.TryReadCustomAuthorization(options, TetraPakConfig, Logger, out var token))
                         {
                             context.Token = token.Identity;
                         }   
+                        return Task.CompletedTask;
                     },
                     OnTokenValidated = context =>
                     {
                         context.HttpContext.EndDiagnosticsTime(TimerName);
-                        Logger.Debug("JWT Bearer is valid");
+                        Logger.Debug("JWT Bearer is valid", context.Request.GetMessageId(TetraPakConfig));
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
@@ -114,14 +115,14 @@ namespace TetraPak.AspNet.Api.Auth
                             var message = context.Exception is { }
                                 ? $"JWT Bearer assertion failed: {context.Exception.Message}"
                                 : "JWT Bearer assertion failed";
-                            Logger.Debug(message, context.HttpContext.Request.GetMessageId(Config));
+                            Logger.Debug(message, context.Request.GetMessageId(TetraPakConfig));
                         }
 
                         // terminates the request (todo: Consider option to allow other authentication schemes)
                         context.Response.OnStarting(async () =>
                         {
                             context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                            var messageId = context.Request.GetMessageId(Config);
+                            var messageId = context.Request.GetMessageId(TetraPakConfig);
                             var response = IsDevelopment
                                 ? new ApiErrorResponse(context.Exception!.Message, messageId)
                                 {

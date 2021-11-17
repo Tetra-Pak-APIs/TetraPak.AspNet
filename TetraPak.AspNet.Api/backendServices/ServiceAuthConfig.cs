@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Api
         /// <inheritdoc />
         public AmbientData AmbientData { get; }
 
-        internal TetraPakConfig Config => AmbientData.Config;
+        internal TetraPakConfig Config => AmbientData.TetraPakConfig;
         
         /// <inheritdoc />
         public IServiceAuthConfig ParentConfig { get; }
@@ -40,7 +40,7 @@ namespace TetraPak.AspNet.Api
         ///   Gets a value indicating whether the configuration has been delegated.  
         /// </summary>
         /// <see cref="ITetraPakConfigDelegate"/>
-        protected virtual bool IsConfigDelegated => AmbientData.Config.IsDelegated;
+        protected virtual bool IsConfigDelegated => AmbientData.TetraPakConfig.IsDelegated;
 
         /// <inheritdoc />
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);

@@ -22,6 +22,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 {
     class DevProxyMiddleware
     {
+        const string DevProxy = nameof(DevProxy);
         const string CacheRepository = CacheRepositories.Tokens.DevProxy;
         
         readonly string _url;
@@ -29,7 +30,6 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         readonly HttpComparison? _isMutedWhenCriteria;
 
         readonly IHttpClientProvider _httpClientProvider;
-        // readonly IHttpServiceProvider _httpService; obsolete
 
         ITimeLimitedRepositories? Cache => _config.Cache;
         
@@ -39,16 +39,16 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         {
             const string TimerName = "dev-proxy";
 
+            var messageId = context.Request.GetMessageId(_config);
             if (isMuted(context.Request))
             {
-                Logger.Debug($"Desktop DevProxy is muted by criteria: \"{_isMutedWhenCriteria}\"");
+                Logger.Debug($"{DevProxy} is muted by criteria: \"{_isMutedWhenCriteria}\"", messageId);
                 return true;
             }
                 
-            var messageId = context.Request.GetMessageId(_config);
             if (!context.GetEndpoint().IsAuthorizationRequired())
             {
-                Logger.Debug("Local development proxy bails out. Endpoint does not require authorization", messageId);
+                Logger.Debug($"{DevProxy} bails out. Endpoint does not require authorization", messageId);
                 return true;
             }
                 
@@ -60,7 +60,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             var tokenOutcome = await ambientData.GetAccessTokenAsync(true);
             if (!tokenOutcome)
             {
-                Logger.Warning("Failed to resolve an access token", messageId);
+                Logger.Warning($"{DevProxy} failed to resolve an access token", messageId);
                 return false;
             }
 
@@ -68,7 +68,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (accessToken.IsJwt)
             {
                 // access token is already a JWT; no need to get a new one ...
-                Logger.Debug("Local development proxy bails out. Token was already JWT token");
+                Logger.Debug($"{DevProxy} bails out. Token was already JWT token", messageId);
                 context.Request.Headers[_config.AuthorizationHeader] = accessToken.ToString();
                 return true;
             }
@@ -84,12 +84,12 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 return true;
             }
 
-            var jwtBearerOutcome = await getJwtBearerAsync(tokenOutcome.Value!.Identity, messageId);
+            var jwtBearerOutcome = await getJwtBearerFromRemoteProxyAsync(tokenOutcome.Value!.Identity, messageId);
             object? description = null;
             if (!jwtBearerOutcome)
             {
                 string? descriptionJson = null;
-                if (jwtBearerOutcome.Exception is HttpException httpException)
+                if (jwtBearerOutcome.Exception is ServerException httpException)
                 {
                     var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
                     if (targetError.StartsWith('{'))
@@ -109,13 +109,13 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 description ??= jwtBearerOutcome.Exception.Message;
                 Logger.Error(
                     jwtBearerOutcome.Exception,
-                    "Local development proxy failed to authenticate access token: " +
+                    $"{DevProxy} failed to authenticate access token: " +
                     $"{tokenOutcome.Value}{Environment.NewLine}{descriptionJson ?? description}", 
                     messageId);
                 context.Response.OnStarting(async () =>
                 {
                     var error = new ApiErrorResponse(
-                        $"Local development proxy failed to authenticate access token: {tokenOutcome.Value}",
+                        $"{DevProxy} failed to authenticate access token: {tokenOutcome.Value}",
                         description,
                         messageId);
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
@@ -166,14 +166,14 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             await Cache.ConfigureAsync(CacheRepository, defaultOptions);
         }
 
-        async Task<Outcome<ActorToken>> getJwtBearerAsync(string accessToken, string? messageId)
+        async Task<Outcome<ActorToken>> getJwtBearerFromRemoteProxyAsync(string accessToken, string? messageId)
         {
             try
             {
                 var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
                 if (!clientOutcome)
                     return Outcome<ActorToken>.Fail(
-                        new ConfigurationException(
+                        new ServerConfigurationException(
                             "Token exchange failed to obtain a HTTP client (see inner exception)", 
                             clientOutcome.Exception));
                 
@@ -182,9 +182,9 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 var response = await client.GetAsync(_url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    var exception = new HttpException(response);
+                    var exception = new ServerException(response);
                     Logger.Error(exception, $"Failed on acquiring JWT bearer from: {_url}", messageId);
-                    return Outcome<ActorToken>.Fail(new HttpException(response));
+                    return Outcome<ActorToken>.Fail(new ServerException(response));
                 }
 
                 await using var stream = await response.Content.ReadAsStreamAsync();

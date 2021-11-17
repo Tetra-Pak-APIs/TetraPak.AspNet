@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,27 +62,32 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets an auth config value. 
         /// </summary>
-        public TetraPakConfig Config { get; }
+        public TetraPakConfig TetraPakConfig { get; }
+
+        /// <summary>
+        ///   Gets the cancellation token for the ongoing request/response context.
+        /// </summary>
+        public CancellationToken? CancellationToken => HttpContext?.RequestAborted;
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger? Logger => Config.Logger;
+        public ILogger? Logger => TetraPakConfig.Logger;
 
         /// <inheritdoc />
         public string? GetMessageId(bool enforce = false) 
-            => _httpContextAccessor.HttpContext?.Request.GetMessageId(Config, enforce);
+            => _httpContextAccessor.HttpContext?.Request.GetMessageId(TetraPakConfig, enforce);
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => HttpContext is { }
-                ? HttpContext.GetAccessTokenAsync(Config, forceStandardHeader)
+                ? HttpContext.GetAccessTokenAsync(/*TetraPakConfig, obsolete */forceStandardHeader)
                 : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found in request")));
 
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetIdTokenAsync() 
             => HttpContext is { }
-                ? HttpContext.GetIdentityTokenAsync(Config)
+                ? HttpContext.GetIdentityTokenAsync(TetraPakConfig)
                 : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Identity token not found in request")));
 
         /// <summary>
@@ -167,17 +173,17 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Initializes the <see cref="AmbientData"/> instance.
         /// </summary>
-        /// <param name="config">
+        /// <param name="tetraPakConfig">
         ///   The Tetra Pak auth configuration.
         /// </param>
         /// <param name="httpContextAccessor">
         ///   A <see cref="IHttpContextAccessor"/> that is required for many of the ambient data operations.
         /// </param>
         public AmbientData(
-            TetraPakConfig config,
+            TetraPakConfig tetraPakConfig,
             IHttpContextAccessor httpContextAccessor)
         {
-            Config = config;
+            TetraPakConfig = tetraPakConfig;
             _httpContextAccessor = httpContextAccessor;
         }
     }
@@ -187,7 +193,7 @@ namespace TetraPak.AspNet
     /// </summary>
     public static class AmbientDataServiceHelper
     {
-        static readonly object s_syncRoot = new object();
+        static readonly object s_syncRoot = new();
         static bool s_isServiceConfigured;
 
         /// <summary>
