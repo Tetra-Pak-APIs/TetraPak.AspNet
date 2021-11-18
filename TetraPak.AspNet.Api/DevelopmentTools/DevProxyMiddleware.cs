@@ -89,7 +89,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (!jwtBearerOutcome)
             {
                 string? descriptionJson = null;
-                if (jwtBearerOutcome.Exception is ServerException httpException)
+                if (jwtBearerOutcome.Exception is ServerException { Response: { } } httpException)
                 {
                     var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
                     if (targetError.StartsWith('{'))
@@ -147,7 +147,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (Cache is null)
                 return;
 
-            var expires = jwtBearerToken.ToJwtSecurityToken().Expires();
+            var expires = jwtBearerToken.ToJwtSecurityToken()?.Expires();
             var lifespan = expires - DateTime.UtcNow ?? TimeSpan.FromSeconds(10);
             await Cache.AddAsync(CacheRepository, accessToken.Identity, jwtBearerToken, lifespan);
         }
@@ -193,7 +193,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 {
                     var responseBody = await JsonSerializer.DeserializeAsync<ProxyResponseBody>(stream);
                     if (responseBody is { }) 
-                        return Outcome<ActorToken>.Success(responseBody.Token);
+                        return Outcome<ActorToken>.Success(responseBody.Token!);
                     
                     isEmptyResponseBody = true;
                     throw new Exception("JSON serialization returned an empty response body");

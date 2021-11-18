@@ -172,7 +172,7 @@ namespace TetraPak.AspNet
         /// </exception>
         /// <seealso cref="IsCustomAuthorizationHeader"/>
         [StateDump]
-        public string? AuthorizationHeader
+        public string AuthorizationHeader
         {
             get => GetFromFieldThenSection(HeaderNames.Authorization)!; 
             set

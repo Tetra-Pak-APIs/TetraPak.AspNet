@@ -1,8 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using demo.Acme.Models;
+using TetraPak.Serialization;
 
 namespace demo.Acme.DTO
 {
+    [Serializable, JsonConverter(typeof(DynamicEntityJsonConverter<AssetDTO>))]
     public class AssetDTO : DataTransferObject
     {
         public string? Description

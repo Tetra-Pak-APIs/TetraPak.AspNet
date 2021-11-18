@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace TetraPak.AspNet
 {
@@ -7,6 +8,14 @@ namespace TetraPak.AspNet
     /// </summary>
     public class ApiMetadata
     {
+        internal const string FormatKey = "tpsdk";
+        
+        /// <summary>
+        ///   Gets a data response format version.  
+        /// </summary>
+        [JsonPropertyName(FormatKey)]
+        public string Format { get; set; }
+        
         /// <summary>
         ///   The totally number of items available to query
         ///   (actual data returned is often only a part of available data). 
@@ -42,12 +51,13 @@ namespace TetraPak.AspNet
         /// </summary>
         public ApiMetadata()
         {
+            Format = typeof(ApiDataResponse).GetCustomAttribute<ApiDataResponseFormatAttribute>()!.Version;
         }
 
         /// <summary>
         ///   Initializes a <see cref="ApiMetadata"/> object and sets the <see cref="Total"/> value.
         /// </summary>
-        public ApiMetadata(int total)
+        public ApiMetadata(int total) : this()
         {
             Total = total;
         }

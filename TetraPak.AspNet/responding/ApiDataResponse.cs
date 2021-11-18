@@ -11,12 +11,8 @@ namespace TetraPak.AspNet
     /// <typeparam name="T">
     ///   The <see cref="Type"/> of data included in response <see cref="Data"/> block.
     /// </typeparam>
-    public class ApiDataResponse<T> : IApiDataResponse
+    public class ApiDataResponse<T> : ApiDataResponse
     {
-        internal const string MetaKey = "meta";
-        
-        internal const string DataKey = "data";
-        
         /// <summary>
         ///   The response meta data block. 
         /// </summary>
@@ -28,44 +24,13 @@ namespace TetraPak.AspNet
         ///   The response data block. 
         /// </summary>
         [JsonPropertyName(DataKey)]
-        public IEnumerable<T> Data { get; set; }
+        public T[] Data { get; set; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
 
         /// <summary>
         ///   Returns all data items as an array of <see cref="object"/>. 
         /// </summary>
         public object[] GetDataAsObjectArray() => Data?.Cast<object>().ToArray();
-
-#if NET5_0_OR_GREATER
-        /// <summary>
-        ///   Initializes the <see cref="ApiDataResponse{T}"/>. 
-        /// </summary>
-        /// <param name="data">
-        ///   A collection of items to be included in the response data block.
-        /// </param>
-        /// <param name="skip">
-        ///   (optional)<br/>
-        ///   Initializes the meta data "count" value (<see cref="ApiChunkedMetadata.Count"/>).
-        /// </param>
-        /// <param name="total">
-        ///   Initialises the meta data "total" value (<see cref="ApiMetadata.Total"/>).
-        /// </param>
-        /// <param name="messageId">
-        ///   (optional)<br/>
-        ///   Initializes thw <see cref="messageId"/> property.
-        /// </param>
-        [JsonConstructor]
-#endif
-        public ApiDataResponse(IEnumerable<T> data, int skip = -1, int total = -1, string messageId = null)
-        {
-            var dataArray = data?.ToArray() ?? Array.Empty<T>();
-            var count = dataArray.Length;
-            total = total < 0 ? count : total;
-            Meta = skip == -1
-                ? new ApiMetadata(total).WithMessageId(messageId)
-                : new ApiChunkedMetadata(new ReadChunk(skip, count), total).WithMessageId(messageId);
-            Data = dataArray;
-        }
 
         /// <summary>
         ///   Creates and returns an empty <see cref="ApiDataResponse{T}"/> object.
@@ -105,13 +70,62 @@ namespace TetraPak.AspNet
             {
                 Meta = new ApiMetadata(totalCount).WithMessageId(messageId);
             }
-            Data = dataArray;
+            Data = dataArray.ToArray();
         }
 
         ApiDataResponse(string messageId)
         {
             Meta = new ApiMetadata { Total = 0, MessageId = messageId };
-            Data = new T[0];
+            Data = Array.Empty<T>();
         }
+        
+        /// <summary>
+        ///   Initializes the <see cref="ApiDataResponse{T}"/>. 
+        /// </summary>
+        /// <param name="data">
+        ///   A collection of items to be included in the response data block.
+        /// </param>
+        /// <param name="skip">
+        ///   (optional)<br/>
+        ///   Initializes the meta data "count" value (<see cref="ApiChunkedMetadata.Count"/>).
+        /// </param>
+        /// <param name="total">
+        ///   Initialises the meta data "total" value (<see cref="ApiMetadata.Total"/>).
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   Initializes thw <see cref="messageId"/> property.
+        /// </param>
+        public ApiDataResponse(IEnumerable<T> data, int skip = -1, int total = -1, string messageId = null)
+        {
+            var dataArray = data?.ToArray() ?? Array.Empty<T>();
+            var count = dataArray.Length;
+            total = total < 0 ? count : total;
+            Meta = skip == -1
+                ? new ApiMetadata(total).WithMessageId(messageId)
+                : new ApiChunkedMetadata(new ReadChunk(skip, count), total).WithMessageId(messageId);
+            Data = dataArray;
+        }
+
+        /// <summary>
+        ///   Initializes an empty the <see cref="ApiDataResponse{T}"/> (intended for deserialization mainly). 
+        /// </summary>
+#if NET5_0_OR_GREATER
+        [JsonConstructor]
+#endif
+        public ApiDataResponse()
+        {
+        }
+    }
+
+    /// <summary>
+    ///   The base API data response format, decorated with a format version. 
+    /// </summary>
+    [ApiDataResponseFormat("1.0")]
+    public abstract class ApiDataResponse
+    {
+        internal const string MetaKey = "meta";
+        
+        internal const string DataKey = "data";
     }
 }

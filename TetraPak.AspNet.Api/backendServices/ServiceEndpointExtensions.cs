@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Principal;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using TetraPak.DynamicEntities;
@@ -56,7 +55,8 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/>
+        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/> to receive a
+        ///   <see cref="HttpResponseMessage"/> back (see remarks).
         /// </summary>
         /// <param name="serviceEndpoint">
         ///     The <see cref="ServiceEndpoint"/>.
@@ -79,7 +79,14 @@ namespace TetraPak.AspNet.Api
         /// <exception cref="InvalidOperationException">
         ///   The <paramref name="serviceEndpoint"/> was not assigned to a registered service.
         /// </exception>
-        public static async Task<HttpOutcome<HttpResponseMessage>> GetAsync(
+        /// <remarks>
+        ///   Use this method when you need more control over how to manage the response.
+        ///   For more standard responses, please see
+        ///   <see cref="GetAsync{T}(ServiceEndpoint,IEnumerable{string},HttpQuery?,RequestOptions?,HttpClientOptions?)"/>
+        /// </remarks>
+        /// <seealso cref="GetHttpResponseAsync(TetraPak.AspNet.Api.ServiceEndpoint,TetraPak.AspNet.HttpQuery?,System.Nullable{System.Threading.CancellationToken},TetraPak.AspNet.HttpClientOptions?)"/>
+        /// <seealso cref="GetAsync{T}(ServiceEndpoint,IEnumerable{string},HttpQuery?,RequestOptions?,HttpClientOptions?)"/>
+        public static async Task<HttpOutcome<HttpResponseMessage>> GetHttpResponseAsync(
             this ServiceEndpoint serviceEndpoint,
             HttpQuery? queryParameters = null,
             CancellationToken? cancellationToken = null,
@@ -100,7 +107,10 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/>
+        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/> and expects
+        ///   untyped data in a successful response
+        ///   (see <see cref="GetAsync{T}(ServiceEndpoint,IEnumerable{string},HttpQuery,RequestOptions,HttpClientOptions)"/>
+        ///   for retrieving a typed response).
         /// </summary>
         /// <param name="serviceEndpoint">
         ///     The <see cref="ServiceEndpoint"/>.
@@ -126,7 +136,9 @@ namespace TetraPak.AspNet.Api
         /// <exception cref="InvalidOperationException">
         ///   The <paramref name="serviceEndpoint"/> was not assigned to a registered service.
         /// </exception>
-        public static async Task<HttpOutcome<HttpResponseMessage>> GetAsync(
+        /// <seealso cref="GetAsync{T}(ServiceEndpoint,IEnumerable{string},HttpQuery,RequestOptions,HttpClientOptions)"/>
+        /// <seealso cref="GetAsync{T}(ServiceEndpoint,HttpQuery,RequestOptions,HttpClientOptions)"/>
+        public static async Task<HttpOutcome<HttpResponseMessage>> GetHttpResponseAsync(
             this ServiceEndpoint serviceEndpoint,
             DynamicPath subPath,
             HttpQuery? queryParameters = null,
@@ -148,8 +160,10 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <summary>
-        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/> and handles the response
-        ///   automatically, deserializing the requested entities into a collection of specified type.
+        ///   Sends an HTTP GET message, passing a collection of resource <paramref name="keys"/> requesting the
+        ///   corresponding resources, to the specified <see cref="ServiceEndpoint"/>.
+        ///   The response is automatically deserialized into a <see cref="ApiDataResponse{T}"/>
+        ///   carrying the expected (typed) resources.
         /// </summary>
         /// <param name="serviceEndpoint">
         ///     The extended <see cref="ServiceEndpoint"/>.
@@ -161,16 +175,51 @@ namespace TetraPak.AspNet.Api
         ///   (optional)<br/>
         ///   Query parameters.
         /// </param>
-        /// <param name="cancellationToken">
+        /// <param name="clientOptions">
         ///   (optional)<br/>
-        ///   Allows cancelling the operation.
+        ///   Options for the client to be used for the operation.
+        /// </param>
+        /// <param name="requestOptions">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies how multiple requests are made.
+        ///   This option affect response times or possible service quota.    
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <paramref name="serviceEndpoint"/> was not assigned to a registered service.
+        /// </exception>
+        public static Task<HttpOutcome<ApiDataResponse<T>>> GetAsync<T>(
+            this ServiceEndpoint serviceEndpoint,
+            HttpQuery? queryParameters = null,
+            RequestOptions? requestOptions = null,
+            HttpClientOptions? clientOptions = null)
+            => serviceEndpoint.GetAsync<T>(null!, queryParameters, requestOptions, clientOptions);
+
+        /// <summary>
+        ///   Sends an HTTP GET message, passing a collection of resource <paramref name="keys"/> requesting the
+        ///   corresponding resources, to the specified <see cref="ServiceEndpoint"/>.
+        ///   The response is automatically deserialized into a <see cref="ApiDataResponse{T}"/>
+        ///   carrying the expected (typed) resources.
+        /// </summary>
+        /// <param name="serviceEndpoint">
+        ///     The extended <see cref="ServiceEndpoint"/>.
+        /// </param>
+        /// <param name="keys">
+        ///   One or more keys, to identity the requested resources.
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)<br/>
+        ///   Query parameters.
         /// </param>
         /// <param name="clientOptions">
         ///   (optional)<br/>
         ///   Options for the client to be used for the operation.
         /// </param>
-        /// <param name="requestType">
-        ///   (optional; default=<see cref="RequestDistribution.Parallel"/>)<br/>
+        /// <param name="requestOptions">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
         ///   Specifies how multiple requests are made.
         ///   This option affect response times or possible service quota.    
         /// </param>
@@ -183,17 +232,22 @@ namespace TetraPak.AspNet.Api
         /// </exception>
         public static async Task<HttpOutcome<ApiDataResponse<T>>> GetAsync<T>(
             this ServiceEndpoint serviceEndpoint, 
-            IEnumerable<string> keys,
+            IEnumerable<string>? keys,
             HttpQuery? queryParameters = null,
             RequestOptions? requestOptions = null,
             HttpClientOptions? clientOptions = null)
         {
             requestOptions ??= RequestOptions.Default;
             var data = new List<T>();
+
+            var keyArray = keys?.ToArray();
+            if ((!keyArray?.Any() ?? true) || keyArray?.Length == 1)
+                return await getAsync(null);
+            
             switch (requestOptions.Distribution)
             {
                 case RequestDistribution.Sequential:
-                    foreach (var key in keys)
+                    foreach (var key in keyArray!)
                     {
                         if (requestOptions.CancellationToken.IsCancellationRequested)
                             return HttpOutcome<ApiDataResponse<T>>.Fail(
@@ -217,7 +271,7 @@ namespace TetraPak.AspNet.Api
                         new ApiDataResponse<T>(data));
                 
                 case RequestDistribution.Parallel:
-                    var requests = keys.Select(getAsync).ToArray();
+                    var requests = keyArray!.Select(getAsync).ToArray();
                     await Task.WhenAll(requests);
                     foreach (var outcome in requests.Select(r => r.Result))
                     {
@@ -238,9 +292,9 @@ namespace TetraPak.AspNet.Api
                         $"Unsupported: {requestOptions.Distribution}");
             }
             
-            async Task<HttpOutcome<ApiDataResponse<T>>> getAsync(string key)
+            async Task<HttpOutcome<ApiDataResponse<T>>> getAsync(string? key)
             {
-                var httpOutcome = await serviceEndpoint.GetAsync(
+                var httpOutcome = await serviceEndpoint.GetHttpResponseAsync(
                     key, 
                     queryParameters, 
                     requestOptions.CancellationToken, 
@@ -269,7 +323,7 @@ namespace TetraPak.AspNet.Api
                     return HttpOutcome<ApiDataResponse<T>>.Fail(httpMethod, new ServerException(HttpStatusCode.NoContent));
                 
                 // first try parsing Tetra Pak Api Data Response format ...
-                if (json.IsJsonApiDataResponse())
+                if (json.IsJsonApiDataResponse(out var version))
                 {
                     try
                     {
@@ -278,7 +332,7 @@ namespace TetraPak.AspNet.Api
                             ? HttpOutcome<ApiDataResponse<T>>.Success(httpMethod, apiDataResponse)
                             : unexpectedJsonFormatFailure();
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // fall back to other parsing strategies
                     }
@@ -319,9 +373,9 @@ namespace TetraPak.AspNet.Api
                 
         }
 
-        static readonly char[] s_jsonApiDataResponseQualifier = "{\"meta\":{".ToCharArray();
+        static readonly char[] s_jsonApiDataResponseQualifier = $"{{\"meta\":{{\"{ApiMetadata.FormatKey}\":\"".ToCharArray();
         
-        static bool IsJsonApiDataResponse(this string json)
+        static bool IsJsonApiDataResponse(this string json, out string? version)
         {
             var ca = json.ToCharArray();
             var i = 0;
@@ -334,9 +388,23 @@ namespace TetraPak.AspNet.Api
                 if (c == s_jsonApiDataResponseQualifier[q])
                     continue;
 
+                version = null;
                 return false;
             }
 
+            version = null;
+            var sbVersion = new StringBuilder();
+            for (; i < ca.Length; i++)
+            {
+                var c = ca[i];
+                if (c != '\"')
+                {
+                    sbVersion.Append(c);
+                    continue;
+                }
+                version = sbVersion.ToString();
+                break;
+            }
             return true;
         }
 
@@ -383,7 +451,10 @@ namespace TetraPak.AspNet.Api
         ///   so calling this method is not really necessary but might improve code readability. 
         /// </remarks>
         /// <seealso cref="Path(ServiceEndpoint)"/>
-        public static string Path(this ServiceEndpoint endpoint, DynamicPath subPath) => subPath.Insert(endpoint.StringValue).StringValue;
+        public static string Path(this ServiceEndpoint endpoint, DynamicPath subPath) 
+            => subPath.IsEmpty() 
+                ? endpoint.StringValue 
+                : subPath.Insert(endpoint.StringValue).StringValue;
 
         /// <summary>
         ///   Sends an HTTP POST message to the specified <see cref="ServiceEndpoint"/>
@@ -633,7 +704,7 @@ namespace TetraPak.AspNet.Api
     /// </summary>
     public class RequestOptions
     {
-        CancellationToken? _cancellationToken;
+        CancellationToken? _cancellationToken = CancellationToken.None;
         
         /// <summary>
         ///   (default=<see cref="RequestDistribution.Sequential"/>)<br/>
@@ -649,6 +720,7 @@ namespace TetraPak.AspNet.Api
         public RequestDistribution Distribution { get; set; } = RequestDistribution.Sequential;
 
         /// <summary>
+        ///   (default=<c>false</c>)<br/>
         ///   Gets or sets a value that specifies whether all requests should be cancelled if one request fails.
         /// </summary>
         /// <remarks>
@@ -660,6 +732,7 @@ namespace TetraPak.AspNet.Api
         public bool IsFailureTolerant { get; set; }
 
         /// <summary>
+        ///   (default=<see cref="System.Threading.CancellationToken.None"/>)<br/>
         ///   Gets or sets a cancellation token to be honored by the affected request.
         /// </summary>
         public CancellationToken CancellationToken
@@ -688,18 +761,21 @@ namespace TetraPak.AspNet.Api
             return this;
         }
 
+        /// <summary>
+        ///   Gets a default configuration (see individual properties for default values).
+        /// </summary>
         public static RequestOptions Default => new();
     }
 
     public enum RequestDistribution
     {
         /// <summary>
-        ///   Multiple requests are made in sequence.
+        ///   Multiple requests are made in sequence (in same thread).
         /// </summary>
         Sequential,
         
         /// <summary>
-        ///   Multiple requests are made in parallel.
+        ///   Multiple requests are made in parallel (in worker threads).
         /// </summary>
         Parallel
     }
