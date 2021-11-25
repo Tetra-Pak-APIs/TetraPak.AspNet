@@ -71,16 +71,6 @@ namespace TetraPak.AspNet
             return this;
         }
 
-        // /// <summary>
-        // ///   (Fluid API)<br/>
-        // ///   Assigns the <see cref="AuthorizationService"/> and returns <c>this</c>. obsolete
-        // /// </summary>
-        // public HttpClientOptions WithAuthorizationService(IAuthorizationService authorizationService)
-        // {
-        //     AuthorizationService = authorizationService;
-        //     return this;
-        // }
-
         /// <summary>
         ///   Initializes the <see cref="HttpClientOptions"/>.
         /// </summary>

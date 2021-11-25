@@ -9,6 +9,7 @@ public interface IMessageIdProvider
 
 Derived  
 &#8627; [AmbientData](TetraPak_AspNet_AmbientData.md 'TetraPak.AspNet.AmbientData')  
+&#8627; [TetraPakClaimsTransformation](TetraPak_AspNet_TetraPakClaimsTransformation.md 'TetraPak.AspNet.TetraPakClaimsTransformation')  
 ### Methods
 <a name='TetraPak_AspNet_IMessageIdProvider_GetMessageId(bool)'></a>
 ## IMessageIdProvider.GetMessageId(bool) Method

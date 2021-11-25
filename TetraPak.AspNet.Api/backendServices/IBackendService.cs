@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,6 +54,13 @@ namespace TetraPak.AspNet.Api
         ///   <paramref name="name"/> was unassigned (<c>null</c> or just whitespace).
         /// </exception>
         ServiceEndpoint GetEndpoint(string name);
+
+        /// <summary>
+        ///   Gets a collection of <see cref="KeyValuePair{TKey,TValue}"/> with all endpoint names (key)
+        ///   and the corresponding <see cref="ServiceEndpoint"/> (value).
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<KeyValuePair<string,ServiceEndpoint>> GetEndpoints();
 
         /// <summary>
         ///   Sends a POST request to the backend service.

@@ -200,7 +200,7 @@ public virtual TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
 #### Property Value
 [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
+[ServerConfigurationException](TetraPak_AspNet_ServerConfigurationException.md 'TetraPak.AspNet.ServerConfigurationException')  
 The configured (textual) value could not be parsed into a [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
 
 Implements [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  
@@ -297,12 +297,21 @@ public bool IsPkceUsed { get; set; }
   
 <a name='TetraPak_AspNet_TetraPakConfig_JwtBearerAssertion'></a>
 ## TetraPakConfig.JwtBearerAssertion Property
-Gets configuration for how to validate JWT tokens.    
+Gets JWT validation options.    
 ```csharp
 public TetraPak.AspNet.Auth.JwtBearerAssertionConfig JwtBearerAssertion { get; }
 ```
 #### Property Value
 [JwtBearerAssertionConfig](TetraPak_AspNet_Auth_JwtBearerAssertionConfig.md 'TetraPak.AspNet.Auth.JwtBearerAssertionConfig')
+  
+<a name='TetraPak_AspNet_TetraPakConfig_Logging'></a>
+## TetraPakConfig.Logging Property
+Gets logging configuration.    
+```csharp
+public TetraPak.AspNet.TetraPakLoggingConfiguration Logging { get; }
+```
+#### Property Value
+[TetraPakLoggingConfiguration](TetraPak_AspNet_TetraPakLoggingConfiguration.md 'TetraPak.AspNet.TetraPakLoggingConfiguration')
   
 <a name='TetraPak_AspNet_TetraPakConfig_ParentConfig'></a>
 ## TetraPakConfig.ParentConfig Property
@@ -391,6 +400,17 @@ public string TokenIssuerUrl { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
+<a name='TetraPak_AspNet_TetraPakConfig_TrimHostInResponses'></a>
+## TetraPakConfig.TrimHostInResponses Property
+Gets a value that specifies whether to always remove the host element from relationship URLs  
+based on this endpoint. If not specified in configuration the value will fall back to the  
+configuration service level (the endpoint "parent" section).   
+```csharp
+public bool TrimHostInResponses { get; set; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
   
 <a name='TetraPak_AspNet_TetraPakConfig_UserInformationUrl'></a>
 ## TetraPakConfig.UserInformationUrl Property

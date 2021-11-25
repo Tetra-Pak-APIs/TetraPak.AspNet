@@ -3,7 +3,7 @@
 namespace TetraPak.AspNet.Api 
 { 
     [AttributeUsage(AttributeTargets.Class)]
-    public class BackendServiceAttribute : Attribute
+    public class BackendServiceAttribute : Attribute // obsolete?
     {
         public string ServiceName { get; set; }
         

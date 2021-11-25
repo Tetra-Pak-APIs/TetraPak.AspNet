@@ -125,19 +125,18 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 if (Logger.IsEnabled(LogLevel.Debug))
                 {
-                    var options = new StateDumpOptions(_config)
-                        .WithIgnored(
-                            nameof(TetraPakApiConfig.GrantType),
-                            nameof(TetraPakConfig.ClientId),
-                            nameof(TetraPakConfig.ClientSecret),
-                            nameof(TetraPakConfig.RequestMessageIdHeader),
-                            nameof(TetraPakConfig.IsPkceUsed),
-                            nameof(TetraPakConfig.CallbackPath))
-                        .WithTargetLogger(Logger);
+                    // var options = new StateDumpContext(_config) obsolete 
+                    //     .WithIgnored(
+                    //         nameof(TetraPakApiConfig.GrantType),
+                    //         nameof(TetraPakConfig.ClientId),
+                    //         nameof(TetraPakConfig.ClientSecret),
+                    //         nameof(TetraPakConfig.RequestMessageIdHeader),
+                    //         nameof(TetraPakConfig.IsPkceUsed),
+                    //         nameof(TetraPakConfig.CallbackPath))
+                    //     .WithTargetLogger(Logger);
                     var dump = new StateDump().WithStackTrace();
-                    dump.Add(_config, "AuthConfig", options);
-                    options = new StateDumpOptions(clientCredentials).WithTargetLogger(Logger);
-                    dump.Add(clientCredentials, "Credentials", options);
+                    dump.AddAsync(_config, "AuthConfig");
+                    dump.AddAsync(clientCredentials, "Credentials");
                     message.AppendLine(dump.ToString());
                 }
                 Logger.Error(ex, message.ToString(), messageId);

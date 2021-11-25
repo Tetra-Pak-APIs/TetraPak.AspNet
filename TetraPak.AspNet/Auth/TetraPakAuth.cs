@@ -61,9 +61,6 @@ namespace TetraPak.AspNet.Auth
             services.AddAmbientData();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTetraPakConfiguration();
-            // services.TryAddSingleton<TetraPakConfig>(); obsolete
-            // services.AddTetraPakClaimsTransformation();
-            // services.AddTetraPakUserInformation();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
@@ -166,7 +163,7 @@ namespace TetraPak.AspNet.Auth
                         OnRemoteFailure = context =>
                         {
                             var messageId = context.Request.GetMessageId(null);
-                            tetraPakConfig.Logger.Error(context.Failure,"<OIDC> authentication error!", messageId);
+                            tetraPakConfig.Logger.Error(context.Failure!,"<OIDC> authentication error!", messageId);
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -200,15 +197,15 @@ namespace TetraPak.AspNet.Auth
                         OnTokenResponseReceived = async context =>
                         {
                             traceOidc(() 
-                                => $"Token response received:{oidcConnectMessage(context.TokenEndpointResponse)}");
+                                => $"Token response received:{oidcConnectMessageAsync(context.TokenEndpointResponse)}");
                             await logger.TraceAsync(context.Response, true);
                         },
-                        OnRedirectToIdentityProvider = context =>
+                        OnRedirectToIdentityProvider = _ =>
                         {
                             traceOidc(() => "Redirects to identity provider");
                             return Task.CompletedTask;
                         },
-                        OnRemoteSignOut = context =>
+                        OnRemoteSignOut = _ =>
                         {
                             traceOidc(() => "Remote sign-out");
                             return Task.CompletedTask;
@@ -218,15 +215,15 @@ namespace TetraPak.AspNet.Auth
                             if (!(logger?.IsEnabled(LogLevel.Trace) ?? false)) 
                                 return Task.CompletedTask;
                             
-                            var claims = context.Principal?.Claims.ConcatCollection(callback: o => o?.ToString());
+                            var claims = context.Principal?.Claims.ConcatCollection(callback: o => o.ToString()!);
                             traceOidc(() => $"User information received: {claims}");
                             return Task.CompletedTask;
                         },
-                        OnSignedOutCallbackRedirect = context =>
+                        OnSignedOutCallbackRedirect = _ =>
                         {
                             return Task.CompletedTask;
                         },
-                        OnRedirectToIdentityProviderForSignOut = context =>
+                        OnRedirectToIdentityProviderForSignOut = _ =>
                         {
                             traceOidc(() => "Redirects to identity provider for sign-out");
                             return Task.CompletedTask;
@@ -244,19 +241,14 @@ namespace TetraPak.AspNet.Auth
                 logger.Trace($"<IODC> {message()}", messageId);
             }
 
-            string oidcConnectMessage(OpenIdConnectMessage oidcMessage)
+            async Task<string> oidcConnectMessageAsync(OpenIdConnectMessage oidcMessage)
             {
-                var dump = new StateDump(logger);
-                dump.Add(oidcMessage, "", new StateDumpOptions(
-                    oidcMessage, 
-                    includeHandler: info => 
-                        info.Name is nameof(OpenIdConnectMessage.AccessToken) 
-                            or nameof(OpenIdConnectMessage.IdToken) 
-                            or nameof(OpenIdConnectMessage.RefreshToken)));
+                var dump = new StateDump("OIDC Message", logger);
+                await dump.AddAsync(oidcMessage, "");
 
                 var sb = new StringBuilder();
                 sb.AppendLine();
-                sb.AppendLine(dump.ToString("OIDC Message"));
+                sb.AppendLine(await dump.BuildAsStringAsync());
                 return sb.ToString();
             }
 
@@ -266,29 +258,12 @@ namespace TetraPak.AspNet.Auth
                 {
                     services.AddTetraPakCaching();
                 }
-                // if (!typeof(TCache).IsAssignableFrom(typeof(SimpleCache)))
-                // {
-                //     services.TryAddSingleton<ITimeLimitedRepositories, TCache>(); obsolete
-                //     return;
-                // }
-                //
-                // services.AddSingleton<ITimeLimitedRepositories,SimpleCache>(p =>
-                // {
-                //     var cacheLogger = p.GetService<ILogger<SimpleCache>>();
-                //     var cache = new SimpleCache(cacheLogger)
-                //     {
-                //         DefaultLifeSpan = tetraPakConfig.DefaultCachingLifetime
-                //     };
-                //     var cacheConfig = tetraPakConfig.Caching.WithCache(cache);
-                //     return cache.WithConfiguration(cacheConfig);
-                // });
             }
         }
 
         static void AddTetraPakWebClientAuthentication(this IServiceCollection services) // todo Make available when needed -JR 2021-09-01
         {
             services.AddTetraPakConfiguration();
-            // services.TryAddSingleton<TetraPakConfig>(); obsolete
             services.AddTetraPakClaimsTransformation();
             
             var provider = services.BuildServiceProvider();
@@ -347,7 +322,7 @@ namespace TetraPak.AspNet.Auth
                     {
                         OnRemoteFailure = context =>
                         {
-                            authConfig.Logger.Error(context.Failure,"OIDC authentication error!");
+                            authConfig.Logger.Error(context.Failure!,"OIDC authentication error!");
                             context.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -393,7 +368,7 @@ namespace TetraPak.AspNet.Auth
         public static async Task<bool> RefreshTokenIfExpiredAsync(
             this CookieValidatePrincipalContext context,
             TetraPakConfig config,
-            ILogger logger)
+            ILogger? logger)
         {
             if (!isExpired())
                 return true;
@@ -406,7 +381,7 @@ namespace TetraPak.AspNet.Auth
             if (!outcome)
                 return await fail();
             
-            context.Properties.UpdateTokenValue(AmbientData.Keys.AccessToken, outcome.Value.AccessToken);
+            context.Properties.UpdateTokenValue(AmbientData.Keys.AccessToken, outcome.Value!.AccessToken);
             var expiresAt = outcome.Value.ExpiresInSeconds.HasValue
                 ? DateTimeOffset.UtcNow.AddSeconds(outcome.Value.ExpiresInSeconds.Value)
                 : DateTimeOffset.Now;

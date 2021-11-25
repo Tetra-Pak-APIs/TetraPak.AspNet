@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Auth;
 
 namespace demo.AcmeAssets
@@ -55,6 +56,8 @@ namespace demo.AcmeAssets
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.LogTetraPakConfiguration();
         }
     }
 }

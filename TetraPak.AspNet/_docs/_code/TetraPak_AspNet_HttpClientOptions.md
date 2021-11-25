@@ -62,37 +62,49 @@ public bool IsClientTransient { get; set; }
 <a name='TetraPak_AspNet_HttpClientOptions_MessageHandler'></a>
 ## HttpClientOptions.MessageHandler Property
 A custom [System.Net.Http.HttpMessageHandler](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpMessageHandler 'System.Net.Http.HttpMessageHandler') to be used by the requested [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient').  
+Can be assigned with [WithMessageHandler(HttpMessageHandler)](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler) 'TetraPak.AspNet.HttpClientOptions.WithMessageHandler(System.Net.Http.HttpMessageHandler)').  
 ```csharp
 public System.Net.Http.HttpMessageHandler? MessageHandler { get; set; }
 ```
 #### Property Value
 [System.Net.Http.HttpMessageHandler](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpMessageHandler 'System.Net.Http.HttpMessageHandler')
+#### See Also
+- [WithMessageHandler(HttpMessageHandler)](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler) 'TetraPak.AspNet.HttpClientOptions.WithMessageHandler(System.Net.Http.HttpMessageHandler)')
   
 ### Methods
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_)'></a>
-## HttpClientOptions.WithAuthorization(ActorToken?) Method
-Fluid API for assigning the [ActorToken](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_ActorToken 'TetraPak.AspNet.HttpClientOptions.ActorToken') property value.  
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)'></a>
+## HttpClientOptions.WithAuthorization(ActorToken, IAuthorizationService?) Method
+Fluid API for requesting client authorization.  
 ```csharp
-public TetraPak.AspNet.HttpClientOptions WithAuthorization(TetraPak.ActorToken? authorization);
+public TetraPak.AspNet.HttpClientOptions WithAuthorization(TetraPak.ActorToken actorToken, TetraPak.AspNet.IAuthorizationService? authorizationService=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_)_authorization'></a>
-`authorization` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)_actorToken'></a>
+`actorToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
+The actor token of the current request.  
   
-#### Returns
-[HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions')  
-  
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorizationService(TetraPak_AspNet_IAuthorizationService)'></a>
-## HttpClientOptions.WithAuthorizationService(IAuthorizationService) Method
-(Fluid API)<br/>  
-Assigns the [AuthorizationService](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_AuthorizationService 'TetraPak.AspNet.HttpClientOptions.AuthorizationService') and returns `this`.  
-```csharp
-public TetraPak.AspNet.HttpClientOptions WithAuthorizationService(TetraPak.AspNet.IAuthorizationService authorizationService);
-```
-#### Parameters
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorizationService(TetraPak_AspNet_IAuthorizationService)_authorizationService'></a>
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)_authorizationService'></a>
 `authorizationService` [IAuthorizationService](TetraPak_AspNet_IAuthorizationService.md 'TetraPak.AspNet.IAuthorizationService')  
+(optional)<br/>  
+A (custom) authorization service to be used for authorizing the requested client.  
   
 #### Returns
 [HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions')  
+  
+<a name='TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler)'></a>
+## HttpClientOptions.WithMessageHandler(HttpMessageHandler) Method
+Fluid API for assigning a (custom) [System.Net.Http.HttpMessageHandler](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpMessageHandler 'System.Net.Http.HttpMessageHandler') to the requested  
+HTTP client.  
+```csharp
+public TetraPak.AspNet.HttpClientOptions WithMessageHandler(System.Net.Http.HttpMessageHandler messageHandler);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler)_messageHandler'></a>
+`messageHandler` [System.Net.Http.HttpMessageHandler](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpMessageHandler 'System.Net.Http.HttpMessageHandler')  
+  
+#### Returns
+[HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions')  
+`this`
+#### See Also
+- [MessageHandler](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_MessageHandler 'TetraPak.AspNet.HttpClientOptions.MessageHandler')
   

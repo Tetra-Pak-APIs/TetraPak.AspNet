@@ -111,27 +111,5 @@ namespace TetraPak.AspNet
             claimType = null;
             return false;
         }
-
-        // public static bool TryResolveClaim(this ClaimsIdentity self, out string claimType, params string[] fallbackClaimTypes) obsolete
-        // {
-        //     var claim = self.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultNameClaimType);
-        //     if (claim is { })
-        //     {
-        //         claimType = claim.Value;
-        //         return true;
-        //     }
-        //     foreach (var type in fallbackClaimTypes)
-        //     {
-        //         claim = self.Claims.FirstOrDefault(c => c.Type == type);
-        //         if (claim is null)
-        //             continue;
-        //         
-        //         claimType = claim.Value;
-        //         return true;
-        //     }
-        //
-        //     claimType = null;
-        //     return false;
-        // }
     }
 }

@@ -22,8 +22,8 @@ namespace TetraPak.AspNet.Api.Auth
     /// </summary>
     public class TetraPakApiConfig : TetraPakConfig 
     {
-        public IDownstreamServiceProvider? BackendServiceProvider =>
-            ServiceProvider.GetService<IDownstreamServiceProvider>();
+        public IBackendServiceProvider? BackendServiceProvider =>
+            ServiceProvider.GetService<IBackendServiceProvider>();
 
         public TetraPakApiConfig(IServiceProvider provider) : base(provider)
         {

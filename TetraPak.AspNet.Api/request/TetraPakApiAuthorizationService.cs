@@ -15,9 +15,15 @@ using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Api
 {
-    public class TetraPakApiAuthorizationService : IAuthorizationService, ITetraPakDiagnosticsProvider
+    
+    /// <summary>
+    ///   This class is intended to be instantiated via a dependency injection mechanism. 
+    /// </summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    class TetraPakApiAuthorizationService : IAuthorizationService, ITetraPakDiagnosticsProvider
     {
         readonly IServiceProvider _provider;
+        readonly IGrantTypeResolver _grantTypeResolver;
 
         ILogger? Logger => TetraPakConfig.Logger;
 
@@ -41,21 +47,32 @@ namespace TetraPak.AspNet.Api
         
         HttpContext? HttpContext => TetraPakConfig.AmbientData.HttpContext;
 
+        /// <inheritdoc />
         public async Task<Outcome<ActorToken>> AuthorizeAsync(
-            HttpClientOptions? options,
+            HttpClientOptions options,
             CancellationToken? cancellationToken = null)
         {
             const string TimerNameTx = "out-auth-tx";
             const string TimerNameCc = "out-auth-cc";
+
+            if (options.AuthConfig is null)
+                throw new InvalidOperationException(
+                    $"{nameof(HttpClientOptions)}.{nameof(HttpClientOptions.AuthConfig)} must be assigned");
             
             try
             {
-                switch (options?.AuthConfig?.GrantType)
+                var grantType = options.AuthConfig?.GrantType ?? GrantType.TX;
+                if (grantType == GrantType.Automatic)
+                {
+                    grantType = await _grantTypeResolver.ResolveAutomaticGrantType(HttpContext!);
+                }
+                
+                switch (grantType)
                 {
                     case GrantType.TokenExchange:
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameTx);
                         var outcome = await OnTokenExchangeAuthenticationAsync(
-                            options.AuthConfig,
+                            options.AuthConfig!,
                             options.ActorToken,
                             cancellationToken);
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameTx);
@@ -64,7 +81,7 @@ namespace TetraPak.AspNet.Api
                     case GrantType.ClientCredentials:
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsStartTimer(TimerNameCc);
                         outcome = await OnClientCredentialsAuthenticationAsync(
-                            options.AuthConfig,
+                            options.AuthConfig!,
                             cancellationToken);
                         ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameCc);
                         return outcome;
@@ -73,6 +90,9 @@ namespace TetraPak.AspNet.Api
                         throw new NotSupportedException($"Cannot authenticate with no specified grant type");
                     
                     case GrantType.Inherited:
+                        throw unexpectedMethod();
+
+                    case GrantType.Automatic: // should never happen; just keeping the code analyzer happy
                         throw unexpectedMethod();
                     
                     default:
@@ -86,11 +106,12 @@ namespace TetraPak.AspNet.Api
 
             Exception unexpectedMethod()
             {
-                return options is null
+                return /*options is null
                     ? new ArgumentOutOfRangeException(
                         nameof(options),
-                        "Error when authenticating HTTP client. Unexpected auth mechanism: (null)")
-                    : new ArgumentOutOfRangeException(
+                        "Error when authenticating HTTP client. Unexpected auth mechanism: (null)") obsolete
+                    : */
+                    new ArgumentOutOfRangeException(
                         nameof(options),
                         $"Error when authenticating HTTP client. Unexpected auth mechanism: {options.AuthConfig?.GrantType}");
             }
@@ -213,15 +234,17 @@ namespace TetraPak.AspNet.Api
             }
         }
         
-        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => GetDiagnostics()?.StartTimer(timerKey);
+        void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => getDiagnostics()?.StartTimer(timerKey);
 
-        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => GetDiagnostics()?.GetElapsedMs(timerKey);
+        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => getDiagnostics()?.GetElapsedMs(timerKey);
         
-        protected ServiceDiagnostics? GetDiagnostics() => HttpContext?.GetDiagnostics(); 
+        ServiceDiagnostics? getDiagnostics() => HttpContext?.GetDiagnostics(); 
 
         public TetraPakApiAuthorizationService(IServiceProvider provider)
         {
             _provider = provider;
+            _grantTypeResolver = provider.GetService<IGrantTypeResolver>()
+                                          ?? new TetraPakGrantTypeResolver();
         }
     }
 }

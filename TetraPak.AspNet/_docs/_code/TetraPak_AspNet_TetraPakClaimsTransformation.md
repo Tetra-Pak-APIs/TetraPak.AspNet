@@ -4,7 +4,8 @@
 A basic (abstract) implementation of the [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.  
 ```csharp
 public abstract class TetraPakClaimsTransformation :
-TetraPak.AspNet.ITetraPakClaimsTransformation
+TetraPak.AspNet.ITetraPakClaimsTransformation,
+TetraPak.AspNet.IMessageIdProvider
 ```
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakClaimsTransformation  
@@ -12,7 +13,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 Derived  
 &#8627; [TetraPakJwtClaimsTransformation](TetraPak_AspNet_TetraPakJwtClaimsTransformation.md 'TetraPak.AspNet.TetraPakJwtClaimsTransformation')  
 
-Implements [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation')  
+Implements [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation'), [IMessageIdProvider](TetraPak_AspNet_IMessageIdProvider.md 'TetraPak.AspNet.IMessageIdProvider')  
 ### Properties
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_Cache'></a>
 ## TetraPakClaimsTransformation.Cache Property
@@ -32,15 +33,6 @@ protected TetraPak.AspNet.Auth.IClientCredentialsProvider? ClientCredentials { g
 #### Property Value
 [IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider')
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_Context'></a>
-## TetraPakClaimsTransformation.Context Property
-Gets the current HTTP context.  
-```csharp
-protected Microsoft.AspNetCore.Http.HttpContext? Context { get; set; }
-```
-#### Property Value
-[Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')
-  
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_DefaultServiceScope'></a>
 ## TetraPakClaimsTransformation.DefaultServiceScope Property
 Gets or sets the global (static) default service scope to be used for all  
@@ -51,6 +43,15 @@ public static TetraPak.AspNet.ServiceScope DefaultServiceScope { get; set; }
 ```
 #### Property Value
 [ServiceScope](TetraPak_AspNet_ServiceScope.md 'TetraPak.AspNet.ServiceScope')
+  
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_HttpContext'></a>
+## TetraPakClaimsTransformation.HttpContext Property
+Gets the current HTTP context.  
+```csharp
+protected Microsoft.AspNetCore.Http.HttpContext? HttpContext { get; set; }
+```
+#### Property Value
+[Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')
   
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_IdentitySource'></a>
 ## TetraPakClaimsTransformation.IdentitySource Property
@@ -101,9 +102,27 @@ protected System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.Credentials>> Ge
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials') object or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_GetMessageId(bool)'></a>
+## TetraPakClaimsTransformation.GetMessageId(bool) Method
+Retrieves a request message id if available.   
+```csharp
+public string? GetMessageId(bool enforce=false);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_GetMessageId(bool)_enforce'></a>
+`enforce` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`false`)<br/>  
+When set a message id will be generated and injected into the request/response context.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') value if a message id was available (or enforced); otherwise `null`.  
+
+Implements [GetMessageId(bool)](TetraPak_AspNet_IMessageIdProvider.md#TetraPak_AspNet_IMessageIdProvider_GetMessageId(bool) 'TetraPak.AspNet.IMessageIdProvider.GetMessageId(bool)')  
+  
 <a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnGetIdTokenAsync(System_Threading_CancellationToken)'></a>
 ## TetraPakClaimsTransformation.OnGetIdTokenAsync(CancellationToken) Method
-Invoked from [OnTransformAsync(ClaimsPrincipal)](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal) 'TetraPak.AspNet.TetraPakClaimsTransformation.OnTransformAsync(System.Security.Claims.ClaimsPrincipal)') to acquire an identity token.  
+Invoked from [OnTransformAsync(ClaimsPrincipal, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakClaimsTransformation.OnTransformAsync(System.Security.Claims.ClaimsPrincipal, System.Nullable&lt;System.Threading.CancellationToken&gt;)') to acquire an identity token.  
 ```csharp
 protected virtual System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> OnGetIdTokenAsync(System.Threading.CancellationToken cancellationToken);
 ```
@@ -117,38 +136,46 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal)'></a>
-## TetraPakClaimsTransformation.OnTransformAsync(ClaimsPrincipal) Method
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)'></a>
+## TetraPakClaimsTransformation.OnTransformAsync(ClaimsPrincipal, Nullable&lt;CancellationToken&gt;) Method
 (Must be overridden)<br/>  
 Invoked, internally, to decorate the context [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal').  
-Please note that the [principal](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal)_principal 'TetraPak.AspNet.TetraPakClaimsTransformation.OnTransformAsync(System.Security.Claims.ClaimsPrincipal).principal') is a cloned instance of the  
-[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') attached to [Context](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_Context 'TetraPak.AspNet.TetraPakClaimsTransformation.Context').  
+Please note that the [principal](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)_principal 'TetraPak.AspNet.TetraPakClaimsTransformation.OnTransformAsync(System.Security.Claims.ClaimsPrincipal, System.Nullable&lt;System.Threading.CancellationToken&gt;).principal') is a cloned instance of the  
+[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') attached to [HttpContext](TetraPak_AspNet_TetraPakClaimsTransformation.md#TetraPak_AspNet_TetraPakClaimsTransformation_HttpContext 'TetraPak.AspNet.TetraPakClaimsTransformation.HttpContext').  
 ```csharp
-protected abstract System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> OnTransformAsync(System.Security.Claims.ClaimsPrincipal principal);
+protected abstract System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> OnTransformAsync(System.Security.Claims.ClaimsPrincipal principal, System.Nullable<System.Threading.CancellationToken> cancellationToken);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal)_principal'></a>
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)_principal'></a>
 `principal` [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')  
 The (incoming) [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal').  
+  
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_OnTransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
+`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
+Allows cancelling the operation.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 A [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') object.  
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal)'></a>
-## TetraPakClaimsTransformation.TransformAsync(ClaimsPrincipal) Method
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)'></a>
+## TetraPakClaimsTransformation.TransformAsync(ClaimsPrincipal, Nullable&lt;CancellationToken&gt;) Method
 Provides a central transformation point to change the specified principal.   
 ```csharp
-public System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> TransformAsync(System.Security.Claims.ClaimsPrincipal principal);
+public System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> TransformAsync(System.Security.Claims.ClaimsPrincipal principal, System.Nullable<System.Threading.CancellationToken> cancellationToken);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal)_principal'></a>
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)_principal'></a>
 `principal` [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')  
 The [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') to transform.  
+  
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
+`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
+Allows cancelling the operation.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 The transformed principal.  
 
-Implements [TransformAsync(ClaimsPrincipal)](TetraPak_AspNet_ITetraPakClaimsTransformation.md#TetraPak_AspNet_ITetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal) 'TetraPak.AspNet.ITetraPakClaimsTransformation.TransformAsync(System.Security.Claims.ClaimsPrincipal)')  
+Implements [TransformAsync(ClaimsPrincipal, Nullable<CancellationToken>)](TetraPak_AspNet_ITetraPakClaimsTransformation.md#TetraPak_AspNet_ITetraPakClaimsTransformation_TransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.ITetraPakClaimsTransformation.TransformAsync(System.Security.Claims.ClaimsPrincipal, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   

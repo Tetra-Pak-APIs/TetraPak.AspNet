@@ -8,62 +8,52 @@ public static class HttpContextHelper
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; HttpContextHelper  
 ### Methods
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)'></a>
-## HttpContextHelper.GetAccessToken(HttpContext, TetraPakConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext)'></a>
+## HttpContextHelper.GetAccessToken(HttpContext) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self, TetraPak.AspNet.TetraPakConfig config);
+public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpContext self);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
-  
 #### Returns
 [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') instance representing the request's access token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetAccessToken(HttpRequest, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakConfig)')
+- [GetAccessToken(HttpRequest)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)'></a>
-## HttpContextHelper.GetAccessToken(HttpRequest, TetraPakConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest)'></a>
+## HttpContextHelper.GetAccessToken(HttpRequest) Method
 Returns the request access token, or `null` if unavailable.   
 ```csharp
-public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
+public static TetraPak.ActorToken? GetAccessToken(this Microsoft.AspNetCore.Http.HttpRequest self);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
-  
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 An [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') instance representing the request's access token if one can be obtained;  
 otherwise `null`.  
 #### See Also
-- [GetAccessToken(HttpContext, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakConfig)')
+- [GetAccessToken(HttpContext)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)'></a>
-## HttpContextHelper.GetAccessTokenAsync(HttpContext?, TetraPakConfig?, bool) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__bool)'></a>
+## HttpContextHelper.GetAccessTokenAsync(HttpContext?, bool) Method
 Tries obtaining an access token from the request.   
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpContext? self, TetraPak.AspNet.TetraPakConfig? config, bool forceStandardHeader=false);
+public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpContext? self, bool forceStandardHeader=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__bool)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
 The [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
-A Tetra Pak configuration object.  
-  
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig__bool)_forceStandardHeader'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpContext__bool)_forceStandardHeader'></a>
 `forceStandardHeader` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
 When set the configured (see [AuthorizationHeader](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_AuthorizationHeader 'TetraPak.AspNet.TetraPakConfig.AuthorizationHeader')) authorization  
@@ -75,20 +65,17 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 holds the access token in its [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value') property. On failure the outcome   
 declares the problem via its [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception') property.   
 #### See Also
-- [GetAccessToken(HttpContext, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext, TetraPak.AspNet.TetraPakConfig)')
+- [GetAccessToken(HttpContext)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpContext) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpContext)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)'></a>
-## HttpContextHelper.GetAccessTokenAsync(HttpRequest, TetraPakConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest)'></a>
+## HttpContextHelper.GetAccessTokenAsync(HttpRequest) Method
 Tries obtaining an access token from the request.   
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpRequest self, TetraPak.AspNet.TetraPakConfig config);
+public static System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> GetAccessTokenAsync(this Microsoft.AspNetCore.Http.HttpRequest self);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
-  
-<a name='TetraPak_AspNet_HttpContextHelper_GetAccessTokenAsync(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -96,22 +83,18 @@ An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraP
 holds the access token in its [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value') property. On failure the outcome   
 declares the problem via its [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception') property.   
 #### See Also
-- [GetAccessToken(HttpRequest, TetraPakConfig)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.TetraPakConfig)')
+- [GetAccessToken(HttpRequest)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetAccessToken(Microsoft_AspNetCore_Http_HttpRequest) 'TetraPak.AspNet.HttpContextHelper.GetAccessToken(Microsoft.AspNetCore.Http.HttpRequest)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)'></a>
-## HttpContextHelper.GetActorTokensAsync(HttpContext?, TetraPakConfig) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext_)'></a>
+## HttpContextHelper.GetActorTokensAsync(HttpContext?) Method
 Gets all tokens from an [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
 ```csharp
-public static System.Threading.Tasks.Task<TetraPak.EnumOutcome<TetraPak.ActorToken>> GetActorTokensAsync(this Microsoft.AspNetCore.Http.HttpContext? self, TetraPak.AspNet.TetraPakConfig config);
+public static System.Threading.Tasks.Task<TetraPak.EnumOutcome<TetraPak.ActorToken>> GetActorTokensAsync(this Microsoft.AspNetCore.Http.HttpContext? self);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)_self'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext_)_self'></a>
 `self` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
 The [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').  
-  
-<a name='TetraPak_AspNet_HttpContextHelper_GetActorTokensAsync(Microsoft_AspNetCore_Http_HttpContext__TetraPak_AspNet_TetraPakConfig)_config'></a>
-`config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
-The Tetra Pak integration configuration.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
@@ -467,4 +450,112 @@ Identifies the value to be set.
 `value` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
 The value to be set.  
   
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ToHttpMethod(string)'></a>
+## HttpContextHelper.ToHttpMethod(string) Method
+Casts the [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') representation of a HTTP method into a [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod').   
+```csharp
+public static Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod ToHttpMethod(this string stringVerb);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_ToHttpMethod(string)_stringVerb'></a>
+`stringVerb` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The textual HTTP method (verb) string representation.  
+  
+#### Returns
+[Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+A [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') value.  
+#### Exceptions
+[System.Collections.Generic.KeyNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyNotFoundException 'System.Collections.Generic.KeyNotFoundException')  
+The [stringVerb](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ToHttpMethod(string)_stringVerb 'TetraPak.AspNet.HttpContextHelper.ToHttpMethod(string).stringVerb') value is not a recognized HTTP method.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerb(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)'></a>
+## HttpContextHelper.ToStringVerb(HttpMethod) Method
+Casts a [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') enum value into its equivalent [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') value.  
+```csharp
+public static string ToStringVerb(this Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod httpMethod);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerb(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)_httpMethod'></a>
+`httpMethod` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+The [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') value to be cast.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') value.  
+#### Exceptions
+[System.Collections.Generic.KeyNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyNotFoundException 'System.Collections.Generic.KeyNotFoundException')  
+The [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') is not recognized.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerbs(System_Collections_Generic_IEnumerable_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_)'></a>
+## HttpContextHelper.ToStringVerbs(IEnumerable&lt;HttpMethod&gt;) Method
+Casts a collection of [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') enum values into a collection of  
+equivalent [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') values.  
+```csharp
+public static string[] ToStringVerbs(this System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod> methods);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerbs(System_Collections_Generic_IEnumerable_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_)_methods'></a>
+`methods` [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
+The enum values to be cast into [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+An array of [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)'></a>
+## HttpContextHelper.ValidateHttpMethod(string?, bool) Method
+Validates a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') as a HTTP method (verb) and throws a [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
+if it is not recognised.    
+```csharp
+public static string ValidateHttpMethod(string? value, bool allowNull=true);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_value'></a>
+`value` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') to be validated.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_allowNull'></a>
+`allowNull` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`true`)<br/>  
+Specifies whether the exception is also thrown when [value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).value') is `null`.   
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The [value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).value') (can be `null` if [allowNull](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_allowNull 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).allowNull') is set).  
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+[value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).value') was unassigned (`null`) and [allowNull](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_allowNull 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).allowNull') was not set.  
+            
+[System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
+[value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethod(string__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethod(string?, bool).value') was not recognized as a HTTP method.  
+            
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)'></a>
+## HttpContextHelper.ValidateHttpMethods(MultiStringValue?, bool) Method
+Validates the items of a [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue') as HTTP methods (verbs)  
+and returns them (on success) or throws a [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException') (on failure).    
+```csharp
+public static TetraPak.MultiStringValue? ValidateHttpMethods(TetraPak.MultiStringValue? value, bool allowNull=true);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_value'></a>
+`value` [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')  
+The [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue') to be validated.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_allowNull'></a>
+`allowNull` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`true`)<br/>  
+Specifies whether the exception is also thrown when [value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).value') is `null`.   
+  
+#### Returns
+[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')  
+The [value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).value') (can be `null` if [allowNull](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_allowNull 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).allowNull') is set).  
+#### Exceptions
+[System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
+[value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).value') was unassigned (`null`) and [allowNull](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_allowNull 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).allowNull') was not set.  
+            
+[System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException')  
+[value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)_value 'TetraPak.AspNet.HttpContextHelper.ValidateHttpMethods(TetraPak.MultiStringValue?, bool).value') was not recognized as a HTTP method.  
+            
   

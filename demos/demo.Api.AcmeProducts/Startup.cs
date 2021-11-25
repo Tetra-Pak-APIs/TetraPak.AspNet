@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
 using TetraPak.AspNet.Auth;
@@ -39,11 +41,13 @@ namespace demo.AcmeProducts
 
             app.UseRouting();
             
-            app.UseTetraPakAuthentication(env);
+            app.UseTetraPakClientAuthentication(env);
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.LogTetraPakConfiguration(LogLevel.Information);
         }
     }
 }

@@ -28,7 +28,7 @@ protected ServiceEndpoints();
 ## ServiceEndpoints.ServiceEndpoints(TetraPakConfig, IServiceAuthConfig, IHttpClientProvider, IAuthorizationService, IConfigurationSection) Constructor
 Initializes the [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint').  
 ```csharp
-internal ServiceEndpoints(TetraPak.AspNet.TetraPakConfig tetraPakConfig, TetraPak.AspNet.Auth.IServiceAuthConfig serviceAuthConfig, TetraPak.AspNet.IHttpClientProvider httpClientProvider, TetraPak.AspNet.IAuthorizationService authorizationService, Microsoft.Extensions.Configuration.IConfigurationSection section);
+internal ServiceEndpoints(TetraPak.AspNet.TetraPakConfig tetraPakConfig, TetraPak.AspNet.Auth.IServiceAuthConfig serviceAuthConfig, TetraPak.AspNet.IHttpClientProvider httpHttpClientProvider, TetraPak.AspNet.IAuthorizationService authorizationService, Microsoft.Extensions.Configuration.IConfigurationSection section);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_ServiceEndpoints_ServiceEndpoints(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_AspNet_IHttpClientProvider_TetraPak_AspNet_IAuthorizationService_Microsoft_Extensions_Configuration_IConfigurationSection)_tetraPakConfig'></a>
@@ -39,8 +39,8 @@ Initializes [TetraPakConfig](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_As
 `serviceAuthConfig` [TetraPak.AspNet.Auth.IServiceAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig')  
 Initializes [ServiceAuthConfig](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_ServiceAuthConfig 'TetraPak.AspNet.Api.ServiceEndpoints.ServiceAuthConfig').  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoints_ServiceEndpoints(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_AspNet_IHttpClientProvider_TetraPak_AspNet_IAuthorizationService_Microsoft_Extensions_Configuration_IConfigurationSection)_httpClientProvider'></a>
-`httpClientProvider` [TetraPak.AspNet.IHttpClientProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IHttpClientProvider 'TetraPak.AspNet.IHttpClientProvider')  
+<a name='TetraPak_AspNet_Api_ServiceEndpoints_ServiceEndpoints(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_AspNet_IHttpClientProvider_TetraPak_AspNet_IAuthorizationService_Microsoft_Extensions_Configuration_IConfigurationSection)_httpHttpClientProvider'></a>
+`httpHttpClientProvider` [TetraPak.AspNet.IHttpClientProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IHttpClientProvider 'TetraPak.AspNet.IHttpClientProvider')  
 A Http Client factory.  
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoints_ServiceEndpoints(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_AspNet_IHttpClientProvider_TetraPak_AspNet_IAuthorizationService_Microsoft_Extensions_Configuration_IConfigurationSection)_authorizationService'></a>
@@ -124,7 +124,7 @@ public virtual TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
 #### Property Value
 [TetraPak.AspNet.Auth.GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.GrantType 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
+[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
 The configured value was incorrect (could not be parsed into [GrantType](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_GrantType 'TetraPak.AspNet.Api.ServiceEndpoints.GrantType')).  
 
 Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  
@@ -148,6 +148,15 @@ public bool IsValid { get; }
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
 #### See Also
 - [GetIssues()](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_GetIssues() 'TetraPak.AspNet.Api.ServiceEndpoints.GetIssues()')
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoints_Methods'></a>
+## ServiceEndpoints.Methods Property
+Gets or sets a (comma separated) list of allowed HTTP methods.  
+```csharp
+public virtual TetraPak.MultiStringValue? Methods { get; set; }
+```
+#### Property Value
+[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoints_ParentConfig'></a>
 ## ServiceEndpoints.ParentConfig Property
@@ -207,6 +216,17 @@ The name of the endpoint.
 [endpointName](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_this_string__endpointName 'TetraPak.AspNet.Api.ServiceEndpoints.this[string].endpointName') was unassigned (`null` or just whitespace).  
             
   
+<a name='TetraPak_AspNet_Api_ServiceEndpoints_TrimHostInResponses'></a>
+## ServiceEndpoints.TrimHostInResponses Property
+Gets a value that specifies whether to always remove the host element from relationship URLs  
+based on this endpoint. If not specified in configuration the value will fall back to the  
+configuration service level (the endpoint "parent" section).   
+```csharp
+public bool TrimHostInResponses { get; set; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
+  
 ### Methods
 <a name='TetraPak_AspNet_Api_ServiceEndpoints_AuthorizeAsync(TetraPak_AspNet_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## ServiceEndpoints.AuthorizeAsync(HttpClientOptions, Nullable&lt;CancellationToken&gt;) Method
@@ -228,6 +248,10 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 A [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') value indicating success/failure and, on success, carrying  
 the requested token as its [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value'); otherwise an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+#### Exceptions
+[System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
+[options](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_AuthorizeAsync(TetraPak_AspNet_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_)_options 'TetraPak.AspNet.Api.ServiceEndpoints.AuthorizeAsync(TetraPak.AspNet.HttpClientOptions, System.Nullable&lt;System.Threading.CancellationToken&gt;).options') configuration ([TetraPak.AspNet.HttpClientOptions.AuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions.AuthConfig 'TetraPak.AspNet.HttpClientOptions.AuthConfig')) was unassigned.  
+            
 
 Implements [AuthorizeAsync(HttpClientOptions, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService.AuthorizeAsync#TetraPak_AspNet_IAuthorizationService_AuthorizeAsync_TetraPak_AspNet_HttpClientOptions,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.IAuthorizationService.AuthorizeAsync(TetraPak.AspNet.HttpClientOptions,System.Nullable{System.Threading.CancellationToken})')  
   

@@ -40,15 +40,6 @@ JWT Bearer Assertion options.
   
   
 ### Properties
-<a name='TetraPak_AspNet_Api_Auth_ConfigureJwtBearerOptions_Config'></a>
-## ConfigureJwtBearerOptions.Config Property
-Provides access to the Tetra Pak configuration.  
-```csharp
-public TetraPak.AspNet.Api.Auth.TetraPakApiConfig Config { get; }
-```
-#### Property Value
-[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')
-  
 <a name='TetraPak_AspNet_Api_Auth_ConfigureJwtBearerOptions_Logger'></a>
 ## ConfigureJwtBearerOptions.Logger Property
 Gets a logger provider.   
@@ -57,4 +48,13 @@ public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
+  
+<a name='TetraPak_AspNet_Api_Auth_ConfigureJwtBearerOptions_TetraPakConfig'></a>
+## ConfigureJwtBearerOptions.TetraPakConfig Property
+Provides access to the Tetra Pak configuration.  
+```csharp
+public TetraPak.AspNet.Api.Auth.TetraPakApiConfig TetraPakConfig { get; }
+```
+#### Property Value
+[TetraPakApiConfig](TetraPak_AspNet_Api_Auth_TetraPakApiConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiConfig')
   

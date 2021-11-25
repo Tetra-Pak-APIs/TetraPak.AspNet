@@ -18,41 +18,4 @@ namespace TetraPak.AspNet
         /// </returns>
         RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue);
     }
-
-    // public static class TetraPakAuthConfigHelper obsolete
-    // {
-    //     static readonly object s_syncRoot = new object();
-    //     static bool s_isTetraPakAuthConfigDelegateConfigured;
-    //     
-    //     public static IServiceCollection AddTetraPakConfigDelegate<TDelegate>(this IServiceCollection self) 
-    //     where TDelegate : class, ITetraPakConfigDelegate 
-    //     {
-    //         lock (s_syncRoot)
-    //         {
-    //             if (s_isTetraPakAuthConfigDelegateConfigured)
-    //                 return self;
-    //
-    //             self.AddSingleton<ITetraPakConfigDelegate, TDelegate>();
-    //             s_isTetraPakAuthConfigDelegateConfigured = true;
-    //             return self;
-    //         }
-    //     }
-    //
-    //     public static IServiceCollection AddTetraPakAuthConfigServices<TDelegate,TSecretsProvider>(this IServiceCollection self) 
-    //         where TDelegate : class, ITetraPakConfigDelegate 
-    //         where TSecretsProvider : class, ITetraPakSecretsProvider
-    //     {
-    //         lock (s_syncRoot)
-    //         {
-    //             if (s_isTetraPakAuthConfigDelegateConfigured)
-    //                 return self;
-    //
-    //             self.AddTetraPakConfigDelegate<TDelegate>();
-    //             self.AddSecretsProvider<TSecretsProvider>();
-    //             s_isTetraPakAuthConfigDelegateConfigured = true;
-    //             return self;
-    //         }
-    //     }
-    //
-    // }
 }

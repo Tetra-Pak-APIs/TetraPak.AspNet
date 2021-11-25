@@ -81,7 +81,7 @@ namespace TetraPak.AspNet
         /// <inheritdoc />
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => HttpContext is { }
-                ? HttpContext.GetAccessTokenAsync(/*TetraPakConfig, obsolete */forceStandardHeader)
+                ? HttpContext.GetAccessTokenAsync(forceStandardHeader)
                 : Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Access token not found in request")));
 
         /// <inheritdoc />

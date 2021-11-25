@@ -32,9 +32,6 @@ namespace TetraPak.AspNet
             {
                 case null:
                     return false;
-                
-                // case DynamicEntity dynamicEntity:
-                //     return dynamicEntity.IsApiDataResponse(out dataResponse);
 
                 case ApiDataResponse<T> apiDataResponse:
                     dataResponse = apiDataResponse;
@@ -42,15 +39,6 @@ namespace TetraPak.AspNet
             }
 
             return false;
-
-            // if (!obj.GetType().TryGetGenericBase(typeof(ApiDataResponse<>), out var type)) obsolete
-            //     return false;
-            //
-            // var itemType = type.GetGenericArguments().FirstOrDefault();
-            // if (itemType is null)
-            //     return false;
-            //
-            // return itemType == typeof(T) || itemType.IsAssignableFrom(typeof(T));
         }
 
         public static bool IsApiDataResponse(this DynamicEntity dynamicEntity, out object dataResponse)

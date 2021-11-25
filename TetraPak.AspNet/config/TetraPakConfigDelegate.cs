@@ -99,7 +99,7 @@ namespace TetraPak.AspNet
 
         Task<Outcome<Credentials>> getClientCredentialsFromConfiguration(GrantType grantType)
         {
-            var clientId = _authConfig.GetConfiguredValue(nameof(TetraPakConfig.ClientId));
+            var clientId = _authConfig!.GetConfiguredValue(nameof(TetraPakConfig.ClientId));
             if (string.IsNullOrWhiteSpace(clientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
                     new ServerConfigurationException($"{nameof(TetraPakConfig.ClientId)} value is missing "+

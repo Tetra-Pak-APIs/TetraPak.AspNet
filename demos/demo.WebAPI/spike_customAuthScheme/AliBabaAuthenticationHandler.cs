@@ -18,13 +18,12 @@ namespace WebAPI.spike_customAuthScheme
     /// </summary>
     class AliBabaAuthenticationHandler : AuthenticationHandler<AliBabaAuthenticationOptions>
     {
-        // readonly TetraPakConfig _tetraPakConfig; obsolete
         const string ExpectedSecret = "Open Sesame!";
         
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             // get token from request and try parsing it as Basic Authentication credentials ...
-            var tokenOutcome = await Context.GetAccessTokenAsync(/*_tetraPakConfig obsolete */);
+            var tokenOutcome = await Context.GetAccessTokenAsync();
             if (!tokenOutcome)
                 return AuthenticateResult.Fail("No authorization found");
 
@@ -51,11 +50,9 @@ namespace WebAPI.spike_customAuthScheme
         public AliBabaAuthenticationHandler(IOptionsMonitor<AliBabaAuthenticationOptions> options, 
             ILoggerFactory logger, 
             UrlEncoder encoder, 
-            ISystemClock clock/*,
-            TetraPakConfig tetraPakConfig obsolete */) 
+            ISystemClock clock) 
             : base(options, logger, encoder, clock)
         {
-            // _tetraPakConfig = tetraPakConfig; obsolete
         }
     }
 

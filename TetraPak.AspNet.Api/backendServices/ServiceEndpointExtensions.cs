@@ -452,7 +452,7 @@ namespace TetraPak.AspNet.Api
         /// </remarks>
         /// <seealso cref="Path(ServiceEndpoint)"/>
         public static string Path(this ServiceEndpoint endpoint, DynamicPath subPath) 
-            => subPath.IsEmpty() 
+            => subPath.IsEmpty 
                 ? endpoint.StringValue 
                 : subPath.Insert(endpoint.StringValue).StringValue;
 

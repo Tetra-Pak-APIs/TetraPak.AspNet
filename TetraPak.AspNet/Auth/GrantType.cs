@@ -35,6 +35,25 @@
         ClientCredentials = CC,
         
         /// <summary>
+        ///   Abbreviation for <see cref="Automatic"/>.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        AU,
+        
+        /// <summary>
+        ///   Abbreviation for <see cref="Automatic"/>.
+        /// </summary>
+        Auto = AU,
+        
+        /// <summary>
+        ///   The grant type is automatically resolved.
+        ///   Usually, what this means is that there must be an actor and that when it's a human actor the
+        ///   service with select the <see cref="TX"/> grant type but if the actor is a (autonomous) service
+        ///   the automated resolution delegate will instead authorize with <see cref="CC"/>.
+        /// </summary>
+        Automatic = AU,
+        
+        /// <summary>
         ///   The service authentication mechanism is inherited from its parent service configuration.
         /// </summary>
         Inherited

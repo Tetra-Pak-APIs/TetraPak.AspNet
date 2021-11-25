@@ -21,18 +21,9 @@ namespace TetraPak.AspNet
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        // /// <exception cref="ConfigurationException"> obsolete 
-        // ///   No <see cref="TetraPakConfig"/> service could be obtained from service locator.
-        // /// </exception>
         public static Task<Outcome<ActorToken>> GetAccessTokenAsync(this Controller self)
         {
-            // if (!self.TryGetTetraPakConfig(out var config)) obsolete 
-            //     return Task.FromResult(Outcome<ActorToken>.Fail(
-            //         new ConfigurationException(
-            //             "Cannot get access token. Failed to obtain a "+
-            //             $" configuration ({typeof(TetraPakConfig)})")));
-                
-            return self.HttpContext.Request.GetAccessTokenAsync(/*config obsolete */);
+            return self.HttpContext.Request.GetAccessTokenAsync();
         }
 
         /// <summary>
@@ -45,18 +36,9 @@ namespace TetraPak.AspNet
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="ActorToken"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        // /// <exception cref="ConfigurationException"> obsolete
-        // ///   No <see cref="TetraPakConfig"/> service could be obtained from service locator.
-        // /// </exception>
         public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this Controller self)
         {
-            // if (!self.TryGetTetraPakConfig(out var config)) obsolete 
-            //     return Task.FromResult(Outcome<ActorToken>.Fail(
-            //         new ConfigurationException(
-            //             "Cannot get identity token. Failed to obtain a "+
-            //             $" configuration ({typeof(TetraPakConfig)})")));
-                
-            return self.HttpContext.Request.GetAccessTokenAsync(/*config obsolete */);
+            return self.HttpContext.Request.GetAccessTokenAsync();
         }
 
         /// <summary>

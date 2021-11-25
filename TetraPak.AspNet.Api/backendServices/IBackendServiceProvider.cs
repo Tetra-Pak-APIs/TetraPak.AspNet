@@ -7,7 +7,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   Classes implementing this contract are able to resolve backend services.
     /// </summary>
-    public interface IDownstreamServiceProvider
+    public interface IBackendServiceProvider
     {
         /// <summary>
         ///   Resolves a service, based on its type and (optionally) service name

@@ -13,7 +13,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
     /// </summary>
     public static class DevProxyHelper
     {
-        static readonly object s_syncRoot = new object();
+        static readonly object s_syncRoot = new();
         static bool s_isDevProxyAllowed = true;
         static bool s_isDevProxyConfigured;
 

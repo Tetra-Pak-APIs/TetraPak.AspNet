@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Configuration;
 using TetraPak.Logging;
@@ -15,7 +17,7 @@ using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 namespace TetraPak.AspNet.Api
 {
     [DebuggerDisplay("{" + nameof(ConfigPath) + "}")]
-    public class ServiceAuthConfig : ConfigurationSection, IServiceAuthConfig
+    public class ServiceAuthConfig : ConfigurationSection, IServiceAuthConfig 
     {
         public const string ServicesConfigName = "Services";
         
@@ -46,10 +48,14 @@ namespace TetraPak.AspNet.Api
         public bool IsAuthIdentifier(string identifier) => TetraPakConfig.CheckIsAuthIdentifier(identifier);
 
         /// <inheritdoc />
+        public string? GetConfiguredValue(string key) => Section?[key];
+        
+        /// <inheritdoc />
+        [StateDump]
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.Inherited, 
-                (string value, out GrantType grantType) =>
+                (string? value, out GrantType grantType) =>
                 {
                     if (string.IsNullOrWhiteSpace(value))
                         value = GrantType.Inherited.ToString();
@@ -66,32 +72,29 @@ namespace TetraPak.AspNet.Api
                 });
             set => _grantType = value;
         }
-
-        /// <inheritdoc />
-        public string? GetConfiguredValue(string key) => Section?[key];
         
         [StateDump]
         public string? ClientId
         {
-            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result;
+            get => GetClientIdAsync(new AuthContext(GrantType, this)).Result.Value;
             set => _clientId = value?.Trim() ?? null!;
         }
 
-        [StateDump]
+        [StateDump, RestrictedValue(DisclosureLogLevel = LogLevel.Debug)]
         public string? ClientSecret
         {
-            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result;
+            get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result.Value;
             set => _clientSecret = value?.Trim() ?? null!;
         }
 
         [StateDump]
         public MultiStringValue? Scope
         {
-            get => GetScopeAsync(new AuthContext(GrantType, this)).Result;
+            get => GetScopeAsync(new AuthContext(GrantType, this)).Result.Value;
             set => _scope = value!;
         }
         
-        public IConfiguration Configuration => Section;
+        public IConfiguration Configuration => Section!;
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(
@@ -142,6 +145,52 @@ namespace TetraPak.AspNet.Api
             return new ServiceInvalidEndpoint(endpointName, issues);
         }
         
+        public async Task<bool> GetStateDumpAsync(object source, StateDumpContext context)
+        {
+            if (source is TetraPakConfig)
+            {
+                var stateDump = new StateDump(context);
+                await stateDump.AddAsync(
+                    this, 
+                    ConfigPath!.Last());
+                return true;
+            }
+
+            if (source is ServiceAuthConfig)
+            {
+                var services = TetraPakBackendServiceProvider.GetConfiguredServices();
+                foreach (var service in services)
+                {
+                    var stateDump = new StateDump(context);
+                    await stateDump.AddAsync(
+                        service, 
+                        service.ServiceName);
+                }
+                return true;
+            }
+
+            if (source is IBackendService backendService)
+            {
+                foreach (var (name, endpoint) in backendService.GetEndpoints())
+                {
+                    var stateDump = new StateDump(context);
+                    await stateDump.AddAsync(endpoint, name);
+                }
+                return true;
+            }
+
+            if (source is ServiceEndpoint serviceEndpoint)
+            {
+                context.Append(context.Indentation);
+                context.Append("\"Url\": \"");
+                context.Append(serviceEndpoint.GetAbsolutePath(false));
+                context.AppendLine("\"");
+                return true;
+            }
+
+            return false;
+        }
+        
         public ServiceAuthConfig(
             IServiceProvider serviceProvider,
             IServiceAuthConfig parentConfig,
@@ -154,6 +203,7 @@ namespace TetraPak.AspNet.Api
             AmbientData = serviceProvider.GetRequiredService<AmbientData>();
             ParentConfig = parentConfig;
             ServiceProvider = serviceProvider;
+            StateDump.Attach(GetStateDumpAsync);
         }
     }
 }

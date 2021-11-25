@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
-using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
 namespace TetraPak.AspNet.Debugging
 {
@@ -64,7 +61,6 @@ namespace TetraPak.AspNet.Debugging
             }
 
             var sb = new StringBuilder();
-            // var assemblies = AppDomain.CurrentDomain.GetAssemblies(); obsolete
             sb.AppendLine(">===== ASSEMBLIES =====<");
             sb.appendAssembliesInUse();
             sb.AppendLine(">======================<");
@@ -80,26 +76,31 @@ namespace TetraPak.AspNet.Debugging
             }
         }
 
-        // /// <summary>
-        // ///   Gets the lowest <see cref="LogLevel"/> defined for the logger provider. 
-        // /// </summary>
-        // /// <param name="logger">
-        // ///   The logger provider.
-        // /// </param>
-        // /// <returns>
-        // ///   A <see cref="LogLevel"/> value.
-        // /// </returns>
-        // public static LogLevel GetLowestLogLevel(this ILogger logger) obsolete?
-        // {
-        //     var min = typeof(ILogger).GetEnumValues().Cast<int>().ToList().Min();
-        //     return (LogLevel) min;
-        // }
-        
-        public static void TraceTetraPakConfigAsync(this ILogger logger, TetraPakConfig config, bool justOnce = true)
+        /// <summary>
+        ///   Builds and a state dump from a <see cref="TetraPakConfig"/> object and writes it to the logger. 
+        /// </summary>
+        /// <param name="logger">
+        ///   The extended logger provider.
+        /// </param>
+        /// <param name="tetraPakConfig">
+        ///   The <see cref="TetraPakConfig"/> object to be state dumped to the logger. 
+        /// </param>
+        /// <param name="logLevel">
+        ///   (optional; default=<see cref="LogLevel.Trace"/>)<br/>
+        ///   A (custom) log level for the state dump information.
+        /// </param>
+        /// <param name="justOnce">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   When set the state dump will only be performed once.
+        ///   The state dump will be ignored if invoked again and this value was set previously (and now).  
+        /// </param>
+        public static async Task LogTetraPakConfigAsync(
+            this ILogger logger, 
+            TetraPakConfig tetraPakConfig, 
+            LogLevel logLevel = LogLevel.Trace,
+            bool justOnce = true)
         {
-            // ReSharper disable once InconsistentNaming
-            const int Indent = 3;
-            if (config is null || !logger.IsEnabled(LogLevel.Debug))
+            if (tetraPakConfig is null || !logger.IsEnabled(logLevel))
                 return;
 
             lock (s_syncRoot)
@@ -109,77 +110,85 @@ namespace TetraPak.AspNet.Debugging
 
                 s_isAuthConfigAlreadyLogged = true;
             }
+            
+            var stateDump = new StateDump("Tetra Pak Configuration", logger);
+            await stateDump.AddAsync(tetraPakConfig, "TetraPak");
 
-            var sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine(">===== AUTH CONFIGURATION =====<");
-            sb.AppendLine(config.GetSectionIdentifier());
-            sb.AppendLine("{");
-            buildContent(config, Indent);
-            sb.AppendLine("}");
-            sb.AppendLine(">==============================<");
-            logger.Debug(sb.ToString());
+            logger.LogLevel(await stateDump.BuildAsStringAsync(), logLevel);
+            // return;
+            
+            
+            
+            // var sb = new StringBuilder(); // obsolete (replaced by StateDump)
+            // sb.AppendLine();
+            // sb.AppendLine(">===== AUTH CONFIGURATION =====<");
+            // sb.AppendLine(config.GetSectionIdentifier());
+            // sb.AppendLine("{");
+            // buildContent(config, Indent);
+            // sb.AppendLine("}");
+            // sb.AppendLine(">==============================<");
+            // logger.Debug(sb.ToString());
 
-            void buildContent(ConfigurationSection sct, int indent)
-            {
-                var sIndent = new string(' ', indent);
-                var propertyInfos = sct.GetType().GetProperties().Where(i => i.CanRead);
-                foreach (var propertyInfo in propertyInfos)
-                {
-                    var jsonProperty = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>();
-                    var isIgnored = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>() is { };
-                    if (isIgnored)
-                        continue;
-
-                    var isRestricted = propertyInfo.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
-                    var key = jsonProperty?.Name ?? propertyInfo.Name;
-
-                    sb.Append(sIndent);
-                    sb.Append('"');
-                    sb.Append(key);
-                    sb.Append("\": ");
-                    try
-                    {
-                        if (isRestricted)
-                        {
-                            sb.AppendLine("\"**** RESTRICTED ****\",");
-                            continue;
-                        }
-                        
-                        var value = propertyInfo.GetValue(sct);
-                        if (value.IsCollection(out _, out var items, out _))
-                        {
-                            value = items.Cast<object>().ConcatCollection();
-                        }
-                        switch (value)
-                        {
-                            case null:
-                                sb.AppendLine("null,");
-                                continue;
-                            
-                            case string sValue:
-                                sb.Append('"');
-                                sb.Append(sValue);
-                                sb.AppendLine("\",");
-                                continue;
-                            
-                            case ConfigurationSection section:
-                                sb.AppendLine("{");
-                                buildContent(section, indent + Indent);
-                                sb.Append(sIndent);
-                                sb.AppendLine("},");
-                                continue;
-                        }
-
-                        sb.Append(value);
-                        sb.AppendLine(",");
-                    }
-                    catch (Exception ex)
-                    {
-                        sb.AppendLine($"\"** ERROR READING VALUE: {ex.Message} **\",");
-                    }
-                }
-            }
+            // void buildContent(ConfigurationSection sct, int indent)
+            // {
+            //     var sIndent = new string(' ', indent);
+            //     var propertyInfos = sct.GetType().GetProperties().Where(i => i.CanRead);
+            //     foreach (var propertyInfo in propertyInfos)
+            //     {
+            //         var jsonProperty = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>();
+            //         var isIgnored = propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>() is { };
+            //         if (isIgnored)
+            //             continue;
+            //
+            //         var isRestricted = propertyInfo.GetCustomAttribute<RestrictedValueAttribute>() is { }; 
+            //         var key = jsonProperty?.Name ?? propertyInfo.Name;
+            //
+            //         sb.Append(sIndent);
+            //         sb.Append('"');
+            //         sb.Append(key);                    
+            //         sb.Append("\": ");
+            //         try
+            //         {
+            //             if (isRestricted)
+            //             {
+            //                 sb.AppendLine("\"**** RESTRICTED ****\",");
+            //                 continue;
+            //             }
+            //             
+            //             var value = propertyInfo.GetValue(sct);
+            //             if (value.IsCollection(out _, out var items, out _))
+            //             {
+            //                 value = items.Cast<object>().ConcatCollection();
+            //             }
+            //             switch (value)
+            //             {
+            //                 case null:
+            //                     sb.AppendLine("null,");
+            //                     continue;
+            //                 
+            //                 case string sValue:
+            //                     sb.Append('"');
+            //                     sb.Append(sValue);
+            //                     sb.AppendLine("\",");
+            //                     continue;
+            //                 
+            //                 case ConfigurationSection section:
+            //                     sb.AppendLine("{");
+            //                     buildContent(section, indent + Indent);
+            //                     sb.Append(sIndent);
+            //                     sb.AppendLine("},");
+            //                     continue;
+            //             }
+            //
+            //             sb.Append(value);
+            //             sb.AppendLine(",");
+            //         }
+            //         catch (Exception ex)
+            //         {
+            //             sb.AppendLine($"\"** ERROR READING VALUE: {ex.Message} **\",");
+            //         }
+            //     }
+            // }
         }
     }
 }

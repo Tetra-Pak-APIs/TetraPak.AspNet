@@ -1,24 +1,24 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api](TetraPak_AspNet_Api.md 'TetraPak.AspNet.Api')
-## IDownstreamServiceProvider Interface
+## IBackendServiceProvider Interface
 Classes implementing this contract are able to resolve backend services.  
 ```csharp
-public interface IDownstreamServiceProvider
+public interface IBackendServiceProvider
 ```
 ### Methods
-<a name='TetraPak_AspNet_Api_IDownstreamServiceProvider_ResolveService(System_Type_string_)'></a>
-## IDownstreamServiceProvider.ResolveService(Type, string?) Method
+<a name='TetraPak_AspNet_Api_IBackendServiceProvider_ResolveService(System_Type_string_)'></a>
+## IBackendServiceProvider.ResolveService(Type, string?) Method
 Resolves a service, based on its type and (optionally) service name  
 ```csharp
 TetraPak.Outcome<TetraPak.AspNet.Api.IBackendService> ResolveService(System.Type serviceType, string? serviceName=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IDownstreamServiceProvider_ResolveService(System_Type_string_)_serviceType'></a>
+<a name='TetraPak_AspNet_Api_IBackendServiceProvider_ResolveService(System_Type_string_)_serviceType'></a>
 `serviceType` [System.Type](https://docs.microsoft.com/en-us/dotnet/api/System.Type 'System.Type')  
   
-<a name='TetraPak_AspNet_Api_IDownstreamServiceProvider_ResolveService(System_Type_string_)_serviceName'></a>
+<a name='TetraPak_AspNet_Api_IBackendServiceProvider_ResolveService(System_Type_string_)_serviceName'></a>
 `serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-Specifies a configured service. This is required if [serviceType](TetraPak_AspNet_Api_IDownstreamServiceProvider.md#TetraPak_AspNet_Api_IDownstreamServiceProvider_ResolveService(System_Type_string_)_serviceType 'TetraPak.AspNet.Api.IDownstreamServiceProvider.ResolveService(System.Type, string?).serviceType')  
+Specifies a configured service. This is required if [serviceType](TetraPak_AspNet_Api_IBackendServiceProvider.md#TetraPak_AspNet_Api_IBackendServiceProvider_ResolveService(System_Type_string_)_serviceType 'TetraPak.AspNet.Api.IBackendServiceProvider.ResolveService(System.Type, string?).serviceType')  
 if just a generic backend service.   
   
 #### Returns

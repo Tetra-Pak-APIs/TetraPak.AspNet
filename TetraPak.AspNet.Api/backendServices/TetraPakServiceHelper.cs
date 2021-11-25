@@ -49,11 +49,11 @@ namespace TetraPak.AspNet.Api
             collection.AddTetraPakTokenExchangeService();
             collection.AddTetraPakClientCredentialsService();
             
-            collection.TryAddSingleton<TetraPakDownstreamServiceProvider2>();
-            collection.TryAddSingleton<IDownstreamServiceProvider,TetraPakDownstreamServiceProvider2>();
+            collection.TryAddSingleton<TetraPakBackendServiceProvider>();
+            collection.TryAddSingleton<IBackendServiceProvider,TetraPakBackendServiceProvider>();
             collection.AddTetraPakHttpClientProvider();
             collection.AddTetraPakAuthorizationService<TetraPakApiAuthorizationService>();
-            TetraPakDownstreamServiceProvider2.InitializeServices(collection);
+            TetraPakBackendServiceProvider.InitializeServices(collection);
             // if (addBackendServices)
             // {
             //     // register all API gateway controllers and corresponding services,

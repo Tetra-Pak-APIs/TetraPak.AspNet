@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.OpenIdConnect;
 using TetraPak.Caching;
 using TetraPak.Logging;
@@ -91,6 +90,8 @@ namespace TetraPak.AspNet
         /// </summary>
         protected IServiceProvider ServiceProvider { get; }
 
+        internal IServiceProvider GetServiceProvider() => ServiceProvider;
+
         /// <summary>
         ///   Gets logging configuration.  
         /// </summary>
@@ -152,7 +153,7 @@ namespace TetraPak.AspNet
         public bool IsAuthIdentifier(string identifier) => CheckIsAuthIdentifier(identifier);
         
         /// <inheritdoc />
-        protected override FieldInfo? OnGetField(string fieldName, bool inherited = false) // obsolete? (can't see this is doing anything special)
+        protected override FieldInfo? OnGetField(string fieldName, bool inherited = false)
         {
             var field = GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             return field ?? base.OnGetField(fieldName, inherited);
@@ -389,7 +390,8 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetClientIdAsync(new AuthContext(GrantType, this)).Result;
-                return outcome ? outcome.Value! : throw new ServerConfigurationException("Client id could not be resolved");
+                return outcome.Value;
+                return outcome ? outcome.Value! : throw new ServerConfigurationException("Client id could not be resolved"); // obsolete
             }
             set => _clientId = value;
         }
@@ -398,7 +400,7 @@ namespace TetraPak.AspNet
         ///   Gets a configured client secret at this configuration level.
         /// </summary>
         /// <seealso cref="GetClientSecretAsync"/>
-        [StateDump, RestrictedValue(DisclosureLogLevels = new[] { LogLevel.Debug })]
+        [StateDump, RestrictedValue(DisclosureLogLevel = LogLevel.Debug)]
         public virtual string? ClientSecret
         {
             get
@@ -469,7 +471,7 @@ namespace TetraPak.AspNet
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
             return outcome
                 ? Outcome<string>.Success(outcome.Value!.Identity)
-                : throw outcome.Exception;
+                : Outcome<string>.Fail(outcome.Exception);
         }
 
         /// <summary>
@@ -497,7 +499,7 @@ namespace TetraPak.AspNet
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
             return outcome
                 ? Outcome<string>.Success(outcome.Value!.Secret)
-                : throw outcome.Exception;
+                : Outcome<string>.Fail(outcome.Exception);
         }
 
         /// <summary>
@@ -809,7 +811,7 @@ namespace TetraPak.AspNet
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
-                        Logger.TraceTetraPakConfigAsync(this);
+                        // Logger.TraceTetraPakConfigAsync(this); obsolete
                         return done(discoveryDocument);
                     }
                 }
@@ -902,18 +904,6 @@ namespace TetraPak.AspNet
 
             return new MultiStringValue(scope.ToArray());
         }
-        
-        // protected virtual void OnSetProperty(PropertyInfo property, object value) obsolete
-        // {
-        //     if (property.PropertyType == typeof(string))
-        //     {
-        //         property.SetValue(this, value);
-        //         return;
-        //     }
-        //     
-        //     var obj = Convert.ChangeType(value, property.PropertyType);
-        //     property.SetValue(this, obj);
-        // }
         
         /// <summary>
         ///   Initializes a Tetra Pak authorization configuration instance. 

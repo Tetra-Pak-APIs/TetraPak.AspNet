@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet
 {
@@ -16,10 +19,12 @@ namespace TetraPak.AspNet
     /// </summary>
     public static class TetraPakConfigHelper
     {
-        static readonly object s_syncRoot = new object();
+        static readonly object s_syncRoot = new();
         static bool s_isTetraPakConfigAdded;
         static bool s_isTetraPakConfigDelegateConfigured;
-        
+        static bool s_isTetraPakDiagnosticsUsed;
+        static bool s_isTetraPakConfigDumped;
+
         /// <summary>
         ///   Enforces the use of a message id for all request/response round trips.
         /// </summary>
@@ -91,7 +96,21 @@ namespace TetraPak.AspNet
                 return c;
             }
         }
+
+        public static IApplicationBuilder LogTetraPakConfiguration(
+            this IApplicationBuilder app, 
+            LogLevel logLevel = LogLevel.Trace)
+        {
+            if (s_isTetraPakConfigDumped)
+                return app;
+
+            s_isTetraPakConfigDumped = true;
+            var tetraPakConfig = app.ApplicationServices.GetService<TetraPakConfig>(); 
+            tetraPakConfig?.Logger.LogTetraPakConfigAsync(tetraPakConfig, logLevel);
+            return app;
+        }
         
+       
         /// <summary>
         ///   Enabled various types of diagnostics features, such as timers and trackable message ids.
         /// </summary>
@@ -104,15 +123,24 @@ namespace TetraPak.AspNet
         public static IApplicationBuilder UseTetraPakDiagnostics(this IApplicationBuilder app)
         {
             const string TotalName = "*";
+
+            lock (s_syncRoot)
+            {
+                if (s_isTetraPakDiagnosticsUsed)
+                    return app;
+
+                s_isTetraPakDiagnosticsUsed = true;
+            }
             
-            var config = app.ApplicationServices.GetService<TetraPakConfig>();
-            if (!(config?.EnableDiagnostics ?? false))
+            var tetraPakConfig = app.ApplicationServices.GetService<TetraPakConfig>();
+            if (!(tetraPakConfig?.EnableDiagnostics ?? false))
                 return app;
 
+            var logger = app.ApplicationServices.GetService<ILogger<ServiceDiagnostics>>();
+            ServiceDiagnostics? diagnostics;
             app.Use(async (context, func) =>
             {
-                var logger = app.ApplicationServices.GetService<ILogger<ServiceDiagnostics>>();
-                var diagnostics = context.BeginDiagnostics(logger);
+                diagnostics = context.BeginDiagnostics(logger);
                 context.Response.OnStarting(() =>
                 {
                     if (diagnostics is null)

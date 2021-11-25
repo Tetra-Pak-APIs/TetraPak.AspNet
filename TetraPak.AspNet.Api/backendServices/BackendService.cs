@@ -37,7 +37,6 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets the endpoint configuration.
         /// </summary>
-        // ReSharper disable MemberCanBePrivate.Global
         public TEndpoints Endpoints { get; }
 
         // /// <summary>
@@ -90,7 +89,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets a client secret to be submitted when requesting authorization.
         /// </summary>
-        [StateDump]
+        [StateDump, RestrictedValue(DisclosureLogLevel = LogLevel.Debug)]
         public string? ClientSecret => Endpoints.ClientSecret;
 
         /// <summary>
@@ -143,6 +142,8 @@ namespace TetraPak.AspNet.Api
         
         /// <inheritdoc />
         public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
+
+        public IEnumerable<KeyValuePair<string,ServiceEndpoint>> GetEndpoints() => Endpoints;
 
         internal void DiagnosticsStartTimer(string? timerKey)
         {

@@ -115,6 +115,5 @@ namespace TetraPak.AspNet.Auth
                 app.UseTetraPakMessageId();
             }
         }
-
     }
 }

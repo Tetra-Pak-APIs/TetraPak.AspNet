@@ -21,15 +21,6 @@ A logger provider.
   
   
 ### Properties
-<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Config'></a>
-## ReadDiscoveryDocumentArgs.Config Property
-Gets or sets the Tetra Pak integration configuration.  
-```csharp
-public TetraPak.AspNet.TetraPakConfig Config { get; set; }
-```
-#### Property Value
-[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
-  
 <a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_LocalCachePath'></a>
 ## ReadDiscoveryDocumentArgs.LocalCachePath Property
 Gets or sets a local (file) path for locally caching the [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraPak.AspNet.OpenIdConnect.DiscoveryDocument').   
@@ -65,6 +56,15 @@ public TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy Policy { get; set; }
 ```
 #### Property Value
 [ReadDocumentPolicy](TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md 'TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy')
+  
+<a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_TetraPakConfig'></a>
+## ReadDiscoveryDocumentArgs.TetraPakConfig Property
+Gets or sets the Tetra Pak integration configuration.  
+```csharp
+public TetraPak.AspNet.TetraPakConfig TetraPakConfig { get; set; }
+```
+#### Property Value
+[TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
   
 <a name='TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Timeout'></a>
 ## ReadDiscoveryDocumentArgs.Timeout Property

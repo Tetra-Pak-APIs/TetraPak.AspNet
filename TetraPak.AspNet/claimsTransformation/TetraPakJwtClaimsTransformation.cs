@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Documentations;
 using TetraPak.Logging;
 
@@ -45,7 +44,7 @@ namespace TetraPak.AspNet
             ClaimsPrincipal principal, 
             CancellationToken? cancellationToken)
         {
-            Logger.TraceTetraPakConfigAsync(TetraPakConfig);
+            // Logger.TraceTetraPakConfigAsync(TetraPakConfig); obsolete
             Outcome<CachedClaimsPrincipal> cachedOutcome;
 
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))

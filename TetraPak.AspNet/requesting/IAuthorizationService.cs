@@ -26,6 +26,9 @@ namespace TetraPak.AspNet
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and, on success, carrying
         ///   the requested token as its <see cref="Outcome{T}.Value"/>; otherwise an <see cref="Exception"/>.
         /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   <paramref name="options"/> configuration (<see cref="HttpClientOptions.AuthConfig"/>) was unassigned.
+        /// </exception>
         Task<Outcome<ActorToken>> AuthorizeAsync(HttpClientOptions options, CancellationToken? cancellationToken = null);
     }
 }

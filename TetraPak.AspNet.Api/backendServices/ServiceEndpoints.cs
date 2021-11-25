@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
@@ -117,7 +118,7 @@ namespace TetraPak.AspNet.Api
         public virtual GrantType GrantType
         {
             get => GetFromFieldThenSection(GrantType.Inherited, 
-                (string value, out GrantType grantType) =>
+                (string? value, out GrantType grantType) =>
                 {
                     if (string.IsNullOrWhiteSpace(value))
                         value = GrantType.Inherited.ToString();
@@ -155,7 +156,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets or sets a client secret to be submitted when requesting authorization.
         /// </summary>
-        [StateDump]
+        [StateDump, RestrictedValue(DisclosureLogLevel = LogLevel.Debug)]
         public virtual string? ClientSecret
         {
             get
@@ -377,7 +378,7 @@ namespace TetraPak.AspNet.Api
             endpoint = new ServiceEndpoint(child.Value)
                 .WithIdentity(endpointName, this)
                 .WithConfig(TetraPakConfig, child);
-            endpoint.SetBackendService(BackendService);
+            endpoint.SetBackendService(BackendService!);
             return true;
         }
 

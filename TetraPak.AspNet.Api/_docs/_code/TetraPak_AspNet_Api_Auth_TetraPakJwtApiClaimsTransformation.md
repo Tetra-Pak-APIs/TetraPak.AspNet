@@ -21,7 +21,7 @@ public void ConfigureServices(IServiceCollection services)
 ### Methods
 <a name='TetraPak_AspNet_Api_Auth_TetraPakJwtApiClaimsTransformation_OnGetAccessTokenAsync(System_Threading_CancellationToken)'></a>
 ## TetraPakJwtApiClaimsTransformation.OnGetAccessTokenAsync(CancellationToken) Method
-Can be invoked to acquire an access token from the [TetraPak.AspNet.TetraPakClaimsTransformation.Context](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakClaimsTransformation.Context 'TetraPak.AspNet.TetraPakClaimsTransformation.Context').  
+Can be invoked to acquire an access token from the [TetraPak.AspNet.TetraPakClaimsTransformation.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakClaimsTransformation.HttpContext 'TetraPak.AspNet.TetraPakClaimsTransformation.HttpContext').  
 ```csharp
 protected override System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> OnGetAccessTokenAsync(System.Threading.CancellationToken cancellationToken);
 ```

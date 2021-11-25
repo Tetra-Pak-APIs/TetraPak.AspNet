@@ -63,7 +63,7 @@ TetraPak.AspNet.Auth.GrantType GrantType { get; }
 #### Property Value
 [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[ConfigurationException](TetraPak_AspNet_ConfigurationException.md 'TetraPak.AspNet.ConfigurationException')  
+[ServerConfigurationException](TetraPak_AspNet_ServerConfigurationException.md 'TetraPak.AspNet.ServerConfigurationException')  
 The configured (textual) value could not be parsed into a [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
   
 <a name='TetraPak_AspNet_Auth_IServiceAuthConfig_ParentConfig'></a>

@@ -171,7 +171,8 @@ namespace TetraPak.AspNet.Api.Auth
         {
             app.UseTetraPakTraceRequestAsync();
             app.UseTetraPakClientAuthentication(env);
-            
+            app.UseTetraPakDiagnostics();       // <-- add this to allow diagnostics, such a profiling headers
+
             var tetraPakConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
             var proxyUrl = tetraPakConfig.JwtBearerAssertion.DevProxy;
             if (!string.IsNullOrEmpty(proxyUrl))

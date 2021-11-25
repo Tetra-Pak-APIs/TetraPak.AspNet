@@ -112,7 +112,7 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        [StateDump]
+        [StateDump, RestrictedValue(DisclosureLogLevel = LogLevel.Debug)]
         public string? ClientSecret
         {
             get => GetClientSecretAsync(new AuthContext(GrantType, this)).Result!;
@@ -207,7 +207,7 @@ namespace TetraPak.AspNet.Api
 
         internal IAuthorizationService AuthorizationService => Parent!.AuthorizationService;
 
-        public string GetAbsolutePath(bool trimHost) => (trimHost ? Parent!.BasePath : $"{Parent!.Host}{Parent!.BasePath}")!;
+        public string GetAbsolutePath(bool trimHost) => (trimHost ? Parent!.BasePath : $"{Parent!.Host}{Parent!.BasePath}{StringValue}")!;
 
         #region .  Equality  .
 

@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api.Auth](TetraPak_AspNet_Api_Auth.md 'TetraPak.AspNet.Api.Auth')
 ## TokenExchangeArgs Class
-Provides the options to be used for a token exchange process (see [ITokenExchangeGrantService.ExchangeAsync](https://docs.microsoft.com/en-us/dotnet/api/ITokenExchangeGrantService.ExchangeAsync 'ITokenExchangeGrantService.ExchangeAsync')).  
+Provides the options to be used for a token exchange process (see [ExchangeAccessTokenAsync(Credentials, ActorToken, CancellationToken)](TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService.md#TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService_ExchangeAccessTokenAsync(TetraPak_Credentials_TetraPak_ActorToken_System_Threading_CancellationToken) 'TetraPak.AspNet.Api.Auth.ITokenExchangeGrantService.ExchangeAccessTokenAsync(TetraPak.Credentials, TetraPak.ActorToken, System.Threading.CancellationToken)')).  
 See https://tools.ietf.org/id/draft-ietf-oauth-token-exchange-19.html for more details,  
 ```csharp
 public class TokenExchangeArgs

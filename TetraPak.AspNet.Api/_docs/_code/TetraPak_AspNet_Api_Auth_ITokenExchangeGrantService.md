@@ -34,4 +34,24 @@ A cancellation token.
 A [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') value indicating success/failure and.  
 On success the value also carries the requested result; otherwise a [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception') might  
 be carried instead.  
+### Remarks
+Please note that (as of 2021-11-01) Tetra Pak auth services does not allow Token Exchange for  
+non-human identities (a.k.a. "system identities").  
+
+
+
+
+  
+What this means is that if you pass an [accessToken](TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService.md#TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService_ExchangeAccessTokenAsync(TetraPak_Credentials_TetraPak_ActorToken_System_Threading_CancellationToken)_accessToken 'TetraPak.AspNet.Api.Auth.ITokenExchangeGrantService.ExchangeAccessTokenAsync(TetraPak.Credentials, TetraPak.ActorToken, System.Threading.CancellationToken).accessToken')  
+that was ultimately issued from a Client Credentials Grant the token exchange will fail  
+with a `400 Bad Request`.  
+You can examine the [accessToken](TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService.md#TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService_ExchangeAccessTokenAsync(TetraPak_Credentials_TetraPak_ActorToken_System_Threading_CancellationToken)_accessToken 'TetraPak.AspNet.Api.Auth.ITokenExchangeGrantService.ExchangeAccessTokenAsync(TetraPak.Credentials, TetraPak.ActorToken, System.Threading.CancellationToken).accessToken') using the  
+extension method [TetraPak.AspNet.Auth.JwtHelper.IsSystemIdentityToken(TetraPak.ActorToken)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.JwtHelper.IsSystemIdentityToken#TetraPak_AspNet_Auth_JwtHelper_IsSystemIdentityToken_TetraPak_ActorToken_ 'TetraPak.AspNet.Auth.JwtHelper.IsSystemIdentityToken(TetraPak.ActorToken)').  
+
+
+
+
+  
+For more details please see article using the link found in this constant:  
+[TetraPak.AspNet.Documentations.Docs.DevPortal.TokenExchangeSubjectTokenTypes](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Documentations.Docs.DevPortal.TokenExchangeSubjectTokenTypes 'TetraPak.AspNet.Documentations.Docs.DevPortal.TokenExchangeSubjectTokenTypes')
   

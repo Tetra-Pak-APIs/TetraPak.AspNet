@@ -18,7 +18,7 @@ namespace WebAPI.spike_customAuthScheme
                 return principal;
             
             // get the token and try parsing it as Basic Auth Credentials ...
-            var tokenOutcome = await HttpContext.GetAccessTokenAsync(/*TetraPakConfig obsolete */);
+            var tokenOutcome = await HttpContext.GetAccessTokenAsync();
             if (!tokenOutcome)
                 return principal;
 

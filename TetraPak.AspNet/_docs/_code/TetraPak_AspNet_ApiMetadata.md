@@ -30,6 +30,15 @@ public ApiMetadata(int total);
   
   
 ### Properties
+<a name='TetraPak_AspNet_ApiMetadata_Format'></a>
+## ApiMetadata.Format Property
+Gets a data response format version.    
+```csharp
+public string Format { get; set; }
+```
+#### Property Value
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
+  
 <a name='TetraPak_AspNet_ApiMetadata_MessageId'></a>
 ## ApiMetadata.MessageId Property
 A unique string value for tracking a request/response (mainly for diagnostics purposes).  

@@ -227,7 +227,7 @@ a [DiscoveryDocument](TetraPak_AspNet_OpenIdConnect_DiscoveryDocument.md 'TetraP
 #### Exceptions
 [System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
 Required configuration was not provided; such as [MasterSourceUrl](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_MasterSourceUrl 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.MasterSourceUrl')  
-or [Config](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_Config 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.Config').  
+or [TetraPakConfig](TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs.md#TetraPak_AspNet_OpenIdConnect_ReadDiscoveryDocumentArgs_TetraPakConfig 'TetraPak.AspNet.OpenIdConnect.ReadDiscoveryDocumentArgs.TetraPakConfig').  
 #### See Also
 - [ReadDocumentPolicy](TetraPak_AspNet_OpenIdConnect_ReadDocumentPolicy.md 'TetraPak.AspNet.OpenIdConnect.ReadDocumentPolicy')
   

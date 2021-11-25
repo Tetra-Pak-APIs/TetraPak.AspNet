@@ -117,7 +117,7 @@ public TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
 #### Property Value
 [TetraPak.AspNet.Auth.GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.GrantType 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[TetraPak.AspNet.ConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ConfigurationException 'TetraPak.AspNet.ConfigurationException')  
+[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
 The configured (textual) value could not be parsed into a [TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
 
 Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  
@@ -139,6 +139,15 @@ public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_Methods'></a>
+## ServiceEndpoint.Methods Property
+Gets or sets a (comma separated) list of allowed HTTP methods.  
+```csharp
+public TetraPak.MultiStringValue Methods { get; set; }
+```
+#### Property Value
+[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_Name'></a>
 ## ServiceEndpoint.Name Property
@@ -199,6 +208,17 @@ public TetraPak.AspNet.TetraPakConfig? TetraPakConfig { get; set; }
 ```
 #### Property Value
 [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_TrimHostInResponses'></a>
+## ServiceEndpoint.TrimHostInResponses Property
+Gets a value that specifies whether to always remove the host element from relationship URLs  
+based on this endpoint. If not specified in configuration the value will fall back to the  
+configuration service level (the endpoint "parent" section).   
+```csharp
+public bool TrimHostInResponses { get; set; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
   
 ### Methods
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_Equals(object_)'></a>
