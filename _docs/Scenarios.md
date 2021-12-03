@@ -1,9 +1,9 @@
 # TetraPak.AspNet SDK - Scenarios
 
-This document presents typical ASP.NET related scenarios, including issues, you will likely face and suggestions for what to do:
+This document presents typical ASP.NET related scenarios, use cases, and issues that you will likely face and suggestions for what to do:
 
 <a id="api-key-invalid"></a>
-## Error `401 - API key invalid`
+## ERROR `401 - API key invalid`
 
 Your web app is probably referencing the wrong `client id`. Please check your configuration (eg. `appsettings.json` file) and compare the `"ClientId"` value with your [app registration Consumer Key][tetra-pak-dev-portal-appreg-consumer-key].
 

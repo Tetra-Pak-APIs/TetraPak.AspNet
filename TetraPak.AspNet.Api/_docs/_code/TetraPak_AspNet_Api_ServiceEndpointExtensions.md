@@ -246,25 +246,6 @@ a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/
 [System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
 The [serviceEndpoint](TetraPak_AspNet_Api_ServiceEndpointExtensions.md#TetraPak_AspNet_Api_ServiceEndpointExtensions_PatchAsync(TetraPak_AspNet_Api_ServiceEndpoint_System_Net_Http_HttpContent_System_Nullable_System_Threading_CancellationToken__TetraPak_AspNet_HttpClientOptions_)_serviceEndpoint 'TetraPak.AspNet.Api.ServiceEndpointExtensions.PatchAsync(TetraPak.AspNet.Api.ServiceEndpoint, System.Net.Http.HttpContent, System.Nullable&lt;System.Threading.CancellationToken&gt;, TetraPak.AspNet.HttpClientOptions?).serviceEndpoint') was not assigned to a registered service.  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint)'></a>
-## ServiceEndpointExtensions.Path(ServiceEndpoint) Method
-Returns the endpoint path as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
-```csharp
-public static string Path(this TetraPak.AspNet.Api.ServiceEndpoint endpoint);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint)_endpoint'></a>
-`endpoint` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
-The service endpoint.  
-  
-#### Returns
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-### Remarks
-The [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') is implicitly always cast to a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-so calling this method is not really necessary but might improve code readability.   
-#### See Also
-- [Path(ServiceEndpoint, DynamicPath)](TetraPak_AspNet_Api_ServiceEndpointExtensions.md#TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath) 'TetraPak.AspNet.Api.ServiceEndpointExtensions.Path(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.DynamicEntities.DynamicPath)')
-  
 <a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath)'></a>
 ## ServiceEndpointExtensions.Path(ServiceEndpoint, DynamicPath) Method
 Adds one or more key elements to the endpoint path and returns the result as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
@@ -288,6 +269,25 @@ The [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Ap
 so calling this method is not really necessary but might improve code readability.   
 #### See Also
 - [Path(ServiceEndpoint)](TetraPak_AspNet_Api_ServiceEndpointExtensions.md#TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint) 'TetraPak.AspNet.Api.ServiceEndpointExtensions.Path(TetraPak.AspNet.Api.ServiceEndpoint)')
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint)'></a>
+## ServiceEndpointExtensions.Path(ServiceEndpoint) Method
+Returns the endpoint path as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
+```csharp
+public static string Path(this TetraPak.AspNet.Api.ServiceEndpoint endpoint);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint)_endpoint'></a>
+`endpoint` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
+The service endpoint.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+### Remarks
+The [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') is implicitly always cast to a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+so calling this method is not really necessary but might improve code readability.   
+#### See Also
+- [Path(ServiceEndpoint, DynamicPath)](TetraPak_AspNet_Api_ServiceEndpointExtensions.md#TetraPak_AspNet_Api_ServiceEndpointExtensions_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath) 'TetraPak.AspNet.Api.ServiceEndpointExtensions.Path(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.DynamicEntities.DynamicPath)')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointExtensions_PostAsync(TetraPak_AspNet_Api_ServiceEndpoint_object__System_Nullable_System_Threading_CancellationToken__TetraPak_AspNet_HttpClientOptions_)'></a>
 ## ServiceEndpointExtensions.PostAsync(ServiceEndpoint, object?, Nullable&lt;CancellationToken&gt;, HttpClientOptions?) Method

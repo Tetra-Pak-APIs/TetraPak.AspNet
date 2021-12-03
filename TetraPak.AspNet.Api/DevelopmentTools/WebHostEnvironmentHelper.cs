@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using TetraPak.Logging;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api.DevelopmentTools
 {
@@ -10,7 +14,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
     public static class WebHostEnvironmentHelper
     {
         const string LocalHostPattern = "://localhost";
-        
+
         /// <summary>
         ///   Examines the bound host(s) and returns a value indicating whether they represent
         ///   a local host (eg: https://localhost[:port]).
@@ -21,6 +25,10 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         /// <param name="policy">
         ///   (optional; default=<see cref="CollectionMatchingPolicy.All"/>)
         ///   Specifies how to resolve the result (see remarks).
+        /// </param>
+        /// <param name="logger">
+        ///   (optional)<br/>
+        ///   A logger provider. When passed the method will log its operation.
         /// </param>
         /// <returns>
         ///   The result depends on the specified <paramref name="policy"/>:
@@ -45,9 +53,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         /// </returns>
         public static bool IsLocalHost(
             this IWebHostEnvironment self, 
-            CollectionMatchingPolicy policy = CollectionMatchingPolicy.All)
+            CollectionMatchingPolicy policy = CollectionMatchingPolicy.All,
+            ILogger? logger = null)
         {
             var hostUrls = new MultiStringValue(Environment.GetEnvironmentVariable("ASPNETCORE_URLS"), ";");
+            logger.Debug($"Checking bound URLs for local host \"{hostUrls}\" (policy: {policy})");
             const StringComparison Comparison = StringComparison.InvariantCultureIgnoreCase;
             return policy switch
             {

@@ -6,7 +6,7 @@ Each term/concept is presented as a separate section and in alphabetical order.
 
 ## Actor
 
-We use the term "`actor`" for *the acting party that initiated a request*. This can be a human or some autonomous service. The actor must be recognized as an `identity` by the Tetra Pak Auth Services (TPAS)
+We use the term "actor" for *the acting party that initiated a request*. This can be a human or some autonomous service. The actor must be recognized as an `identity` by the Tetra Pak Auth Services ([TPAS](#tpas))
 
 See also: [Identity](#identity)
 
@@ -597,7 +597,7 @@ See also: [Microsoft's official SignalR home page][signalr-official-home]
 
 ## Terminus (API)
 
-An API that is self-sustained in that it never makes [downstream](#downstream) requests. Instead all information required to complete the request can be produced by the API, or obtained from the API's own resources.
+An API that is self-sustained in that it never makes "[downstream](#downstream)" requests to other remote Tetra Pak APIs. Instead all information required to complete the request can be produced by the API, or obtained from the API's own resources without the need for further service authorization.
 
 We use this term in the SDK documentation to distinguish an API because such an API have no need to authenticate itself and, therefore, have no requirement for securely persisting its credentials ([client id](#client-id) and [client secret](#client-secret)), which removes complexity from its configuration and implementation.
 

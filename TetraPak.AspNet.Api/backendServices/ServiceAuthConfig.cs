@@ -17,7 +17,7 @@ using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 namespace TetraPak.AspNet.Api
 {
     [DebuggerDisplay("{" + nameof(ConfigPath) + "}")]
-    public class ServiceAuthConfig : ConfigurationSection, IServiceAuthConfig 
+    class ServiceAuthConfig : ConfigurationSection, IServiceAuthConfig 
     {
         public const string ServicesConfigName = "Services";
         
@@ -28,7 +28,7 @@ namespace TetraPak.AspNet.Api
         MultiStringValue? _scope;
         // ReSharper restore NotAccessedField.Local
 
-        IServiceProvider ServiceProvider { get; }
+        // IServiceProvider ServiceProvider { get; } obsolete
 
         /// <inheritdoc />
         public AmbientData AmbientData { get; }
@@ -150,9 +150,7 @@ namespace TetraPak.AspNet.Api
             if (source is TetraPakConfig)
             {
                 var stateDump = new StateDump(context);
-                await stateDump.AddAsync(
-                    this, 
-                    ConfigPath!.Last());
+                await stateDump.AddAsync(this, ConfigPath!.Last());
                 return true;
             }
 
@@ -162,9 +160,7 @@ namespace TetraPak.AspNet.Api
                 foreach (var service in services)
                 {
                     var stateDump = new StateDump(context);
-                    await stateDump.AddAsync(
-                        service, 
-                        service.ServiceName);
+                    await stateDump.AddAsync(service, service.ServiceName);
                 }
                 return true;
             }
@@ -183,7 +179,7 @@ namespace TetraPak.AspNet.Api
             {
                 context.Append(context.Indentation);
                 context.Append("\"Url\": \"");
-                context.Append(serviceEndpoint.GetAbsolutePath(false));
+                context.Append(serviceEndpoint.GetUrl(false));
                 context.AppendLine("\"");
                 return true;
             }
@@ -191,18 +187,32 @@ namespace TetraPak.AspNet.Api
             return false;
         }
         
-        public ServiceAuthConfig(
-            IServiceProvider serviceProvider,
+        // public ServiceAuthConfig(
+        //     IServiceProvider serviceProvider, obsolete
+        //     IServiceAuthConfig parentConfig,
+        //     string sectionIdentifier = ServicesConfigName) 
+        // : this(
+        //     parentConfig,
+        //     serviceProvider.GetRequiredService<AmbientData>(),
+        //     GetServiceConfigPath(sectionIdentifier))
+        // {
+        //     // AmbientData = serviceProvider.GetRequiredService<AmbientData>();
+        //     // ParentConfig = parentConfig;
+        //     // ServiceProvider = serviceProvider;
+        //     // StateDump.Attach(GetStateDumpAsync);
+        // }
+        
+        internal ServiceAuthConfig(
             IServiceAuthConfig parentConfig,
+            AmbientData ambientData,
             string sectionIdentifier = ServicesConfigName) 
         : base(
             parentConfig.Configuration,
-            serviceProvider.GetRequiredService<AmbientData>().Logger,
+            ambientData.Logger,
             GetServiceConfigPath(sectionIdentifier))
         {
-            AmbientData = serviceProvider.GetRequiredService<AmbientData>();
+            AmbientData = ambientData;
             ParentConfig = parentConfig;
-            ServiceProvider = serviceProvider;
             StateDump.Attach(GetStateDumpAsync);
         }
     }

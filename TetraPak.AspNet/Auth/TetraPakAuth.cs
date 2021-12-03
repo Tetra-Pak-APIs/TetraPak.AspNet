@@ -198,7 +198,10 @@ namespace TetraPak.AspNet.Auth
                         {
                             traceOidc(() 
                                 => $"Token response received:{oidcConnectMessageAsync(context.TokenEndpointResponse)}");
-                            await logger.TraceAsync(context.Response, true);
+                            await logger.TraceAsync(
+                                context.Response, 
+                                context.Request.GetMessageId(tetraPakConfig), 
+                                true);
                         },
                         OnRedirectToIdentityProvider = _ =>
                         {

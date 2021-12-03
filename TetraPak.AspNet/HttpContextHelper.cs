@@ -281,7 +281,7 @@ namespace TetraPak.AspNet
         /// <param name="request">
         ///   The <see cref="HttpRequest"/>.
         /// </param>
-        /// <param name="authConfig">
+        /// <param name="tetraPakConfig">
         ///   Carries the Tetra Pak authorization configuration.
         /// </param>
         /// <param name="enforce">
@@ -293,10 +293,10 @@ namespace TetraPak.AspNet
         /// </returns>
         public static string? GetMessageId(
             this HttpRequest request,
-            TetraPakConfig? authConfig,
+            TetraPakConfig? tetraPakConfig,
             bool enforce = false)
         {
-            var key = authConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;
+            var key = tetraPakConfig?.RequestMessageIdHeader ?? AmbientData.Keys.RequestMessageId;
             return request.Headers.GetSingleValue(key, enforce ? new RandomString() : null, enforce);
         }
 
@@ -673,6 +673,6 @@ namespace TetraPak.AspNet
         /// <exception cref="KeyNotFoundException">
         ///   The <paramref name="stringVerb"/> value is not a recognized HTTP method.
         /// </exception>
-        public static HttpMethod ToHttpMethod(this string stringVerb) => s_httpStringVerbToMethodMap[stringVerb];
+        public static HttpMethod ToHttpMethod(this string stringVerb) => s_httpStringVerbToMethodMap[stringVerb.ToUpper()];
     }
 }

@@ -43,7 +43,7 @@ namespace TetraPak.AspNet.Api
             collection.TryAddSingleton<IServiceAuthConfig>(p =>
             {
                 var parentConfig = p.GetRequiredService<TetraPakConfig>();
-                return new ServiceAuthConfig(p, parentConfig);
+                return new ServiceAuthConfig(parentConfig, p.GetRequiredService<AmbientData>());
             });
             collection.AddAmbientData();
             collection.AddTetraPakTokenExchangeService();
@@ -263,7 +263,7 @@ namespace TetraPak.AspNet.Api
             HttpQuery? query,
             HttpMethod[]? methods)
         {
-            var path = HateoasHelper.BuildPath(self.GetAbsolutePath(self.TrimHostInResponses), keys, query);
+            var path = HateoasHelper.BuildPath(self.GetUrl(self.TrimHostInResponses), keys, query);
             return new DtoRelationshipLocator(path, methods.EnsureGet());
         }
     }

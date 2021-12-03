@@ -207,7 +207,19 @@ namespace TetraPak.AspNet.Api
 
         internal IAuthorizationService AuthorizationService => Parent!.AuthorizationService;
 
-        public string GetAbsolutePath(bool trimHost) => (trimHost ? Parent!.BasePath : $"{Parent!.Host}{Parent!.BasePath}{StringValue}")!;
+        /// <summary>
+        ///   Constructs and returns the endpoint's absolute URL or path (with or without the host element). 
+        /// </summary>
+        /// <param name="trimHost">
+        ///   Specifies whether to remove the endpoint's host element, returning the absolute path instead. 
+        /// </param>
+        /// <returns>
+        ///   The a string reflecting the endpoint's URL or absolute path.
+        /// </returns>
+        public string GetUrl(bool trimHost) 
+            => (trimHost
+                ? Parent!.BasePath
+                : $"{Parent!.Host}{Parent!.BasePath}{StringValue}")!;
 
         #region .  Equality  .
 

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
@@ -499,12 +500,14 @@ namespace TetraPak.AspNet.Api
         internal ServiceEndpoints Initialize(ServiceEndpoints configuredEndpoints)
         {
             ServiceAuthConfig = configuredEndpoints.ServiceAuthConfig;
+            SectionIdentifier = configuredEndpoints.SectionIdentifier;
             BackendService = configuredEndpoints.BackendService;
             AuthorizationService = configuredEndpoints.AuthorizationService;
             HttpClientProvider = configuredEndpoints.HttpClientProvider;
             Host = configuredEndpoints.Host;
             BasePath = configuredEndpoints.BasePath;
             Section = configuredEndpoints.Section;
+            Logger = configuredEndpoints.Logger;
             _endpoints = configuredEndpoints._endpoints;
             return this;
         }

@@ -603,39 +603,6 @@ The exception to be reflected.
 [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
 An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
   
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)'></a>
-## ControllerBaseExtensions.RespondOk&lt;T&gt;(ControllerBase, EnumOutcome&lt;T&gt;, int) Method
-Constructs and returns an 'OK' (HTTP status code 200) response from an [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.   
-```csharp
-public static Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk<T>(this Microsoft.AspNetCore.Mvc.ControllerBase self, TetraPak.EnumOutcome<T> outcome, int totalCount=-1);
-```
-#### Type parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T'></a>
-`T`  
-The type of data items in response.  
-  
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome'></a>
-`outcome` [TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')  
-The [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_totalCount'></a>
-`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
-(optional; default=[read from [TetraPak.EnumOutcome&lt;&gt;.Count](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1.Count 'TetraPak.EnumOutcome`1.Count')])<br/>  
-Specifies a (custom) total count value. Use when the value from [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).outcome') is incorrect.    
-  
-#### Returns
-[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
-An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
-#### See Also
-- [TetraPak.AspNet.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse-1 'TetraPak.AspNet.ApiDataResponse`1')
-- [RespondOk(ControllerBase, HttpOkStatusCode)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Controllers_HttpOkStatusCode) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Controllers.HttpOkStatusCode)')
-- [RespondOk(ControllerBase, object?, int, ReadChunk?, HttpOkStatusCode)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_HttpOkStatusCode) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.HttpOkStatusCode)')
-  
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_HttpOkStatusCode)'></a>
 ## ControllerBaseExtensions.RespondOk(ControllerBase, object?, int, ReadChunk?, HttpOkStatusCode) Method
 Creates an [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult') object that produces an Status 200 OK response.  
@@ -694,6 +661,39 @@ Specifies the status code to be returned for the successful operation.
 #### Returns
 [Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
 An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)'></a>
+## ControllerBaseExtensions.RespondOk&lt;T&gt;(ControllerBase, EnumOutcome&lt;T&gt;, int) Method
+Constructs and returns an 'OK' (HTTP status code 200) response from an [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.   
+```csharp
+public static Microsoft.AspNetCore.Mvc.OkObjectResult RespondOk<T>(this Microsoft.AspNetCore.Mvc.ControllerBase self, TetraPak.EnumOutcome<T> outcome, int totalCount=-1);
+```
+#### Type parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T'></a>
+`T`  
+The type of data items in response.  
+  
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome'></a>
+`outcome` [TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[T](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_T 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')  
+The [TetraPak.EnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_totalCount'></a>
+`totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
+(optional; default=[read from [TetraPak.EnumOutcome&lt;&gt;.Count](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1.Count 'TetraPak.EnumOutcome`1.Count')])<br/>  
+Specifies a (custom) total count value. Use when the value from [outcome](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk_T_(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_EnumOutcome_T__int)_outcome 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk&lt;T&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.EnumOutcome&lt;T&gt;, int).outcome') is incorrect.    
+  
+#### Returns
+[Microsoft.AspNetCore.Mvc.OkObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.OkObjectResult 'Microsoft.AspNetCore.Mvc.OkObjectResult')  
+An [Microsoft.AspNetCore.Mvc.ObjectResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ObjectResult 'Microsoft.AspNetCore.Mvc.ObjectResult') object.  
+#### See Also
+- [TetraPak.AspNet.ApiDataResponse&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse-1 'TetraPak.AspNet.ApiDataResponse`1')
+- [RespondOk(ControllerBase, HttpOkStatusCode)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Controllers_HttpOkStatusCode) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Controllers.HttpOkStatusCode)')
+- [RespondOk(ControllerBase, object?, int, ReadChunk?, HttpOkStatusCode)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOk(Microsoft_AspNetCore_Mvc_ControllerBase_object__int_TetraPak_ReadChunk__TetraPak_AspNet_Api_Controllers_HttpOkStatusCode) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.RespondOk(Microsoft.AspNetCore.Mvc.ControllerBase, object?, int, TetraPak.ReadChunk?, TetraPak.AspNet.Api.Controllers.HttpOkStatusCode)')
   
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_RespondOkAccepted(Microsoft_AspNetCore_Mvc_ControllerBase_string__)'></a>
 ## ControllerBaseExtensions.RespondOkAccepted(ControllerBase, string[]) Method
@@ -814,6 +814,34 @@ An outcome to be transformed into the returned body.
 [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult')  
 An [Microsoft.AspNetCore.Mvc.ActionResult](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ActionResult 'Microsoft.AspNetCore.Mvc.ActionResult') object.  
   
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)'></a>
+## ControllerBaseExtensions.Service(ControllerBase, string?) Method
+Gets a backend service.  
+```csharp
+public static TetraPak.AspNet.Api.IBackendService Service(this Microsoft.AspNetCore.Mvc.ControllerBase self, string? serviceName=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_self'></a>
+`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
+The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
+  
+<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName'></a>
+`serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+(optional; default=[see remarks])<br/>  
+Identifies the service.   
+  
+#### Returns
+[IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService')  
+An object implementing the [IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService') contract.  
+#### Exceptions
+[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+The backend service could not be resolved.  
+Please ensure you haven't misspelled it in service configuration.   
+### Remarks
+When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service(Microsoft.AspNetCore.Mvc.ControllerBase, string?).serviceName') is omitted it will instead be resolved from naming convention,  
+based on the controller's type. As an example; calling this method from a controller of type  
+`WeatherServiceController` will assume the requested backend service name is "WeatherService".     
+  
 <a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service_TBackendService_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)'></a>
 ## ControllerBaseExtensions.Service&lt;TBackendService&gt;(ControllerBase, string?) Method
 Gets a backend service of a specified [System.Type](https://docs.microsoft.com/en-us/dotnet/api/System.Type 'System.Type') (implementing [IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService')).  
@@ -853,34 +881,6 @@ of the [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspN
 
   
 When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service_TBackendService_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service&lt;TBackendService&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string?).serviceName') is omitted it will instead be resolved from naming convention,  
-based on the controller's type. As an example; calling this method from a controller of type  
-`WeatherServiceController` will assume the requested backend service name is "WeatherService".     
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)'></a>
-## ControllerBaseExtensions.Service(ControllerBase, string?) Method
-Gets a backend service.  
-```csharp
-public static TetraPak.AspNet.Api.IBackendService Service(this Microsoft.AspNetCore.Mvc.ControllerBase self, string? serviceName=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_self'></a>
-`self` [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase')  
-The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Mvc.ControllerBase 'Microsoft.AspNetCore.Mvc.ControllerBase') object.  
-  
-<a name='TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName'></a>
-`serviceName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional; default=[see remarks])<br/>  
-Identifies the service.   
-  
-#### Returns
-[IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService')  
-An object implementing the [IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService') contract.  
-#### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
-The backend service could not be resolved.  
-Please ensure you haven't misspelled it in service configuration.   
-### Remarks
-When the [serviceName](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_serviceName 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service(Microsoft.AspNetCore.Mvc.ControllerBase, string?).serviceName') is omitted it will instead be resolved from naming convention,  
 based on the controller's type. As an example; calling this method from a controller of type  
 `WeatherServiceController` will assume the requested backend service name is "WeatherService".     
   

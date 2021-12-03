@@ -412,7 +412,7 @@ The TetraPak.AspNet SDK have this
 
 [tetra-pak-aspnet]: ./TetraPak.AspNet/README.md
 [tetra-pak-aspnet_dependency-injection]: ./TetraPak.AspNet/_docs/aspnet_webapp_overview.md#startup
-[tetra-pak-aspnet-scenarios]: ./Scenarios.md
+[tetra-pak-aspnet-scenarios]: ./_docs/Scenarios.md
 [tetra-pak-aspnet-api]: ./TetraPak.AspNet.Api/README.md
 [tetra-pak-aspnet-api-recipe]: ./TetraPak.AspNet.Api/recipe-webapi.md
 [tetra-pak-aspnet-api-cheat-sheet]: ./TetraPak.AspNet.Api/cheatsheet-webapi.md
@@ -461,10 +461,10 @@ The TetraPak.AspNet SDK have this
 [recipe-app]: ./TetraPak.AspNet/_docs/Recipe-WebApp.md
 [recipe-api]: ./TetraPak.AspNet.Api/_docs/Recipe-WebApi.md
 
-[cat]: ./CAT.md
-[cat-actor]: ./CAT.md#actor
-[cat-api]: ./CAT.md#api
-[cat-auth]: ./CAT.md#auth
-[cat-middleware-aspnet]: ./CAT.md#middleware-aspnet
-[cat-terminus-api]: ./CAT.md#terminus-api
-[cat-tpas]: ./CAT.md#tpas
+[cat]: ./_docs/CAT.md
+[cat-actor]: ./_docs/CAT.md#actor
+[cat-api]: ./_docs/CAT.md#api
+[cat-auth]: ./_docs/CAT.md#auth
+[cat-middleware-aspnet]: ./_docs/CAT.md#middleware-aspnet
+[cat-terminus-api]: ./_docs/CAT.md#terminus-api
+[cat-tpas]: ./_docs/CAT.md#tpas

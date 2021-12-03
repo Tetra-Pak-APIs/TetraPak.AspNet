@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Debugging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
@@ -30,7 +31,7 @@ namespace TetraPak.AspNet
         public int TraceRequestBodyBufferSize
         {
             get => GetFromFieldThenSection(0);
-            set => _traceRequestBodyBufferSize = TraceBodyOptions.AdjustBufferSize(value);
+            set => _traceRequestBodyBufferSize = TraceRequestOptions.AdjustBufferSize(value);
         }
 
         /// <summary>
@@ -44,20 +45,23 @@ namespace TetraPak.AspNet
         public long TraceBodyMaxSize
         {
             get => GetFromFieldThenSection<long>();
-            set => _traceRequestBodyMaxSize = TraceBodyOptions.AdjustMaxSize(value, TraceRequestBodyBufferSize);
+            set => _traceRequestBodyMaxSize = TraceRequestOptions.AdjustMaxSize(value, TraceRequestBodyBufferSize);
         }
 
         /// <summary>
-        ///   Constructs and returns a <see cref="TraceBodyOptions"/> object from the configuration.
+        ///   Constructs and returns a <see cref="TraceRequestOptions"/> object from the configuration.
         ///   This can be used with the <see cref="WebLoggerHelper"/>'s tracing methods.
         /// </summary>
+        /// <param name="tetraPakConfig"></param>
+        /// <param name="httpContext"></param>
         /// <returns>
-        ///   A <see cref="TraceBodyOptions"/> if <see cref="TraceBodyMaxSize"/> is assigned
+        ///   A <see cref="TraceRequestOptions"/> if <see cref="TraceBodyMaxSize"/> is assigned
         ///   and greater then zero (0); otherwise <c>null</c>.
         /// </returns>
-        public TraceBodyOptions? GetTraceBodyOptions() => TraceBodyMaxSize > 0
-            ? new TraceBodyOptions()
-            : null;
+        public TraceRequestOptions? GetTraceBodyOptions(TetraPakConfig tetraPakConfig, HttpContext httpContext) 
+            => TraceBodyMaxSize > 0
+                ? TraceRequestOptions.Default(httpContext.Request.GetMessageId(tetraPakConfig, true))
+                : null;
         
         /// <summary>
         ///   Initializes the code API. 

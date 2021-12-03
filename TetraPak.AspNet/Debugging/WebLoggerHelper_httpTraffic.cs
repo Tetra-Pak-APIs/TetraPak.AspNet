@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using TetraPak.Logging;
 
 #nullable enable
@@ -114,23 +120,19 @@ namespace TetraPak.AspNet.Debugging
         /// <param name="request">
         ///   The request to be traced.
         /// </param>
-        /// <param name="bodyHandler">
-        ///   (optional)<br/>
-        ///   A request body to be traced.
-        /// </param>
-        /// <param name="bodyOptions">
+        /// <param name="options">
         ///   (optional)<br/>
         ///   Specifies how tracing of request bodies is conducted. 
         /// </param>
         public static Task TraceHttpRequestAsync(
             this ILogger? logger, 
             HttpRequest request, 
-            Func<string>? bodyHandler = null,
-            TraceBodyOptions? bodyOptions = null)
+            Func<TraceRequestOptions>? optionsFactory = null)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return Task.CompletedTask;
 
+            var options = optionsFactory?.Invoke();
             if (request.ContentLength > 2048)
                 return Task.Run(async () => await logBodyAsync());
 
@@ -143,21 +145,112 @@ namespace TetraPak.AspNet.Debugging
                 sb.Append(request.Method.ToUpper());
                 sb.Append(' ');
                 sb.AppendLine(request.GetDisplayUrl());
-                addHeaders(sb, request.Headers);
+                addHeaders(sb, request.Headers.ToKeyValuePairs());
                 await addBody(sb);
-                logger.Trace(sb.ToString());
+                sb = options.AsyncDecorationHandler is { }
+                    ? await options.AsyncDecorationHandler(sb)
+                    : sb;
+            
+                logger.Trace(sb.ToString(), options?.MessageId);
             }
             
             async Task addBody(StringBuilder sb)
             {
-                if (bodyHandler is {})
+                if (options?.AsyncBodyFactory is {})
                 {
                     sb.AppendLine();
-                    sb.AppendLine(bodyHandler());
+                    sb.AppendLine(await options.AsyncBodyFactory());
                     return;
                 }
 
-                var bodyText = await request.GetRawBodyStringAsync(Encoding.Default, bodyOptions);
+                if (request.Body.Length == 0)
+                    return;
+                
+                var bodyText = await request.Body.GetRawBodyStringAsync(Encoding.Default, options);
+                if (string.IsNullOrEmpty(bodyText))
+                    return;
+                
+                sb.AppendLine();
+                sb.AppendLine(bodyText);
+            }
+        }
+        
+        /// <summary>
+        ///   Traces a <see cref="HttpWebRequest"/> in the logs.
+        /// </summary>
+        /// <param name="logger">
+        ///   The logger provider.
+        /// </param>
+        /// <param name="requestMessage">
+        ///   The request message to be traced.
+        /// </param>
+        /// <param name="options">
+        ///   (optional)<br/>
+        ///   Specifies how tracing of request bodies is conducted. 
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        ///   <paramref name="baseAddress"/> is <c>null</c> but the <paramref name="requestMessage"/>'s
+        ///   URI is relative.
+        /// </exception>
+        public static async Task TraceHttpRequestMessageAsync(
+            this ILogger? logger,
+            HttpRequestMessage requestMessage,
+            Func<TraceRequestOptions>? optionsFactory = null)
+        {
+            if (logger is null || !logger.IsEnabled(LogLevel.Trace))
+                return;
+
+            var options = optionsFactory?.Invoke();
+            var contentStream = await requestMessage.Content?.ReadAsStreamAsync();
+            if (contentStream?.Length > 2048)
+            {
+                traceAsync();
+            }
+            else
+            {
+                await traceAsync();
+            }
+
+            async Task traceAsync()
+            {
+                var sb = await requestMessage.ToStringBuilder(new StringBuilder(), optionsFactory);
+                logger.Trace(sb.ToString(), options?.MessageId);
+            }
+        }
+
+        public static async Task<StringBuilder> ToStringBuilder(
+            this HttpRequestMessage requestMessage,
+            StringBuilder sb,
+            Func<TraceRequestOptions>? optionsFactory = null)
+        {
+            var options = optionsFactory?.Invoke();
+            var contentStream = await requestMessage.Content?.ReadAsStreamAsync();
+
+            sb.Append(requestMessage.Method.Method.ToUpper());
+            sb.Append(' ');
+            var uri = options?.BaseAddress is { }
+                ? $"{options.BaseAddress.ToString().EnsurePostfix("/")}{requestMessage.RequestUri.ToString().TrimStart('/')}"
+                : requestMessage.RequestUri.AbsoluteUri;
+            sb.AppendLine(uri);
+            addHeaders(sb, requestMessage.Headers);
+            await addBodyAsync(sb);
+            return options.AsyncDecorationHandler is { }
+                ? await options.AsyncDecorationHandler(sb)
+                : sb;
+            
+            async Task addBodyAsync(StringBuilder sb)
+            {
+                if (options?.AsyncBodyFactory is {})
+                {
+                    sb.AppendLine();
+                    sb.AppendLine(await options.AsyncBodyFactory());
+                    return;
+                }
+
+                if (requestMessage.Content is null)
+                    return;
+                
+                var bodyText = await requestMessage.GetRawBodyStringAsync(Encoding.Default, options);
                 if (string.IsNullOrEmpty(bodyText))
                     return;
                 
@@ -175,46 +268,98 @@ namespace TetraPak.AspNet.Debugging
         /// <param name="encoding">
         ///   The character encoding to use. 
         /// </param>
-        /// <param name="bodyOptions">
+        /// <param name="options">
         ///   (optional)<br/>
         ///   Specifies how tracing of request bodies is conducted. 
         /// </param>
         /// <returns>
         ///   The (raw) textual representation of the request body as a <see cref="string"/>. 
         /// </returns>
+        // public static async Task<string> GetRawBodyStringAsync( obsolete
+        //     this HttpRequest request, 
+        //     Encoding encoding, 
+        //     TraceRequestOptions? options = null)
+        // {
+        //     var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
+        //     
+        //     request.EnableBuffering();
+        //     if (request.ContentLength == 0 || !request.Body.CanSeek)
+        //         return string.Empty;
+        //
+        //     string body;
+        //     if (options is null || request.Body.Length <= options.MaxSize)
+        //     {
+        //         // no need to read in chunks, just get and return the whole body ...
+        //         using var bodyReader = new StreamReader(request.Body, encoding, true, 
+        //             bufferSize, 
+        //             true);
+        //         body = await bodyReader.ReadToEndAsync();
+        //         request.Body.Position = 0;
+        //         return body;
+        //     }
+        //     
+        //     // read body in chunks of buffer size and truncate if there's a max length
+        //     // (to avoid performance issues with very large bodies, such as media or binaries) ... 
+        //     request.Body.Seek(0, SeekOrigin.Begin);
+        //     var buffer = new char[bufferSize];
+        //     var remaining = options.MaxSize;
+        //     var isTruncated = false;
+        //
+        //     var bodyStream = new MemoryStream();
+        //     await using var writer = new StreamWriter(bodyStream);
+        //     using var reader = new StreamReader(request.Body, encoding, true, bufferSize, true);
+        //     
+        //     while (await reader.ReadBlockAsync(buffer) != 0 && !isTruncated)
+        //     {
+        //         await writer.WriteAsync(buffer);
+        //         remaining -= bufferSize;
+        //         isTruncated = remaining <= 0; 
+        //     }
+        //     bodyStream.Position = 0;
+        //     using (var memoryReader = new StreamReader(bodyStream, leaveOpen:true)) // leave open (`writer` will close)
+        //     {
+        //         body = await memoryReader.ReadToEndAsync();
+        //     }
+        //     request.Body.Position = 0;
+        //     return isTruncated
+        //         ? $"{body}...[--TRUNCATED--]"
+        //         : body;
+        // }
+        
         public static async Task<string> GetRawBodyStringAsync(
-            this HttpRequest request, 
+            this HttpRequestMessage request, 
             Encoding encoding, 
-            TraceBodyOptions? bodyOptions = null)
+            TraceRequestOptions? options = null)
         {
-            var bufferSize = bodyOptions?.BufferSize ?? TraceBodyOptions.DefaultBuffersSize;
+            if (request.Content is null)
+                return string.Empty;
             
-            request.EnableBuffering();
-            if (request.ContentLength is not > 0 || !request.Body.CanSeek)
+            var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
+            var stream = await request.Content.ReadAsStreamAsync();
+            if (stream.Length == 0 || !stream.CanSeek)
                 return string.Empty;
 
             string body;
-            if (bodyOptions is null)
+            if (options is null || stream.Length <= options.MaxSize)
             {
                 // no need to read in chunks, just get and return the whole body ...
-                using var bodyReader = new StreamReader(request.Body, encoding, true, 
+                using var bodyReader = new StreamReader(stream, encoding, true, 
                     bufferSize, 
                     true);
                 body = await bodyReader.ReadToEndAsync();
-                request.Body.Position = 0;
+                stream.Position = 0;
                 return body;
             }
             
             // read body in chunks of buffer size and truncate if there's a max length
             // (to avoid performance issues with very large bodies, such as media or binaries) ... 
-            request.Body.Seek(0, SeekOrigin.Begin);
             var buffer = new char[bufferSize];
-            var remaining = bodyOptions.MaxSize;
+            var remaining = options.MaxSize;
             var isTruncated = false;
 
             var bodyStream = new MemoryStream();
             await using var writer = new StreamWriter(bodyStream);
-            using var reader = new StreamReader(request.Body, encoding, true, bufferSize, true);
+            using var reader = new StreamReader(stream, encoding, true, bufferSize, true);
             
             while (await reader.ReadBlockAsync(buffer) != 0 && !isTruncated)
             {
@@ -227,7 +372,7 @@ namespace TetraPak.AspNet.Debugging
             {
                 body = await memoryReader.ReadToEndAsync();
             }
-            request.Body.Position = 0;
+            stream.Position = 0;
             return isTruncated
                 ? $"{body}...[--TRUNCATED--]"
                 : body;
@@ -249,11 +394,10 @@ namespace TetraPak.AspNet.Debugging
         /// <seealso cref="TraceAsync(Microsoft.Extensions.Logging.ILogger?,HttpResponse?,bool?)"/>
         public static async Task TraceAsync(this ILogger? logger, 
             HttpResponse? response, 
-            Func<HttpResponse?,Task<string>>? bodyHandler = null)
-        {
-            await traceAsync(logger, response, bodyHandler);
-        }
-        
+            Func<TraceRequestOptions>? optionsFactory = null)
+        =>
+            await traceAsync(logger, response, optionsFactory);
+
         /// <summary>
         ///   Traces a <see cref="HttpResponse"/> in the logs.
         /// </summary>
@@ -268,9 +412,14 @@ namespace TetraPak.AspNet.Debugging
         ///   Specifies whether to also include the response body.
         /// </param>
         /// <seealso cref="TraceAsync(ILogger?,HttpResponse?,Func{HttpResponse?,Task{string}}?)"/>
-        public static async Task TraceAsync(this ILogger? logger, HttpResponse? response, bool? includeBody = false)
+        public static async Task TraceAsync(this ILogger? logger, HttpResponse? response, string? messageId, bool? includeBody = false)
         {
-            await traceAsync(logger, response, includeBody!.Value ? defaultHttpResponseBodyHandler! : null);
+            var options = TraceRequestOptions.Default(messageId);
+            if (!includeBody ?? false)
+            {
+                options.AsyncBodyFactory = () => Task.FromResult(string.Empty);
+            }
+            await traceAsync(logger, response, () => options);
         }
         
         /// <summary>
@@ -343,28 +492,133 @@ namespace TetraPak.AspNet.Debugging
             }
         }
 
-        static async Task traceAsync(ILogger? logger, HttpResponse? response, Func<HttpResponse?,Task<string>>? bodyHandler)
+        public static async Task<StringBuilder> ToStringBuilderAsync(
+            this HttpResponse? response,
+            StringBuilder sb,
+            TraceRequestOptions options)
         {
-            if (logger is null || response is null || !logger.IsEnabled(LogLevel.Debug))
-                return;
-            
-            var sb = new StringBuilder();
             sb.Append(response.StatusCode);
+            sb.Append(' ');
+            sb.AppendLine(response.StatusCode.ToString());
+            addHeaders(sb, response.Headers.ToKeyValuePairs());
+            await addBody();
+            return sb;
+
+            async Task addBody()
+            {
+                if (options.AsyncBodyFactory is { })
+                {
+                    sb.AppendLine();
+                    sb.AppendLine(await options.AsyncBodyFactory());
+                    return;
+                }
+
+                if (response.Body.Length == 0)
+                    return;
+
+                var body = await response.Body.GetRawBodyStringAsync(Encoding.UTF8, options);
+                if (body.Length == 0)
+                    return;
+                
+                sb.AppendLine();
+                sb.AppendLine(body);
+            }
+        }
+        public static async Task<StringBuilder> ToStringBuilderAsync(
+            this HttpResponseMessage? response,
+            StringBuilder sb,
+            TraceRequestOptions options)
+        {
+            sb.Append((int) response.StatusCode);
             sb.Append(' ');
             sb.AppendLine(response.StatusCode.ToString());
             addHeaders(sb, response.Headers);
             await addBody();
+            return sb;
 
-            logger.Trace(sb.ToString());
-            
             async Task addBody()
             {
-                if (bodyHandler is null)
+                if (options.AsyncBodyFactory is { })
+                {
+                    sb.AppendLine();
+                    sb.AppendLine(await options.AsyncBodyFactory());
+                    return;
+                }
+
+                var stream = await response.Content.ReadAsStreamAsync();
+                if (stream.Length == 0)
                     return;
 
+                var body = await stream.GetRawBodyStringAsync(Encoding.UTF8, options);
+                if (body.Length == 0)
+                    return;
+                
                 sb.AppendLine();
-                sb.AppendLine(await bodyHandler(response));
+                sb.AppendLine(body);
             }
+        }
+
+        static async Task traceAsync(
+            ILogger? logger, 
+            HttpResponse? response,
+            Func<TraceRequestOptions>? optionsFactory = null)
+        {
+            if (logger is null || response is null || !logger.IsEnabled(LogLevel.Trace))
+                return;
+
+            var sb = await response.ToStringBuilderAsync(new StringBuilder(), optionsFactory.Invoke());
+            logger.Trace(sb.ToString());
+        }
+        
+        public static async Task<string> GetRawBodyStringAsync(
+            this Stream stream, 
+            Encoding encoding, 
+            TraceRequestOptions? options = null)
+        {
+            if (stream is null || stream.Length == 0)
+                return string.Empty;
+            
+            var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
+            if (stream.Length == 0 || !stream.CanSeek)
+                return string.Empty;
+
+            string body;
+            if (options is null || stream.Length <= options.MaxSize)
+            {
+                // no need to read in chunks, just get and return the whole body ...
+                using var bodyReader = new StreamReader(stream, encoding, true, 
+                    bufferSize, 
+                    true);
+                body = await bodyReader.ReadToEndAsync();
+                stream.Position = 0;
+                return body;
+            }
+            
+            // read body in chunks of buffer size and truncate if there's a max length
+            // (to avoid performance issues with very large bodies, such as media or binaries) ... 
+            var buffer = new char[bufferSize];
+            var remaining = options.MaxSize;
+            var isTruncated = false;
+
+            var bodyStream = new MemoryStream();
+            await using var writer = new StreamWriter(bodyStream);
+            using var reader = new StreamReader(stream, encoding, true, bufferSize, true);
+            
+            while (await reader.ReadBlockAsync(buffer) != 0 && !isTruncated)
+            {
+                await writer.WriteAsync(buffer);
+                remaining -= bufferSize;
+                isTruncated = remaining <= 0; 
+            }
+            bodyStream.Position = 0;
+            using (var memoryReader = new StreamReader(bodyStream, leaveOpen:true)) // leave open (`writer` will close)
+            {
+                body = await memoryReader.ReadToEndAsync();
+            }
+            stream.Position = 0;
+            return isTruncated
+                ? $"{body}...[--TRUNCATED--]"
+                : body;
         }
         
         static async Task traceAsync(ILogger? logger, WebResponse? response, Func<WebResponse?,Task<string>>? bodyHandler)
@@ -418,11 +672,27 @@ namespace TetraPak.AspNet.Debugging
             }
         }
     
-        static void addHeaders(StringBuilder sb, IHeaderDictionary headers)
+        // static void addHeaders(StringBuilder sb, IHeaderDictionary headers) obsolete
+        // {
+        //     foreach (var (key, values) in headers)
+        //     {
+        //         if (values.Count == 0)
+        //         {
+        //             sb.AppendLine(key);
+        //             continue;
+        //         }
+        //     
+        //         sb.Append(key);
+        //         sb.Append('=');
+        //         sb.AppendLine(values.ConcatCollection());
+        //     }
+        // }
+        
+        static void addHeaders(StringBuilder sb, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
         {
             foreach (var (key, values) in headers)
             {
-                if (values.Count == 0)
+                if (!values.Any())
                 {
                     sb.AppendLine(key);
                     continue;
@@ -433,12 +703,22 @@ namespace TetraPak.AspNet.Debugging
                 sb.AppendLine(values.ConcatCollection());
             }
         }
+
+        static IEnumerable<KeyValuePair<string, IEnumerable<string>>> ToKeyValuePairs(
+            this IDictionary<string, StringValues> dict)
+        {
+            foreach (var (key, values) in dict)
+            {
+                yield return new KeyValuePair<string, IEnumerable<string>>(key, values);
+            }
+        }
+        
     }
 
     /// <summary>
     ///   Used when request bodies gets dumped to the logger (at log level <see cref="LogLevel.Trace"/>).
     /// </summary>
-    public class TraceBodyOptions
+    public class TraceRequestOptions
     {
         internal const int DefaultBuffersSize = 1024;
         const int DefaultMaxSizeFactor = 4;
@@ -454,9 +734,55 @@ namespace TetraPak.AspNet.Debugging
         public static uint DefaultContentLengthAsyncThreshold { get; set; } = 1024;
         
         /// <summary>
-        ///   Gets default <see cref="TraceBodyOptions"/>
+        ///   Gets default <see cref="TraceRequestOptions"/>
         /// </summary>
-        public static TraceBodyOptions Default => new();
+        public static TraceRequestOptions Default(string? messageId) => new(messageId);
+        
+        /// <summary>
+        ///   A base address used for the traced request message. This should be passed if
+        ///   the request message's URI (<see cref="HttpRequestMessage.RequestUri"/>) is a relative path.
+        ///   If <c>null</c> the request message's URI is expected to be an absolute URI (which may throw an
+        ///   exception).
+        /// </summary>
+        public Uri? BaseAddress { get; set; }
+
+        /// <summary>
+        ///   (fluent API)<br/>
+        ///   Assigns the <see cref="BaseAddress"/> property and returns <c>this</c>.
+        /// </summary>
+        public TraceRequestOptions WithBaseAddress(Uri baseAddress)
+        {
+            BaseAddress = baseAddress;
+            return this;
+        }
+        
+        /// <summary>
+        ///   Assign this to construct custom body content (default = <c>null</c>).
+        /// </summary>
+        public Func<Task<string>>? AsyncBodyFactory { get; set; }
+        
+        /// <summary>
+        ///   Gets or sets a unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </summary>
+        public string? MessageId { get; set; }
+        
+        /// <summary>
+        ///   A callback handler, invoked after the request message has been serialized to
+        ///   a <see cref="string"/> but before the result is propagated to the <paramref name="logger"/>.
+        ///   Use this to decorate the result with custom content.
+        /// </summary>
+        /// <seealso cref="WithDecorator"/>
+        internal Func<StringBuilder, Task<StringBuilder>>? AsyncDecorationHandler { get; set; }
+
+        /// <summary>
+        ///   (fluent API)<br/>
+        ///   Assigns the <see cref="AsyncDecorationHandler"/> decorator and returns <c>this</c>.
+        /// </summary>
+        public TraceRequestOptions WithDecorator(Func<StringBuilder, Task<StringBuilder>> decorator)
+        {
+            AsyncDecorationHandler = decorator;
+            return this;
+        }
 
         /// <summary>
         ///   The buffer size. Set for reading large bodies.
@@ -493,12 +819,13 @@ namespace TetraPak.AspNet.Debugging
         internal static long AdjustMaxSize(long value, int bufferSize) => (long)Math.Round((decimal)value / bufferSize) * bufferSize;
 
         /// <summary>
-        ///   Initializes the <see cref="TraceBodyOptions"/> with default values.  
+        ///   Initializes the <see cref="TraceRequestOptions"/> with default values.  
         /// </summary>
-        public TraceBodyOptions()
+        public TraceRequestOptions(string? messageId = null)
         {
             _bufferSize = DefaultBuffersSize;
             _maxSize = _bufferSize * DefaultMaxSizeFactor;
+            MessageId = messageId;
         }
     }
 }

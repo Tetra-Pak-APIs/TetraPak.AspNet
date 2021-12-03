@@ -13,8 +13,8 @@ namespace TetraPak.AspNet.Debugging
 
         public Task InvokeAsync(HttpContext context) 
             => _logger.TraceHttpRequestAsync(
-                context.Request, 
-                bodyOptions: _tetraPakConfig.Logging.GetTraceBodyOptions());
+                context.Request,
+                () => _tetraPakConfig.Logging.GetTraceBodyOptions(_tetraPakConfig, context));
 
         public TraceRequestMiddleware(TetraPakConfig tetraPakConfig, ILogger logger)
         {

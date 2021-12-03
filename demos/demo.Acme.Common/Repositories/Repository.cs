@@ -17,12 +17,14 @@ namespace demo.Acme.Repositories
     /// <typeparam name="T">
     ///   The type of items supported by the repository.
     /// </typeparam>
-    public abstract class SimpleRepository<T> where T : Model
+    public abstract class Repository<T> : IRepository<T> where T : Model
     {
         IDictionary<string, T> _items;
         string? _itemTypeName;
         uint _delayMax;
         uint _delayMin;
+
+        ILogger? Logger { get; }
 
         /// <summary>
         ///   Gets the name of the item type supported by this repository.
@@ -40,10 +42,8 @@ namespace demo.Acme.Repositories
         /// <see cref="ItemTypeName"/>
         protected virtual string OnGetItemTypeName() => typeof(T).Name;
 
-        ILogger? Logger { get; }
-
         /// <summary>
-        ///   Seeds the <see cref="SimpleRepository{T}"/> with a collection of items.
+        ///   Seeds the <see cref="Repository{T}"/> with a collection of items.
         /// </summary>
         public void Seed(IEnumerable<T> items) => _items = items
             .Where(i => !string.IsNullOrWhiteSpace(i.Id))
@@ -353,10 +353,8 @@ namespace demo.Acme.Repositories
                 }
             }, c);
         }
-
         
-        
-        public SimpleRepository(ILogger? logger)
+        public Repository(ILogger? logger)
         {
             Logger = logger;
             _items = new Dictionary<string, T>();

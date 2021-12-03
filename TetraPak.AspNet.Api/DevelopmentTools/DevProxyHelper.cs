@@ -51,7 +51,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
                 var logger = app.ApplicationServices.GetService<ILogger<DevProxyMiddleware>>();
                 var httpClientProvider = app.ApplicationServices.GetRequiredService<IHttpClientProvider>();
-                s_isDevProxyAllowed = env.IsLocalHost();
+                s_isDevProxyAllowed = env.IsLocalHost(CollectionMatchingPolicy.Any, logger);
                 if (!s_isDevProxyAllowed)
                 {
                     logger.Debug("Local development proxy middleware was NOT injected (not a local host)");

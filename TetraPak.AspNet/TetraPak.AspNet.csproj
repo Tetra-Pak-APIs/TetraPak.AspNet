@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>1.1.0-beta.1</PackageVersion>
+        <PackageVersion>1.1.0-beta.2</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
