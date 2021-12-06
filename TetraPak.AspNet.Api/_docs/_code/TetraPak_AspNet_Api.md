@@ -20,4 +20,4 @@
 
 | Enums | |
 | :--- | :--- |
-| [RequestDistribution](TetraPak_AspNet_Api_RequestDistribution.md 'TetraPak.AspNet.Api.RequestDistribution') |  |
+| [RequestDistribution](TetraPak_AspNet_Api_RequestDistribution.md 'TetraPak.AspNet.Api.RequestDistribution') | Used to specify the request thread distribution when performing multiple resource requests.<br/> |

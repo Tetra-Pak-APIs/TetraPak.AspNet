@@ -384,6 +384,19 @@ The name of the requested endpoint.
 
 Implements [GetEndpoint(string)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetEndpoint(string) 'TetraPak.AspNet.Api.IBackendService.GetEndpoint(string)')  
   
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetEndpoints()'></a>
+## BackendService&lt;TEndpoints&gt;.GetEndpoints() Method
+Returns all service endpoints as a collection of key-value pairs, each  
+with the endpoint name as its 'key' element and the actual [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') as the value.   
+```csharp
+public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string,TetraPak.AspNet.Api.ServiceEndpoint>> GetEndpoints();
+```
+#### Returns
+[System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.Collections.Generic.KeyValuePair&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
+A collection of [System.Collections.Generic.KeyValuePair&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2') items.  
+
+Implements [GetEndpoints()](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetEndpoints() 'TetraPak.AspNet.Api.IBackendService.GetEndpoints()')  
+  
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetScopeAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetScopeAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
 Gets a scope to be requested for authorization while, optionally, specifying a default scope.  
@@ -476,6 +489,25 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 The default implementation simply calls [Endpoints](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__Endpoints 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.Endpoints')'  
 internal [TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService')
   
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnConstructPath(string)'></a>
+## BackendService&lt;TEndpoints&gt;.OnConstructPath(string) Method
+(virtual method)<br/>  
+Resolves the effective path to be used.  
+Default implementation resolved a default path ('/') as a concatenation of  
+[Host](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_Host 'TetraPak.AspNet.Api.ServiceEndpoints.Host') and [BasePath](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_BasePath 'TetraPak.AspNet.Api.ServiceEndpoints.BasePath')  
+and just returns all other paths as-is.   
+```csharp
+protected virtual string OnConstructPath(string path);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnConstructPath(string)_path'></a>
+`path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The path to be resolved.  
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A URL to be used in the request.  
+  
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnGetHttpClientAsync(TetraPak_AspNet_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.OnGetHttpClientAsync(HttpClientOptions, Nullable&lt;CancellationToken&gt;) Method
 This method gets invoked when the class needs a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') instance.  
@@ -497,6 +529,30 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnMakeRequestMessage(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_string_System_Net_Http_HttpContent)'></a>
+## BackendService&lt;TEndpoints&gt;.OnMakeRequestMessage(HttpMethod, string, HttpContent) Method
+Invoked to construct a [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage') from a path,  
+HTTP method and [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent') object.  
+```csharp
+protected virtual System.Net.Http.HttpRequestMessage OnMakeRequestMessage(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, string path, System.Net.Http.HttpContent content);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnMakeRequestMessage(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_string_System_Net_Http_HttpContent)_method'></a>
+`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+The HTTP method.  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnMakeRequestMessage(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_string_System_Net_Http_HttpContent)_path'></a>
+`path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+A resource path.  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnMakeRequestMessage(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_string_System_Net_Http_HttpContent)_content'></a>
+`content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
+The HTTP content (and headers).  
+  
+#### Returns
+[System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage')  
+A [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage') object.  
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__OnServiceConfigurationError(System_Net_Http_HttpRequestMessage_System_Collections_Generic_IEnumerable_System_Exception__string_)'></a>
 ## BackendService&lt;TEndpoints&gt;.OnServiceConfigurationError(HttpRequestMessage, IEnumerable&lt;Exception&gt;, string?) Method

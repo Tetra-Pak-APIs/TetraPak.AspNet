@@ -2,7 +2,7 @@
 ### [TetraPak.AspNet.Api](TetraPak_AspNet_Api.md 'TetraPak.AspNet.Api')
 ## ServiceAuthConfig Class
 ```csharp
-public class ServiceAuthConfig : TetraPak.Configuration.ConfigurationSection,
+internal class ServiceAuthConfig : TetraPak.Configuration.ConfigurationSection,
 TetraPak.AspNet.Auth.IServiceAuthConfig
 ```
 

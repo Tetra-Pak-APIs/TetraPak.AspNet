@@ -23,7 +23,7 @@ namespace TetraPak.AspNet
         void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) =>
             GetDiagnostics()?.StartTimer(timerKey);
 
-        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) =>
+        long? ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) =>
             GetDiagnostics()?.GetElapsedMs(timerKey);
 
         /// <summary>

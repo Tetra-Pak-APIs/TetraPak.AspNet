@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using demo.Acme.Models;
 using demo.Acme.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ namespace demo.AcmeAssets.Data
             var filePath = Path.Combine(RootFolder, $"{model.Id!}.{suffixOutcome.Value!}");
             while (File.Exists(filePath))
             {
-                model = new FileModel(new RandomString(), model.File);
+                model = new FileModel(new RandomString(), model.File!);
                 filePath = Path.Combine(RootFolder, model.Id!, suffixOutcome.Value!);
             }
 
@@ -34,7 +35,7 @@ namespace demo.AcmeAssets.Data
             var fileInfo = fileInfoOutcome.Value!;
             await using (var stream = new FileStream(fileInfo.FullName, FileMode.Create))
             {
-                await model.File.CopyToAsync(stream);
+                await model.File!.CopyToAsync(stream);
             }
             
             return Outcome<FileModel>.Success(model);
@@ -60,11 +61,31 @@ namespace demo.AcmeAssets.Data
             return Outcome<FileInfo>.Success(fileInfo);
         }
 
+        public Task<Outcome<Stream>> ReadFileStream(FileModel model)
+        {
+            var fileName = model.File!.FileName;
+            var path = Path.Combine(RootFolder, fileName);
+            var fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists)
+                return Task.FromResult(Outcome<Stream>.Fail(new FileNotFoundException($"File not found: {fileName}")));
+
+            try
+            {
+                var stream = fileInfo.OpenRead();
+                return Task.FromResult(Outcome<Stream>.Success(stream));
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(Outcome<Stream>.Fail(ex));
+            }
+        }
+
         static Outcome<string> getFileSuffix(FileModel model)
         {
-            return model.File.ContentType switch
+            return model.ContentType switch
             {
                 "application/png" => Outcome<string>.Success("png"),
+                "image/png" => Outcome<string>.Success("png"),
                 MediaTypeNames.Image.Jpeg => Outcome<string>.Success("jpg"),
                 MediaTypeNames.Application.Zip => Outcome<string>.Success("zip"),
                 _ => Outcome<string>.Fail(new NotSupportedException("Repository supports only PNG and JPEG files at this time"))
@@ -75,7 +96,7 @@ namespace demo.AcmeAssets.Data
         : base(logger)
         {
             RootFolder = configuration.GetValue<string>("FilesRoot") ?? "./files";
-            new DirectoryInfo(RootFolder).DeleteAllAsync();
+            new DirectoryInfo(RootFolder).DeleteAllWhereAsync(info => info.Name != "big-picture.jpg");
         }
     }
 }

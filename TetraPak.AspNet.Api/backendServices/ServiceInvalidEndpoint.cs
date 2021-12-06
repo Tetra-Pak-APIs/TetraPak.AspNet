@@ -24,14 +24,6 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public IEnumerable<Exception> GetIssues() => _issues;
 
-        // internal ServiceInvalidEndpoint WithInformation(string name, IEnumerable<Exception> issues) obsolete
-        // {
-        //     Name = name;
-        //     StringValue = $"(name={name})"; 
-        //     _issues = issues;
-        //     return this;
-        // }
-
         /// <summary>
         ///   Initializes the <see cref="ServiceInvalidEndpoint"/>.
         ///   This constructor is mainly intended for the use by the dependency injection services. 

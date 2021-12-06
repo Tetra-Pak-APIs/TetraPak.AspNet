@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -14,8 +13,8 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using TetraPak.Logging;
+using TetraPak.Serialization;
 
 #nullable enable
 
@@ -72,7 +71,10 @@ namespace TetraPak.AspNet.Debugging
         ///   (optional)<br/>
         ///   A handler that provides a content (body) to be traced.
         /// </param>
-        public static Task TraceWebRequestAsync(this ILogger? logger, HttpWebRequest request, Func<string>? bodyHandler = null)
+        public static Task TraceWebRequestAsync(
+            this ILogger? logger, 
+            HttpWebRequest request, 
+            Func<string>? bodyHandler = null)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return Task.CompletedTask;
@@ -120,7 +122,7 @@ namespace TetraPak.AspNet.Debugging
         /// <param name="request">
         ///   The request to be traced.
         /// </param>
-        /// <param name="options">
+        /// <param name="optionsFactory">
         ///   (optional)<br/>
         ///   Specifies how tracing of request bodies is conducted. 
         /// </param>
@@ -132,7 +134,7 @@ namespace TetraPak.AspNet.Debugging
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return Task.CompletedTask;
 
-            var options = optionsFactory?.Invoke();
+            var options = optionsFactory?.Invoke() ?? TraceRequestOptions.Default(null);
             if (request.ContentLength > 2048)
                 return Task.Run(async () => await logBodyAsync());
 
@@ -142,6 +144,8 @@ namespace TetraPak.AspNet.Debugging
             async Task logBodyAsync()
             {
                 var sb = new StringBuilder();
+                sb.Append(TraceRequest.GetTraceRequestQualifier(false));
+                sb.Append(" >>> ");
                 sb.Append(request.Method.ToUpper());
                 sb.Append(' ');
                 sb.AppendLine(request.GetDisplayUrl());
@@ -156,15 +160,27 @@ namespace TetraPak.AspNet.Debugging
             
             async Task addBody(StringBuilder sb)
             {
-                if (options?.AsyncBodyFactory is {})
+                if (options.AsyncBodyFactory is {})
                 {
                     sb.AppendLine();
                     sb.AppendLine(await options.AsyncBodyFactory());
                     return;
                 }
 
-                if (request.Body.Length == 0)
-                    return;
+                // var isEmptyOutcome = await request.Body.IsEmptyAsync(options?.ForceTraceBody ?? TraceRequestOptions.DefaultForceTraceBody);
+                // if (!isEmptyOutcome.IsSuccess)
+                // {
+                //     sb.AppendLine();
+                //     sb.AppendLine("(*** BODY UNAVAILABLE ***)");
+                //     return;
+                // }
+                //
+                // if (isEmptyOutcome && isEmptyOutcome.Value)
+                // {
+                //     sb.AppendLine();
+                //     sb.AppendLine("(NO BODY)");
+                //     return;
+                // }   
                 
                 var bodyText = await request.Body.GetRawBodyStringAsync(Encoding.Default, options);
                 if (string.IsNullOrEmpty(bodyText))
@@ -202,7 +218,7 @@ namespace TetraPak.AspNet.Debugging
 
             var options = optionsFactory?.Invoke();
             var contentStream = await requestMessage.Content?.ReadAsStreamAsync();
-            if (contentStream?.Length > 2048)
+            if (contentStream.Length > 2048)
             {
                 traceAsync();
             }
@@ -224,8 +240,6 @@ namespace TetraPak.AspNet.Debugging
             Func<TraceRequestOptions>? optionsFactory = null)
         {
             var options = optionsFactory?.Invoke();
-            var contentStream = await requestMessage.Content?.ReadAsStreamAsync();
-
             sb.Append(requestMessage.Method.Method.ToUpper());
             sb.Append(' ');
             var uri = options?.BaseAddress is { }
@@ -336,7 +350,8 @@ namespace TetraPak.AspNet.Debugging
             
             var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
             var stream = await request.Content.ReadAsStreamAsync();
-            if (stream.Length == 0 || !stream.CanSeek)
+            var isEmptyOutcome = await stream.IsEmptyAsync();
+            if (isEmptyOutcome.IsSuccess && isEmptyOutcome.Value)
                 return string.Empty;
 
             string body;
@@ -497,6 +512,9 @@ namespace TetraPak.AspNet.Debugging
             StringBuilder sb,
             TraceRequestOptions options)
         {
+            if (response is null)
+                return sb;
+            
             sb.Append(response.StatusCode);
             sb.Append(' ');
             sb.AppendLine(response.StatusCode.ToString());
@@ -513,7 +531,9 @@ namespace TetraPak.AspNet.Debugging
                     return;
                 }
 
-                if (response.Body.Length == 0)
+                var lengthOutcome = await response.Body.GetLengthAsync(options.ForceTraceBody);
+                var length = lengthOutcome.Value;
+                if (length == 0)
                     return;
 
                 var body = await response.Body.GetRawBodyStringAsync(Encoding.UTF8, options);
@@ -546,7 +566,9 @@ namespace TetraPak.AspNet.Debugging
                 }
 
                 var stream = await response.Content.ReadAsStreamAsync();
-                if (stream.Length == 0)
+                var lengthOutcome = await stream.GetLengthAsync(options.ForceTraceBody);
+                var length = lengthOutcome.Value;
+                if (length == 0)
                     return;
 
                 var body = await stream.GetRawBodyStringAsync(Encoding.UTF8, options);
@@ -571,26 +593,29 @@ namespace TetraPak.AspNet.Debugging
         }
         
         public static async Task<string> GetRawBodyStringAsync(
-            this Stream stream, 
+            this Stream? stream, 
             Encoding encoding, 
             TraceRequestOptions? options = null)
         {
-            if (stream is null || stream.Length == 0)
-                return string.Empty;
-            
-            var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
-            if (stream.Length == 0 || !stream.CanSeek)
+            var lengthOutcome = await stream.GetLengthAsync(options?.ForceTraceBody ?? TraceRequestOptions.DefaultForceTraceBody);
+            var length = lengthOutcome.Value;
+            if (length == 0)
                 return string.Empty;
 
+            if (!stream!.CanSeek)
+                return "[*** BODY UNAVAILABLE ***]";
+                
+            var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
+
             string body;
-            if (options is null || stream.Length <= options.MaxSize)
+            if (options is null || length <= options.MaxSize)
             {
                 // no need to read in chunks, just get and return the whole body ...
-                using var bodyReader = new StreamReader(stream, encoding, true, 
+                using var bodyReader = new StreamReader(stream!, encoding, true, 
                     bufferSize, 
                     true);
                 body = await bodyReader.ReadToEndAsync();
-                stream.Position = 0;
+                stream!.Position = 0;
                 return body;
             }
             
@@ -602,7 +627,7 @@ namespace TetraPak.AspNet.Debugging
 
             var bodyStream = new MemoryStream();
             await using var writer = new StreamWriter(bodyStream);
-            using var reader = new StreamReader(stream, encoding, true, bufferSize, true);
+            using var reader = new StreamReader(stream!, encoding, true, bufferSize, true);
             
             while (await reader.ReadBlockAsync(buffer) != 0 && !isTruncated)
             {
@@ -723,6 +748,11 @@ namespace TetraPak.AspNet.Debugging
         internal const int DefaultBuffersSize = 1024;
         const int DefaultMaxSizeFactor = 4;
 
+        /// <summary>
+        ///   The default value for <see cref="ForceTraceBody"/>.
+        /// </summary>
+        public static bool DefaultForceTraceBody { get; set; } = false;
+
         int _bufferSize;
         long _maxSize;
 
@@ -768,7 +798,7 @@ namespace TetraPak.AspNet.Debugging
         
         /// <summary>
         ///   A callback handler, invoked after the request message has been serialized to
-        ///   a <see cref="string"/> but before the result is propagated to the <paramref name="logger"/>.
+        ///   a <see cref="string"/> but before the result is propagated to the logger provider.
         ///   Use this to decorate the result with custom content.
         /// </summary>
         /// <seealso cref="WithDecorator"/>
@@ -783,6 +813,12 @@ namespace TetraPak.AspNet.Debugging
             AsyncDecorationHandler = decorator;
             return this;
         }
+
+        /// <summary>
+        ///   (default=<see cref="DefaultForceTraceBody"/>)<br/>
+        ///   Gets or sets a value that forces the tracing of the request/response body
+        /// </summary>
+        public bool ForceTraceBody { get; set; } = DefaultForceTraceBody;
 
         /// <summary>
         ///   The buffer size. Set for reading large bodies.

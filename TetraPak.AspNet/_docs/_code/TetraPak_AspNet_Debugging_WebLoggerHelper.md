@@ -46,23 +46,23 @@ Specifies whether to ignore logging if this method has already been invoked once
 This is to help avoiding littering the log files with the same information multiple times.  
   
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceBodyOptions_)'></a>
-## WebLoggerHelper.GetRawBodyStringAsync(HttpRequest, Encoding, TraceBodyOptions?) Method
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(System_Net_Http_HttpRequestMessage_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceRequestOptions_)'></a>
+## WebLoggerHelper.GetRawBodyStringAsync(HttpRequestMessage, Encoding, TraceRequestOptions?) Method
 Retrieves the [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') body as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').    
 ```csharp
-public static System.Threading.Tasks.Task<string> GetRawBodyStringAsync(this Microsoft.AspNetCore.Http.HttpRequest request, System.Text.Encoding encoding, TetraPak.AspNet.Debugging.TraceBodyOptions? bodyOptions=null);
+public static System.Threading.Tasks.Task<string> GetRawBodyStringAsync(this System.Net.Http.HttpRequestMessage request, System.Text.Encoding encoding, TetraPak.AspNet.Debugging.TraceRequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceBodyOptions_)_request'></a>
-`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(System_Net_Http_HttpRequestMessage_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceRequestOptions_)_request'></a>
+`request` [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage')  
 The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceBodyOptions_)_encoding'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(System_Net_Http_HttpRequestMessage_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceRequestOptions_)_encoding'></a>
 `encoding` [System.Text.Encoding](https://docs.microsoft.com/en-us/dotnet/api/System.Text.Encoding 'System.Text.Encoding')  
 The character encoding to use.   
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(Microsoft_AspNetCore_Http_HttpRequest_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceBodyOptions_)_bodyOptions'></a>
-`bodyOptions` [TraceBodyOptions](TetraPak_AspNet_Debugging_TraceBodyOptions.md 'TetraPak.AspNet.Debugging.TraceBodyOptions')  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_GetRawBodyStringAsync(System_Net_Http_HttpRequestMessage_System_Text_Encoding_TetraPak_AspNet_Debugging_TraceRequestOptions_)_options'></a>
+`options` [TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions')  
 (optional)<br/>  
 Specifies how tracing of request bodies is conducted.   
   
@@ -99,47 +99,25 @@ The state dump will be ignored if invoked again and this value was set previousl
 #### Returns
 [System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___)'></a>
-## WebLoggerHelper.TraceAsync(ILogger?, HttpResponse?, Func&lt;HttpResponse?,Task&lt;string&gt;&gt;?) Method
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__string__System_Nullable_bool_)'></a>
+## WebLoggerHelper.TraceAsync(ILogger?, HttpResponse?, string?, Nullable&lt;bool&gt;) Method
 Traces a [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse') in the logs.  
 ```csharp
-public static System.Threading.Tasks.Task TraceAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpResponse? response, System.Func<Microsoft.AspNetCore.Http.HttpResponse?,System.Threading.Tasks.Task<string>>? bodyHandler=null);
+public static System.Threading.Tasks.Task TraceAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpResponse? response, string? messageId, System.Nullable<bool> includeBody=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___)_logger'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__string__System_Nullable_bool_)_logger'></a>
 `logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
 The logger provider.  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___)_response'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__string__System_Nullable_bool_)_response'></a>
 `response` [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse')  
 The response to be traced.  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___)_bodyHandler'></a>
-`bodyHandler` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  
-(optional)<br/>  
-A handler that provides a content (body) to be traced.  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__string__System_Nullable_bool_)_messageId'></a>
+`messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
   
-#### Returns
-[System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
-#### See Also
-- [TraceAsync(ILogger?, HttpResponse?, Nullable&lt;bool&gt;)](TetraPak_AspNet_Debugging_WebLoggerHelper.md#TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Nullable_bool_) 'TetraPak.AspNet.Debugging.WebLoggerHelper.TraceAsync(Microsoft.Extensions.Logging.ILogger?, Microsoft.AspNetCore.Http.HttpResponse?, System.Nullable&lt;bool&gt;)')
-  
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Nullable_bool_)'></a>
-## WebLoggerHelper.TraceAsync(ILogger?, HttpResponse?, Nullable&lt;bool&gt;) Method
-Traces a [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse') in the logs.  
-```csharp
-public static System.Threading.Tasks.Task TraceAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpResponse? response, System.Nullable<bool> includeBody=false);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Nullable_bool_)_logger'></a>
-`logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
-The logger provider.  
-  
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Nullable_bool_)_response'></a>
-`response` [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse')  
-The response to be traced.  
-  
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Nullable_bool_)_includeBody'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__string__System_Nullable_bool_)_includeBody'></a>
 `includeBody` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 (optional; default=`false`)<br/>  
 Specifies whether to also include the response body.  
@@ -147,7 +125,30 @@ Specifies whether to also include the response body.
 #### Returns
 [System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
 #### See Also
-- [TraceAsync(ILogger?, HttpResponse?, Func&lt;HttpResponse?,Task&lt;string&gt;&gt;?)](TetraPak_AspNet_Debugging_WebLoggerHelper.md#TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___) 'TetraPak.AspNet.Debugging.WebLoggerHelper.TraceAsync(Microsoft.Extensions.Logging.ILogger?, Microsoft.AspNetCore.Http.HttpResponse?, System.Func&lt;Microsoft.AspNetCore.Http.HttpResponse?,System.Threading.Tasks.Task&lt;string&gt;&gt;?)')
+- [TraceAsync(ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?)](https://docs.microsoft.com/en-us/dotnet/api/TraceAsync#TraceAsync_ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?_ 'TraceAsync(ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?)')
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)'></a>
+## WebLoggerHelper.TraceAsync(ILogger?, HttpResponse?, Func&lt;TraceRequestOptions&gt;?) Method
+Traces a [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse') in the logs.  
+```csharp
+public static System.Threading.Tasks.Task TraceAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpResponse? response, System.Func<TetraPak.AspNet.Debugging.TraceRequestOptions>? optionsFactory=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_logger'></a>
+`logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
+The logger provider.  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_response'></a>
+`response` [Microsoft.AspNetCore.Http.HttpResponse](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpResponse 'Microsoft.AspNetCore.Http.HttpResponse')  
+The response to be traced.  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_optionsFactory'></a>
+`optionsFactory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')[TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')  
+  
+#### Returns
+[System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
+#### See Also
+- [TraceAsync(Microsoft.Extensions.Logging.ILogger?,HttpResponse?,bool?)](https://docs.microsoft.com/en-us/dotnet/api/TraceAsync#TraceAsync_Microsoft_Extensions_Logging_ILogger?,HttpResponse?,bool?_ 'TraceAsync(Microsoft.Extensions.Logging.ILogger?,HttpResponse?,bool?)')
   
 <a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__System_Net_WebResponse__System_Func_System_Net_WebResponse__System_Threading_Tasks_Task_string___)'></a>
 ## WebLoggerHelper.TraceAsync(ILogger?, WebResponse?, Func&lt;WebResponse?,Task&lt;string&gt;&gt;?) Method
@@ -197,35 +198,56 @@ Specifies whether to also include the response body.
 #### Returns
 [System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
 #### See Also
-- [TraceAsync(ILogger?, HttpResponse?, Func&lt;HttpResponse?,Task&lt;string&gt;&gt;?)](TetraPak_AspNet_Debugging_WebLoggerHelper.md#TetraPak_AspNet_Debugging_WebLoggerHelper_TraceAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpResponse__System_Func_Microsoft_AspNetCore_Http_HttpResponse__System_Threading_Tasks_Task_string___) 'TetraPak.AspNet.Debugging.WebLoggerHelper.TraceAsync(Microsoft.Extensions.Logging.ILogger?, Microsoft.AspNetCore.Http.HttpResponse?, System.Func&lt;Microsoft.AspNetCore.Http.HttpResponse?,System.Threading.Tasks.Task&lt;string&gt;&gt;?)')
+- [TraceAsync(ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?)](https://docs.microsoft.com/en-us/dotnet/api/TraceAsync#TraceAsync_ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?_ 'TraceAsync(ILogger?,HttpResponse?,Func<HttpResponse?,Task<string>>?)')
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string___TetraPak_AspNet_Debugging_TraceBodyOptions_)'></a>
-## WebLoggerHelper.TraceHttpRequestAsync(ILogger?, HttpRequest, Func&lt;string&gt;?, TraceBodyOptions?) Method
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)'></a>
+## WebLoggerHelper.TraceHttpRequestAsync(ILogger?, HttpRequest, Func&lt;TraceRequestOptions&gt;?) Method
 Traces a [System.Net.HttpWebRequest](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpWebRequest 'System.Net.HttpWebRequest') in the logs.  
 ```csharp
-public static System.Threading.Tasks.Task TraceHttpRequestAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpRequest request, System.Func<string>? bodyHandler=null, TetraPak.AspNet.Debugging.TraceBodyOptions? bodyOptions=null);
+public static System.Threading.Tasks.Task TraceHttpRequestAsync(this Microsoft.Extensions.Logging.ILogger? logger, Microsoft.AspNetCore.Http.HttpRequest request, System.Func<TetraPak.AspNet.Debugging.TraceRequestOptions>? optionsFactory=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string___TetraPak_AspNet_Debugging_TraceBodyOptions_)_logger'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_logger'></a>
 `logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
 The logger provider.  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string___TetraPak_AspNet_Debugging_TraceBodyOptions_)_request'></a>
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The request to be traced.  
   
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string___TetraPak_AspNet_Debugging_TraceBodyOptions_)_bodyHandler'></a>
-`bodyHandler` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')  
-(optional)<br/>  
-A request body to be traced.  
-  
-<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_string___TetraPak_AspNet_Debugging_TraceBodyOptions_)_bodyOptions'></a>
-`bodyOptions` [TraceBodyOptions](TetraPak_AspNet_Debugging_TraceBodyOptions.md 'TetraPak.AspNet.Debugging.TraceBodyOptions')  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestAsync(Microsoft_Extensions_Logging_ILogger__Microsoft_AspNetCore_Http_HttpRequest_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_optionsFactory'></a>
+`optionsFactory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')[TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')  
 (optional)<br/>  
 Specifies how tracing of request bodies is conducted.   
   
 #### Returns
 [System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestMessageAsync(Microsoft_Extensions_Logging_ILogger__System_Net_Http_HttpRequestMessage_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)'></a>
+## WebLoggerHelper.TraceHttpRequestMessageAsync(ILogger?, HttpRequestMessage, Func&lt;TraceRequestOptions&gt;?) Method
+Traces a [System.Net.HttpWebRequest](https://docs.microsoft.com/en-us/dotnet/api/System.Net.HttpWebRequest 'System.Net.HttpWebRequest') in the logs.  
+```csharp
+public static System.Threading.Tasks.Task TraceHttpRequestMessageAsync(this Microsoft.Extensions.Logging.ILogger? logger, System.Net.Http.HttpRequestMessage requestMessage, System.Func<TetraPak.AspNet.Debugging.TraceRequestOptions>? optionsFactory=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestMessageAsync(Microsoft_Extensions_Logging_ILogger__System_Net_Http_HttpRequestMessage_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_logger'></a>
+`logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
+The logger provider.  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestMessageAsync(Microsoft_Extensions_Logging_ILogger__System_Net_Http_HttpRequestMessage_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_requestMessage'></a>
+`requestMessage` [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage')  
+The request message to be traced.  
+  
+<a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestMessageAsync(Microsoft_Extensions_Logging_ILogger__System_Net_Http_HttpRequestMessage_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_optionsFactory'></a>
+`optionsFactory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')[TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-1 'System.Func`1')  
+  
+#### Returns
+[System.Threading.Tasks.Task](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task 'System.Threading.Tasks.Task')  
+#### Exceptions
+[System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
+baseAddress is `null` but the [requestMessage](TetraPak_AspNet_Debugging_WebLoggerHelper.md#TetraPak_AspNet_Debugging_WebLoggerHelper_TraceHttpRequestMessageAsync(Microsoft_Extensions_Logging_ILogger__System_Net_Http_HttpRequestMessage_System_Func_TetraPak_AspNet_Debugging_TraceRequestOptions__)_requestMessage 'TetraPak.AspNet.Debugging.WebLoggerHelper.TraceHttpRequestMessageAsync(Microsoft.Extensions.Logging.ILogger?, System.Net.Http.HttpRequestMessage, System.Func&lt;TetraPak.AspNet.Debugging.TraceRequestOptions&gt;?).requestMessage')'s  
+              URI is relative.  
+            
   
 <a name='TetraPak_AspNet_Debugging_WebLoggerHelper_TraceWebRequestAsync(Microsoft_Extensions_Logging_ILogger__System_Net_HttpWebRequest_System_Func_string__)'></a>
 ## WebLoggerHelper.TraceWebRequestAsync(ILogger?, HttpWebRequest, Func&lt;string&gt;?) Method

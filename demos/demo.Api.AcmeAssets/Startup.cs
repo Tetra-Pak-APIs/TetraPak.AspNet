@@ -2,6 +2,7 @@ using demo.Acme.Seeding;
 using demo.AcmeAssets.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,12 @@ namespace demo.AcmeAssets
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "demo.Api.AcmeAssets", Version = "v1" });
             });
             // create a simple file repository, to allow uploading more files ...
-            services.AddSingleton<FilesRepository>();
+            services.AddSingleton<FilesRepository>(p =>
+            {
+                var repo = new FilesRepository(p.GetService<ILogger<FilesRepository>>(), p.GetRequiredService<IConfiguration>());
+                repo.Seed(AssetsSeeder.GetFilesSeed());
+                return repo;
+            });
 
             // create and seed the simple assets repository ...
             services.AddSingleton(p =>
@@ -42,8 +48,8 @@ namespace demo.AcmeAssets
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "demo.Api.AcmeAssets v1"));
+                // app.UseSwagger();
+                // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "demo.Api.AcmeAssets v1"));
             }
 
             app.UseHttpsRedirection();

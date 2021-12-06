@@ -1,6 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api](TetraPak_AspNet_Api.md 'TetraPak.AspNet.Api')
 ## RequestDistribution Enum
+Used to specify the request thread distribution when performing multiple resource requests.  
 ```csharp
 public enum RequestDistribution
 

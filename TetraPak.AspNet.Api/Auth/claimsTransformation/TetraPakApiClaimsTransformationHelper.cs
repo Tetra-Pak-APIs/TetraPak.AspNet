@@ -30,7 +30,6 @@ namespace TetraPak.AspNet.Api.Auth
                 c.AddTetraPakUserInformation();
                 c.AddSingleton<IClaimsTransformation, TetraPakClaimsTransformationDispatcher>();
                 c.AddTetraPakCustomClaimsTransformation<TetraPakJwtApiClaimsTransformation>();
-                // c.AddScoped<IDefaultClaimsTransformation, TetraPakApiClaimsTransformation>(); obsolete
             }
             catch (Exception ex)
             {

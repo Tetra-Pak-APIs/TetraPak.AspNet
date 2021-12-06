@@ -38,16 +38,16 @@ namespace demo.AcmeProducts.Controllers
             var assetsRelLevel = RelationshipLevelHelper.Parse(assets);
             if (string.IsNullOrEmpty(id))
                 return await this.RespondAsync(
-                    cats.IsEmpty
+                    cats.IsEmpty()
                         ? await mapDtoAsync(await _productsRepository.ReadAsync(), assetsRelLevel)
                         : await mapDtoAsync(await _productsRepository.ReadWhereCategoriesAsync(cats), assetsRelLevel));
             
-            if (!cats.IsEmpty)
+            if (!cats.IsEmpty())
                 // passing id AND category is bad form ...
                 return this.RespondErrorBadRequest("Duh! Either pass id OR category, not both!");
                 
             var ids = (MultiStringValue)id;
-            return await this.RespondAsync(ids.IsEmpty
+            return await this.RespondAsync(ids.IsEmpty()
                 ? await mapDtoAsync(await _productsRepository.ReadAsync(cancellation: HttpContext.RequestAborted), assetsRelLevel)
                 : await mapDtoAsync(await _productsRepository.ReadAsync(ids.Items, cancellation: HttpContext.RequestAborted), assetsRelLevel)); 
         }

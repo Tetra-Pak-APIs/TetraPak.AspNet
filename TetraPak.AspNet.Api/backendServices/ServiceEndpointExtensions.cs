@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -133,8 +134,9 @@ namespace TetraPak.AspNet.Api
         /// <param name="serviceEndpoint">
         ///     The <see cref="ServiceEndpoint"/>.
         /// </param>
+        /// <param name="dynamicPathElements"></param>
         /// <param name="subPath">
-        ///   One or more key elements to be added to the endpoint path.
+        ///     One or more key elements to be added to the endpoint path.
         /// </param>
         /// <param name="queryParameters">
         ///     (optional)
@@ -158,6 +160,7 @@ namespace TetraPak.AspNet.Api
         /// <seealso cref="GetAsync{T}(ServiceEndpoint,HttpQuery,RequestOptions,HttpClientOptions)"/>
         public static async Task<HttpOutcome<HttpResponseMessage>> GetHttpResponseAsync(
             this ServiceEndpoint serviceEndpoint,
+            object? dynamicPathElements,
             DynamicPath subPath,
             HttpQuery? queryParameters = null,
             CancellationToken? cancellationToken = null,
@@ -169,7 +172,7 @@ namespace TetraPak.AspNet.Api
             var service = serviceEndpoint.Service 
                           ?? throw new InvalidOperationException($"Endpoint Url {serviceEndpoint} was not assigned to a service");
             return await service.GetAsync(
-                serviceEndpoint.Path(subPath),
+                serviceEndpoint.Path(dynamicPathElements, subPath),
                 queryParameters,
                 clientOptions ?? serviceEndpoint.ClientOptions.WithAuthorization(
                     (await serviceEndpoint.GetAccessTokenAsync()).Value, 
@@ -210,7 +213,50 @@ namespace TetraPak.AspNet.Api
             HttpQuery? queryParameters = null,
             RequestOptions? requestOptions = null,
             HttpClientOptions? clientOptions = null)
-            => serviceEndpoint.GetAsync<T>(null!, queryParameters, requestOptions, clientOptions);
+        => 
+            serviceEndpoint.GetAsync<T>(null!, queryParameters, requestOptions, clientOptions);
+
+
+        /// <summary>
+        ///   Sends an HTTP GET message to the specified <see cref="ServiceEndpoint"/> while specifying one or
+        ///   more resource keys.
+        ///   The response is automatically deserialized into a <see cref="ApiDataResponse{T}"/>
+        ///   carrying the expected (typed) resources.
+        /// </summary>
+        /// <param name="serviceEndpoint">
+        ///     The extended <see cref="ServiceEndpoint"/>.
+        /// </param>
+        /// <param name="keys">
+        ///   A collection of resource keys (for obtaining multiple resources).
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)<br/>
+        ///   Query parameters.
+        /// </param>
+        /// <param name="clientOptions">
+        ///   (optional)<br/>
+        ///   Options for the client to be used for the operation.
+        /// </param>
+        /// <param name="requestOptions">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies how multiple requests are made.
+        ///   This option affect response times or possible service quota.    
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///   The <paramref name="serviceEndpoint"/> was not assigned to a registered service.
+        /// </exception>
+        public static Task<HttpOutcome<ApiDataResponse<T>>> GetAsync<T>(
+            this ServiceEndpoint serviceEndpoint,
+            IEnumerable<string>? keys,
+            HttpQuery? queryParameters = null,
+            RequestOptions? requestOptions = null,
+            HttpClientOptions? clientOptions = null)
+        => 
+            serviceEndpoint.GetAsync<T>(keys, null, queryParameters, requestOptions, clientOptions);
 
         /// <summary>
         ///   Sends an HTTP GET message, passing a collection of resource <paramref name="keys"/> requesting the
@@ -220,6 +266,9 @@ namespace TetraPak.AspNet.Api
         /// </summary>
         /// <param name="serviceEndpoint">
         ///     The extended <see cref="ServiceEndpoint"/>.
+        /// </param>
+        /// <param name="dynamicPathElements">
+        ///   An object used to resolve dynamic elements of the endpoint path. 
         /// </param>
         /// <param name="keys">
         ///   One or more keys, to identity the requested resources.
@@ -245,8 +294,9 @@ namespace TetraPak.AspNet.Api
         ///   The <paramref name="serviceEndpoint"/> was not assigned to a registered service.
         /// </exception>
         public static async Task<HttpOutcome<ApiDataResponse<T>>> GetAsync<T>(
-            this ServiceEndpoint serviceEndpoint, 
-            IEnumerable<string>? keys,
+            this ServiceEndpoint serviceEndpoint,
+            object? dynamicPathElements = null,
+            IEnumerable<string>? keys = null,
             HttpQuery? queryParameters = null,
             RequestOptions? requestOptions = null,
             HttpClientOptions? clientOptions = null)
@@ -309,6 +359,7 @@ namespace TetraPak.AspNet.Api
             async Task<HttpOutcome<ApiDataResponse<T>>> getAsync(string? key)
             {
                 var httpOutcome = await serviceEndpoint.GetHttpResponseAsync(
+                    dynamicPathElements,
                     key, 
                     queryParameters, 
                     requestOptions.CancellationToken, 
@@ -318,6 +369,42 @@ namespace TetraPak.AspNet.Api
 
                 return await httpOutcome.Value!.TryParseApiDataResponseAsync<T>(HttpMethod.Get);
             }
+        }
+
+        public static async Task<HttpOutcome<HttpResponseMessage>> GetRawAsync(
+            this ServiceEndpoint serviceEndpoint,
+            object? dynamicPathElements = null,
+            string? key = null,
+            HttpQuery? queryParameters = null,
+            RequestOptions? requestOptions = null,
+            HttpClientOptions? clientOptions = null)
+        {
+            requestOptions ??= RequestOptions.Default;
+            return await serviceEndpoint.GetHttpResponseAsync(
+                dynamicPathElements,
+                key, 
+                queryParameters, 
+                requestOptions.CancellationToken, 
+                clientOptions);
+        }
+
+        public static async Task<HttpOutcome<Stream>> GetStreamAsync(
+            this ServiceEndpoint serviceEndpoint,
+            object? dynamicPathElements = null,
+            string? key = null,
+            HttpQuery? queryParameters = null,
+            RequestOptions? requestOptions = null,
+            HttpClientOptions? clientOptions = null)
+        {
+            var rawOutcome = await serviceEndpoint.GetRawAsync(
+                dynamicPathElements, 
+                key,
+                queryParameters,
+                requestOptions, clientOptions);
+
+            return rawOutcome
+                ? HttpOutcome<Stream>.Success(HttpMethod.Get, await rawOutcome.Value!.Content.ReadAsStreamAsync())
+                : HttpOutcome<Stream>.Fail(HttpMethod.Get, rawOutcome.Exception); 
         }
 
         static async Task<HttpOutcome<ApiDataResponse<T>>> TryParseApiDataResponseAsync<T>(
@@ -466,9 +553,20 @@ namespace TetraPak.AspNet.Api
         /// </remarks>
         /// <seealso cref="Path(ServiceEndpoint)"/>
         public static string Path(this ServiceEndpoint endpoint, DynamicPath subPath) 
-            => subPath.IsEmpty 
+            => subPath.IsEmpty()
                 ? endpoint.StringValue 
                 : subPath.Insert(endpoint.StringValue).StringValue;
+        
+        public static string Path(this ServiceEndpoint endpoint, object? dynamicPathElements, DynamicPath subPath)
+        {
+            if (dynamicPathElements is null)
+                return endpoint.Path(subPath);
+
+            var pathElements = ((DynamicPath) endpoint.StringValue).Substitute(dynamicPathElements, true);
+            return subPath.IsEmpty()
+                ? pathElements.StringValue
+                : subPath.Insert(pathElements.StringValue).StringValue;
+        }
 
         /// <summary>
         ///   Sends an HTTP POST message to the specified <see cref="ServiceEndpoint"/>

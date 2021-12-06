@@ -4,6 +4,6 @@
     {
         void DiagnosticsStartTimer(string timerKey);
 
-        void DiagnosticsEndTimer(string timerKey);
+        long? DiagnosticsEndTimer(string timerKey);
     }
 }

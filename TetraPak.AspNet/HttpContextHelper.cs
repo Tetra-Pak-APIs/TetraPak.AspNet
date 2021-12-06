@@ -617,7 +617,7 @@ namespace TetraPak.AspNet
         /// </exception>
         public static MultiStringValue? ValidateHttpMethods(MultiStringValue? value, bool allowNull = true)
         {
-            if (value is null || value.IsEmpty)
+            if (value is null || value.IsEmpty())
             {
                 if (allowNull)
                     return null;

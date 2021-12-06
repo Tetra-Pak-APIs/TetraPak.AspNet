@@ -369,6 +369,21 @@ Cancellation token for cancellation the operation.
 
 Implements [GetScopeAsync(AuthContext, MultiStringValue?, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync#TetraPak_AspNet_Auth_IServiceAuthConfig_GetScopeAsync_TetraPak_AspNet_AuthContext,TetraPak_MultiStringValue,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetScopeAsync(TetraPak.AspNet.AuthContext,TetraPak.MultiStringValue,System.Nullable{System.Threading.CancellationToken})')  
   
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetUrl(bool)'></a>
+## ServiceEndpoint.GetUrl(bool) Method
+Constructs and returns the endpoint's absolute URL or path (with or without the host element).   
+```csharp
+public string GetUrl(bool trimHost);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetUrl(bool)_trimHost'></a>
+`trimHost` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+Specifies whether to remove the endpoint's host element, returning the absolute path instead.   
+  
+#### Returns
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The a string reflecting the endpoint's URL or absolute path.  
+  
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_IsAuthIdentifier(string)'></a>
 ## ServiceEndpoint.IsAuthIdentifier(string) Method
 Examines a string and returns a value to indicate whether the value identifies  

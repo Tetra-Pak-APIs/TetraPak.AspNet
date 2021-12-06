@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using demo.Acme.Models;
 using demo.AcmeAssets.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TetraPak;
+using TetraPak.AspNet;
 using TetraPak.AspNet.Api.Controllers;
 using TetraPak.AspNet.DataTransfers;
 using TetraPak.DynamicEntities;
@@ -22,13 +24,32 @@ namespace demo.AcmeAssets.Controllers
         public async Task<ActionResult> Get(string? id = null)
         {
             var ids = (MultiStringValue)id;
-            var outcome = ids.IsEmpty
+            var outcome = ids.IsEmpty()
                 ? await _repository.ReadAsync(cancellation: HttpContext.RequestAborted)
                 : await _repository.ReadAsync(ids.Items, cancellation: HttpContext.RequestAborted);
 
             return await this.RespondAsync(outcome);
         }
         
+        [HttpGet, Route("{id?}/file")]
+        public async Task<ActionResult> GetFile(string? id = null)
+        {
+            if (id is null)
+                return await this.RespondAsync(Outcome<string>.Fail(ServerException.BadRequest("Expected file id")));
+                
+            var outcome = await _filesRepository.ReadAsync(new[] {id}); 
+            if (!outcome)
+                return await this.RespondAsync(outcome);
+
+            var fileModel = outcome.Value!.First();
+            var streamOutcome = await _filesRepository.ReadFileStream(fileModel);
+            if (!streamOutcome)
+                return await this.RespondAsync(outcome);
+
+            var stream = streamOutcome.Value!;
+            return new FileStreamResult(stream, fileModel.File!.ContentType);
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] string? description, [FromForm] IFormFile? file)
         {

@@ -1,4 +1,5 @@
-﻿using TetraPak.AspNet.Api;
+﻿using System.Diagnostics.CodeAnalysis;
+using TetraPak.AspNet.Api;
 
 namespace demo.AcmeProducts.Services
 {
@@ -7,6 +8,10 @@ namespace demo.AcmeProducts.Services
         public class AssetsEndpoints : ServiceEndpoints
         {
             public ServiceEndpoint Assets => GetEndpoint();
+
+            public ServiceEndpoint Files => GetEndpoint();
+            
+            // public ServiceEndpoint Files(string id) => GetEndpoint(new { Id = id });
         }
 
         public AssetsService(AssetsEndpoints endpoints) : base(endpoints)

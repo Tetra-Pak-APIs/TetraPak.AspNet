@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Mime;
 using demo.Acme.Models;
 
@@ -22,6 +23,7 @@ namespace demo.Acme.Seeding
             public const string DiyTornadoKit = "WXvqigweIFd3V0NS";
             public const string DehydratedBoulders = "E7SQw0WEGimRdqnt";
             public const string RocketUnicycle = "sKioM3mRxc9jNGJV";
+            public const string BigPicture = "yyioM9Wkg39jNGxx";
         }
 
         public const string MediaTypePng = "image/png";
@@ -112,7 +114,18 @@ namespace demo.Acme.Seeding
                     Description = "Customer ready to light it up",
                     Url = "https://static.wikia.nocookie.net/looneytunes/images/1/13/Jet-Propelled_Unicycle.png",
                     MimeType = MediaTypePng
+                },
+                new(Id.BigPicture)
+                {
+                    Description = "A large test picture",
+                    Url = $"/media/assets/{Id.BigPicture}/file",
+                    MimeType = MediaTypePng
                 }
             };
+
+        public static IEnumerable<FileModel> GetFilesSeed()
+        {
+            yield return new FileModel(Id.BigPicture, new FileInfo("./files/big-picture.jpg"), MediaTypeNames.Image.Jpeg);
+        }
     }
 }

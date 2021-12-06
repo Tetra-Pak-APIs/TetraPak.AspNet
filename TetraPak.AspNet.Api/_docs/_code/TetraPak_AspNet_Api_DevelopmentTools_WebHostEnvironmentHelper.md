@@ -34,26 +34,31 @@ a `false` value the bound hosts are not considered "local".
 [criteria](TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper.md#TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_System_Func_System_Uri_bool_)_criteria 'TetraPak.AspNet.Api.DevelopmentTools.WebHostEnvironmentHelper.IsLocalHost(Microsoft.AspNetCore.Hosting.IWebHostEnvironment, System.Func&lt;System.Uri,bool&gt;).criteria') was unassigned (`null`).  
             
   
-<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy)'></a>
-## WebHostEnvironmentHelper.IsLocalHost(IWebHostEnvironment, CollectionMatchingPolicy) Method
+<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy_Microsoft_Extensions_Logging_ILogger_)'></a>
+## WebHostEnvironmentHelper.IsLocalHost(IWebHostEnvironment, CollectionMatchingPolicy, ILogger?) Method
 Examines the bound host(s) and returns a value indicating whether they represent  
 a local host (eg: https://localhost[:port]).  
 ```csharp
-public static bool IsLocalHost(this Microsoft.AspNetCore.Hosting.IWebHostEnvironment self, TetraPak.CollectionMatchingPolicy policy=TetraPak.CollectionMatchingPolicy.All);
+public static bool IsLocalHost(this Microsoft.AspNetCore.Hosting.IWebHostEnvironment self, TetraPak.CollectionMatchingPolicy policy=TetraPak.CollectionMatchingPolicy.All, Microsoft.Extensions.Logging.ILogger? logger=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy)_self'></a>
+<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy_Microsoft_Extensions_Logging_ILogger_)_self'></a>
 `self` [Microsoft.AspNetCore.Hosting.IWebHostEnvironment](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Hosting.IWebHostEnvironment 'Microsoft.AspNetCore.Hosting.IWebHostEnvironment')  
 The hosting environment.  
   
-<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy)_policy'></a>
+<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy_Microsoft_Extensions_Logging_ILogger_)_policy'></a>
 `policy` [TetraPak.CollectionMatchingPolicy](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.CollectionMatchingPolicy 'TetraPak.CollectionMatchingPolicy')  
 (optional; default=[TetraPak.CollectionMatchingPolicy.All](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.CollectionMatchingPolicy.All 'TetraPak.CollectionMatchingPolicy.All'))  
 Specifies how to resolve the result (see remarks).  
   
+<a name='TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy_Microsoft_Extensions_Logging_ILogger_)_logger'></a>
+`logger` [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')  
+(optional)<br/>  
+A logger provider. When passed the method will log its operation.  
+  
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-The result depends on the specified [policy](TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper.md#TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy)_policy 'TetraPak.AspNet.Api.DevelopmentTools.WebHostEnvironmentHelper.IsLocalHost(Microsoft.AspNetCore.Hosting.IWebHostEnvironment, TetraPak.CollectionMatchingPolicy).policy'):  
+The result depends on the specified [policy](TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper.md#TetraPak_AspNet_Api_DevelopmentTools_WebHostEnvironmentHelper_IsLocalHost(Microsoft_AspNetCore_Hosting_IWebHostEnvironment_TetraPak_CollectionMatchingPolicy_Microsoft_Extensions_Logging_ILogger_)_policy 'TetraPak.AspNet.Api.DevelopmentTools.WebHostEnvironmentHelper.IsLocalHost(Microsoft.AspNetCore.Hosting.IWebHostEnvironment, TetraPak.CollectionMatchingPolicy, Microsoft.Extensions.Logging.ILogger?).policy'):  
 <list type="table">  
   
 </term>  

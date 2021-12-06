@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
@@ -24,6 +23,7 @@ namespace TetraPak.AspNet.Api
     /// <summary>
     ///   A specialized <see cref="ConfigurationSection"/> for named URLs.
     /// </summary>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class ServiceEndpoints : ConfigurationSection, 
         IServiceAuthConfig,
         IAccessTokenProvider,
@@ -280,7 +280,7 @@ namespace TetraPak.AspNet.Api
 
         public void DiagnosticsStartTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.StartTimer(timerKey);
 
-        public void DiagnosticsEndTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.GetElapsedMs(timerKey);
+        public long? DiagnosticsEndTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.GetElapsedMs(timerKey);
 
         /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
@@ -305,7 +305,11 @@ namespace TetraPak.AspNet.Api
         /// </returns>
         public ServiceEndpoint GetEndpoint([CallerMemberName] string propertyName = null!) 
             =>
-            getServiceEndpoint(propertyName);
+                getServiceEndpoint(propertyName);
+        
+        public ServiceEndpoint GetEndpoint(object pathElements, [CallerMemberName] string propertyName = null!) 
+            =>
+                getServiceEndpoint(propertyName);
         
         /// <summary>
         ///   Gets a named endpoint (<see cref="ServiceEndpoint"/>).
@@ -319,6 +323,25 @@ namespace TetraPak.AspNet.Api
         public ServiceEndpoint this[string endpointName] => getServiceEndpoint(endpointName);
 
         ServiceEndpoint getServiceEndpoint(string? endpointName)
+        {
+            if (string.IsNullOrWhiteSpace(endpointName))
+                throw new ArgumentNullException(nameof(endpointName));
+                
+            if (_endpoints.TryGetValue(endpointName, out var endpoint)) 
+                return endpoint;
+            
+            if (_endpoints.Count == 0 && getServiceEndpointFromConfiguration(endpointName, out endpoint))
+                return endpoint!;
+
+            return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
+                endpointName, 
+                new[]
+                {
+                    new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
+                });
+        }
+
+        ServiceEndpoint getServiceEndpoint(string? endpointName, object pathElements)
         {
             if (string.IsNullOrWhiteSpace(endpointName))
                 throw new ArgumentNullException(nameof(endpointName));

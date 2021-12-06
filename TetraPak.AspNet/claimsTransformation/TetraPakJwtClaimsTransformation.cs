@@ -44,7 +44,6 @@ namespace TetraPak.AspNet
             ClaimsPrincipal principal, 
             CancellationToken? cancellationToken)
         {
-            // Logger.TraceTetraPakConfigAsync(TetraPakConfig); obsolete
             Outcome<CachedClaimsPrincipal> cachedOutcome;
 
             using (Logger?.BeginScope("ClaimsPrincipal transformation"))

@@ -28,13 +28,7 @@ namespace TetraPak.AspNet.Api
     public class BackendService<TEndpoints> : IBackendService, IAccessTokenProvider
     where TEndpoints : ServiceEndpoints
     {
-#if DEBUG
-        static int s_debugCount;
-
-        public int DebugInstanceI { get; } = s_debugCount++;
-#endif
-
-        string? _serviceName;
+        readonly string? _serviceName;
         
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
@@ -159,12 +153,14 @@ namespace TetraPak.AspNet.Api
             }
         }
 
-        internal void DiagnosticsEndTimer(string? timerKey)
+        internal long? DiagnosticsEndTimer(string? timerKey)
         {
             if (timerKey is { })
             {
-                Endpoints.DiagnosticsEndTimer(timerKey);
+                return Endpoints.DiagnosticsEndTimer(timerKey);
             }
+
+            return null;
         }
 
         /// <inheritdoc />
@@ -248,24 +244,24 @@ namespace TetraPak.AspNet.Api
 
             try
             {
-                StringBuilder sb = Logger.IsEnabled(LogLevel.Trace)
+                var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
                     ? await requestMessage.ToStringBuilder(new StringBuilder(), () => TraceRequestOptions
                         .Default(messageId)
-                        .WithBaseAddress(client.BaseAddress)
-                        .WithDecorator(async sb =>
+                        .WithBaseAddress(client.BaseAddress!)
+                        .WithDecorator(sb =>
                         {
                             var decorated = new StringBuilder();
-                            decorated.AppendLine($"SVC.REQ ({ServiceName}) ===>");
+                            decorated.Append($"{TraceRequest.GetTraceRequestQualifier(true)} ({ServiceName}) >>> ");
                             decorated.AppendLine(sb.ToString());
-                            return decorated;
+                            return Task.FromResult(decorated);
                         }))
                     : null;
                 DiagnosticsStartTimer(timer);
                 var response = await client.SendAsync(requestMessage, ct);
-                DiagnosticsEndTimer(timer);
+                var roundTripMs = DiagnosticsEndTimer(timer);
                 if (sb is { })
                 {
-                    sb.AppendLine("RESPONSE ===>");
+                    sb.AppendLine(roundTripMs.HasValue ? $"RESPONSE ({roundTripMs}ms) ===>" : "RESPONSE ===>");
                     sb.AppendLine();
                     await response.ToStringBuilderAsync(sb, TraceRequestOptions.Default(messageId));
                     Logger.Trace(sb.ToString(), messageId);
@@ -470,7 +466,7 @@ namespace TetraPak.AspNet.Api
         {
             return path != ServiceEndpoints.DefaultPath 
                 ? path 
-                : $"{Endpoints.Host.EnsurePostfix("/")}{Endpoints.BasePath.TrimStart('/')}";
+                : $"{Endpoints.Host!.EnsurePostfix("/")}{Endpoints.BasePath!.TrimStart('/')}";
         }
         
         /// <summary>

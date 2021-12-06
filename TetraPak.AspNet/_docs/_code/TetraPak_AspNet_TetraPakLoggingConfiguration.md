@@ -64,15 +64,22 @@ public int TraceRequestBodyBufferSize { get; set; }
 [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')
   
 ### Methods
-<a name='TetraPak_AspNet_TetraPakLoggingConfiguration_GetTraceBodyOptions()'></a>
-## TetraPakLoggingConfiguration.GetTraceBodyOptions() Method
-Constructs and returns a [TraceBodyOptions](TetraPak_AspNet_Debugging_TraceBodyOptions.md 'TetraPak.AspNet.Debugging.TraceBodyOptions') object from the configuration.  
+<a name='TetraPak_AspNet_TetraPakLoggingConfiguration_GetTraceBodyOptions(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_HttpContext)'></a>
+## TetraPakLoggingConfiguration.GetTraceBodyOptions(TetraPakConfig, HttpContext) Method
+Constructs and returns a [TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions') object from the configuration.  
 This can be used with the [WebLoggerHelper](TetraPak_AspNet_Debugging_WebLoggerHelper.md 'TetraPak.AspNet.Debugging.WebLoggerHelper')'s tracing methods.  
 ```csharp
-public TetraPak.AspNet.Debugging.TraceBodyOptions? GetTraceBodyOptions();
+public TetraPak.AspNet.Debugging.TraceRequestOptions? GetTraceBodyOptions(TetraPak.AspNet.TetraPakConfig tetraPakConfig, Microsoft.AspNetCore.Http.HttpContext httpContext);
 ```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakLoggingConfiguration_GetTraceBodyOptions(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_HttpContext)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+  
+<a name='TetraPak_AspNet_TetraPakLoggingConfiguration_GetTraceBodyOptions(TetraPak_AspNet_TetraPakConfig_Microsoft_AspNetCore_Http_HttpContext)_httpContext'></a>
+`httpContext` [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext')  
+  
 #### Returns
-[TraceBodyOptions](TetraPak_AspNet_Debugging_TraceBodyOptions.md 'TetraPak.AspNet.Debugging.TraceBodyOptions')  
-A [TraceBodyOptions](TetraPak_AspNet_Debugging_TraceBodyOptions.md 'TetraPak.AspNet.Debugging.TraceBodyOptions') if [TraceBodyMaxSize](TetraPak_AspNet_TetraPakLoggingConfiguration.md#TetraPak_AspNet_TetraPakLoggingConfiguration_TraceBodyMaxSize 'TetraPak.AspNet.TetraPakLoggingConfiguration.TraceBodyMaxSize') is assigned  
+[TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions')  
+A [TraceRequestOptions](TetraPak_AspNet_Debugging_TraceRequestOptions.md 'TetraPak.AspNet.Debugging.TraceRequestOptions') if [TraceBodyMaxSize](TetraPak_AspNet_TetraPakLoggingConfiguration.md#TetraPak_AspNet_TetraPakLoggingConfiguration_TraceBodyMaxSize 'TetraPak.AspNet.TetraPakLoggingConfiguration.TraceBodyMaxSize') is assigned  
 and greater then zero (0); otherwise `null`.  
   

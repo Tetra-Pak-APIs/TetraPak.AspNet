@@ -40,7 +40,11 @@ namespace TetraPak.AspNet.Api.Auth
 
                 var token = accessTokenOutcome.Value;
                 if (token!.IsSystemIdentityToken())
-                    return Outcome<ActorToken>.Fail(ServerException.BadRequest("Claims transformation not supported for system identity"));
+                {
+                    var error = ServerException.BadRequest("Claims transformation not supported for system identity");
+                    Logger.Warning(error.Message, GetMessageId());
+                    return Outcome<ActorToken>.Fail();
+                }
                 
                 // try getting a cached exchanged token ... 
                 var accessToken = accessTokenOutcome.Value;
@@ -78,7 +82,7 @@ namespace TetraPak.AspNet.Api.Auth
             }
             catch (Exception ex)
             {
-                ex = new Exception($"Claims transformation failure: {ex.Message}", ex);
+                ex = ServerException.InternalServerError($"Claims transformation failure: {ex.Message}", ex);
                 Logger.Error(ex, GetMessageId());
                 return Outcome<ActorToken>.Fail(ex);
             }

@@ -236,7 +236,7 @@ namespace TetraPak.AspNet.Api
         
         void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => getDiagnostics()?.StartTimer(timerKey);
 
-        void ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => getDiagnostics()?.GetElapsedMs(timerKey);
+        long? ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => getDiagnostics()?.GetElapsedMs(timerKey);
         
         ServiceDiagnostics? getDiagnostics() => HttpContext?.GetDiagnostics(); 
 

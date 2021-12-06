@@ -219,15 +219,15 @@ otherwise `null`.
 ## HttpContextHelper.GetMessageId(HttpRequest, TetraPakConfig?, bool) Method
 Gets a standardized value used for referencing a unique request.   
 ```csharp
-public static string? GetMessageId(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.TetraPakConfig? authConfig, bool enforce=false);
+public static string? GetMessageId(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.TetraPakConfig? tetraPakConfig, bool enforce=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_authConfig'></a>
-`authConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
+<a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_tetraPakConfig'></a>
+`tetraPakConfig` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 Carries the Tetra Pak authorization configuration.  
   
 <a name='TetraPak_AspNet_HttpContextHelper_GetMessageId(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_TetraPakConfig__bool)_enforce'></a>

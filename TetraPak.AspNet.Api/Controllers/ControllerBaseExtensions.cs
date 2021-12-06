@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -211,6 +212,9 @@ namespace TetraPak.AspNet.Api.Controllers
                     return self.RespondError(ex);
                 }
             }
+
+            if (outcome.Value is Stream stream)
+                return self.Ok(stream);
 
             if (outcome.Value is not HttpResponseMessage responseMessage)
                 return self.RespondOk(outcome.Value, totalCount, chunk);
