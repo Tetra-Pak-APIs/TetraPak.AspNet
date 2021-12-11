@@ -156,7 +156,7 @@ namespace TetraPak.AspNet.DataTransfers
         
         /// <summary>
         ///   (fluent API)<br/>
-        ///   Appends keys to the <see creDynamicDtoRelationshipLocator"/> and
+        ///   Appends keys to the <see cref="DtoRelationshipLocator"/> and
         ///   returns a new <see cref="DtoRelationshipLocator"/>.
         /// </summary>
         public static DtoRelationshipLocator WithKeys(this DtoRelationshipLocator locator, params string[] keys)

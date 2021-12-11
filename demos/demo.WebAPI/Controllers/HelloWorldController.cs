@@ -50,7 +50,11 @@ namespace WebAPI.Controllers
 
             var credentials = new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret);
             var ct = new CancellationToken();
-            var txOutcome = await _tokenExchangeGrantService.ExchangeAccessTokenAsync(credentials, actorTokenOutcome!, ct);
+            var txOutcome = await _tokenExchangeGrantService.ExchangeAccessTokenAsync(
+                credentials,
+                actorTokenOutcome.Value!, 
+                false, 
+                ct);
             if (!txOutcome)
             {
                 var ex = new ServerConfigurationException(innerException: txOutcome.Exception);
@@ -62,7 +66,7 @@ namespace WebAPI.Controllers
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiAccessToken);
             var response = await client.GetAsync("https://api-dev.tetrapak.com/samples/helloworld", ct);
-            return await this.RespondAsync(await response.ToOutcomeAsync());
+            return await this.RespondAsync(await response.ToOutcomeAsync(this.GetMessageId(true)));
         }
 
         [AllowAnonymous]

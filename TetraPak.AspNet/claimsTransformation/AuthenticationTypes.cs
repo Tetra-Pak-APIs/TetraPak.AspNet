@@ -1,9 +1,12 @@
 ﻿namespace TetraPak.AspNet
 {
-    public static class AuthenticationTypes 
+    static class AuthenticationTypes 
     {
-        public static string Default = Federation;
-        
+        // /// <summary>
+        // ///   The 
+        // /// </summary>
+        // public static string Default = Federation; obsolete
+
         public const string Federation = "AuthenticationTypes.Federation";
     }
 }

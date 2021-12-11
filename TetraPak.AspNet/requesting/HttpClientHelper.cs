@@ -26,17 +26,19 @@ namespace TetraPak.AspNet
         /// </returns>
         public static IServiceCollection AddTetraPakHttpClientProvider(this IServiceCollection collection)
         {
+            var provider = collection.BuildServiceProvider();
+            var tetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
             collection.AddTetraPakHttpClientProvider(p =>
             {
                 if (s_singleton is { })
                     return s_singleton;
 
                 s_singleton = new TetraPakHttpClientProvider(
-                    p.GetRequiredService<TetraPakConfig>()
+                    tetraPakConfig
                     ,p.GetService<IAuthorizationService>());
                 return s_singleton;
             });
-            TetraPakHttpClientProvider.AddDecorator(new TetraPakSdkClientDecorator());
+            TetraPakHttpClientProvider.AddDecorator(new TetraPakSdkClientDecorator(tetraPakConfig));
             return collection;
         }
 

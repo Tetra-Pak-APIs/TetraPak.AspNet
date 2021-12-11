@@ -7,7 +7,7 @@
 | [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions') | Can be used to control the behavior of a request. <br/> |
 | [ServiceAuthConfig](TetraPak_AspNet_Api_ServiceAuthConfig.md 'TetraPak.AspNet.Api.ServiceAuthConfig') |  |
 | [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') | Represents a single service endpoint ([BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;')).<br/> |
-| [ServiceEndpointExtensions](TetraPak_AspNet_Api_ServiceEndpointExtensions.md 'TetraPak.AspNet.Api.ServiceEndpointExtensions') | Convenient methods to help consuming service endpoints.  <br/> |
+| [ServiceEndpointHelper](TetraPak_AspNet_Api_ServiceEndpointHelper.md 'TetraPak.AspNet.Api.ServiceEndpointHelper') | Convenient methods to help consuming service endpoints.  <br/> |
 | [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints') | A specialized [TetraPak.Configuration.ConfigurationSection](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Configuration.ConfigurationSection 'TetraPak.Configuration.ConfigurationSection') for named URLs.<br/> |
 | [ServiceInvalidEndpoint](TetraPak_AspNet_Api_ServiceInvalidEndpoint.md 'TetraPak.AspNet.Api.ServiceInvalidEndpoint') | Represents a service endpoint with issues.<br/>The reason for such endpoints is to assist in creating meaningful error handling.<br/> |
 | [TetraPakApiAuthorizationService](TetraPak_AspNet_Api_TetraPakApiAuthorizationService.md 'TetraPak.AspNet.Api.TetraPakApiAuthorizationService') | This class is intended to be instantiated via a dependency injection mechanism. <br/> |

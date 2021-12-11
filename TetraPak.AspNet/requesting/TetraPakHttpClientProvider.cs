@@ -18,18 +18,18 @@ namespace TetraPak.AspNet
     /// <summary>
     ///   A base implementation of the <see cref="IHttpClientProvider"/>.  
     /// </summary>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakHttpClientProvider : IHttpClientProvider, ITetraPakDiagnosticsProvider
     {
         void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) =>
             GetDiagnostics()?.StartTimer(timerKey);
 
-        long? ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) =>
+        long? ITetraPakDiagnosticsProvider.DiagnosticsStopTimer(string timerKey) =>
             GetDiagnostics()?.GetElapsedMs(timerKey);
 
         /// <summary>
         ///   Returns a <see cref="ServiceDiagnostics"/> object if available; otherwise <c>null</c>. 
         /// </summary>
-        /// <returns></returns>
         protected ServiceDiagnostics? GetDiagnostics() => HttpContext?.GetDiagnostics();
 
         readonly Func<HttpClientOptions,HttpClient> _singletonClientFactory;

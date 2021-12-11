@@ -188,12 +188,12 @@ namespace TetraPak.AspNet.OpenIdConnect
             }
         }
 
-        static async Task<Outcome<DiscoveryDocument>> readCachedAsync(ILogger logger, TimeSpan? timeout)
+        static async Task<Outcome<DiscoveryDocument>> readCachedAsync(ILogger? logger, TimeSpan? timeout)
         {
             throw new NotImplementedException(); // todo support cached discovery document
         }
 
-        void cache(string path = null)
+        void cache(string? path = null)
         {
             throw new NotImplementedException(); // todo support cached discovery document
         }
@@ -219,7 +219,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <summary>
         ///   Gets or sets a logging provider.
         /// </summary>
-        public ILogger Logger { get; set; }
+        public ILogger? Logger { get; set; }
         
         /// <summary>
         ///   Gets or sets a (fallback) policy for reading a <see cref="DiscoveryDocument"/>.
@@ -262,7 +262,7 @@ namespace TetraPak.AspNet.OpenIdConnect
             TetraPakConfig config,
             TimeSpan? timeout = null,
             ReadDocumentPolicy fallbackPolicy = ReadDocumentPolicy.All,
-            string localCachePath = null)
+            string? localCachePath = null)
         {
             return new ReadDiscoveryDocumentArgs
             {
@@ -306,7 +306,7 @@ namespace TetraPak.AspNet.OpenIdConnect
         /// <param name="logger">
         ///   A logger provider.
         /// </param>
-        public ReadDiscoveryDocumentArgs(ILogger<ReadDiscoveryDocumentArgs> logger = null)
+        public ReadDiscoveryDocumentArgs(ILogger<ReadDiscoveryDocumentArgs>? logger = null)
         {
             Logger = logger;
             Policy = ReadDocumentPolicy.Configured;

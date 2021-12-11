@@ -19,14 +19,37 @@ namespace TetraPak.AspNet.Diagnostics
         [JsonPropertyName("roundtripTime")]
         public long ElapsedMilliseconds { get; set; }
 
-        public long? End() => GetElapsedMs(TimerPrefix);
+        /// <summary>
+        ///   Stops the timer for a 
+        /// </summary>
+        /// <returns></returns>
+        public long? StopTimer() => GetElapsedMs(TimerPrefix);
         
-        public void StartTimer(string key)
+        /// <summary>
+        ///   Starts a timer to measure a specified source. 
+        /// </summary>
+        /// <param name="source">
+        ///   Identifies a source to be timed.
+        /// </param>
+        public void StartTimer(string source)
         {
-            key = key == TimerPrefix ? key : timerKey(key); 
-            _values[key] = new Timer(DateTime.Now.Ticks);
+            source = source == TimerPrefix ? source : timerKey(source); 
+            _values[source] = new Timer(DateTime.Now.Ticks);
         }
-        
+
+        /// <summary>
+        ///   Returns the elapsed time and, optionally, stops the timer. 
+        /// </summary>
+        /// <param name="key">
+        ///   Identifies the diagnostics source. 
+        /// </param>
+        /// <param name="stopTimer">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to also stop the timer (if the timer was already stopped the request is ignored).
+        /// </param>
+        /// <returns>
+        ///   The number of ticks that has elapsed since the timer was started until now (or it ended, when stopped).
+        /// </returns>
         public long? GetElapsedMs(string key = null, bool stopTimer = true)
         {
             key = key is null ? TimerPrefix : timerKey(key);
@@ -55,31 +78,50 @@ namespace TetraPak.AspNet.Diagnostics
                 : _values.Where(i => i.Key.StartsWith(prefix));
         }
 
-        public ServiceDiagnostics()
+        internal ServiceDiagnostics()
         {
             StartTimer(TimerPrefix);
         }
         
+        /// <summary>
+        ///   A service diagnostics timer.
+        /// </summary>
         public class Timer
         {
-            public long Begin { get; }
+            /// <summary>
+            ///   Gets the timer start time (ticks).
+            /// </summary>
+            public long Started { get; }
             
-            public long? End { get; set; }
+            /// <summary>
+            ///   Gets the timer end time (ticks).
+            /// </summary>
+            public long? Ended { get; private set; }
 
+            /// <summary>
+            ///   Returns the elapsed time and, optionally, stops the timer. 
+            /// </summary>
+            /// <param name="stop">
+            ///   (optional; default=<c>true</c>)<br/>
+            ///   Specifies whether to also stop the timer (if the timer was already stopped the request is ignored).
+            /// </param>
+            /// <returns>
+            ///   The number of ticks that has elapsed since the timer was started until now (or it ended, when stopped).
+            /// </returns>
             public long ElapsedMs(bool stop = true)
             {
                 var end = DateTime.Now.Ticks;
-                if (stop && !End.HasValue)
-                    End = end;
+                if (stop && !Ended.HasValue)
+                    Ended = end;
                 
-                return (long) (End.HasValue
-                    ? TimeSpan.FromTicks(End.Value - Begin).TotalMilliseconds
-                    : TimeSpan.FromTicks(end - Begin).TotalMilliseconds);
+                return (long) (Ended.HasValue
+                    ? TimeSpan.FromTicks(Ended.Value - Started).TotalMilliseconds
+                    : TimeSpan.FromTicks(end - Started).TotalMilliseconds);
             }
 
-            public Timer(long now)
+            internal Timer(long now)
             {
-                Begin = now;
+                Started = now;
             }
         }
 

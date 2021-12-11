@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Represents a basic (<c>abstract</c>) factory to be used for constructing
+    ///   implementations of the <see cref="ITetraPakClaimsTransformation"/> interface.
+    /// </summary>
     public abstract class ClaimsTransformationFactory : ITetraPakClaimsTransformation
     {
         internal ITetraPakClaimsTransformation GetClaimsTransformation(IServiceProvider serviceProvider)
@@ -12,6 +16,15 @@ namespace TetraPak.AspNet
             return OnGetClaimsTransformation(serviceProvider);
         }
 
+        /// <summary>
+        ///   Invoked to construct and return a <see cref="ITetraPakClaimsTransformation"/>.
+        /// </summary>
+        /// <param name="serviceProvider">
+        ///   A service locator.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="ITetraPakClaimsTransformation"/>.
+        /// </returns>
         protected abstract ITetraPakClaimsTransformation OnGetClaimsTransformation(IServiceProvider serviceProvider);
 
         /// <summary>

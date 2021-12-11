@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Identity
 {
     /// <summary>
@@ -15,7 +17,7 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        public ILogger Logger => AmbientData.Logger;
+        public ILogger? Logger => AmbientData.Logger;
 
         /// <summary>
         ///   Gets the ambient data object.
@@ -28,11 +30,15 @@ namespace TetraPak.AspNet.Identity
         /// <param name="accessToken">
         ///   The request access token.
         /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="UserInformation"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        public async Task<Outcome<UserInformation>> GetUserInformationAsync(ActorToken accessToken)
+        public async Task<Outcome<UserInformation>> GetUserInformationAsync(ActorToken accessToken, string? messageId)
         {
             var loader = new UserInformationProvider(AmbientData);
             try
@@ -41,7 +47,7 @@ namespace TetraPak.AspNet.Identity
                 if (accessToken.Identity.IsSystemIdentityToken())
                     return Outcome<UserInformation>.Fail(ServerException.BadRequest("Cannot obtain user information for system identity"));
                 
-                var userInformation = await loader.GetUserInformationAsync(accessToken);
+                var userInformation = await loader.GetUserInformationAsync(accessToken!, messageId);
                 return Outcome<UserInformation>.Success(userInformation);
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -84,6 +85,7 @@ namespace TetraPak.AspNet
         bool? _trimHostInResponses;
         static  DiscoveryDocument? s_discoveryDocument;
         TaskCompletionSource<DiscoveryDocument?>? _masterSourceTcs;
+        ProductInfoHeaderValue? _sdkVersion;
 
         /// <summary>
         ///   Gets a (DI) service locator.
@@ -391,7 +393,6 @@ namespace TetraPak.AspNet
             {
                 var outcome = GetClientIdAsync(new AuthContext(GrantType, this)).Result;
                 return outcome.Value;
-                return outcome ? outcome.Value! : throw new ServerConfigurationException("Client id could not be resolved"); // obsolete
             }
             set => _clientId = value;
         }
@@ -682,6 +683,38 @@ namespace TetraPak.AspNet
         {
             get => _refreshThresholdSeconds ?? Section.GetValue<int>(nameof(RefreshThreshold));
             set => _refreshThresholdSeconds = value;
+        }
+
+        /// <summary>
+        ///   Returns a <see cref="ProductInfoHeaderValue"/> to reflect the current SDK version.
+        /// </summary>
+        [StateDump]
+        public ProductInfoHeaderValue SdkVersion
+        {
+            get
+            {
+                if (_sdkVersion is { })
+                    return _sdkVersion;
+
+                _sdkVersion = OnGetSdkVersion();
+                return _sdkVersion;
+            }
+        }
+
+        /// <summary>
+        ///   Invoked internally to produce the SDK version.
+        /// </summary>
+        /// <returns>
+        ///   A <see cref="ProductInfoHeaderValue"/> object.
+        /// </returns>
+        /// <remarks>
+        ///   This method will only be invoked once.  
+        /// </remarks>
+        protected virtual ProductInfoHeaderValue OnGetSdkVersion()
+        {
+            var asm = typeof(TetraPakConfig).Assembly;
+            var v = asm.GetName().Version!;
+            return new ProductInfoHeaderValue(asm.GetName().Name, $"{v.Major}.{v.Minor}.{v.Build}");
         }
 
         /// <summary>

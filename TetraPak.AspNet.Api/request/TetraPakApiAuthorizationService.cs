@@ -74,8 +74,9 @@ namespace TetraPak.AspNet.Api
                         var outcome = await OnTokenExchangeAuthenticationAsync(
                             options.AuthConfig!,
                             options.ActorToken,
+                            options.ForceAuthorization,
                             cancellationToken);
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameTx);
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStopTimer(TimerNameTx);
                         return outcome;
                     
                     case GrantType.ClientCredentials:
@@ -83,7 +84,7 @@ namespace TetraPak.AspNet.Api
                         outcome = await OnClientCredentialsAuthenticationAsync(
                             options.AuthConfig!,
                             cancellationToken);
-                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsEndTimer(TimerNameCc);
+                        ((ITetraPakDiagnosticsProvider) this).DiagnosticsStopTimer(TimerNameCc);
                         return outcome;
                     
                     case GrantType.None:
@@ -123,11 +124,14 @@ namespace TetraPak.AspNet.Api
         /// <param name="authConfig">
         ///   Specifies the authentication credentials and options.
         /// </param>
-        /// <param name="accessToken">
+        /// <param name="subjectToken">
         ///   The access token to be exchanged.
         /// </param>
         /// <param name="cancellationToken">
         ///   A <see cref="CancellationToken"/>.
+        /// </param>
+        /// <param name="forceAuthorization">
+        ///   Specifies whether to force a new client authorization (overriding/replacing any cached authorization). 
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
@@ -138,10 +142,11 @@ namespace TetraPak.AspNet.Api
         /// </exception>
         protected virtual async Task<Outcome<ActorToken>> OnTokenExchangeAuthenticationAsync(
             IServiceAuthConfig authConfig,
-            ActorToken? accessToken,
+            ActorToken? subjectToken,
+            bool forceAuthorization,
             CancellationToken? cancellationToken)
         {
-            if (accessToken is null)
+            if (subjectToken is null)
                 return Outcome<ActorToken>.Fail(new InvalidOperationException("Expected an access token for token exchange"));
             
             try
@@ -161,7 +166,11 @@ namespace TetraPak.AspNet.Api
                 var clientSecret = secretOutcome.Value;
             
                 var credentials = new BasicAuthCredentials(clientId, clientSecret);
-                var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(credentials, accessToken, ct);
+                var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(
+                    credentials,
+                    subjectToken,
+                    forceAuthorization,
+                    ct);
                 if (!txOutcome)
                     throw txOutcome.Exception;
 
@@ -236,7 +245,7 @@ namespace TetraPak.AspNet.Api
         
         void ITetraPakDiagnosticsProvider.DiagnosticsStartTimer(string timerKey) => getDiagnostics()?.StartTimer(timerKey);
 
-        long? ITetraPakDiagnosticsProvider.DiagnosticsEndTimer(string timerKey) => getDiagnostics()?.GetElapsedMs(timerKey);
+        long? ITetraPakDiagnosticsProvider.DiagnosticsStopTimer(string timerKey) => getDiagnostics()?.GetElapsedMs(timerKey);
         
         ServiceDiagnostics? getDiagnostics() => HttpContext?.GetDiagnostics(); 
 

@@ -280,7 +280,7 @@ namespace TetraPak.AspNet.Api
 
         public void DiagnosticsStartTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.StartTimer(timerKey);
 
-        public long? DiagnosticsEndTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.GetElapsedMs(timerKey);
+        public long? DiagnosticsStopTimer(string timerKey) => AmbientData.HttpContext?.GetDiagnostics()?.GetElapsedMs(timerKey);
 
         /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, ServiceEndpoint>> GetEnumerator()
@@ -341,24 +341,24 @@ namespace TetraPak.AspNet.Api
                 });
         }
 
-        ServiceEndpoint getServiceEndpoint(string? endpointName, object pathElements)
-        {
-            if (string.IsNullOrWhiteSpace(endpointName))
-                throw new ArgumentNullException(nameof(endpointName));
-                
-            if (_endpoints.TryGetValue(endpointName, out var endpoint)) 
-                return endpoint;
-            
-            if (_endpoints.Count == 0 && getServiceEndpointFromConfiguration(endpointName, out endpoint))
-                return endpoint!;
-
-            return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
-                endpointName, 
-                new[]
-                {
-                    new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
-                });
-        }
+        // ServiceEndpoint getServiceEndpoint(string? endpointName, object pathElements) obsolete
+        // {
+        //     if (string.IsNullOrWhiteSpace(endpointName))
+        //         throw new ArgumentNullException(nameof(endpointName));
+        //         
+        //     if (_endpoints.TryGetValue(endpointName, out var endpoint)) 
+        //         return endpoint;
+        //     
+        //     if (_endpoints.Count == 0 && getServiceEndpointFromConfiguration(endpointName, out endpoint))
+        //         return endpoint!;
+        //
+        //     return ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(
+        //         endpointName, 
+        //         new[]
+        //         {
+        //             new ArgumentOutOfRangeException(nameof(endpointName), $"Missing endpoint: {endpointName}")
+        //         });
+        // }
 
         void addIssue(Exception exception)
         {

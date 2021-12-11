@@ -32,47 +32,44 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         ///     The URL for the (actual) proxy to be emulated locally.
         /// </param>
         /// <param name="isMutedWhen">
-        ///   (optional)<br/>
-        ///   Specified a <see cref="HttpComparison"/> criteria that, when <c>true</c>, mutes the
-        ///   DevProxy, allowing the request to just pass through to the API.
+        ///     (optional)<br/>
+        ///     Specified a <see cref="HttpComparison"/> criteria that, when <c>true</c>, mutes the
+        ///     DevProxy, allowing the request to just pass through to the API.
         /// </param>
+        /// <param name="isDebugDevProxy"></param>
         /// <returns>
         ///   The <paramref name="app"/> instance.
         /// </returns>
-        public static IApplicationBuilder UseLocalDevProxy(this IApplicationBuilder app,
+        public static IApplicationBuilder UseDevelopmentProxy(this IApplicationBuilder app,
             IWebHostEnvironment env,
-            string proxyUrl, 
-            HttpComparison? isMutedWhen = null)
+            string proxyUrl,
+            HttpComparison? isMutedWhen = null, 
+            bool isDebugDevProxy = false)
         {
             lock (s_syncRoot)
             {
                 if (s_isDevProxyConfigured || !s_isDevProxyAllowed)
                     return app;
 
+                var tetraPakConfig = app.ApplicationServices.GetRequiredService<TetraPakConfig>();
                 var logger = app.ApplicationServices.GetService<ILogger<DevProxyMiddleware>>();
                 var httpClientProvider = app.ApplicationServices.GetRequiredService<IHttpClientProvider>();
-                s_isDevProxyAllowed = env.IsLocalHost(CollectionMatchingPolicy.Any, logger);
+                s_isDevProxyAllowed = env.IsLocalHost(CollectionMatchingPolicy.Any, logger) || isDebugDevProxy;
                 if (!s_isDevProxyAllowed)
                 {
-                    logger.Debug("Local development proxy middleware was NOT injected (not a local host)");
+                    logger.Debug("Local development proxy middleware was NOT injected (host is not local)");
                     return app;
                 }
 
-                var tetraPakConfig = app.ApplicationServices.GetService<TetraPakConfig>();
-                if (tetraPakConfig is null)
-                {
-                    logger.Warning($"Cannot inject a local development proxy. {nameof(TetraPakConfig)} service is not configured");
-                    s_isDevProxyConfigured = true;
-                    return app;
-                }
-
-                var proxyMiddleware = new DevProxyMiddleware(tetraPakConfig, httpClientProvider, proxyUrl, isMutedWhen);
+                var proxyMiddleware = new DevProxyMiddleware(tetraPakConfig, httpClientProvider, proxyUrl, isMutedWhen, isDebugDevProxy);
                 app.Use(async (context, next) =>
                 {
                     await proxyMiddleware.InvokeAsync(context);
                     await next();
                 });
-                logger.Warning("Local development proxy middleware WAS injected");
+                logger.Warning(() => isDebugDevProxy 
+                    ? "Local development proxy middleware WAS injected for auth debugging purposes (clients can now circumvent proxy)" 
+                    : "Local development proxy middleware WAS injected");
                 s_isDevProxyConfigured = true;
                 return app;
             }

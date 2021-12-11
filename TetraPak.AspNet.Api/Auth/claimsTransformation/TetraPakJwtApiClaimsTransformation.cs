@@ -67,9 +67,10 @@ namespace TetraPak.AspNet.Api.Auth
                 var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(
                     credentials, 
                     subjectToken, 
+                    false,
                     cancellationToken);
 
-                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value!.AccessToken, out var actorToken))
+                if (!txOutcome || !ActorToken.TryParse(txOutcome.Value!.AccessToken!, out var actorToken))
                     throw txOutcome.Exception;
 
                 var exchangedToken = isBearerToken

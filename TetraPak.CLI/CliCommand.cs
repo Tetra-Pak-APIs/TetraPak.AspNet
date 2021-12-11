@@ -36,10 +36,10 @@ namespace TetraPak.CLI
             sb.Append(CommandIdentifier);
             sb.Append("\t\t");
             sb.AppendLine(CommandDescription);
-            const char indent = '\t';
+            const char Indent = '\t';
             foreach (var commandFlag in CommandFlags)
             {
-                sb.Append(indent);
+                sb.Append(Indent);
                 if (commandFlag.IsFlagsOptional)
                 {
                     sb.Append('[');

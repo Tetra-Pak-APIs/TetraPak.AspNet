@@ -74,13 +74,13 @@ namespace WebAPI.Controllers
                     // note This is an example of how you can use an indexer to fetch the endpoint:
                     return await this.RespondAsync(
                         await _helloWorldService.Endpoints["HelloWorldWithTokenExchange"]
-                        .GetHttpResponseAsync(query));
+                        .GetRawAsync(query));
                 
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
                     return await this.RespondAsync(
                         await _helloWorldService.Endpoints.HelloWorldWithClientCredentials
-                            .GetHttpResponseAsync(query)
+                            .GetRawAsync(query)
                         );
                 
                 default:

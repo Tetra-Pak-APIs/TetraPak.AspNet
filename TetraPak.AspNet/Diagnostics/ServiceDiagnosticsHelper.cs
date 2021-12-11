@@ -24,6 +24,9 @@ namespace TetraPak.AspNet.diagnostics
             return diagnostics;
         }
         
+        /// <summary>
+        ///   Returns a <see cref="ServiceDiagnostics"/> object if available; otherwise <c>null</c>. 
+        /// </summary>
         public static ServiceDiagnostics? GetDiagnostics(this HttpContext self)
         {
             return self.GetValue<ServiceDiagnostics>(KeyDiagnostics);
@@ -32,7 +35,7 @@ namespace TetraPak.AspNet.diagnostics
         public static void StartDiagnosticsTime(this HttpContext self, string timeKey) 
             => self.GetDiagnostics()?.StartTimer(timeKey);
         
-        public static long? EndDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true) 
+        public static long? StopDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true) 
             => self.GetDiagnostics()?.GetElapsedMs(timeKey, stopTimer);
         
         public static ServiceDiagnostics End(this ServiceDiagnostics? self)
@@ -40,7 +43,7 @@ namespace TetraPak.AspNet.diagnostics
             if (self is null)
                 return null!;
 
-            self.End();
+            self.StopTimer();
             return self;
         }
 

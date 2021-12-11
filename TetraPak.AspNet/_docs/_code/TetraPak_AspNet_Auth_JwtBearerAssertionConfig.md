@@ -80,6 +80,18 @@ public TetraPak.AspNet.HttpComparison? DevProxyIsMutedWhen { get; set; }
 #### Property Value
 [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')
   
+<a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_IsDebugDevProxy'></a>
+## JwtBearerAssertionConfig.IsDebugDevProxy Property
+Gets a value that indicates whether a Development Proxy is specified to be run in debug mode.  
+```csharp
+public bool IsDebugDevProxy { get; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
+### Remarks
+It is possible to force the use of a development proxy (in debug mode) even when the process  
+is not run in a local host. This will allow more diagnostic during JWT Bearer Assertion.     
+  
 <a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_Issuer'></a>
 ## JwtBearerAssertionConfig.Issuer Property
 Gets or sets the required JWT issuer ("iss").  

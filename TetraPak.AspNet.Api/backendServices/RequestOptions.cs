@@ -1,4 +1,8 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
+using TetraPak.DynamicEntities;
+
+#nullable enable
 
 namespace TetraPak.AspNet.Api
 {
@@ -10,12 +14,18 @@ namespace TetraPak.AspNet.Api
         CancellationToken? _cancellationToken = CancellationToken.None;
         
         /// <summary>
+        ///   (default=<c>null</c>)<br/>
+        ///   Options for the client to be used for the operation.
+        /// </summary>
+        public HttpClientOptions? ClientOptions { get; set; }
+
+        /// <summary>
         ///   (default=<see cref="RequestDistribution.Sequential"/>)<br/>
         ///   Gets or sets a value to control how a multi-request process is distributed. 
         /// </summary>
         /// <remarks>
         ///   This value affects the distribution in a situation where multiple requests are made (such
-        ///   as calling <see cref="ServiceEndpointExtensions.GetAsync{T}(TetraPak.AspNet.Api.ServiceEndpoint,System.Collections.Generic.IEnumerable{string}?,TetraPak.AspNet.HttpQuery?,TetraPak.AspNet.Api.RequestOptions?,TetraPak.AspNet.HttpClientOptions?)"/>
+        ///   as calling <see cref="ServiceEndpointHelper.GetCollectionAsync{T}(ServiceEndpoint,IEnumerable{string}?,HttpQuery?,RequestOptions?)"/>
         ///   passing a collection of keys). When set to <see cref="RequestDistribution.Sequential"/> 
         ///   all requests are made in sequence, on the same thread. Set to <see cref="RequestDistribution.Parallel"/>
         ///   to allow the process to be made in parallel, distributed over multiple worker threads.
@@ -62,6 +72,35 @@ namespace TetraPak.AspNet.Api
         public RequestOptions WithDistribution(RequestDistribution value)
         {
             Distribution = value;
+            return this;
+        }
+
+        /// <summary>
+        ///   (fluent API)<br/>
+        ///   Sets the <see cref="ClientOptions"/> property and returns <c>this</c>.
+        /// </summary>
+        public RequestOptions WithClient(HttpClientOptions options)
+        {
+            ClientOptions = options;
+            return this;
+        }
+
+        /// <summary>
+        ///   Gets an object used for resolving variable elements of the request URL.
+        /// </summary>
+        /// <seealso cref="DynamicPathHelper.Substitute"/>
+        public object? DynamicPathValues { get; set; }
+
+        /// <summary>
+        ///   (Fluent API)<br/>
+        ///   Assigns the <see cref="DynamicPathValues"/> and returns <c>this</c>.
+        /// </summary>
+        /// <param name="values">
+        ///   Provides values (to be substituted) for variable elements.
+        /// </param>
+        public RequestOptions WithDynamicPath(object values)
+        {
+            DynamicPathValues = values;
             return this;
         }
 

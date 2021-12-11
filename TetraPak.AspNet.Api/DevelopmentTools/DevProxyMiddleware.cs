@@ -35,6 +35,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         
         ILogger? Logger => _config.Logger;
 
+        bool IsDebugging { get; }
+
         public async Task<bool> InvokeAsync(HttpContext context)
         {
             const string TimerName = "dev-proxy";
@@ -80,7 +82,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             {
                 jwtBearer = cachedJwtOutcome.Value!.Identity.ToBearerToken();
                 context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
-                context.EndDiagnosticsTime(TimerName);
+                context.StopDiagnosticsTime(TimerName);
                 return true;
             }
 
@@ -120,14 +122,14 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         messageId);
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
-                context.EndDiagnosticsTime(TimerName);
+                context.StopDiagnosticsTime(TimerName);
                 return false;
             }
 
             jwtBearer = jwtBearerOutcome.Value!.Identity.ToBearerToken();
             context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
             await cacheToken(accessToken, jwtBearerOutcome.Value);
-            context.EndDiagnosticsTime(TimerName);
+            context.StopDiagnosticsTime(TimerName);
  
             return true;
         }
@@ -176,8 +178,8 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         new ServerConfigurationException(
                             "Token exchange failed to obtain a HTTP client (see inner exception)", 
                             clientOutcome.Exception));
-                
-                using var client = new HttpClient();
+
+                var client = clientOutcome.Value!;
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await client.GetAsync(_url);
                 if (!response.IsSuccessStatusCode)
@@ -218,8 +220,12 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
         }
 
-        public DevProxyMiddleware(TetraPakConfig config, IHttpClientProvider httpClientProvider, string url,
-            HttpComparison? isMutedWhenCriteria)
+        public DevProxyMiddleware(
+            TetraPakConfig config, 
+            IHttpClientProvider httpClientProvider, 
+            string url,
+            HttpComparison? isMutedWhenCriteria,
+            bool isDebugging)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _httpClientProvider = httpClientProvider;
@@ -227,6 +233,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 ? throw new ArgumentNullException(nameof(url)) 
                 : url;
             _isMutedWhenCriteria = isMutedWhenCriteria;
+            IsDebugging = isDebugging;
             configureTokenCache();
         }
 

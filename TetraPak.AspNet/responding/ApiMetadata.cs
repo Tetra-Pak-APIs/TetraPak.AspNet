@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 
+#nullable enable
+
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -8,12 +10,14 @@ namespace TetraPak.AspNet
     /// </summary>
     public class ApiMetadata
     {
-        internal const string FormatKey = "tpsdk";
+        internal const string FormatKey = "tpSdk";
         
         /// <summary>
         ///   Gets a data response format version.  
         /// </summary>
         [JsonPropertyName(FormatKey)]
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         public string Format { get; set; }
         
         /// <summary>
@@ -27,8 +31,8 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </summary>
-        [JsonPropertyName("messageId")]
-        public string MessageId { get; set; }
+        [JsonPropertyName("msgId")]
+        public string? MessageId { get; set; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
 
         /// <summary>
@@ -40,7 +44,7 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>this</c> object.
         /// </returns>
-        public ApiMetadata WithMessageId(string messageId)
+        public ApiMetadata WithMessageId(string? messageId)
         {
             MessageId = messageId;
             return this;

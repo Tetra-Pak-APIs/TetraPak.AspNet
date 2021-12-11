@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Auth
 {
     partial class TetraPakAuth // refresh token flow 
@@ -19,7 +21,8 @@ namespace TetraPak.AspNet.Auth
         public static async Task<Outcome<TokenRefreshResponse>> RefreshTokenAsync( // todo Consider refactoring to service (like with ITokenExchangeService)
             this TetraPakConfig config,
             string refreshToken,
-            ILogger logger)
+            ILogger? logger,
+            string? messageId)
         {
             var body = makeRefreshTokenBody(refreshToken, config.IsPkceUsed ? config.ClientId : null);
             var uri = config.TokenIssuerUrl;
@@ -35,13 +38,24 @@ namespace TetraPak.AspNet.Auth
 
             try
             {
+                var sb = logger?.IsEnabled(LogLevel.Trace) ?? false
+                    ? await request.ToAbstractHttpRequestAsync().ToStringBuilderAsync(new StringBuilder(), () => TraceRequestOptions
+                        .Default(messageId))
+                    : null;
+                
                 var response = await request.GetResponseAsync();
                 stream = response.GetResponseStream() 
                     ?? throw new Exception("Unexpected error: No response when requesting token.");
 
+                if (sb is { })
+                {
+                    await response.ToAbstractHttpResponse().ToStringBuilderAsync(sb);
+                    logger.Trace(sb.ToString());
+                }
+                
                 using var r = new StreamReader(stream); 
                 var text = await r.ReadToEndAsync();
-                await logger.TraceAsync(response, _ => Task.FromResult(text));
+                // await logger.TraceAsync(response,  _ => Task.FromResult(text)); obsolete
                 return await buildAuthResultAsync(text);
             }
             catch (Exception ex)

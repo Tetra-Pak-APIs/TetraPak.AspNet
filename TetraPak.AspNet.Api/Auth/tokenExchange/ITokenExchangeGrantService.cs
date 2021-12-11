@@ -15,14 +15,19 @@ namespace TetraPak.AspNet.Api.Auth
         ///   Exchanges a specified access token for a new, to be used for consuming a service.
         /// </summary>
         /// <param name="credentials">
-        ///   Specifies the credentials used for the token exchange
-        ///   (typically <see cref="BasicAuthCredentials"/> carrying client id and client secret).
+        ///     Specifies the credentials used for the token exchange
+        ///     (typically <see cref="BasicAuthCredentials"/> carrying client id and client secret).
         /// </param>
-        /// <param name="accessToken">
-        ///   The access token to be exchanged.
+        /// <param name="subjectToken">
+        ///     The access token to be exchanged.
+        /// </param>
+        /// <param name="forceAuthorization">
+        ///   (optional; default=<c>true</c>)<br/>
+        ///   Specifies whether to force a new client authorization (overriding/replacing any cached authorization). 
         /// </param>
         /// <param name="cancellationToken">
-        ///   A cancellation token.
+        ///   (optional)<br/>
+        ///   Enables cancellation of the operation.
         /// </param>
         /// <returns>
         ///   A <see cref="Outcome{T}"/> value indicating success/failure and.
@@ -35,10 +40,10 @@ namespace TetraPak.AspNet.Api.Auth
         ///   non-human identities (a.k.a. "system identities").
         ///   </para>
         ///   <para>
-        ///   What this means is that if you pass an <paramref name="accessToken"/>
+        ///   What this means is that if you pass an <paramref name="subjectToken"/>
         ///   that was ultimately issued from a Client Credentials Grant the token exchange will fail
         ///   with a <c>400 Bad Request</c>.
-        ///   You can examine the <paramref name="accessToken"/> using the
+        ///   You can examine the <paramref name="subjectToken"/> using the
         ///   extension method <see cref="JwtHelper.IsSystemIdentityToken(ActorToken)"/>.
         ///   </para>
         ///   <para>
@@ -48,7 +53,8 @@ namespace TetraPak.AspNet.Api.Auth
         /// </remarks>
         Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
             Credentials credentials,
-            ActorToken accessToken, 
-            CancellationToken cancellationToken);
+            ActorToken subjectToken,
+            bool forceAuthorization = false,
+            CancellationToken? cancellationToken = null);
     }
 }

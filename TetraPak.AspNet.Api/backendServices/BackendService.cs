@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -8,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Configuration;
@@ -29,6 +31,7 @@ namespace TetraPak.AspNet.Api
     where TEndpoints : ServiceEndpoints
     {
         readonly string? _serviceName;
+        HttpClientOptions? _defaultClientOptions;
         
         const string TimerGet = "out-get";
         const string TimerPost = "out-post";
@@ -130,8 +133,15 @@ namespace TetraPak.AspNet.Api
         public Task<Outcome<ActorToken>> GetAccessTokenAsync(bool forceStandardHeader = false)
             => Endpoints.GetAccessTokenAsync(forceStandardHeader);
         
-        /// <inheritdoc />
-        public HttpClientOptions DefaultClientOptions => Endpoints.ClientOptions;
+        /// <summary>
+        ///   Gets or sets a default <see cref="HttpClientOptions"/>, used when sending HTTP requests
+        ///   without passing client options.    
+        /// </summary>
+        public HttpClientOptions DefaultClientOptions
+        {
+            get => _defaultClientOptions ?? Endpoints.ClientOptions;
+            set => _defaultClientOptions = value;
+        }
         
         /// <inheritdoc />
         public ServiceEndpoint GetEndpoint(string name) => Endpoints[name];
@@ -157,7 +167,7 @@ namespace TetraPak.AspNet.Api
         {
             if (timerKey is { })
             {
-                return Endpoints.DiagnosticsEndTimer(timerKey);
+                return Endpoints.DiagnosticsStopTimer(timerKey);
             }
 
             return null;
@@ -208,7 +218,7 @@ namespace TetraPak.AspNet.Api
             HttpClientOptions? clientOptions,
             CancellationToken? cancellationToken)
         {
-            var messageId = AmbientData.GetMessageId(true);
+            var messageId = AmbientData.GetMessageId(true)!;
             if (!Endpoints.IsValid)
                 return OnServiceConfigurationError(requestMessage, Endpoints.GetIssues()!, messageId);
             
@@ -229,15 +239,19 @@ namespace TetraPak.AspNet.Api
                     new Exception("Could not initialize a HTTP client. No access token available", 
                         accessTokenOutcome.Exception));
 
+            var forceAuthorization = false;
             clientOptions ??= accessTokenOutcome
                 ? DefaultClientOptions.WithAuthorization(accessTokenOutcome.Value!, Endpoints.AuthorizationService)
                 : DefaultClientOptions;
+
+            retry:
             
             var clientOutcome = await OnGetHttpClientAsync(clientOptions, ct);
             if (!clientOutcome)
                 return HttpOutcome<HttpResponseMessage>.Fail(
                     httpMethod,
-                    new Exception("Could not initialize a HTTP client (see inner exception)", 
+                    ServerException.InternalServerError(
+                        "Could not initialize a HTTP client (see inner exception)",
                         clientOutcome.Exception));
             
             var client = clientOutcome.Value!;
@@ -245,30 +259,43 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
-                    ? await requestMessage.ToStringBuilder(new StringBuilder(), () => TraceRequestOptions
+                    ? await (await requestMessage.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                        new StringBuilder(), 
+                        () => TraceRequestOptions
                         .Default(messageId)
+                        .WithDirection(HttpDirection.Out, ApiRequestInitiators.SdkBackendService(this))
                         .WithBaseAddress(client.BaseAddress!)
-                        .WithDecorator(sb =>
-                        {
-                            var decorated = new StringBuilder();
-                            decorated.Append($"{TraceRequest.GetTraceRequestQualifier(true)} ({ServiceName}) >>> ");
-                            decorated.AppendLine(sb.ToString());
-                            return Task.FromResult(decorated);
-                        }))
+                        .WithDefaultHeaders(client.DefaultRequestHeaders))
                     : null;
                 DiagnosticsStartTimer(timer);
                 var response = await client.SendAsync(requestMessage, ct);
                 var roundTripMs = DiagnosticsEndTimer(timer);
                 if (sb is { })
                 {
-                    sb.AppendLine(roundTripMs.HasValue ? $"RESPONSE ({roundTripMs}ms) ===>" : "RESPONSE ===>");
                     sb.AppendLine();
-                    await response.ToStringBuilderAsync(sb, TraceRequestOptions.Default(messageId));
+                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(
+                        sb,
+                        roundTripMs.HasValue
+                            ? () => TraceRequestOptions.Default(messageId).WithDetail($"{roundTripMs}ms")
+                            : null);
                     Logger.Trace(sb.ToString(), messageId);
                 }
-                return response.IsSuccessStatusCode
-                    ? HttpOutcome<HttpResponseMessage>.Success(httpMethod, response)
-                    : HttpOutcome<HttpResponseMessage>.Fail(httpMethod, new ServerException(response));
+
+                if (response.IsSuccessStatusCode)
+                    return HttpOutcome<HttpResponseMessage>.Success(httpMethod, response);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized && !forceAuthorization)
+                {
+                    // this deals with a situation where caching has produces an invalid (cached) authorization;
+                    // try re-authorizing the client once ...
+                    forceAuthorization = true;
+                    clientOptions.RequestForcedAuthorization();
+                    requestMessage = await requestMessage.CloneAsync();
+                    requestMessage.Headers.Remove(HeaderNames.Authorization);
+                    goto retry;
+                }
+
+                return HttpOutcome<HttpResponseMessage>.Fail(httpMethod, new ServerException(response));
             }
             catch (Exception ex)
             {
@@ -290,17 +317,16 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> PostAsync(
+        public Task<HttpOutcome<HttpResponseMessage>> PostRawAsync(
             string path,
             HttpContent content,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null) 
+            RequestOptions? options = null) 
         =>
             sendAsync(
                 OnMakeRequestMessage(HttpMethod.Post, path, content), 
                 TimerPost, 
-                clientOptions,
-                cancellationToken);
+                options?.ClientOptions,
+                options?.CancellationToken);
 
         /// <summary>
         ///   Invoked to construct a <see cref="HttpRequestMessage"/> from a path,
@@ -363,77 +389,52 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> PutAsync(
+        public Task<HttpOutcome<HttpResponseMessage>> PutRawAsync(
             string path, 
             HttpContent content, 
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null) 
+            RequestOptions? options = null) 
         =>
             sendAsync(
                 OnMakeRequestMessage(HttpMethod.Put, path, content),
                 TimerPut,
-                clientOptions,
-                cancellationToken);
+                options?.ClientOptions,
+                options?.CancellationToken);
 
         /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
+        public Task<HttpOutcome<HttpResponseMessage>> PatchRawAsync(
             string path, 
-            HttpContent content,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null)
+            HttpContent content,RequestOptions? options = null)
         => 
             sendAsync(
                 OnMakeRequestMessage(HttpMethod.Patch, path, content),
                 TimerPatch,
-                clientOptions,
-                cancellationToken);
+                options?.ClientOptions,
+                options?.CancellationToken);
 
+        
         /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
-            string path, 
-            object? data, 
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null) 
-        =>
-            sendAsync(
-                OnMakeRequestMessage(HttpMethod.Patch, path, makeHttpContent(data)),
-                TimerPatch,
-                clientOptions,
-                cancellationToken);
-
-        HttpContent makeHttpContent(object? data)
-        {
-            // todo Create HttpContent from object data 
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> GetAsync(
+        public Task<HttpOutcome<HttpResponseMessage>> GetRawAsync(
             string path,
             HttpQuery? queryParameters = null,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null,
-            string? messageId = null)
+            RequestOptions? options = null)
         {
             var useQuery = !queryParameters.IsEmpty();
             var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
             var get = new System.Net.Http.HttpMethod(HttpVerbs.Get); 
             var request = new HttpRequestMessage(get, usePath.TrimStart('/'));
-            return sendAsync(request, TimerGet, clientOptions, cancellationToken);
+            return sendAsync(request, TimerGet, options?.ClientOptions, options?.CancellationToken);
         }
 
         /// <inheritdoc />
-        public async Task<HttpEnumOutcome<T>> GetAsync<T>(
+        public async Task<HttpEnumOutcome<T>> GetCollectionAsync<T>(
             string path, 
             HttpQuery? queryParameters = null, 
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null, 
-            string? messageId = null)
+            RequestOptions? options = null)
         {
             try
             {
                 DiagnosticsStartTimer(TimerGet);
-                var outcome = await GetAsync(path, queryParameters, clientOptions, cancellationToken, messageId);
+                var outcome = await GetRawAsync(path, queryParameters, options);
                 DiagnosticsEndTimer(TimerGet);
                 if (!outcome)
                     return HttpEnumOutcome<T>.Fail(HttpMethod.Get, outcome.Exception);
@@ -447,6 +448,19 @@ namespace TetraPak.AspNet.Api
                 Console.WriteLine(ex);
                 throw;
             }
+        }
+
+        /// <inheritdoc />
+        public Task<HttpOutcome<HttpResponseMessage>> DeleteRawAsync(
+            string path, 
+            HttpQuery? queryParameters = null, 
+            RequestOptions? options = null)
+        {
+            var useQuery = !queryParameters.IsEmpty();
+            var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
+            var delete = new System.Net.Http.HttpMethod(HttpVerbs.Delete); 
+            var request = new HttpRequestMessage(delete, usePath.TrimStart('/'));
+            return sendAsync(request, TimerDelete, options?.ClientOptions, options?.CancellationToken);
         }
 
         /// <summary>
@@ -530,10 +544,9 @@ namespace TetraPak.AspNet.Api
         /// </remarks>
         protected virtual async Task<Outcome<ActorToken>> OnAuthorizeAsync(
             HttpClientOptions clientOptions,
-            CancellationToken? cancellationToken)
-        {
-            return await Endpoints.AuthorizeAsync(clientOptions, cancellationToken);
-        }
+            CancellationToken? cancellationToken) 
+        =>
+            await Endpoints.AuthorizeAsync(clientOptions, cancellationToken);
 
         /// <summary>
         ///   This method gets invoked when the class needs a <see cref="HttpClient"/> instance.

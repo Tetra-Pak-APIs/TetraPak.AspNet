@@ -178,7 +178,7 @@ namespace TetraPak.AspNet.Api.Auth
             if (!string.IsNullOrEmpty(proxyUrl))
             {
                 var mutedWhen = tetraPakConfig.JwtBearerAssertion.DevProxyIsMutedWhen;
-                app.UseLocalDevProxy(env, proxyUrl, mutedWhen);
+                app.UseDevelopmentProxy(env, proxyUrl, mutedWhen, tetraPakConfig.JwtBearerAssertion.IsDebugDevProxy);
             }
             app.Use((context, func) =>
             {

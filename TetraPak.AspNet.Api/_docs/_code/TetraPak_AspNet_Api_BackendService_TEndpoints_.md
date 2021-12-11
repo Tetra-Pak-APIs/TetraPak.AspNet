@@ -102,14 +102,13 @@ Implements [Configuration](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__DefaultClientOptions'></a>
 ## BackendService&lt;TEndpoints&gt;.DefaultClientOptions Property
-Gets default options for the creating clients for the backend service.   
+Gets or sets a default [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions'), used when sending HTTP requests  
+without passing client options.      
 ```csharp
-public TetraPak.AspNet.HttpClientOptions DefaultClientOptions { get; }
+public TetraPak.AspNet.HttpClientOptions DefaultClientOptions { get; set; }
 ```
 #### Property Value
 [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')
-
-Implements [DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions')  
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__Endpoints'></a>
 ## BackendService&lt;TEndpoints&gt;.Endpoints Property
@@ -199,6 +198,36 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 
 Implements [AuthorizeAsync(HttpClientOptions, Nullable<CancellationToken>)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_AuthorizeAsync(TetraPak_AspNet_HttpClientOptions_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.IBackendService.AuthorizeAsync(TetraPak.AspNet.HttpClientOptions, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.DeleteAsync(string, HttpQuery?, RequestOptions?) Method
+Sends a GET request to the backend service to retrieve an object of a specified type.  
+```csharp
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> DeleteAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+`path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The path to the requested resource.   
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
+`queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
+(optional)  
+Query parameters.  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
+  
+#### Returns
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
+a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+
+Implements [DeleteAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.DeleteAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
+#### See Also
+- [GetAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
+  
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAccessTokenAsync(bool)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetAccessTokenAsync(bool) Method
 Gets an access token from the request context.  
@@ -219,90 +248,70 @@ a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Act
 
 Implements [GetAccessTokenAsync(bool)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IAccessTokenProvider.GetAccessTokenAsync#TetraPak_AspNet_Auth_IAccessTokenProvider_GetAccessTokenAsync_System_Boolean_ 'TetraPak.AspNet.Auth.IAccessTokenProvider.GetAccessTokenAsync(System.Boolean)')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)'></a>
-## BackendService&lt;TEndpoints&gt;.GetAsync(string, HttpQuery?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;, string?) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.GetAsync(string, HttpQuery?, RequestOptions?) Method
 Sends a GEt request to the backend service to retrieve a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage').  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> GetAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null, string? messageId=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> GetAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_queryParameters'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
 `queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
 (optional)  
 Query parameters.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
-`messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<bt/>  
-A unique string value to be used for referencing/diagnostics purposes.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [GetAsync(string, HttpQuery?, HttpClientOptions?, Nullable<CancellationToken>, string?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?)')  
+Implements [GetAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
 #### See Also
-- [GetAsync&lt;T&gt;(string, HttpQuery?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;, string?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_) 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?)')
+- [GetAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)'></a>
-## BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, HttpQuery?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;, string?) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?) Method
 Sends a GET request to the backend service to retrieve an object of a specified type.  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpEnumOutcome<T>> GetAsync<T>(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null, string? messageId=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpEnumOutcome<T>> GetAsync<T>(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Type parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_T'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T'></a>
 `T`  
 Specifies the type of object to be retrieved.
   
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_queryParameters'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
 `queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
 (optional)  
 Query parameters.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
-`messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-(optional)<bt/>  
-A unique string value to be used for referencing/diagnostics purposes.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
-[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpEnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[T](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_)_T 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpEnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[T](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [GetAsync<T>(string, HttpQuery?, HttpClientOptions?, Nullable<CancellationToken>, string?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_) 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?)')  
+Implements [GetAsync<T>(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
 #### See Also
-- [GetAsync(string, HttpQuery?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;, string?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken__string_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;, string?)')
+- [GetAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetClientIdAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetClientIdAsync(AuthContext, Nullable&lt;CancellationToken&gt;) Method
@@ -580,133 +589,113 @@ A unique string value to be used for referencing/diagnostics purposes.
 An [TetraPak.AspNet.HttpEnumOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1') to indicate success/failure and, on success, also carry  
 one or more [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')s or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
-## BackendService&lt;TEndpoints&gt;.PatchAsync(string, object?, HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.PatchAsync(string, object?, RequestOptions?) Method
 Sends a PATCH request to the backend service.  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, object? data, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, object? data, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_data'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_data'></a>
 `data` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
 The content to be patched.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [PatchAsync(string, object?, HttpClientOptions?, Nullable<CancellationToken>)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.IBackendService.PatchAsync(string, object?, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [PatchAsync(string, object?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.PatchAsync(string, object?, TetraPak.AspNet.Api.RequestOptions?)')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
-## BackendService&lt;TEndpoints&gt;.PatchAsync(string, HttpContent, HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.PatchAsync(string, HttpContent, RequestOptions?) Method
 Sends a PATCH request to the backend service.  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_content'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be patched.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [PatchAsync(string, HttpContent, HttpClientOptions?, Nullable<CancellationToken>)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.IBackendService.PatchAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [PatchAsync(string, HttpContent, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.PatchAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.Api.RequestOptions?)')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
-## BackendService&lt;TEndpoints&gt;.PostAsync(string, HttpContent, HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.PostAsync(string, HttpContent, RequestOptions?) Method
 Sends a POST request to the backend service.  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PostAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PostAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_content'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be posted.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [PostAsync(string, HttpContent, HttpClientOptions?, Nullable<CancellationToken>)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.IBackendService.PostAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [PostAsync(string, HttpContent, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.PostAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.Api.RequestOptions?)')  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
-## BackendService&lt;TEndpoints&gt;.PutAsync(string, HttpContent, HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## BackendService&lt;TEndpoints&gt;.PutAsync(string, HttpContent, RequestOptions?) Method
 Sends a PUT request to the backend service.  
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PutAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.HttpClientOptions? clientOptions=null, System.Nullable<System.Threading.CancellationToken> cancellationToken=null);
+public System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PutAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_path'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_content'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be put.  
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_clientOptions'></a>
-`clientOptions` [TetraPak.AspNet.HttpClientOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpClientOptions 'TetraPak.AspNet.HttpClientOptions')  
-(optional; default=[DefaultClientOptions](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_DefaultClientOptions 'TetraPak.AspNet.Api.IBackendService.DefaultClientOptions'))<br/>  
-Specifies options for creating a client.  
-  
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
-`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
-(optional)<br/>  
-Allows cancelling the operation.  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
+(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
+Specifies options for the request.  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [PutAsync(string, HttpContent, HttpClientOptions?, Nullable<CancellationToken>)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.IBackendService.PutAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.HttpClientOptions?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
+Implements [PutAsync(string, HttpContent, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.PutAsync(string, System.Net.Http.HttpContent, TetraPak.AspNet.Api.RequestOptions?)')  
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__SendAsync(System_Net_Http_HttpRequestMessage_TetraPak_AspNet_HttpClientOptions__System_Nullable_System_Threading_CancellationToken_)'></a>
 ## BackendService&lt;TEndpoints&gt;.SendAsync(HttpRequestMessage, HttpClientOptions?, Nullable&lt;CancellationToken&gt;) Method

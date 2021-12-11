@@ -6,7 +6,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using TetraPak.AspNet.Debugging;
 using TetraPak.Caching;
 using TetraPak.Logging;
 
@@ -20,28 +22,29 @@ namespace TetraPak.AspNet.Api.Auth
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class TetraPakClientCredentialsGrantService : IClientCredentialsGrantService
     {
-        readonly TetraPakConfig _config;
+        readonly TetraPakConfig _tetraPakConfig;
         readonly IHttpClientProvider _httpClientProvider;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         const string CacheRepository = CacheRepositories.Tokens.ClientCredentials;
 
-        /// <summary>
-        ///   Gets a logger provider.
-        /// </summary>
-        protected ILogger? Logger => _config.Logger;
+        ILogger? Logger => _tetraPakConfig.Logger;
 
-        ITimeLimitedRepositories? Cache => _config.Cache;
+        ITimeLimitedRepositories? Cache => _tetraPakConfig.Cache;
+
+        HttpContext HttpContext => _httpContextAccessor.HttpContext;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
             CancellationToken? cancellationToken = null,
             Credentials? clientCredentials = null,
             MultiStringValue? scope = null, 
-            bool allowCached = true)
+            bool forceAuthorization = false)
         {
+            // todo Consider breaking up this method (it's too big) 
             try
             {
-                var useCancellation = cancellationToken ?? new CancellationToken();
+                var ct = cancellationToken ?? new CancellationToken();
                 if (clientCredentials is null)
                 {
                     var ccOutcome = await OnGetCredentialsAsync();
@@ -52,7 +55,9 @@ namespace TetraPak.AspNet.Api.Auth
                 }
 
                 var basicAuthCredentials = validateBasicAuthCredentials(clientCredentials);
-                var cachedOutcome = await OnGetCachedResponse(basicAuthCredentials);
+                var cachedOutcome = forceAuthorization 
+                        ? Outcome<ClientCredentialsResponse>.Fail()
+                        : await OnGetCachedResponse(basicAuthCredentials);
                 if (cachedOutcome)
                 {
                     var cachedResponse = cachedOutcome.Value!;
@@ -80,23 +85,41 @@ namespace TetraPak.AspNet.Api.Auth
 
                 var keyValues = formsValues.Select(kvp 
                     => new KeyValuePair<string?, string?>(kvp.Key, kvp.Value));
-                var response = await client.PostAsync(
-                    _config.TokenIssuerUrl,
-                    new FormUrlEncodedContent(keyValues),
-                    useCancellation);
+                
+                var request = new HttpRequestMessage(HttpMethod.Post, _tetraPakConfig.TokenIssuerUrl)
+                {
+                    Content = new FormUrlEncodedContent(keyValues)
+                };
+                var messageId = HttpContext.Request.GetMessageId(_tetraPakConfig);
+                var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
+                    ? await (await request.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                        new StringBuilder(), 
+                        () => TraceRequestOptions.Default(messageId)
+                            .WithInitiator(this, HttpDirection.Out)
+                            .WithDefaultHeaders(client.DefaultRequestHeaders))
+                    : null;
 
+                var response = await client.SendAsync(request, ct);
+                
+                if (sb is { })
+                {
+                    sb.AppendLine();
+                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(sb);
+                    Logger.Trace(sb.ToString());
+                }
+                
                 if (!response.IsSuccessStatusCode)
                     return loggedFailedOutcome(response);
 
 #if NET5_0_OR_GREATER
-                var stream = await response.Content.ReadAsStreamAsync(useCancellation);
+                var stream = await response.Content.ReadAsStreamAsync(ct);
 #else
                 var stream = await response.Content.ReadAsStreamAsync();
 #endif
                 var responseBody =
                     await JsonSerializer.DeserializeAsync<ClientCredentialsResponseBody>(
                         stream,
-                        cancellationToken: useCancellation);
+                        cancellationToken: ct);
 
                 var outcome = ClientCredentialsResponse.TryParse(responseBody);
                 if (outcome)
@@ -119,7 +142,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (Logger is null)
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
 
-                var messageId = _config.AmbientData.GetMessageId(true);
+                var messageId = _tetraPakConfig.AmbientData.GetMessageId(true);
                 var message = new StringBuilder();
                 message.AppendLine("Client credentials failure (state dump to follow if DEBUG log level is enabled)");
                 
@@ -135,7 +158,7 @@ namespace TetraPak.AspNet.Api.Auth
                     //         nameof(TetraPakConfig.CallbackPath))
                     //     .WithTargetLogger(Logger);
                     var dump = new StateDump().WithStackTrace();
-                    dump.AddAsync(_config, "AuthConfig");
+                    dump.AddAsync(_tetraPakConfig, "AuthConfig");
                     dump.AddAsync(clientCredentials, "Credentials");
                     message.AppendLine(dump.ToString());
                 }
@@ -212,12 +235,12 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         protected virtual Task<Outcome<Credentials>> OnGetCredentialsAsync()
         {
-            if (string.IsNullOrWhiteSpace(_config.ClientId))
+            if (string.IsNullOrWhiteSpace(_tetraPakConfig.ClientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
                     new ServerConfigurationException("Client credentials have not been provisioned")));
 
             return Task.FromResult(Outcome<Credentials>.Success(
-                new BasicAuthCredentials(_config.ClientId, _config.ClientSecret)));
+                new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret)));
         }
 
         /// <summary>
@@ -229,15 +252,20 @@ namespace TetraPak.AspNet.Api.Auth
         /// <param name="httpClientProvider">
         ///   A HttpClient factory.
         /// </param>
+        /// <param name="httpContextAccessor">
+        ///   Provides access to the current request/response <see cref="HttpContext"/>. 
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   Any parameter was <c>null</c>.
         /// </exception>
         public TetraPakClientCredentialsGrantService(
             TetraPakConfig tetraPakConfig, 
-            IHttpClientProvider httpClientProvider)
+            IHttpClientProvider httpClientProvider,
+            IHttpContextAccessor httpContextAccessor)
         {
-            _config = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
+            _tetraPakConfig = tetraPakConfig ?? throw new ArgumentNullException(nameof(tetraPakConfig));
             _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
+            _httpContextAccessor = httpContextAccessor;
         }
     }
 }

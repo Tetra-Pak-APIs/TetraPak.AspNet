@@ -5,10 +5,46 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LoggerExtensions=TetraPak.Logging.LoggerExtensions;
 
+#nullable enable
+
 namespace TetraPak.AspNet.Debugging
 {
+    /// <summary>
+    ///   Provides convenient extension methods to be used for debugging/diagnostics purposes.
+    /// </summary>
     public static class DebugHelper
     {
+        static AssemblyDebuggingMiddleware? s_assemblyDebuggingMiddleware;
+
+        /// <summary>
+        ///   Injects middleware that logs all assemblies currently linked to the app domain. 
+        /// </summary>
+        /// <param name="app">
+        ///   An <see cref="IApplicationBuilder"/> instance.
+        /// </param>
+        /// <param name="logLevel">
+        ///   (optional; default=<see cref="LogLevel.Debug"/>)<br/>
+        ///   Specifies the log level used when sending the information to the log provider.
+        /// </param>
+        /// <returns>
+        ///   The <see cref="IApplicationBuilder"/> instance.
+        /// </returns>
+        public static IApplicationBuilder UseAssembliesUsedDebugging(
+            this IApplicationBuilder app, 
+            LogLevel logLevel = LogLevel.Debug)
+        {
+            var logger = app.ApplicationServices.GetService<ILogger<AssemblyDebuggingMiddleware>>();
+            s_assemblyDebuggingMiddleware = new AssemblyDebuggingMiddleware(true, logger);
+            
+            app.Use(async (_, next) =>
+            {
+                await s_assemblyDebuggingMiddleware.InvokeAsync();
+                await next();
+            });
+
+            return app;
+        }
+        
         /// <summary>
         ///   Adds route debugging information to all configured channels
         ///   (such as the console and/or the logging framework).
@@ -16,7 +52,7 @@ namespace TetraPak.AspNet.Debugging
         /// <param name="app">
         ///   An <see cref="IApplicationBuilder"/> instance.
         /// </param>
-        /// <param name="onSetOptions">
+        /// <param name="optionsFactory">
         ///   (optional)<br/>
         ///   A delegate to customize <see cref="RouteDebuggingOptions"/> used for debugging routing.
         /// </param>
@@ -26,10 +62,10 @@ namespace TetraPak.AspNet.Debugging
         /// <seealso cref="RouteDebuggingOptions"/>
         public static IApplicationBuilder UseRoutingDebugging(
             this IApplicationBuilder app,
-            Action<RouteDebuggingOptions> onSetOptions = null)
+            Action<RouteDebuggingOptions>? optionsFactory = null)
         {
             var options = new RouteDebuggingOptions();
-            onSetOptions?.Invoke(options);
+            optionsFactory?.Invoke(options);
 
             app.Use((context, next) =>
             {
@@ -42,12 +78,12 @@ namespace TetraPak.AspNet.Debugging
                         return next();
                 }
 
-                if ((options.Logging & RouteDebuggingLogging.Console) == RouteDebuggingLogging.Console)
+                if ((options.Channels & RouteDebuggingChannels.Console) == RouteDebuggingChannels.Console)
                 {
                     Console.WriteLine($"Route found: {context.GetEndpoint()?.DisplayName}");
                 }
 
-                if ((options.Logging & RouteDebuggingLogging.Logger) != RouteDebuggingLogging.Logger) 
+                if ((options.Channels & RouteDebuggingChannels.Logger) != RouteDebuggingChannels.Logger) 
                     return next();
                 
                 var logger = context.RequestServices.GetService<ILogger<RouteDebugArgs>>();
@@ -60,72 +96,5 @@ namespace TetraPak.AspNet.Debugging
 
             return app;
         }
-    }
-
-    public class RouteDebugArgs
-    {
-        public Endpoint Endpoint { get; }
-
-        /// <summary>
-        ///   
-        /// </summary>
-        public LogLevel? LogLevel { get; }
-
-        /// <summary>
-        ///   Gets or sets a value that specifies that operation is complete
-        ///   and that no further actions are to be taken. 
-        /// </summary>
-        public bool IsHandled { get; set; }
-
-        internal RouteDebugArgs(HttpContext context, RouteDebuggingOptions options)
-        {
-            Endpoint = context.GetEndpoint();
-            LogLevel = (options.Logging & RouteDebuggingLogging.Logger) == RouteDebuggingLogging.Logger
-                ? options.LogLevel
-                : null;
-        }
-    }
-
-    /// <summary>
-    ///   Used to specify which channels to write route debugging to.
-    /// </summary>
-    /// <seealso cref="RouteDebuggingOptions.Logging"/>
-    [Flags]
-    public enum RouteDebuggingLogging
-    {
-        /// <summary>
-        ///   Route debugging will not be written to any channel.
-        /// </summary>
-        None = 0,
-        
-        /// <summary>
-        ///   Route debugging will be written to the console.
-        /// </summary>
-        Console = 1,
-        
-        /// <summary>
-        ///   Route debugging will be written to the configured logging framework.
-        /// </summary>
-        Logger = 2,
-        
-        /// <summary>
-        ///   Route debugging will be written to all supported channels.
-        /// </summary>
-        All = Console | Logger
-    }
-
-    public delegate void RouteDebugHandler(RouteDebugArgs args);
-    
-    /// <summary>
-    ///   Used to configure route debugging.
-    /// </summary>
-    /// <seealso cref="DebugHelper.UseRoutingDebugging"/>
-    public class RouteDebuggingOptions
-    {
-        public RouteDebuggingLogging Logging { get; set; } = RouteDebuggingLogging.Logger;
-
-        public LogLevel LogLevel { get; set; } = LogLevel.Debug;
-
-        public RouteDebugHandler OnRouteDebug { get; set; }
     }
 }

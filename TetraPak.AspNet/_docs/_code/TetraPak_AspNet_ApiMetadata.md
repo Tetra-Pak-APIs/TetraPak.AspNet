@@ -43,7 +43,7 @@ public string Format { get; set; }
 ## ApiMetadata.MessageId Property
 A unique string value for tracking a request/response (mainly for diagnostics purposes).  
 ```csharp
-public string MessageId { get; set; }
+public string? MessageId { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -59,14 +59,14 @@ public int Total { get; set; }
 [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')
   
 ### Methods
-<a name='TetraPak_AspNet_ApiMetadata_WithMessageId(string)'></a>
-## ApiMetadata.WithMessageId(string) Method
+<a name='TetraPak_AspNet_ApiMetadata_WithMessageId(string_)'></a>
+## ApiMetadata.WithMessageId(string?) Method
 Fluent API to assign the [MessageId](TetraPak_AspNet_ApiMetadata.md#TetraPak_AspNet_ApiMetadata_MessageId 'TetraPak.AspNet.ApiMetadata.MessageId') property.   
 ```csharp
-public TetraPak.AspNet.ApiMetadata WithMessageId(string messageId);
+public TetraPak.AspNet.ApiMetadata WithMessageId(string? messageId);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiMetadata_WithMessageId(string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiMetadata_WithMessageId(string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The message id value.  
   

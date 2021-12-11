@@ -79,10 +79,28 @@ namespace demo.AcmeProducts.Controllers
             return await this.RespondAsync(await _productsRepository.UpdateAsync(product));
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteProduct(string id)
+        [HttpDelete, Route("{id}")]
+        public async Task<ActionResult> DeleteProduct(string id, [FromQuery] bool? assets = false)
         {
-            return await this.RespondAsync(await _productsRepository.DeleteAsync(id));
+            if (string.IsNullOrWhiteSpace(id))
+                return this.RespondErrorBadRequest("Expected resource id");
+            
+            string[]? assetKeys = null;
+            if (assets ?? false)
+            {
+                var outcome = await _productsRepository.ReadAsync(new[] { id });
+                if (outcome)
+                {
+                    assetKeys = outcome.Value!.First().AssetIds.ToArray();
+                }
+            }
+            
+            var productOutcome = await _productsRepository.DeleteAsync(id);
+            if (!productOutcome || assetKeys is null)
+                return await this.RespondAsync(productOutcome);
+
+            var assetOutcome = await _assetsService.Endpoints.Assets.DeleteAsync<string>(assetKeys);
+            return await this.RespondAsync(productOutcome);
         }
 
         #endregion
@@ -165,7 +183,7 @@ namespace demo.AcmeProducts.Controllers
         {
             return _assetsService.Endpoints.Assets.GetAsync<AssetDTO>(
                 product.AssetIds,
-                requestOptions: RequestOptions.Default.WithCancellation(HttpContext.RequestAborted));
+                options: RequestOptions.Default.WithCancellation(HttpContext.RequestAborted));
         }
 
         public ProductsController(

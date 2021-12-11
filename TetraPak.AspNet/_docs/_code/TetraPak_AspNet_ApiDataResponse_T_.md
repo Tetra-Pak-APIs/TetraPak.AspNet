@@ -20,49 +20,49 @@ Initializes an empty the [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataRespo
 public ApiDataResponse();
 ```
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T__int_int_string)'></a>
-## ApiDataResponse&lt;T&gt;.ApiDataResponse(IEnumerable&lt;T&gt;, int, int, string) Constructor
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)'></a>
+## ApiDataResponse&lt;T&gt;.ApiDataResponse(IEnumerable&lt;T&gt;?, int, int, string?) Constructor
 Initializes the [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;').   
 ```csharp
-public ApiDataResponse(System.Collections.Generic.IEnumerable<T> data, int skip=-1, int total=-1, string messageId=null);
+public ApiDataResponse(System.Collections.Generic.IEnumerable<T>? data, int skip=-1, int total=-1, string? messageId=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T__int_int_string)_data'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)_data'></a>
 `data` [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[T](TetraPak_AspNet_ApiDataResponse_T_.md#TetraPak_AspNet_ApiDataResponse_T__T 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;.T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
 A collection of items to be included in the response data block.  
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T__int_int_string)_skip'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)_skip'></a>
 `skip` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
 (optional)<br/>  
 Initializes the meta data "count" value ([Count](TetraPak_AspNet_ApiChunkedMetadata.md#TetraPak_AspNet_ApiChunkedMetadata_Count 'TetraPak.AspNet.ApiChunkedMetadata.Count')).  
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T__int_int_string)_total'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)_total'></a>
 `total` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
 Initialises the meta data "total" value ([Total](TetraPak_AspNet_ApiMetadata.md#TetraPak_AspNet_ApiMetadata_Total 'TetraPak.AspNet.ApiMetadata.Total')).  
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T__int_int_string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 (optional)<br/>  
 Initializes thw [messageId](https://docs.microsoft.com/en-us/dotnet/api/messageId 'messageId') property.  
   
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string)'></a>
-## ApiDataResponse&lt;T&gt;.ApiDataResponse(EnumOutcome&lt;T&gt;, int, string) Constructor
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string_)'></a>
+## ApiDataResponse&lt;T&gt;.ApiDataResponse(EnumOutcome&lt;T&gt;, int, string?) Constructor
 Initializes the [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;') object from an [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') object.   
 ```csharp
-public ApiDataResponse(TetraPak.EnumOutcome<T> outcome, int totalCount=-1, string messageId=null);
+public ApiDataResponse(TetraPak.EnumOutcome<T> outcome, int totalCount=-1, string? messageId=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string)_outcome'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string_)_outcome'></a>
 `outcome` [TetraPak.EnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')[T](TetraPak_AspNet_ApiDataResponse_T_.md#TetraPak_AspNet_ApiDataResponse_T__T 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;.T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.EnumOutcome-1 'TetraPak.EnumOutcome`1')  
 The [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') object, carrying the data to be included in response.  
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string)_totalCount'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string_)_totalCount'></a>
 `totalCount` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
 (optional)<br/>  
 Initializes the [Total](TetraPak_AspNet_ApiMetadata.md#TetraPak_AspNet_ApiMetadata_Total 'TetraPak.AspNet.ApiMetadata.Total') value.   
   
-<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 (optional)<br/>  
 A unique string value for tracking a request/response (mainly for diagnostics purposes).  
@@ -88,14 +88,14 @@ public TetraPak.AspNet.ApiMetadata Meta { get; set; }
 [ApiMetadata](TetraPak_AspNet_ApiMetadata.md 'TetraPak.AspNet.ApiMetadata')
   
 ### Methods
-<a name='TetraPak_AspNet_ApiDataResponse_T__Empty(string)'></a>
-## ApiDataResponse&lt;T&gt;.Empty(string) Method
+<a name='TetraPak_AspNet_ApiDataResponse_T__Empty(string_)'></a>
+## ApiDataResponse&lt;T&gt;.Empty(string?) Method
 Creates and returns an empty [ApiDataResponse&lt;T&gt;](TetraPak_AspNet_ApiDataResponse_T_.md 'TetraPak.AspNet.ApiDataResponse&lt;T&gt;') object.  
 ```csharp
-public static TetraPak.AspNet.ApiDataResponse<T> Empty(string messageId=null);
+public static TetraPak.AspNet.ApiDataResponse<T> Empty(string? messageId=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiDataResponse_T__Empty(string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiDataResponse_T__Empty(string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A unique string value for tracking a request/response (mainly for diagnostics purposes).  
   

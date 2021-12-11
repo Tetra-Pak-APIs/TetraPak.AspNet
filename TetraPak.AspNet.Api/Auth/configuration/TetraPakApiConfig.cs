@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 
 #nullable enable
@@ -24,6 +25,13 @@ namespace TetraPak.AspNet.Api.Auth
     {
         public IBackendServiceProvider? BackendServiceProvider =>
             ServiceProvider.GetService<IBackendServiceProvider>();
+        
+        protected override ProductInfoHeaderValue OnGetSdkVersion()
+        {
+            var asm = typeof(TetraPakApiConfig).Assembly;
+            var v = asm.GetName().Version!;
+            return new ProductInfoHeaderValue(asm.GetName().Name!, $"{v.Major}.{v.Minor}.{v.Build}");
+        }
 
         public TetraPakApiConfig(IServiceProvider provider) : base(provider)
         {

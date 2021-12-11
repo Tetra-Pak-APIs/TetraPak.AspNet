@@ -72,18 +72,18 @@ public System.Net.Http.HttpMessageHandler? MessageHandler { get; set; }
 - [WithMessageHandler(HttpMessageHandler)](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler) 'TetraPak.AspNet.HttpClientOptions.WithMessageHandler(System.Net.Http.HttpMessageHandler)')
   
 ### Methods
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)'></a>
-## HttpClientOptions.WithAuthorization(ActorToken, IAuthorizationService?) Method
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken__TetraPak_AspNet_IAuthorizationService_)'></a>
+## HttpClientOptions.WithAuthorization(ActorToken?, IAuthorizationService?) Method
 Fluid API for requesting client authorization.  
 ```csharp
-public TetraPak.AspNet.HttpClientOptions WithAuthorization(TetraPak.ActorToken actorToken, TetraPak.AspNet.IAuthorizationService? authorizationService=null);
+public TetraPak.AspNet.HttpClientOptions WithAuthorization(TetraPak.ActorToken? actorToken, TetraPak.AspNet.IAuthorizationService? authorizationService=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)_actorToken'></a>
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken__TetraPak_AspNet_IAuthorizationService_)_actorToken'></a>
 `actorToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
-The actor token of the current request.  
+The actor token of the current request (if any).  
   
-<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken_TetraPak_AspNet_IAuthorizationService_)_authorizationService'></a>
+<a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken__TetraPak_AspNet_IAuthorizationService_)_authorizationService'></a>
 `authorizationService` [IAuthorizationService](TetraPak_AspNet_IAuthorizationService.md 'TetraPak.AspNet.IAuthorizationService')  
 (optional)<br/>  
 A (custom) authorization service to be used for authorizing the requested client.  

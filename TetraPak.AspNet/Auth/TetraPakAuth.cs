@@ -91,7 +91,8 @@ namespace TetraPak.AspNet.Auth
                     {
                         OnValidatePrincipal = async context =>
                         {
-                            if (!await context.RefreshTokenIfExpiredAsync(tetraPakConfig, logger))
+                            var messageId = context.Request.GetMessageId(tetraPakConfig, true);
+                            if (!await context.RefreshTokenIfExpiredAsync(tetraPakConfig, logger, messageId))
                                 return;
                             
                             // transfer access and id token to HttpContext, making them available as ambient values ...
@@ -198,10 +199,10 @@ namespace TetraPak.AspNet.Auth
                         {
                             traceOidc(() 
                                 => $"Token response received:{oidcConnectMessageAsync(context.TokenEndpointResponse)}");
+                            var messageId = context.HttpContext.Request.GetMessageId(tetraPakConfig);
                             await logger.TraceAsync(
-                                context.Response, 
-                                context.Request.GetMessageId(tetraPakConfig), 
-                                true);
+                                context.Response,
+                                optionsFactory: () => TraceRequestOptions.Default(messageId));
                         },
                         OnRedirectToIdentityProvider = _ =>
                         {
@@ -240,7 +241,7 @@ namespace TetraPak.AspNet.Auth
                 if (!logger?.IsEnabled(LogLevel.Trace) ?? true)
                     return;
                 
-                var messageId = tetraPakConfig?.AmbientData.GetMessageId(true);
+                var messageId = tetraPakConfig.AmbientData.GetMessageId(true);
                 logger.Trace($"<IODC> {message()}", messageId);
             }
 
@@ -360,7 +361,7 @@ namespace TetraPak.AspNet.Auth
                 if (!logger?.IsEnabled(LogLevel.Trace) ?? true)
                     return;
                 
-                var messageId = authConfig!.AmbientData.GetMessageId(true);
+                var messageId = authConfig.AmbientData.GetMessageId(true);
                 logger.Trace($"<OAUTH> {message()}", messageId);
             }
         }
@@ -371,7 +372,8 @@ namespace TetraPak.AspNet.Auth
         public static async Task<bool> RefreshTokenIfExpiredAsync(
             this CookieValidatePrincipalContext context,
             TetraPakConfig config,
-            ILogger? logger)
+            ILogger? logger,
+            string? messageId)
         {
             if (!isExpired())
                 return true;
@@ -380,7 +382,7 @@ namespace TetraPak.AspNet.Auth
             if (refreshToken is null)
                 return true;
 
-            var outcome = await config.RefreshTokenAsync(refreshToken, logger);
+            var outcome = await config.RefreshTokenAsync(refreshToken, logger, messageId);
             if (!outcome)
                 return await fail();
             

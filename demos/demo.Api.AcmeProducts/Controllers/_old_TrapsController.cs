@@ -28,7 +28,7 @@
 //         }
 //
 //         [HttpPost]
-//         public async Task<ActionResult> PostAsync([FromBody] TrapDTO trap)
+//         public async Task<ActionResult> PostRawAsync([FromBody] TrapDTO trap)
 //         {
 //             var abort = HttpContext.RequestAborted;
 //
@@ -62,12 +62,12 @@
 //         }
 //
 //         [HttpPut]
-//         public async Task<ActionResult> PutAsync([FromBody] TrapDTO trap)
+//         public async Task<ActionResult> PutRawAsync([FromBody] TrapDTO trap)
 //         {
 //             var abort = HttpContext.RequestAborted;
 //
 //             if (string.IsNullOrEmpty(trap.Id) || !await _oldTrapsRepository.ContainsAsync(trap.Id))
-//                 return await PostAsync(trap);
+//                 return await PostRawAsync(trap);
 //
 //             var assetsList = new List<string>();
 //             foreach (var asset in trap.Assets)
@@ -91,7 +91,7 @@
 //             return this.RespondOkCreated(putOutcome.Value!);
 //         }
 //
-//         public async Task<ActionResult> PatchAsync([FromBody] TrapDTO trap)
+//         public async Task<ActionResult> PatchRawAsync([FromBody] TrapDTO trap)
 //         {
 //             var abort = HttpContext.RequestAborted;
 //             if (string.IsNullOrEmpty(trap.Id))

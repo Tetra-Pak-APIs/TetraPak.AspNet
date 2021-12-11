@@ -25,9 +25,10 @@ namespace TetraPak.AspNet.Api.Auth
         ///   (optional)<br/>
         ///   Scope to be requested for the authorization.
         /// </param>
-        /// <param name="allowCached">
-        ///   (optional; default=<c>true</c>)<br/>
-        ///   Specifies whether to reuse a cached token if available, or to cache an acquired token when successful.
+        /// <param name="forceAuthorization">
+        ///   (optional; default=<c>false</c>)<br/>
+        ///   Specifies whether to force a new client credentials authorization
+        ///   (overriding/replacing any cached authorization). 
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> instance indicating success/failure, and the requested token
@@ -37,6 +38,6 @@ namespace TetraPak.AspNet.Api.Auth
             CancellationToken? cancellationToken = null,
             Credentials clientCredentials = null,
             MultiStringValue scope = null, 
-            bool allowCached = true);
+            bool forceAuthorization = false);
     }
 }

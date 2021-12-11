@@ -75,6 +75,22 @@ namespace TetraPak.AspNet.Api
                 new Exception(errorResponse.Title),
                 responseMessage);
         }
+        internal static HttpOutcome<ApiDataResponse<T>> GetInvalidEndpointResponse<T>(
+            this ServiceInvalidEndpoint url,
+            HttpMethod httpMethod,
+            string path,
+            string? queryParameters)
+        {
+            var issues = url.GetIssues();
+            var errorMessage = 
+                $"Error calling service: {requestToString(httpMethod.ToStringVerb(), path, queryParameters)}{Environment.NewLine}" + 
+                $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
+            var messageId = url.GetMessageId();
+            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
+            return HttpOutcome<ApiDataResponse<T>>.Fail(
+                httpMethod, 
+                new Exception("Internal service configuration error (please see logs)"));
+        }
         
         internal static HttpOutcome<HttpResponseMessage> GetServiceConfigurationErrorResponse(
             string httpMethod,

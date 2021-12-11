@@ -93,8 +93,6 @@ namespace TetraPak.AspNet.Api.Auth
                     OnMessageReceived = context =>
                     {
                         context.HttpContext.StartDiagnosticsTime(TimerName);
-                        Logger.DebugAssembliesInUse(); // todo Consider moving log-dumping assemblies-in-use to middleware  
-                        //await Logger.TraceHttpRequestAsync(context.Request); obsolete (this is now done by middleware)
                         if (context.TryReadCustomAuthorization(options, TetraPakConfig, Logger, out var token))
                         {
                             context.Token = token.Identity;
@@ -103,20 +101,16 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnTokenValidated = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime(TimerName);
+                        context.HttpContext.StopDiagnosticsTime(TimerName);
                         Logger.Debug("JWT Bearer is valid", context.Request.GetMessageId(TetraPakConfig));
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime(TimerName);
-                        if (Logger?.IsEnabled(LogLevel.Debug) ?? false)
-                        {
-                            var message = context.Exception is { }
-                                ? $"JWT Bearer assertion failed: {context.Exception.Message}"
-                                : "JWT Bearer assertion failed";
-                            Logger.Debug(message, context.Request.GetMessageId(TetraPakConfig));
-                        }
+                        context.HttpContext.StopDiagnosticsTime(TimerName);
+                        Logger.Debug(() => context.Exception is { }
+                            ? $"JWT Bearer assertion failed: {context.Exception.Message}"
+                            : "JWT Bearer assertion failed");
 
                         // terminates the request (todo: Consider option to allow other authentication schemes)
                         context.Response.OnStarting(async () =>
@@ -136,11 +130,12 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnForbidden = context =>
                     {
-                        context.HttpContext.EndDiagnosticsTime(TimerName);
+                        context.HttpContext.StopDiagnosticsTime(TimerName);
                         return Task.CompletedTask;
                     },
-                    OnChallenge = _ =>
+                    OnChallenge = context =>
                     {
+                        Logger.Warning(() => $"{context.Error} {context.ErrorDescription}");
                         return Task.CompletedTask;
                     }
                 };

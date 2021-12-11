@@ -7,7 +7,7 @@
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>1.0.1-beta.3</PackageVersion>
+        <PackageVersion>1.0.1-beta.4</PackageVersion>
         <PackageIcon>icon.png</PackageIcon>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
         <PackageReleaseNotes>
@@ -20,8 +20,8 @@
         <Copyright>Tetra Pak</Copyright>
         <RepositoryType>Git</RepositoryType>
         <RepositoryUrl>https://github.com/Tetra-Pak-APIs/TetraPak.Api</RepositoryUrl>
-        <AssemblyVersion>1.0.1.3</AssemblyVersion>
-        <FileVersion>1.0.1.3</FileVersion>
+        <AssemblyVersion>1.0.1.4</AssemblyVersion>
+        <FileVersion>1.0.1.4</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

@@ -280,12 +280,31 @@ The *development proxy* [middleware](#middleware-aspnet) supports (and assumes) 
 - Sends a message to the "actual" [sidecar](#sidecar), passing the access token to have it exchanged for a [JWT bearer token](#bearer-token). If the request fails it will terminate the request, logging the error and respond accordingly.
 - To increase performance the *developer proxy* also supports caching of [JWT bearer tokens](#bearer-token), avoiding unnecessary round trips for every request.
 
-While the *development proxy* is a useful tool for local debugging requirements it cannot be deployed to a (remote) web host. To minimize security risks and avoid deployment mistakes the *DevProxy* [middleware](#middleware-aspnet) will ***only*** be injected when the following criteria are met: 
+While the *development proxy* is a useful tool for local debugging requirements it should not be deployed to a (remote) web host. To minimize security risks and avoid deployment mistakes the *DevProxy* [middleware](#middleware-aspnet) will ***only*** be injected when the following criteria are met: 
 
-- The bound host URL(s) contain the textual pattern "`://localhost`"
-- The "actual" [sidecar](#sidecar) is properly named (configuration) and supports a *development proxy*. The [sidecar](#sidecar) name can be obtained from an [API manager](#api-manager)
+1. The bound host URL(s) contain the textual pattern "`://localhost`"
+2. The "actual" [sidecar](#sidecar) is properly named (configuration) and supports a *development proxy*. The [sidecar](#sidecar) name can be obtained from an [API manager](#api-manager)
 
-See: [API recipe][api-recipe-dev-proxy]
+### DevProxy in remote host
+
+There is one exception to the first rule however (the one that stipulates that your bound host name(s) must contain "`://localhost`"): If you prefix the DevProxy value with the "debug" scheme, like in this example ...
+
+```json
+{
+  "TetraPak": {
+    "JwtBearerAssertion": {
+      "Audience": "my-app",
+      "DevProxy": "debug://my-app-proxy" 
+    }
+  }
+}
+```
+
+... the DevProxy will be injected even when your API is deployed to a remote host, like Azure app service. This will allow for some diagnostics capabilities as you can now call the deployed app service directly (circumventing the proxy). That will make the DevProxy handle the extra roundtrip to the proxy and also log the process for you to analyze.
+
+This is an unusual use case but makes for another option in your debugging tool box that might increases your ability to track traffic and helps isolate where something goes wrong.
+
+See also: [API recipe][api-recipe-dev-proxy]
 
 ## Downstream
 

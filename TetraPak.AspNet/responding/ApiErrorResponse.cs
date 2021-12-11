@@ -13,7 +13,7 @@ namespace TetraPak.AspNet
     ///   Represents a standard Tetra Pak API error response (body). 
     /// </summary>
     [Serializable, JsonConverter(typeof(DynamicEntityJsonConverter<ApiErrorResponse>))]
-    public class ApiErrorResponse  : DynamicEntity
+    public class ApiErrorResponse : DynamicEntity
     {
         /// <summary>
         ///   Gets the response HTTP status code as <see cref="int"/>.

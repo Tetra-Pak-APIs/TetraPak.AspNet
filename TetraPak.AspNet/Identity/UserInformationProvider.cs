@@ -1,7 +1,9 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -25,7 +27,7 @@ namespace TetraPak.AspNet.Identity
         
         string CacheRepository => $"{nameof(UserInformationProvider)}-{_instanceId}"; 
         
-        ILogger Logger => _ambientData.Logger;
+        ILogger? Logger => _ambientData.Logger;
 
         /// <summary>
         ///   Obtains (and, optionally, caches) user information. 
@@ -40,9 +42,9 @@ namespace TetraPak.AspNet.Identity
         /// <returns>
         ///   A <see cref="UserInformation"/> value.
         /// </returns>
-        public async Task<UserInformation> GetUserInformationAsync(string accessToken, bool cached = true)
+        public async Task<UserInformation> GetUserInformationAsync(string accessToken, string? messageId, bool cached = true)
         {
-            object value = null;
+            object? value = null;
             if (cached)
             {
                 value = await getCachedAsync(accessToken);
@@ -67,20 +69,20 @@ namespace TetraPak.AspNet.Identity
                 }
             }
             
-            Logger?.Trace("Obtains discovery document");
+            Logger.Trace("Obtains discovery document");
             var discoOutcome = await Config.GetDiscoveryDocumentAsync();
             if (!discoOutcome)
             {
                 const string MissingDiscoDocErrorMessage =
                     "Could not obtain user information from Tetra Pak's User Information services. " +
                     "Failed when downloading discovery document";
-                Logger?.Warning(MissingDiscoDocErrorMessage, _ambientData.GetMessageId());
+                Logger.Warning(MissingDiscoDocErrorMessage, _ambientData.GetMessageId());
                 throw new Exception(MissingDiscoDocErrorMessage);
             }
 
             var disco = discoOutcome.Value;
             var userInfoEndpoint = disco!.UserInformationEndpoint;
-            var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint));
+            var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint), messageId);
             if (cached)
             {
                 await setCachedAsync(accessToken, completionSource);
@@ -88,7 +90,7 @@ namespace TetraPak.AspNet.Identity
             return await completionSource.Task;
         }
 
-        TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri)
+        TaskCompletionSource<UserInformation> downloadAsync(string accessToken, Uri userInfoUri, string? messageId)
         {
             Logger?.Trace($"Calls user info endpoint: {userInfoUri}");
             var tcs = new TaskCompletionSource<UserInformation>();
@@ -98,21 +100,33 @@ namespace TetraPak.AspNet.Identity
                 {
                     try
                     {
-                        var webRequest = (HttpWebRequest) WebRequest.Create(userInfoUri);
+                        var request = (HttpWebRequest) WebRequest.Create(userInfoUri);
                         var bearerToken = accessToken.ToBearerToken();
-                        webRequest.Method = "GET";
-                        webRequest.Accept = "*/*";
-                        webRequest.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
-                        Logger?.TraceWebRequestAsync(webRequest);
-                        var response = await webRequest.GetResponseAsync();
+                        request.Method = "GET";
+                        request.Accept = "*/*";
+                        request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
+                        
+                        var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
+                            ? await request.ToAbstractHttpRequestAsync().ToStringBuilderAsync(
+                                new StringBuilder(), 
+                                () => TraceRequestOptions.Default(messageId).WithInitiator(this, HttpDirection.Out))
+                            : null;
+                        
+                        // await Logger?.TraceAsync(request);
+                        var response = await request.GetResponseAsync();
+                        
+                        if (sb is { })
+                        {
+                            await response.ToAbstractHttpResponse().ToStringBuilderAsync(sb);
+                            Logger.Trace(sb.ToString());
+                        }
+
                         var responseStream = response.GetResponseStream()
                                              ?? throw new Exception(
                                                  "Unexpected error: No response when requesting user information.");
 
                         using var r = new StreamReader(responseStream);
                         var text = await r.ReadToEndAsync();
-
-                        await Logger.TraceAsync(response, _ => Task.FromResult(text));
 
                         var objDictionary = JsonSerializer.Deserialize<IDictionary<string, object>>(text);
                         if (objDictionary is null)
@@ -140,7 +154,7 @@ namespace TetraPak.AspNet.Identity
                     }
                     finally
                     {
-                        Logger?.Trace("[GET USER INFO END]");
+                        Logger.Trace("[GET USER INFO END]");
                     }
                 }
             });

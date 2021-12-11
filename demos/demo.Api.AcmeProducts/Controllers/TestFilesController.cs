@@ -18,7 +18,8 @@ namespace demo.AcmeProducts.Controllers
         [HttpGet, Route("{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            var outcome = await _assetsService.Endpoints.Files.GetStreamAsync(new { Id = id });
+            var dynamicPath = RequestOptions.Default.WithDynamicPath(new { Id = id });
+            var outcome = await _assetsService.Endpoints.Files.GetStreamAsync(options:dynamicPath);
             return await this.RespondAsync(outcome);
         }
 

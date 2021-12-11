@@ -142,7 +142,7 @@ namespace TetraPak.AspNet.Api
                     if (diagnostics is null)
                         return Task.CompletedTask;
 
-                    ServiceDiagnosticsHelper.End(diagnostics);
+                    diagnostics.End();
                     var timers = diagnostics.GetValues(ServiceDiagnostics.TimerPrefix).ToArray();
                     var timerNameIndex = ServiceDiagnostics.TimerPrefix.Length + 1;
                     var sb = new StringBuilder();

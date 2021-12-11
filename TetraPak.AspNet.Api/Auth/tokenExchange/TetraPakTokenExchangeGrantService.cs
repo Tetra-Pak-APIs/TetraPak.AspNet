@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
+using TetraPak.AspNet.Debugging;
 using TetraPak.Caching;
 using TetraPak.Logging;
 
@@ -19,46 +22,52 @@ namespace TetraPak.AspNet.Api.Auth
     public class TetraPakTokenExchangeGrantService : ITokenExchangeGrantService, IMessageIdProvider
     {
         readonly IHttpClientProvider _httpClientProvider;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         const string CacheRepository = CacheRepositories.Tokens.TokenExchange;
+
+        HttpContext? HttpContext => _httpContextAccessor.HttpContext;
 
         /// <summary>
         ///   Gets a logging provider.
         /// </summary>
-        protected ILogger? Logger => Config.Logger;
+        ILogger? Logger => TetraPakConfig.Logger;
 
         /// <summary>
         ///   Gets the auth configuration code API.
         /// </summary>
-        protected TetraPakConfig Config { get; }
+        TetraPakConfig TetraPakConfig { get; }
 
-        ITimeLimitedRepositories? Cache => Config.Cache;
+        ITimeLimitedRepositories? Cache => TetraPakConfig.Cache;
 
         /// <inheritdoc />
-        public string? GetMessageId(bool enforce = false) => Config.AmbientData.GetMessageId();
+        public string? GetMessageId(bool enforce = false) => TetraPakConfig.AmbientData.GetMessageId();
 
+        
+        
         /// <inheritdoc />
         public async Task<Outcome<TokenExchangeResponse>> ExchangeAccessTokenAsync(
-            Credentials credentials, 
-            ActorToken accessToken,
-            CancellationToken cancellationToken)
+            Credentials credentials,
+            ActorToken subjectToken,
+            bool forceAuthorization = false,
+            CancellationToken? cancellationToken = null)
         {
-            if (accessToken.IsSystemIdentityToken())
+            // todo Consider breaking up this method (it's too big) 
+            if (subjectToken.IsSystemIdentityToken())
                 return Outcome<TokenExchangeResponse>.Fail(this.TokenExchangeNotSupportedForSystemIdentity());
             
-            var cachedOutcome = await getCached(accessToken);
+            var cachedOutcome = forceAuthorization ? Outcome<TokenExchangeResponse>.Fail() : await getCached(subjectToken);
             if (cachedOutcome)
                 return cachedOutcome;
 
             var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
             if (!clientOutcome)
                 return Outcome<TokenExchangeResponse>.Fail(
-                    new ServerConfigurationException(
-                        "Token exchange service failed to obtain a HTTP client (see inner exception)", 
+                    ServerException.InternalServerError(
+                        "Token exchange service failed to obtain a HTTP client (see inner exception)",
                         clientOutcome.Exception));
 
             using var client = clientOutcome.Value!;
-            // var credentials = args.Credentials;
             if (credentials is not BasicAuthCredentials basicAuthCredentials)
             {
                 basicAuthCredentials = new BasicAuthCredentials(credentials.Identity, credentials.Secret);
@@ -67,26 +76,45 @@ namespace TetraPak.AspNet.Api.Auth
             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
             try
             {
-                var discoOutcome = await Config.GetDiscoveryDocumentAsync();
+                var discoOutcome = await TetraPakConfig.GetDiscoveryDocumentAsync();
                 if (!discoOutcome)
                     return Outcome<TokenExchangeResponse>.Fail(
-                        new ServerConfigurationException("Failed to obtain an OIDC discovery document"));
+                        ServerException.InternalServerError(
+                            "Failed to obtain an OIDC discovery document", clientOutcome.Exception));
 
                 var discoveryDocument = discoOutcome.Value!;
                 var form = new TokenExchangeArgs(
                     credentials, 
-                    accessToken, 
+                    subjectToken, 
                     "urn:ietf:params:oauth:token-type:id_token");
-                var response = await client.PostAsync(
-                    discoveryDocument.TokenEndpoint, 
-                    new FormUrlEncodedContent(form.ToDictionary()), 
-                    cancellationToken);
+                var ct = cancellationToken ?? CancellationToken.None;
+                var request = new HttpRequestMessage(HttpMethod.Post, discoveryDocument.TokenEndpoint)
+                {
+                    Content = new FormUrlEncodedContent(form.ToDictionary())
+                };
+                var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
+                var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
+                    ? await (await request.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                        new StringBuilder(), 
+                        () => TraceRequestOptions.Default(messageId)
+                            .WithInitiator(this, HttpDirection.Out)
+                            .WithDefaultHeaders(client.DefaultRequestHeaders))
+                    : null;
 
+                var response = await client.SendAsync(request, ct);
+                
+                if (sb is { })
+                {
+                    sb.AppendLine();
+                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(sb);
+                    Logger.Trace(sb.ToString());
+                }
+                
                 if (!response.IsSuccessStatusCode)
                 {
                     var ex = new ServerException(response);
 #if NET5_0_OR_GREATER                    
-                    var body = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var body = await response.Content.ReadAsStringAsync(ct);
 #else
                     var body = await response.Content.ReadAsStringAsync();
 #endif
@@ -95,85 +123,23 @@ namespace TetraPak.AspNet.Api.Auth
                 }
 
 #if NET5_0_OR_GREATER
-                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                var stream = await response.Content.ReadAsStreamAsync(ct);
 #else
                 var stream = await response.Content.ReadAsStreamAsync();
 #endif
                 var responseBody =
-                    await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream,
-                        cancellationToken: cancellationToken);
+                    await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream, cancellationToken: ct);
 
                 await cache(form.SubjectToken, responseBody!);
                 return Outcome<TokenExchangeResponse>.Success(responseBody!);
             }
             catch (Exception ex)
             {
-                return Outcome<TokenExchangeResponse>.Fail(ex);
+                return Outcome<TokenExchangeResponse>.Fail(ServerException.InternalServerError(
+                    "Unhandled internal token exchange error (see inner exception)", 
+                    ex));
             }
         }
-
-//         async Task<Outcome<TokenExchangeResponse>> exchangeAsync( obsolete
-//             TokenExchangeForm form, 
-//             CancellationToken cancellationToken)
-//         {
-// //             var cachedOutcome = await getCached(args.SubjectToken);
-// //             if (cachedOutcome)
-// //                 return cachedOutcome;
-// //
-// //             var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
-// //             if (!clientOutcome)
-// //                 return Outcome<TokenExchangeResponse>.Fail(
-// //                     new ConfigurationException(
-// //                         "Token exchange service failed to obtain a HTTP client (see inner exception)", 
-// //                         clientOutcome.Exception));
-// //
-// //             using var client = clientOutcome.Value!;
-// //             var credentials = args.Credentials;
-// //             if (credentials is not BasicAuthCredentials basicAuthCredentials)
-// //             {
-// //                 basicAuthCredentials = new BasicAuthCredentials(credentials.Identity, credentials.Secret);
-// //             }
-// //                 
-// //             client.DefaultRequestHeaders.Authorization = basicAuthCredentials.ToAuthenticationHeaderValue();
-// //             try
-// //             {
-// //                 var discoOutcome = await Config.GetDiscoveryDocumentAsync();
-// //                 if (!discoOutcome)
-// //                     return Outcome<TokenExchangeResponse>.Fail(
-// //                         new ConfigurationException("Failed to obtain an OIDC discovery document"));
-// //
-// //                 var discoveryDocument = discoOutcome.Value!;
-// //                 var dictionary = args.ToDictionary();
-// //                 var response = await client.PostAsync(
-// //                     discoveryDocument.TokenEndpoint, 
-// //                     new FormUrlEncodedContent(dictionary), 
-// //                     cancellationToken);
-// //
-// //                 if (!response.IsSuccessStatusCode)
-// //                 {
-// //                     var ex = new ApiException(response);
-// //                     var body = await response.Content.ReadAsStringAsync(); // obsolete?
-// //                     Logger.Error(ex, "Token exchange failure", GetMessageId());
-// //                     return Outcome<TokenExchangeResponse>.Fail(ex);
-// //                 }
-// //
-// // #if NET5_0_OR_GREATER
-// //                 var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-// // #else
-// //                 var stream = await response.Content.ReadAsStreamAsync();
-// // #endif
-// //                 var responseBody =
-// //                     await JsonSerializer.DeserializeAsync<TokenExchangeResponse>(stream,
-// //                         cancellationToken: cancellationToken);
-// //
-// //                 await cache(args.SubjectToken, responseBody!);
-// //                 return Outcome<TokenExchangeResponse>.Success(responseBody!);
-// //             }
-// //             catch (Exception ex)
-// //             {
-// //                 return Outcome<TokenExchangeResponse>.Fail(ex);
-// //             }
-//         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
         async Task<Outcome<TokenExchangeResponse>> getCached(ActorToken accessToken)
@@ -192,15 +158,8 @@ namespace TetraPak.AspNet.Api.Auth
                 return;
 
             var lifespan = response.GetLifespan();
-            await Cache.AddAsync(CacheRepository, accessToken.Identity, response, lifespan);
+            await Cache.AddOrUpdateAsync(CacheRepository, accessToken.Identity, response, lifespan);
         }
-
-        // /// <inheritdoc /> obsolete
-        // public virtual AuthenticationHeaderValue OnGetAuthorizationFrom(TokenExchangeResponse tokenExchangeResponse)
-        // {
-        //     var accessToken = tokenExchangeResponse.AccessToken;
-        //     return new AuthenticationHeaderValue("Bearer", accessToken);
-        // }
 
         /// <summary>
         ///   Initializes the <see cref="TetraPakTokenExchangeGrantService"/>.
@@ -211,16 +170,23 @@ namespace TetraPak.AspNet.Api.Auth
         /// <param name="httpClientProvider">
         ///   A HttpClient factory.
         /// </param>
+        /// <param name="httpContextAccessor">
+        ///   Provides access to the current request/response <see cref="HttpContext"/>. 
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="config"/> was unassigned.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   Any parameter was <c>null</c>.
         /// </exception>
-        public TetraPakTokenExchangeGrantService(TetraPakConfig config, IHttpClientProvider httpClientProvider)
+        public TetraPakTokenExchangeGrantService(
+            TetraPakConfig config,
+            IHttpClientProvider httpClientProvider,
+            IHttpContextAccessor httpContextAccessor)
         {
-            Config = config ?? throw new ArgumentNullException(nameof(config));
+            TetraPakConfig = config ?? throw new ArgumentNullException(nameof(config));
             _httpClientProvider = httpClientProvider ?? throw new ArgumentNullException(nameof(httpClientProvider));
+            _httpContextAccessor = httpContextAccessor;
         }
     }
 }

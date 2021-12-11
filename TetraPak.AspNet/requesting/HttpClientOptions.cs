@@ -10,6 +10,7 @@ namespace TetraPak.AspNet
     public class HttpClientOptions
     {
         /// <summary>
+        ///   (default=<c>false</c>)<br/>
         ///   Gets or sets a value specifying whether the requested <see cref="HttpClient"/> should be
         ///   transient (otherwise a singleton instance till be returned). 
         /// </summary>
@@ -39,6 +40,21 @@ namespace TetraPak.AspNet
         public IServiceAuthConfig? AuthConfig { get; set; }
 
         /// <summary>
+        ///   (intended for internal use; default=<c>false</c>)<br/>
+        ///   Gets a value specifying whether to force a new client authorization (replacing any cached authorization). 
+        /// </summary>
+        /// <seealso cref="RequestForcedAuthorization"/>
+        public bool ForceAuthorization { get; private set; }
+
+        /// <summary>
+        ///   Clears the <see cref="ForceAuthorization"/>, forcing a renewed client authorization.
+        /// </summary>
+        public void RequestForcedAuthorization(bool value = true)
+        {
+            ForceAuthorization = value;
+        }
+
+        /// <summary>
         ///   Fluid API for assigning a (custom) <see cref="HttpMessageHandler"/> to the requested
         ///   HTTP client.
         /// </summary>
@@ -56,14 +72,14 @@ namespace TetraPak.AspNet
         ///   Fluid API for requesting client authorization.
         /// </summary>
         /// <param name="actorToken">
-        ///   The actor token of the current request.
+        ///   The actor token of the current request (if any).
         /// </param>
         /// <param name="authorizationService">
         ///   (optional)<br/>
         ///   A (custom) authorization service to be used for authorizing the requested client.
         /// </param>
         public HttpClientOptions WithAuthorization(
-            ActorToken actorToken, 
+            ActorToken? actorToken,
             IAuthorizationService? authorizationService = null)
         {
             ActorToken = actorToken;
@@ -77,9 +93,10 @@ namespace TetraPak.AspNet
         /// <param name="isClientTransient">
         ///   Initializes <see cref="IsClientTransient"/>.
         /// </param>
-        public HttpClientOptions(bool isClientTransient = true)
+        public HttpClientOptions(bool isClientTransient = false)
         {
             IsClientTransient = isClientTransient;
+            ForceAuthorization = false;
         }
     }
 }

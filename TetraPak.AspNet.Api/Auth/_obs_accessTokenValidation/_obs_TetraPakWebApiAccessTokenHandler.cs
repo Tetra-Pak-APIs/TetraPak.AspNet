@@ -96,7 +96,7 @@
 //         //     if (AmbientData.Cache is null)
 //         //         return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
 //         //
-//         //     return await AmbientData.Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
+//         //     return await AmbientData.Cache.GetCollectionAsync<ActorToken>(CacheRepository, accessToken);
 //         // }
 //         //
 //         // async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)

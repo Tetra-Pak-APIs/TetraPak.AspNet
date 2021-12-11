@@ -147,8 +147,9 @@ namespace TetraPak.AspNet
             
             async Task mapFromRemoteServiceAsync(string accessToken)
             {
-                Logger.Trace("Fetches identity from Tetra Pak User Information Service");
-                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken);
+                var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
+                Logger.Trace("Fetches identity from Tetra Pak User Information Service", messageId);
+                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken!, messageId);
                 if (!userInfoOutcome)
                 {
                     Logger.Error(

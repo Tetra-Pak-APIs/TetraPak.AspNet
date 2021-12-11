@@ -20,11 +20,6 @@ namespace TetraPak.AspNet.Api
         string ServiceName { get; }
         
         /// <summary>
-        ///   Gets default options for the creating clients for the backend service. 
-        /// </summary>
-        HttpClientOptions DefaultClientOptions { get; }
-
-        /// <summary>
         ///   Obtains authorization to consume the service. 
         /// </summary>
         /// <param name="clientOptions">
@@ -59,7 +54,9 @@ namespace TetraPak.AspNet.Api
         ///   Gets a collection of <see cref="KeyValuePair{TKey,TValue}"/> with all endpoint names (key)
         ///   and the corresponding <see cref="ServiceEndpoint"/> (value).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        ///   A collection of key value pairs with the names of endpoints as keys. 
+        /// </returns>
         IEnumerable<KeyValuePair<string,ServiceEndpoint>> GetEndpoints();
 
         /// <summary>
@@ -71,23 +68,18 @@ namespace TetraPak.AspNet.Api
         /// <param name="content">
         ///   The content to be posted.
         /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        Task<HttpOutcome<HttpResponseMessage>> PostAsync(
+        Task<HttpOutcome<HttpResponseMessage>> PostRawAsync(
             string path,
             HttpContent content,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null);
+            RequestOptions? options = null);
         
         /// <summary>
         ///   Sends a PUT request to the backend service.
@@ -98,23 +90,18 @@ namespace TetraPak.AspNet.Api
         /// <param name="content">
         ///   The content to be put.
         /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        Task<HttpOutcome<HttpResponseMessage>> PutAsync(
+        Task<HttpOutcome<HttpResponseMessage>> PutRawAsync(
             string path,
             HttpContent content,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null);
+            RequestOptions? options = null);
 
         /// <summary>
         ///   Sends a PATCH request to the backend service.
@@ -125,50 +112,18 @@ namespace TetraPak.AspNet.Api
         /// <param name="content">
         ///   The content to be patched.
         /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
+        Task<HttpOutcome<HttpResponseMessage>> PatchRawAsync(
             string path,
             HttpContent content,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null);
-
-        /// <summary>
-        ///   Sends a PATCH request to the backend service.
-        /// </summary>
-        /// <param name="path">
-        ///   The path to the requested resource. 
-        /// </param>
-        /// <param name="data">
-        ///   The content to be patched.
-        /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
-        /// </param>
-        /// <returns>
-        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
-        /// </returns>
-        Task<HttpOutcome<HttpResponseMessage>> PatchAsync(
-            string path,
-            object? data,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null);
+            RequestOptions? options = null);
 
         /// <summary>
         ///   Sends a GEt request to the backend service to retrieve a <see cref="HttpResponseMessage"/>.
@@ -180,29 +135,19 @@ namespace TetraPak.AspNet.Api
         ///   (optional)
         ///   Query parameters.
         /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
-        /// </param>
-        /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <seealso cref="GetAsync{T}(string,HttpQuery,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        Task<HttpOutcome<HttpResponseMessage>> GetAsync(
+        /// <seealso cref="GetCollectionAsync{T}"/>
+        Task<HttpOutcome<HttpResponseMessage>> GetRawAsync(
             string path,
             HttpQuery? queryParameters = null,
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null,
-            string? messageId = null);
+            RequestOptions? options = null);
 
         /// <summary>
         ///   Sends a GET request to the backend service to retrieve an object of a specified type.
@@ -214,103 +159,43 @@ namespace TetraPak.AspNet.Api
         ///   (optional)
         ///   Query parameters.
         /// </param>
-        /// <param name="clientOptions">
-        ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        ///   Specifies options for creating a client.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///   (optional)<br/>
-        ///   Allows cancelling the operation.
-        /// </param>
-        /// <param name="messageId">
-        ///   (optional)<bt/>
-        ///   A unique string value to be used for referencing/diagnostics purposes.
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
         /// </param>
         /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        /// <seealso cref="GetAsync(string,HttpQuery,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        Task<HttpEnumOutcome<T>> GetAsync<T>(
+        /// <seealso cref="GetRawAsync"/>
+        Task<HttpEnumOutcome<T>> GetCollectionAsync<T>(
             string path,
             HttpQuery? queryParameters = null, 
-            HttpClientOptions? clientOptions = null,
-            CancellationToken? cancellationToken = null,
-            string? messageId = null);
-
-        // /// <summary>
-        // ///   Sends a GET request to the backend service to retrieve a <see cref="HttpResponseMessage"/>. obsolete
-        // /// </summary>
-        // /// <param name="path">
-        // ///   The path to the requested resource. 
-        // /// </param>
-        // /// <param name="queryParameters">
-        // ///   (optional)
-        // ///   Query parameters.
-        // /// </param>
-        // /// <param name="clientOptions">
-        // ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        // ///   Specifies options for creating a client.
-        // /// </param>
-        // /// <param name="cancellationToken">
-        // ///   (optional)<br/>
-        // ///   Allows cancelling the operation.
-        // /// </param>
-        // /// <param name="messageId">
-        // ///   (optional)<bt/>
-        // ///   A unique string value to be used for referencing/diagnostics purposes.
-        // /// </param>
-        // /// <returns>
-        // ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        // ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
-        // /// </returns>
-        // /// <seealso cref="GetAsync(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // /// <seealso cref="GetAsync{T}(string,string,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // /// <seealso cref="GetAsync{T}(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // Task<HttpOutcome<HttpResponseMessage>> GetAsync(
-        //     string path,
-        //     string? queryParameters = null,
-        //     HttpClientOptions? clientOptions = null,
-        //     CancellationToken? cancellationToken = null,
-        //     string? messageId = null);
-
-        // /// <summary>
-        // ///   Sends a GET request to the backend service to retrieve an object of a specified type.
-        // /// </summary>
-        // /// <param name="path">
-        // ///   The path to the requested resource. 
-        // /// </param>
-        // /// <param name="queryParameters">
-        // ///   (optional)
-        // ///   Query parameters.
-        // /// </param>
-        // /// <param name="clientOptions">
-        // ///   (optional; default=<see cref="DefaultClientOptions"/>)<br/>
-        // ///   Specifies options for creating a client.
-        // /// </param>
-        // /// <param name="cancellationToken">
-        // ///   (optional)<br/>
-        // ///   Allows cancelling the operation.
-        // /// </param>
-        // /// <param name="messageId">
-        // ///   (optional)<bt/>
-        // ///   A unique string value to be used for referencing/diagnostics purposes.
-        // /// </param>
-        // /// <typeparam name="T">Specifies the type of object to be retrieved.</typeparam>
-        // /// <returns>
-        // ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
-        // ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
-        // /// </returns>
-        // /// <seealso cref="GetAsync(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // /// <seealso cref="GetAsync(string,string,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // /// <seealso cref="GetAsync{T}(string,HttpQueryParameters,HttpClientOptions,Nullable{CancellationToken},string)"/>
-        // Task<HttpEnumOutcome<T>> GetAsync<T>(
-        //     string path,
-        //     string? queryParameters = null,
-        //     HttpClientOptions? clientOptions = null,
-        //     CancellationToken? cancellationToken = null,
-        //     string? messageId = null);
-
+            RequestOptions? options = null);
+        
+        /// <summary>
+        ///   Sends a GET request to the backend service to retrieve an object of a specified type.
+        /// </summary>
+        /// <param name="path">
+        ///   The path to the requested resource. 
+        /// </param>
+        /// <param name="queryParameters">
+        ///   (optional)
+        ///   Query parameters.
+        /// </param>
+        /// <param name="options">
+        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///   Specifies options for the request.
+        /// </param>
+        /// <returns>
+        ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
+        ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.
+        /// </returns>
+        /// <seealso cref="GetRawAsync"/>
+        Task<HttpOutcome<HttpResponseMessage>> DeleteRawAsync(
+            string path,
+            HttpQuery? queryParameters = null, 
+            RequestOptions? options = null);
     }
 }

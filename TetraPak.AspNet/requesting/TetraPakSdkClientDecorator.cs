@@ -1,6 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Net.Http.Headers;
 
 #nullable enable
 
@@ -8,23 +8,21 @@ namespace TetraPak.AspNet
 {
     class TetraPakSdkClientDecorator : IHttpClientDecorator
     {
-        static string? s_userAgentValue;
-
-        static string userAgentValue()
-        {
-            if (s_userAgentValue is { }) 
-                return s_userAgentValue;
-
-            var asm = typeof(TetraPakSdkClientDecorator).Assembly;
-            var v = asm.GetName().Version!;
-            s_userAgentValue = $"{asm.GetName().Name}/{v.Major}.{v.Minor}.{v.Build}";
-            return s_userAgentValue;
-        }
+        readonly TetraPakConfig _tetraPakConfig;
 
         public Task<Outcome<HttpClient>> DecorateAsync(HttpClient client)
         {
-            client.DefaultRequestHeaders.TryAddWithoutValidation(HeaderNames.UserAgent, new []{userAgentValue()});
+            var value = _tetraPakConfig.SdkVersion;
+            if (!client.DefaultRequestHeaders.UserAgent.Any(i => i.Equals(value)))
+            {
+                client.DefaultRequestHeaders.UserAgent.TryParseAdd(value.ToString());
+            }
             return Task.FromResult(Outcome<HttpClient>.Success(client));
+        }
+
+        public TetraPakSdkClientDecorator(TetraPakConfig tetraPakConfig)
+        {
+            _tetraPakConfig = tetraPakConfig;
         }
     }
 }

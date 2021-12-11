@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 
+// the pragma disables warnings for uninitialized properties in parameterless ctor (for JSON serialization) 
+#pragma warning disable 8618 
+#nullable enable
+
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -30,7 +34,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Returns all data items as an array of <see cref="object"/>. 
         /// </summary>
-        public object[] GetDataAsObjectArray() => Data?.Cast<object>().ToArray();
+        public object[] GetDataAsObjectArray() => Data.Cast<object>().ToArray();
 
         /// <summary>
         ///   Creates and returns an empty <see cref="ApiDataResponse{T}"/> object.
@@ -41,7 +45,7 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   A <see cref="ApiDataResponse{T}"/> object.
         /// </returns>
-        public static ApiDataResponse<T> Empty(string messageId = null) => new(messageId);
+        public static ApiDataResponse<T> Empty(string? messageId = null) => new(messageId);
 
         /// <summary>
         ///   Initializes the <see cref="ApiDataResponse{T}"/> object from an <see cref="Outcome{T}"/> object. 
@@ -57,7 +61,7 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
-        public ApiDataResponse(EnumOutcome<T> outcome, int totalCount = -1, string messageId = null)
+        public ApiDataResponse(EnumOutcome<T> outcome, int totalCount = -1, string? messageId = null)
         {
             var dataArray = outcome.Value ?? Array.Empty<T>();
             var count = outcome.Count;
@@ -73,7 +77,7 @@ namespace TetraPak.AspNet
             Data = dataArray.ToArray();
         }
 
-        ApiDataResponse(string messageId)
+        ApiDataResponse(string? messageId)
         {
             Meta = new ApiMetadata { Total = 0, MessageId = messageId };
             Data = Array.Empty<T>();
@@ -96,7 +100,7 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   Initializes thw <see cref="messageId"/> property.
         /// </param>
-        public ApiDataResponse(IEnumerable<T> data, int skip = -1, int total = -1, string messageId = null)
+        public ApiDataResponse(IEnumerable<T>? data, int skip = -1, int total = -1, string? messageId = null)
         {
             var dataArray = data?.ToArray() ?? Array.Empty<T>();
             var count = dataArray.Length;

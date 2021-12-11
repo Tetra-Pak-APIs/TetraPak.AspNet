@@ -12,6 +12,9 @@ namespace TetraPak.AspNet.Auth
     /// </summary>
     public class JwtBearerAssertionConfig : ConfigurationSection
     {
+        // inserting this prefix into the DevProxy value will allow the DevProxy even if host is not local  
+        const string DevProxyDebugQualifier = "debug://";
+        
         // ReSharper disable NotAccessedField.Local
         string? _audience;
         string? _issuer;
@@ -70,20 +73,47 @@ namespace TetraPak.AspNet.Auth
         /// </summary>
         public string? DevProxy
         {
-            get => GetFromFieldThenSection(parser: (string value, out string result) =>
-            {
-                // support specifying just the proxy name ...
-                result = value;
-                if (string.IsNullOrWhiteSpace(value))
-                    return false;
-
-                if (!value.Contains("://"))
-                {
-                    result = $"https://api-dev.tetrapak.com/edge/developers/{value}/token";
-                }
-                return true;
-            });
+            get => GetFromFieldThenSection(parser: (string? value, out string? result) => tryGetDevProxy(value, out result));
             set => _devProxy = value;
+        }
+
+        /// <summary>
+        ///   Gets a value that indicates whether a Development Proxy is specified to be run in debug mode.
+        /// </summary>
+        /// <remarks>
+        ///   It is possible to force the use of a development proxy (in debug mode) even when the process
+        ///   is not run in a local host. This will allow more diagnostic during JWT Bearer Assertion.   
+        /// </remarks>
+        public bool IsDebugDevProxy
+        {
+            get
+            {
+                var identifier = GetFromFieldThenSection(propertyName: nameof(DevProxy),  parser: (string? value, out string? result) =>
+                    tryGetDevProxy(value, out result, false, false));
+                return !string.IsNullOrWhiteSpace(identifier) && identifier.StartsWith(DevProxyDebugQualifier);
+            }
+        }
+
+        static bool tryGetDevProxy(
+            string? value, out string? result, 
+            bool trimDebugQualifier = true,
+            bool resolveAbsoluteUrl = true)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result = value;
+                return false;
+            }
+                
+            result = trimDebugQualifier ? value.RejectPrefix(DevProxyDebugQualifier) : value;
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (resolveAbsoluteUrl && !result.Contains("://"))
+            {
+                result = $"https://api-dev.tetrapak.com/edge/developers/{result.RejectPrefix(DevProxyDebugQualifier)}/token";
+            }
+            return true;
         }
         
         /// <summary>
