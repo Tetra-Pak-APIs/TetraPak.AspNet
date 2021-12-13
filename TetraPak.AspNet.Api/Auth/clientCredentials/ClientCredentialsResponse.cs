@@ -34,8 +34,8 @@ namespace TetraPak.AspNet.Api.Auth
             }
 
             if (string.IsNullOrWhiteSpace(body.Scope))
-                return Outcome<ClientCredentialsResponse>.Success(new ClientCredentialsResponse(
-                    accessToken, expiresIn, null));
+                return Outcome<ClientCredentialsResponse>.Success(
+                    new ClientCredentialsResponse(accessToken!, expiresIn, null));
 
             if (!MultiStringValue.TryParse(body.Scope, out var scope))
                 return Outcome<ClientCredentialsResponse>.Fail(
@@ -45,11 +45,11 @@ namespace TetraPak.AspNet.Api.Auth
                 actorToken, expiresIn, scope));
         }
         
-        ClientCredentialsResponse(ActorToken accessToken, TimeSpan expiresIn, MultiStringValue scope)
+        ClientCredentialsResponse(ActorToken accessToken, TimeSpan expiresIn, MultiStringValue? scope)
         {
             AccessToken = accessToken;
             ExpiresIn = expiresIn;
-            Scope = scope;
+            Scope = scope ?? MultiStringValue.Empty;
         }
     }
 }

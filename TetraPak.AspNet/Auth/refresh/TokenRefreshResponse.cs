@@ -8,17 +8,17 @@
         /// <summary>
         ///   Gets the new access token.
         /// </summary>
-        public string AccessToken { get; set; }
+        public string? AccessToken { get; set; }
         
         /// <summary>
         ///   Gets a new refresh token, if available.
         /// </summary>
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
         
         /// <summary>
         ///   Gets a provided identity token, if available.
         /// </summary>
-        public string IdToken { get; set; }
+        public string? IdToken { get; set; }
 
         /// <summary>
         ///   Gets a value indicating the new access token's lifespan.

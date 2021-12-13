@@ -8,8 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     class TetraPakClaimsTransformationDispatcher : IClaimsTransformation

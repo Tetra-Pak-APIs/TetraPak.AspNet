@@ -34,7 +34,7 @@ namespace TetraPak.AspNet.Identity
         /// <exception cref="InvalidCastException">
         ///   Value was found but was not of specified type. 
         /// </exception>
-        public bool TryGet<T>(string key, out T value)
+        public bool TryGet<T>(string key, out T? value)
         {
             if (!_dictionary.TryGetValue(key, out var obj))
             {
@@ -57,7 +57,7 @@ namespace TetraPak.AspNet.Identity
         /// </summary>
         public IDictionary<string, string> ToDictionary() => _dictionary;
 
-        public UserInformation(IDictionary<string, string> dictionary)
+        internal UserInformation(IDictionary<string, string> dictionary)
         {
             _dictionary = dictionary;
         }

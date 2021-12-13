@@ -12,8 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using TetraPak.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Debugging
 {
     partial class WebLoggerHelper // HTTP traffic

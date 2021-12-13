@@ -10,8 +10,6 @@ using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -97,6 +95,16 @@ namespace TetraPak.AspNet
             }
         }
 
+        /// <summary>
+        ///   Builds and a state dump from a <see cref="TetraPakConfig"/> object and writes it to the logger. 
+        /// </summary>
+        /// <param name="app">
+        ///   The extended application builder.
+        /// </param>
+        /// <param name="logLevel">
+        ///   (optional; default=<see cref="LogLevel.Trace"/>)<br/>
+        ///   A (custom) log level for the state dump information.
+        /// </param>
         public static IApplicationBuilder LogTetraPakConfiguration(
             this IApplicationBuilder app, 
             LogLevel logLevel = LogLevel.Trace)
@@ -146,7 +154,7 @@ namespace TetraPak.AspNet
                     if (diagnostics is null)
                         return Task.CompletedTask;
 
-                    ServiceDiagnosticsHelper.End(diagnostics);
+                    diagnostics.End();
                     var timers = diagnostics.GetValues(ServiceDiagnostics.TimerPrefix).ToArray();
                     var timerNameIndex = ServiceDiagnostics.TimerPrefix.Length + 1;
                     var sb = new StringBuilder();

@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

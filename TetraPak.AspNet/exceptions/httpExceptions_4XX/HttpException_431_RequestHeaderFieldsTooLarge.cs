@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     partial class ServerException

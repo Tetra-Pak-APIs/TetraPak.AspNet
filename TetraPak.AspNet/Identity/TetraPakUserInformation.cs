@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Identity
 {
     /// <summary>

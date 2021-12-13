@@ -36,8 +36,8 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
             CancellationToken? cancellationToken = null,
-            Credentials clientCredentials = null,
-            MultiStringValue scope = null, 
+            Credentials? clientCredentials = null,
+            MultiStringValue? scope = null, 
             bool forceAuthorization = false);
     }
 }

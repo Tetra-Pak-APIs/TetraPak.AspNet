@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 
 // the pragma disables warnings for uninitialized properties in parameterless ctor (for JSON serialization) 
 #pragma warning disable 8618 
-#nullable enable
 
 namespace TetraPak.AspNet
 {
@@ -98,7 +97,7 @@ namespace TetraPak.AspNet
         /// </param>
         /// <param name="messageId">
         ///   (optional)<br/>
-        ///   Initializes thw <see cref="messageId"/> property.
+        ///   Initializes thw <see cref="ApiMetadata.MessageId"/> property.
         /// </param>
         public ApiDataResponse(IEnumerable<T>? data, int skip = -1, int total = -1, string? messageId = null)
         {

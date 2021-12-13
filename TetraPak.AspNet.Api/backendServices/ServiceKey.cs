@@ -9,11 +9,11 @@ namespace TetraPak.AspNet.Api
         readonly int _hashCode;
         
 #if DEBUG
-        readonly object _obj;
+        readonly object? _obj;
 
-        readonly string _name;
+        readonly string? _name;
 
-        readonly Type _type;
+        readonly Type? _type;
 
         public override string ToString()
         {
@@ -27,7 +27,7 @@ namespace TetraPak.AspNet.Api
 
         bool @equals(ServiceKey other) => other._hashCode == _hashCode;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

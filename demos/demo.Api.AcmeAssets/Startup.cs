@@ -23,7 +23,7 @@ namespace demo.AcmeAssets
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "demo.Api.AcmeAssets", Version = "v1" });
             });
             // create a simple file repository, to allow uploading more files ...
-            services.AddSingleton<FilesRepository>(p =>
+            services.AddSingleton(p =>
             {
                 var repo = new FilesRepository(p.GetService<ILogger<FilesRepository>>(), p.GetRequiredService<IConfiguration>());
                 repo.Seed(AssetsSeeder.GetFilesSeed());

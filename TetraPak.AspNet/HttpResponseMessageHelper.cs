@@ -3,8 +3,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -42,13 +40,21 @@ namespace TetraPak.AspNet
                 // try deserialize ApiErrorResponse ...
                 var stream = await self.Content.ReadAsStreamAsync();
                 var errorResponse = await JsonSerializer.DeserializeAsync<ApiErrorResponse>(stream);
-                return  Outcome<HttpResponseMessage>.Fail(new ApiErrorResponseException(errorResponse));
+                return errorResponse is {}
+                    ? Outcome<HttpResponseMessage>.Fail(new ApiErrorResponseException(errorResponse)) 
+                    : await failAsync();
             }
             catch
+            {
+                return await failAsync();
+            }
+
+            async Task<Outcome<HttpResponseMessage>> failAsync()
             {
                 var message = await self.Content.ReadAsStringAsync();
                 var errorResponse = new ApiErrorResponse("Error", messageId: messageId, description: message);
                 return Outcome<HttpResponseMessage>.Fail(new ApiErrorResponseException(errorResponse));
+                
             }
         }
     }

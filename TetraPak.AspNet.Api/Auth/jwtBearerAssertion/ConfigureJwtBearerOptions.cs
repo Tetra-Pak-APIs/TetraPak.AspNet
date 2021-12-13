@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TetraPak.AspNet.Auth;
-using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.Logging;
 
@@ -86,13 +85,13 @@ namespace TetraPak.AspNet.Api.Auth
                     Logger?.Information($"Issuer={options.TokenValidationParameters.ValidIssuer}");
                 }
 
-                const string TimerName = "in-auth-jwt";
+                const string DiagnosticsKey = "in-auth-jwt";
                 
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
-                        context.HttpContext.StartDiagnosticsTime(TimerName);
+                        context.HttpContext.DiagnosticsStartTimer(DiagnosticsKey);
                         if (context.TryReadCustomAuthorization(options, TetraPakConfig, Logger, out var token))
                         {
                             context.Token = token.Identity;
@@ -101,13 +100,13 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnTokenValidated = context =>
                     {
-                        context.HttpContext.StopDiagnosticsTime(TimerName);
+                        context.HttpContext.DiagnosticsStopTimer(DiagnosticsKey);
                         Logger.Debug("JWT Bearer is valid", context.Request.GetMessageId(TetraPakConfig));
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
-                        context.HttpContext.StopDiagnosticsTime(TimerName);
+                        context.HttpContext.DiagnosticsStopTimer(DiagnosticsKey);
                         Logger.Debug(() => context.Exception is { }
                             ? $"JWT Bearer assertion failed: {context.Exception.Message}"
                             : "JWT Bearer assertion failed");
@@ -130,7 +129,7 @@ namespace TetraPak.AspNet.Api.Auth
                     },
                     OnForbidden = context =>
                     {
-                        context.HttpContext.StopDiagnosticsTime(TimerName);
+                        context.HttpContext.DiagnosticsStopTimer(DiagnosticsKey);
                         return Task.CompletedTask;
                     },
                     OnChallenge = context =>

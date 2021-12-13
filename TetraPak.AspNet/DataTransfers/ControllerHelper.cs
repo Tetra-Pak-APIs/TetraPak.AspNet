@@ -3,8 +3,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 
-#nullable enable
-
 namespace TetraPak.AspNet.DataTransfers
 {
     /// <summary>

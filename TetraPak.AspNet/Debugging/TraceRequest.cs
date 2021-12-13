@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace TetraPak.AspNet.Debugging
+﻿namespace TetraPak.AspNet.Debugging
 {
     static class TraceRequest
     {

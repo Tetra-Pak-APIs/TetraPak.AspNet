@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Text;
 using Microsoft.Net.Http.Headers;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     partial class ServerException

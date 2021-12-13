@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LoggerExtensions=TetraPak.Logging.LoggerExtensions;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>

@@ -16,6 +16,6 @@
         /// <returns>
         ///   A <see cref="string"/> value if a message id was available (or enforced); otherwise <c>null</c>.
         /// </returns>
-        string GetMessageId(bool enforce = false);
+        string? GetMessageId(bool enforce = false);
     }
 }

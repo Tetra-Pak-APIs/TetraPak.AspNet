@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -89,7 +90,7 @@ namespace TetraPak.AspNet
         /// </returns>
         public static bool TryResolveClaim(
             this ClaimsPrincipal self, 
-            out string claimType, 
+            [NotNullWhen(true)] out string? claimType, 
             params string[] fallbackClaimTypes)
         {
             var claim = self.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultNameClaimType);

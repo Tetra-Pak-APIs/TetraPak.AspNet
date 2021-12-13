@@ -1,6 +1,8 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## ClaimsTransformationFactory Class
+Represents a basic (`abstract`) factory to be used for constructing  
+implementations of the [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.  
 ```csharp
 public abstract class ClaimsTransformationFactory :
 TetraPak.AspNet.ITetraPakClaimsTransformation
@@ -10,6 +12,21 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation')  
 ### Methods
+<a name='TetraPak_AspNet_ClaimsTransformationFactory_OnGetClaimsTransformation(System_IServiceProvider)'></a>
+## ClaimsTransformationFactory.OnGetClaimsTransformation(IServiceProvider) Method
+Invoked to construct and return a [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation').  
+```csharp
+protected abstract TetraPak.AspNet.ITetraPakClaimsTransformation OnGetClaimsTransformation(System.IServiceProvider serviceProvider);
+```
+#### Parameters
+<a name='TetraPak_AspNet_ClaimsTransformationFactory_OnGetClaimsTransformation(System_IServiceProvider)_serviceProvider'></a>
+`serviceProvider` [System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')  
+A service locator.  
+  
+#### Returns
+[ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation')  
+A [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation').  
+  
 <a name='TetraPak_AspNet_ClaimsTransformationFactory_TransformAsync(System_Security_Claims_ClaimsPrincipal_System_Nullable_System_Threading_CancellationToken_)'></a>
 ## ClaimsTransformationFactory.TransformAsync(ClaimsPrincipal, Nullable&lt;CancellationToken&gt;) Method
 NOT SUPPORTED! DO NOT INVOKE!  

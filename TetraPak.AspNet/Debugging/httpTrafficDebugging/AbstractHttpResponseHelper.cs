@@ -3,8 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>

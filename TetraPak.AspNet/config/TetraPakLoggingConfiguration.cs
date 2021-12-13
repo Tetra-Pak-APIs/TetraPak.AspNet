@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Debugging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

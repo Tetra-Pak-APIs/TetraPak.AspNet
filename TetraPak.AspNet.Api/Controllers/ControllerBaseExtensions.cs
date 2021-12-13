@@ -126,7 +126,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 return responsePolicy.ApplyHttpResponsePolicy(self.HttpContext, result);
             }
             
-            object dynamicEntityResponse()
+            object? dynamicEntityResponse()
             {
                 return !dynamicEntity.IsApiDataResponse(out var apiDataResponse) 
                     ? new ApiDataResponse<object>(new[] { dynamicEntity }, messageId: messageId) 

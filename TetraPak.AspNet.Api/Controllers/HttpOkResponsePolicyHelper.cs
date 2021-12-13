@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Api.Controllers
     public static class HttpOkResponsePolicyHelper
     {
         static readonly IHttpOkResponsePolicy s_default = new TetraPakHttpOkResponsePolicy();
-        static IHttpOkResponsePolicy s_resolver;
+        static IHttpOkResponsePolicy? s_resolver;
 
         /// <summary>
         ///   Adds a custom <see cref="IHttpOkResponsePolicy"/>, to be used when automatically resolving a

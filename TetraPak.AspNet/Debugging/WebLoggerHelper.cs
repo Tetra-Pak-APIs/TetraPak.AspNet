@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>
@@ -47,7 +45,7 @@ namespace TetraPak.AspNet.Debugging
         /// <param name="logger">
         ///   The logger provider.
         /// </param>
-        public static Task DebugAssembliesInUseAsync(this ILogger logger)
+        public static Task DebugAssembliesInUseAsync(this ILogger? logger)
         {
             return Task.Run(() =>
             {
@@ -90,12 +88,12 @@ namespace TetraPak.AspNet.Debugging
         ///   The state dump will be ignored if invoked again and this value was set previously (and now).  
         /// </param>
         public static async Task LogTetraPakConfigAsync(
-            this ILogger logger, 
+            this ILogger? logger, 
             TetraPakConfig? tetraPakConfig, 
             LogLevel logLevel = LogLevel.Trace,
             bool justOnce = true)
         {
-            if (tetraPakConfig is null || !logger.IsEnabled(logLevel))
+            if (tetraPakConfig is null || !(logger?.IsEnabled(logLevel) ?? false))
                 return;
 
             lock (s_syncRoot)

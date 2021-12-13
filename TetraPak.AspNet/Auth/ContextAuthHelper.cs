@@ -11,14 +11,14 @@ namespace TetraPak.AspNet.Auth
             this MessageReceivedContext context,
             OpenIdConnectOptions oidcOptions,
             TetraPakConfig config,
-            ILogger logger, 
-            [NotNullWhen(true)] out string authorization)
+            ILogger? logger, 
+            [NotNullWhen(true)] out string? authorization)
         {
             authorization = context.Request.Headers[config.AuthorizationHeader];
             var isTokenAvailable = !string.IsNullOrWhiteSpace(authorization);
             var isJwtToken = authorization.TryParseToJwtSecurityToken(out var jwt);
 
-            if (!logger.IsEnabled(LogLevel.Debug))
+            if (!logger?.IsEnabled(LogLevel.Debug) ?? true)
                 return isTokenAvailable;
 
             var messageId = config.AmbientData.GetMessageId();
@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Auth
 
             if (isJwtToken)
             {
-                logger.Debug($"Received JWT: \n{jwt.ToDebugString()}", messageId);
+                logger.Debug($"Received JWT: \n{jwt?.ToDebugString() ?? "(none)"}", messageId);
                 logger.Debug($"Environment: {config.Environment}", messageId);
                 logger.Debug($"Discovery document URL: {oidcOptions.MetadataAddress}", messageId);
                 return true;

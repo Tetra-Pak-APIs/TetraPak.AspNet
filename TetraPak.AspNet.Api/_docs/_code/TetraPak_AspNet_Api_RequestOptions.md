@@ -48,7 +48,7 @@ public TetraPak.AspNet.Api.RequestDistribution Distribution { get; set; }
 [RequestDistribution](TetraPak_AspNet_Api_RequestDistribution.md 'TetraPak.AspNet.Api.RequestDistribution')
 ### Remarks
 This value affects the distribution in a situation where multiple requests are made (such  
-as calling [GetAsync&lt;T&gt;(ServiceEndpoint, IEnumerable&lt;string&gt;?, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Collections_Generic_IEnumerable_string___TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Collections.Generic.IEnumerable&lt;string&gt;?, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
+as calling [ServiceEndpointHelper.GetCollectionAsync<T>(ServiceEndpoint,IEnumerable<string>?,HttpQuery?,RequestOptions?)](https://docs.microsoft.com/en-us/dotnet/api/ServiceEndpointHelper.GetCollectionAsync<T>#ServiceEndpointHelper_GetCollectionAsync<T>_ServiceEndpoint,IEnumerable<string>?,HttpQuery?,RequestOptions?_ 'ServiceEndpointHelper.GetCollectionAsync<T>(ServiceEndpoint,IEnumerable<string>?,HttpQuery?,RequestOptions?)')  
 passing a collection of keys). When set to [Sequential](TetraPak_AspNet_Api_RequestDistribution.md#TetraPak_AspNet_Api_RequestDistribution_Sequential 'TetraPak.AspNet.Api.RequestDistribution.Sequential')   
 all requests are made in sequence, on the same thread. Set to [Parallel](TetraPak_AspNet_Api_RequestDistribution.md#TetraPak_AspNet_Api_RequestDistribution_Parallel 'TetraPak.AspNet.Api.RequestDistribution.Parallel')  
 to allow the process to be made in parallel, distributed over multiple worker threads.  
@@ -63,7 +63,6 @@ public object? DynamicPathValues { get; set; }
 [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')
 #### See Also
 - [TetraPak.DynamicEntities.DynamicPathHelper.Substitute(TetraPak.DynamicEntities.DynamicPath,System.Object,System.Boolean)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.DynamicEntities.DynamicPathHelper.Substitute#TetraPak_DynamicEntities_DynamicPathHelper_Substitute_TetraPak_DynamicEntities_DynamicPath,System_Object,System_Boolean_ 'TetraPak.DynamicEntities.DynamicPathHelper.Substitute(TetraPak.DynamicEntities.DynamicPath,System.Object,System.Boolean)')
-- [](https://docs.microsoft.com/en-us/dotnet/api/ '')
   
 <a name='TetraPak_AspNet_Api_RequestOptions_IsFailureTolerant'></a>
 ## RequestOptions.IsFailureTolerant Property
@@ -133,6 +132,7 @@ public TetraPak.AspNet.Api.RequestOptions WithDynamicPath(object values);
 #### Parameters
 <a name='TetraPak_AspNet_Api_RequestOptions_WithDynamicPath(object)_values'></a>
 `values` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
+Provides values (to be substituted) for variable elements.  
   
 #### Returns
 [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  

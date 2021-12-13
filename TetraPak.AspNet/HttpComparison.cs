@@ -2,8 +2,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

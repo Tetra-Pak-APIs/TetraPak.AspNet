@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Diagnostics;
-
-#nullable enable
 
 namespace TetraPak.AspNet.diagnostics
 {
@@ -32,11 +31,11 @@ namespace TetraPak.AspNet.diagnostics
             return self.GetValue<ServiceDiagnostics>(KeyDiagnostics);
         }
 
-        public static void StartDiagnosticsTime(this HttpContext self, string timeKey) 
-            => self.GetDiagnostics()?.StartTimer(timeKey);
+        public static void DiagnosticsStartTimer(this HttpContext self, string key) 
+            => self.GetDiagnostics()?.StartTimer(key);
         
-        public static long? StopDiagnosticsTime(this HttpContext self, string timeKey, bool stopTimer = true) 
-            => self.GetDiagnostics()?.GetElapsedMs(timeKey, stopTimer);
+        public static long? DiagnosticsStopTimer(this HttpContext self, string key, bool stopTimer = true) 
+            => self.GetDiagnostics()?.GetElapsedMs(key, stopTimer);
         
         public static ServiceDiagnostics End(this ServiceDiagnostics? self)
         {

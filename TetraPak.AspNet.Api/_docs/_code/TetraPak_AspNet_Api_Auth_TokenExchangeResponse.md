@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet.Api](index.md 'index')
 ### [TetraPak.AspNet.Api.Auth](TetraPak_AspNet_Api_Auth.md 'TetraPak.AspNet.Api.Auth')
 ## TokenExchangeResponse Class
-Represents the response from a successful token exchange request (see [ITokenExchangeGrantService.ExchangeAsync](https://docs.microsoft.com/en-us/dotnet/api/ITokenExchangeGrantService.ExchangeAsync 'ITokenExchangeGrantService.ExchangeAsync')).  
+Represents the response from a successful token exchange request (see [ExchangeAccessTokenAsync(Credentials, ActorToken, bool, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService.md#TetraPak_AspNet_Api_Auth_ITokenExchangeGrantService_ExchangeAccessTokenAsync(TetraPak_Credentials_TetraPak_ActorToken_bool_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Api.Auth.ITokenExchangeGrantService.ExchangeAccessTokenAsync(TetraPak.Credentials, TetraPak.ActorToken, bool, System.Nullable&lt;System.Threading.CancellationToken&gt;)')).  
 ```csharp
 public class TokenExchangeResponse
 ```
@@ -12,7 +12,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ## TokenExchangeResponse.AccessToken Property
 Gets the security token issued by the authorization server in response to the token exchange request.  
 ```csharp
-public string AccessToken { get; set; }
+public string? AccessToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -22,7 +22,7 @@ public string AccessToken { get; set; }
 (optional, recommended)<br/>  
 The validity lifetime, in seconds, of the token issued by the authorization server.  
 ```csharp
-public string ExpiresIn { get; set; }
+public string? ExpiresIn { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -31,7 +31,7 @@ public string ExpiresIn { get; set; }
 ## TokenExchangeResponse.IssuedTokenType Property
 Gets an identifier for the representation of the issued security token.  
 ```csharp
-public string IssuedTokenType { get; set; }
+public string? IssuedTokenType { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -41,7 +41,7 @@ public string IssuedTokenType { get; set; }
 (optional)<br/>  
 A refresh token.  
 ```csharp
-public string RefreshToken { get; set; }
+public string? RefreshToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -51,7 +51,7 @@ public string RefreshToken { get; set; }
 (optional)<br/>  
 The scope of the issued security token.  
 ```csharp
-public string Scope { get; set; }
+public string? Scope { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -60,7 +60,7 @@ public string Scope { get; set; }
 ## TokenExchangeResponse.TokenType Property
 A case-insensitive value specifying the method of using the access token issued, as specified in Section 7.1 of [RFC6749].  
 ```csharp
-public string TokenType { get; set; }
+public string? TokenType { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

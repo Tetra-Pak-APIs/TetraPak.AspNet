@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 using TetraPak.AspNet.Auth;
 using TetraPak.SecretsManagement;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

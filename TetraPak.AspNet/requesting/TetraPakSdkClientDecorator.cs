@@ -2,8 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     class TetraPakSdkClientDecorator : IHttpClientDecorator

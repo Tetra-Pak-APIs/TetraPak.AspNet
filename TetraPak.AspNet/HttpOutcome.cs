@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
-// using System.Net.Http;
-
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -68,7 +64,7 @@ namespace TetraPak.AspNet
         ///   The HTTP request method used.
         /// </param>
         /// <param name="exception">
-        ///   Assigns the <see cref="Outcome{T}.Exception"/>.
+        ///   Assigns the <see cref="Outcome.Exception"/>.
         /// </param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate failure.
@@ -83,7 +79,7 @@ namespace TetraPak.AspNet
         ///   The HTTP request method used.
         /// </param>
         /// <param name="exception">
-        ///   Assigns <see cref="Outcome{T}.Exception"/>.
+        ///   Assigns <see cref="Outcome.Exception"/>.
         /// </param>
         /// <param name="value">
         ///   Assigns <see cref="Outcome{T}.Value"/>.
@@ -107,7 +103,7 @@ namespace TetraPak.AspNet
         ///   Initializes the <see cref="Outcome{T}.Value"/>.
         /// </param>
         /// <param name="exception">
-        ///   Initializes the <see cref="Outcome{T}.Exception"/>.
+        ///   Initializes the <see cref="Outcome.Exception"/>.
         /// </param>
         protected HttpOutcome(bool result, HttpMethod method, T value, Exception? exception = null) 
         : base(result, value, exception)
@@ -127,6 +123,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets the HTTP request method used.
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public HttpMethod Method { get; }
 
         /// <summary>
@@ -212,10 +209,31 @@ namespace TetraPak.AspNet
         ///   An <see cref="HttpEnumOutcome{T}"/> to indicate failure and also carry a default
         ///   value of type <typeparamref name="T"/>.
         /// </returns>
-        /// <returns></returns>
+        /// <returns>
+        ///   A <see cref="HttpEnumOutcome{T}"/> object.
+        /// </returns>
         public static HttpEnumOutcome<T> Fail(HttpMethod method, T[] value, Exception exception) 
             => new(false, method, value, 0, exception);
         
+        /// <summary>
+        ///   A convenient overload method for passing a single value while creating and returning a failed outcome.
+        /// </summary>
+        /// <param name="method">
+        ///   Sets the <see cref="Method"/>.
+        /// </param>
+        /// <param name="singleValue">
+        ///   A single item to populate the <see cref="Outcome{T}.Value"/>.
+        /// </param>
+        /// <param name="exception">
+        ///   The <see cref="Exception"/> (presumably causing the failure).
+        /// </param>
+        /// <returns>
+        ///   An <see cref="HttpEnumOutcome{T}"/> to indicate failure and also carry a default
+        ///   value of type <typeparamref name="T"/>.
+        /// </returns>
+        /// <returns>
+        ///   A <see cref="HttpEnumOutcome{T}"/> object.
+        /// </returns>
         public static HttpEnumOutcome<T> Fail(HttpMethod method, T singleValue, Exception exception) 
             => new(false, method, new[] { singleValue }, 0, exception);
         

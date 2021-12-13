@@ -1,5 +1,8 @@
 ﻿namespace TetraPak.AspNet
 {
+    /// <summary>
+    ///   Provides constants for SDK supported headers 
+    /// </summary>
     public static class Headers
     {
         public const string ServiceDiagnostics = "tp-diag";

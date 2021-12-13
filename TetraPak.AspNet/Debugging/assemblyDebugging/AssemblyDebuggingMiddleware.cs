@@ -8,7 +8,7 @@ namespace TetraPak.AspNet.Debugging
     {
         bool _isRunOnce;
         readonly bool _runOnce;
-        readonly ILogger _logger;
+        readonly ILogger? _logger;
 
         public async Task<bool> InvokeAsync()
         {
@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.Debugging
             return true;
         }
         
-        public AssemblyDebuggingMiddleware(bool runOnce, ILogger logger)
+        public AssemblyDebuggingMiddleware(bool runOnce, ILogger? logger)
         {
             _runOnce = runOnce;
             _logger = logger;

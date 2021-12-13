@@ -38,22 +38,27 @@ public TetraPak.AspNet.AmbientData AmbientData { get; }
 ## TetraPakUserInformation.Logger Property
 Gets a logging provider.  
 ```csharp
-public Microsoft.Extensions.Logging.ILogger Logger { get; }
+public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
   
 ### Methods
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken)'></a>
-## TetraPakUserInformation.GetUserInformationAsync(ActorToken) Method
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)'></a>
+## TetraPakUserInformation.GetUserInformationAsync(ActorToken, string?) Method
 Obtains and returns user information from the Tetra Pak Auth Services.   
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Identity.UserInformation>> GetUserInformationAsync(TetraPak.ActorToken accessToken);
+public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Identity.UserInformation>> GetUserInformationAsync(TetraPak.ActorToken accessToken, string? messageId);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken)_accessToken'></a>
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)_accessToken'></a>
 `accessToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 The request access token.  
+  
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)_messageId'></a>
+`messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+(optional)<br/>  
+A unique string value for tracking a request/response (mainly for diagnostics purposes).  
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[UserInformation](TetraPak_AspNet_Identity_UserInformation.md 'TetraPak.AspNet.Identity.UserInformation')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  

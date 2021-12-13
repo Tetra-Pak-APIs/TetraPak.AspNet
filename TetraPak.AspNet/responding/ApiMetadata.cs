@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

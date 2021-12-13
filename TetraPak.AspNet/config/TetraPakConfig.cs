@@ -16,8 +16,6 @@ using TetraPak.Logging;
 using TetraPak.SecretsManagement;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -714,7 +712,12 @@ namespace TetraPak.AspNet
         {
             var asm = typeof(TetraPakConfig).Assembly;
             var v = asm.GetName().Version!;
+            
+#if NET5_0_OR_GREATER
+            return new ProductInfoHeaderValue(asm.GetName().Name!, $"{v.Major}.{v.Minor}.{v.Build}");
+#else
             return new ProductInfoHeaderValue(asm.GetName().Name, $"{v.Major}.{v.Minor}.{v.Build}");
+#endif
         }
 
         /// <summary>
@@ -844,7 +847,6 @@ namespace TetraPak.AspNet
                         _authorityUrl = discoveryDocument.AuthorizationEndpoint;
                         _tokenIssuerUrl = discoveryDocument.TokenEndpoint;
                         _userInfoUrl = discoveryDocument.UserInformationEndpoint;
-                        // Logger.TraceTetraPakConfigAsync(this); obsolete
                         return done(discoveryDocument);
                     }
                 }

@@ -194,8 +194,10 @@ The [serviceEndpoint](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspN
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointHelper_GetRawAsync(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
 ## ServiceEndpointHelper.GetRawAsync(ServiceEndpoint, HttpQuery?, RequestOptions?) Method
-Sends an HTTP GET message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') to receive a   
-[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') back (see remarks).  
+Sends an HTTP GET message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') to receive a ("raw")  
+[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') in response, allowing for customized response formatting or logics.  
+(see [GetAsync&lt;T&gt;(ServiceEndpoint, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
+for retrieving a typed response).  
 ```csharp
 public static System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> GetRawAsync(this TetraPak.AspNet.Api.ServiceEndpoint serviceEndpoint, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
@@ -224,18 +226,14 @@ a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/
             
 [System.InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/System.InvalidOperationException 'System.InvalidOperationException')  
 The [serviceEndpoint](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetRawAsync(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_serviceEndpoint 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetRawAsync(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?).serviceEndpoint') was not assigned to a registered service.  
-### Remarks
-Use this method when you need more control over how to manage the response.  
-For more standard responses, please see  
-[GetAsync&lt;T&gt;(ServiceEndpoint, IEnumerable&lt;string&gt;?, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Collections_Generic_IEnumerable_string___TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Collections.Generic.IEnumerable&lt;string&gt;?, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
 #### See Also
 - [GetRawAsync(ServiceEndpoint, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetRawAsync(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetRawAsync(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
 - [GetAsync&lt;T&gt;(ServiceEndpoint, IEnumerable&lt;string&gt;?, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Collections_Generic_IEnumerable_string___TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Collections.Generic.IEnumerable&lt;string&gt;?, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointHelper_GetRawAsync(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
 ## ServiceEndpointHelper.GetRawAsync(ServiceEndpoint, DynamicPath, HttpQuery?, RequestOptions?) Method
-Sends an HTTP GET message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') and expects  
-untyped data in a successful response  
+Sends an HTTP GET message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') to receive a ("raw")  
+[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') in response, allowing for customized response formatting or logics.  
 (see [GetAsync&lt;T&gt;(ServiceEndpoint, IEnumerable&lt;string&gt;?, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_GetAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Collections_Generic_IEnumerable_string___TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.GetAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Collections.Generic.IEnumerable&lt;string&gt;?, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')  
 for retrieving a typed response).  
 ```csharp
@@ -301,6 +299,29 @@ Options for the request.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.IO.Stream](https://docs.microsoft.com/en-us/dotnet/api/System.IO.Stream 'System.IO.Stream')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.AspNet.HttpOutcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1') to indicate success/failure and, on success, carry  
 the requested [System.IO.Stream](https://docs.microsoft.com/en-us/dotnet/api/System.IO.Stream 'System.IO.Stream') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_IsJsonApiDataResponse(string_string_)'></a>
+## ServiceEndpointHelper.IsJsonApiDataResponse(string, string?) Method
+Examines a (presumably downloaded) [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') and resolves whether it is standardized  
+Tetra Pak JSON response format and, if so, what version.  
+```csharp
+public static bool IsJsonApiDataResponse(this string data, out string? version);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_IsJsonApiDataResponse(string_string_)_data'></a>
+`data` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+The [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') to be examined.  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_IsJsonApiDataResponse(string_string_)_version'></a>
+`version` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Passes back the format version expressed by the JSON data when successful;  
+otherwise passes back `null`.    
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [data](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_IsJsonApiDataResponse(string_string_)_data 'TetraPak.AspNet.Api.ServiceEndpointHelper.IsJsonApiDataResponse(string, string?).data') was found to contain standardized Tetra Pak JSON response  
+              format ([TetraPak.AspNet.ApiDataResponse](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ApiDataResponse 'TetraPak.AspNet.ApiDataResponse')); otherwise `false`.  
+            
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointHelper_PatchAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
 ## ServiceEndpointHelper.PatchAsync&lt;T&gt;(ServiceEndpoint, HttpContent, RequestOptions?) Method
@@ -417,19 +438,20 @@ A path to be appended to the resolved service endpoint base path.
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') representing the service endpoint path.  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath)'></a>
-## ServiceEndpointHelper.Path(ServiceEndpoint, DynamicPath) Method
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath_)'></a>
+## ServiceEndpointHelper.Path(ServiceEndpoint, DynamicPath?) Method
 Adds one or more key elements to the endpoint path and returns the result as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
 ```csharp
-public static string Path(this TetraPak.AspNet.Api.ServiceEndpoint endpoint, TetraPak.DynamicEntities.DynamicPath subPath);
+public static string Path(this TetraPak.AspNet.Api.ServiceEndpoint endpoint, TetraPak.DynamicEntities.DynamicPath? subPath=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath)_endpoint'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath_)_endpoint'></a>
 `endpoint` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
 The extended [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint').  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath)_subPath'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath_)_subPath'></a>
 `subPath` [TetraPak.DynamicEntities.DynamicPath](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.DynamicEntities.DynamicPath 'TetraPak.DynamicEntities.DynamicPath')  
+(optional)<br/>  
 One or more key elements to be added to the endpoint path.  
   
 #### Returns
@@ -439,27 +461,7 @@ A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'Sys
 The [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') is implicitly always cast to a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 so calling this method is not really necessary but might improve code readability.   
 #### See Also
-- [Path(ServiceEndpoint)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint) 'TetraPak.AspNet.Api.ServiceEndpointHelper.Path(TetraPak.AspNet.Api.ServiceEndpoint)')
 - [Path(ServiceEndpoint, object?, DynamicPath)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_object__TetraPak_DynamicEntities_DynamicPath) 'TetraPak.AspNet.Api.ServiceEndpointHelper.Path(TetraPak.AspNet.Api.ServiceEndpoint, object?, TetraPak.DynamicEntities.DynamicPath)')
-  
-<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint)'></a>
-## ServiceEndpointHelper.Path(ServiceEndpoint) Method
-Returns the endpoint path as a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String').  
-```csharp
-public static string Path(this TetraPak.AspNet.Api.ServiceEndpoint endpoint);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint)_endpoint'></a>
-`endpoint` [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')  
-The service endpoint.  
-  
-#### Returns
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-### Remarks
-The [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') is implicitly always cast to a [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-so calling this method is not really necessary but might improve code readability.   
-#### See Also
-- [Path(ServiceEndpoint, DynamicPath)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_Path(TetraPak_AspNet_Api_ServiceEndpoint_TetraPak_DynamicEntities_DynamicPath) 'TetraPak.AspNet.Api.ServiceEndpointHelper.Path(TetraPak.AspNet.Api.ServiceEndpoint, TetraPak.DynamicEntities.DynamicPath)')
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointHelper_PostAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_object__TetraPak_AspNet_Api_RequestOptions_)'></a>
 ## ServiceEndpointHelper.PostAsync&lt;T&gt;(ServiceEndpoint, object?, RequestOptions?) Method
@@ -558,8 +560,10 @@ The [serviceEndpoint](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspN
   
 <a name='TetraPak_AspNet_Api_ServiceEndpointHelper_PostRawAsync(TetraPak_AspNet_Api_ServiceEndpoint_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
 ## ServiceEndpointHelper.PostRawAsync(ServiceEndpoint, HttpContent, RequestOptions?) Method
-Sends an HTTP POST message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') for a "raw"  
-[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') response, allowing for customized response formatting or logics.  
+Sends an HTTP POST message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') to receive a ("raw")  
+[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') in response, allowing for customized response formatting or logics.  
+(see [PostAsync&lt;T&gt;(ServiceEndpoint, HttpContent, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_PostAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.PostAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Net.Http.HttpContent, TetraPak.AspNet.Api.RequestOptions?)')  
+for retrieving a typed response).  
 ```csharp
 public static System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PostRawAsync(this TetraPak.AspNet.Api.ServiceEndpoint serviceEndpoint, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
@@ -684,6 +688,8 @@ The [serviceEndpoint](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspN
 ## ServiceEndpointHelper.PutRawAsync(ServiceEndpoint, HttpContent, RequestOptions?) Method
 Sends an HTTP PUT message to the specified [ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint') for a "raw"  
 [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') response, allowing for customized response formatting or logics.  
+(see [PutAsync&lt;T&gt;(ServiceEndpoint, HttpContent, RequestOptions?)](TetraPak_AspNet_Api_ServiceEndpointHelper.md#TetraPak_AspNet_Api_ServiceEndpointHelper_PutAsync_T_(TetraPak_AspNet_Api_ServiceEndpoint_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.ServiceEndpointHelper.PutAsync&lt;T&gt;(TetraPak.AspNet.Api.ServiceEndpoint, System.Net.Http.HttpContent, TetraPak.AspNet.Api.RequestOptions?)')  
+for retrieving a typed response).  
 ```csharp
 public static System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PutRawAsync(this TetraPak.AspNet.Api.ServiceEndpoint serviceEndpoint, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```

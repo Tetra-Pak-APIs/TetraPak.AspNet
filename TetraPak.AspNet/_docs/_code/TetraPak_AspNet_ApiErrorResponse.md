@@ -8,38 +8,38 @@ public class ApiErrorResponse : TetraPak.DynamicEntities.DynamicEntity
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; [TetraPak.DynamicEntities.DynamicEntity](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.DynamicEntities.DynamicEntity 'TetraPak.DynamicEntities.DynamicEntity') &#129106; ApiErrorResponse  
 ### Constructors
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string)'></a>
-## ApiErrorResponse.ApiErrorResponse(string, object, string) Constructor
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string_)'></a>
+## ApiErrorResponse.ApiErrorResponse(string, object, string?) Constructor
 Initializes the [ApiErrorResponse](TetraPak_AspNet_ApiErrorResponse.md 'TetraPak.AspNet.ApiErrorResponse').  
 ```csharp
-public ApiErrorResponse(string title, object description, string messageId);
+public ApiErrorResponse(string title, object description, string? messageId);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string)_title'></a>
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string_)_title'></a>
 `title` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Initializes the [Title](TetraPak_AspNet_ApiErrorResponse.md#TetraPak_AspNet_ApiErrorResponse_Title 'TetraPak.AspNet.ApiErrorResponse.Title') property.  
   
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string)_description'></a>
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string_)_description'></a>
 `description` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
 Initializes the [Description](TetraPak_AspNet_ApiErrorResponse.md#TetraPak_AspNet_ApiErrorResponse_Description 'TetraPak.AspNet.ApiErrorResponse.Description') property.  
   
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_object_string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Initializes the [MessageId](TetraPak_AspNet_ApiErrorResponse.md#TetraPak_AspNet_ApiErrorResponse_MessageId 'TetraPak.AspNet.ApiErrorResponse.MessageId') property.  
   
   
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string)'></a>
-## ApiErrorResponse.ApiErrorResponse(string, string) Constructor
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string_)'></a>
+## ApiErrorResponse.ApiErrorResponse(string, string?) Constructor
 Initializes the [ApiErrorResponse](TetraPak_AspNet_ApiErrorResponse.md 'TetraPak.AspNet.ApiErrorResponse').  
 ```csharp
-public ApiErrorResponse(string title, string messageId);
+public ApiErrorResponse(string title, string? messageId);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string)_title'></a>
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string_)_title'></a>
 `title` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Initializes the [Title](TetraPak_AspNet_ApiErrorResponse.md#TetraPak_AspNet_ApiErrorResponse_Title 'TetraPak.AspNet.ApiErrorResponse.Title') property.  
   
-<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string)_messageId'></a>
+<a name='TetraPak_AspNet_ApiErrorResponse_ApiErrorResponse(string_string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Initializes the [MessageId](TetraPak_AspNet_ApiErrorResponse.md#TetraPak_AspNet_ApiErrorResponse_MessageId 'TetraPak.AspNet.ApiErrorResponse.MessageId') property.  
   
@@ -58,7 +58,7 @@ public object Description { get; set; }
 ## ApiErrorResponse.MessageId Property
 Gets any message id associated with the failed request.  
 ```csharp
-public string MessageId { get; set; }
+public string? MessageId { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

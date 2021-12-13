@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TetraPak.Configuration;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>

@@ -3,8 +3,6 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.Net.Http.Headers;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     partial class ServerException

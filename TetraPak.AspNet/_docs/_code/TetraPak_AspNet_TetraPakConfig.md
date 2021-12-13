@@ -383,6 +383,15 @@ Implements [Scope](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Au
 #### See Also
 - [GetScopeAsync(AuthContext, MultiStringValue?, Nullable&lt;CancellationToken&gt;)](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_GetScopeAsync(TetraPak_AspNet_AuthContext_TetraPak_MultiStringValue__System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.TetraPakConfig.GetScopeAsync(TetraPak.AspNet.AuthContext, TetraPak.MultiStringValue?, System.Nullable&lt;System.Threading.CancellationToken&gt;)')
   
+<a name='TetraPak_AspNet_TetraPakConfig_SdkVersion'></a>
+## TetraPakConfig.SdkVersion Property
+Returns a [System.Net.Http.Headers.ProductInfoHeaderValue](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.ProductInfoHeaderValue 'System.Net.Http.Headers.ProductInfoHeaderValue') to reflect the current SDK version.  
+```csharp
+public System.Net.Http.Headers.ProductInfoHeaderValue SdkVersion { get; }
+```
+#### Property Value
+[System.Net.Http.Headers.ProductInfoHeaderValue](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.ProductInfoHeaderValue 'System.Net.Http.Headers.ProductInfoHeaderValue')
+  
 <a name='TetraPak_AspNet_TetraPakConfig_ServiceProvider'></a>
 ## TetraPakConfig.ServiceProvider Property
 Gets a (DI) service locator.  
@@ -675,6 +684,18 @@ Cancellation token for cancellation the operation.
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+  
+<a name='TetraPak_AspNet_TetraPakConfig_OnGetSdkVersion()'></a>
+## TetraPakConfig.OnGetSdkVersion() Method
+Invoked internally to produce the SDK version.  
+```csharp
+protected virtual System.Net.Http.Headers.ProductInfoHeaderValue OnGetSdkVersion();
+```
+#### Returns
+[System.Net.Http.Headers.ProductInfoHeaderValue](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.ProductInfoHeaderValue 'System.Net.Http.Headers.ProductInfoHeaderValue')  
+A [System.Net.Http.Headers.ProductInfoHeaderValue](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.ProductInfoHeaderValue 'System.Net.Http.Headers.ProductInfoHeaderValue') object.  
+### Remarks
+This method will only be invoked once.    
   
 <a name='TetraPak_AspNet_TetraPakConfig_OnResolveRuntimeEnvironment(string)'></a>
 ## TetraPakConfig.OnResolveRuntimeEnvironment(string) Method

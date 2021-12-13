@@ -72,6 +72,30 @@ The [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Except
 An [HttpEnumOutcome&lt;T&gt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;') to indicate failure and also carry a default  
 value of type [T](TetraPak_AspNet_HttpEnumOutcome_T_.md#TetraPak_AspNet_HttpEnumOutcome_T__T 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;.T').  
   
+<a name='TetraPak_AspNet_HttpEnumOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T_System_Exception)'></a>
+## HttpEnumOutcome&lt;T&gt;.Fail(HttpMethod, T, Exception) Method
+A convenient overload method for passing a single value while creating and returning a failed outcome.  
+```csharp
+public static TetraPak.AspNet.HttpEnumOutcome<T> Fail(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, T singleValue, System.Exception exception);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpEnumOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T_System_Exception)_method'></a>
+`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+Sets the [Method](TetraPak_AspNet_HttpEnumOutcome_T_.md#TetraPak_AspNet_HttpEnumOutcome_T__Method 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;.Method').  
+  
+<a name='TetraPak_AspNet_HttpEnumOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T_System_Exception)_singleValue'></a>
+`singleValue` [T](TetraPak_AspNet_HttpEnumOutcome_T_.md#TetraPak_AspNet_HttpEnumOutcome_T__T 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;.T')  
+A single item to populate the [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value').  
+  
+<a name='TetraPak_AspNet_HttpEnumOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T_System_Exception)_exception'></a>
+`exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
+The [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception') (presumably causing the failure).  
+  
+#### Returns
+[TetraPak.AspNet.HttpEnumOutcome&lt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpEnumOutcome_T_.md#TetraPak_AspNet_HttpEnumOutcome_T__T 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;')  
+An [HttpEnumOutcome&lt;T&gt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;') to indicate failure and also carry a default  
+value of type [T](TetraPak_AspNet_HttpEnumOutcome_T_.md#TetraPak_AspNet_HttpEnumOutcome_T__T 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;.T').  
+  
 <a name='TetraPak_AspNet_HttpEnumOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T___System_Exception)'></a>
 ## HttpEnumOutcome&lt;T&gt;.Fail(HttpMethod, T[], Exception) Method
 Creates and returns a failed outcome.  

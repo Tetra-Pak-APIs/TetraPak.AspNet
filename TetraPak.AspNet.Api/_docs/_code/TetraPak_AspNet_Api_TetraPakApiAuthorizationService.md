@@ -83,22 +83,26 @@ a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/Syste
 [TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
 There where issues with the configured options, such as client id/secret.  
   
-<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__System_Nullable_System_Threading_CancellationToken_)'></a>
-## TetraPakApiAuthorizationService.OnTokenExchangeAuthenticationAsync(IServiceAuthConfig, ActorToken?, Nullable&lt;CancellationToken&gt;) Method
+<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)'></a>
+## TetraPakApiAuthorizationService.OnTokenExchangeAuthenticationAsync(IServiceAuthConfig, ActorToken?, bool, Nullable&lt;CancellationToken&gt;) Method
 This method is called to acquire a token using the Token Exchange grant type.   
 ```csharp
-protected virtual System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> OnTokenExchangeAuthenticationAsync(TetraPak.AspNet.Auth.IServiceAuthConfig authConfig, TetraPak.ActorToken? accessToken, System.Nullable<System.Threading.CancellationToken> cancellationToken);
+protected virtual System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.ActorToken>> OnTokenExchangeAuthenticationAsync(TetraPak.AspNet.Auth.IServiceAuthConfig authConfig, TetraPak.ActorToken? subjectToken, bool forceAuthorization, System.Nullable<System.Threading.CancellationToken> cancellationToken);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__System_Nullable_System_Threading_CancellationToken_)_authConfig'></a>
+<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)_authConfig'></a>
 `authConfig` [TetraPak.AspNet.Auth.IServiceAuthConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig 'TetraPak.AspNet.Auth.IServiceAuthConfig')  
 Specifies the authentication credentials and options.  
   
-<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__System_Nullable_System_Threading_CancellationToken_)_accessToken'></a>
-`accessToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
+<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)_subjectToken'></a>
+`subjectToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 The access token to be exchanged.  
   
-<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
+<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)_forceAuthorization'></a>
+`forceAuthorization` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+Specifies whether to force a new client authorization (overriding/replacing any cached authorization).   
+  
+<a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)_cancellationToken'></a>
 `cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken').  
   

@@ -12,8 +12,6 @@ using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Debugging;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Auth
 {
     partial class TetraPakAuth // refresh token flow 
@@ -66,7 +64,7 @@ namespace TetraPak.AspNet.Auth
             }
         }
         
-        static string makeRefreshTokenBody(string refreshToken, string clientId = null)
+        static string makeRefreshTokenBody(string refreshToken, string? clientId = null)
         {
             var sb = new StringBuilder();
             sb.Append("grant_type=refresh_token");

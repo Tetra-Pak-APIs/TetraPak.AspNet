@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -37,7 +36,7 @@ namespace TetraPak.AspNet
                 clone.Content = new StreamContent(stream);
                 
                 // copy content headers ...
-                if (message.Content.Headers?.Any() ?? false)
+                if (message.Content.Headers.Any())
                 {
                     foreach (var (key, values) in message.Content.Headers)
                     {
@@ -48,9 +47,9 @@ namespace TetraPak.AspNet
 
 #if NET5_0_OR_GREATER
             var clonedOptionsDictionary = (IDictionary<string, object?>)clone.Options;
-            foreach (var option in message.Options)
+            foreach (var (key, value) in message.Options)
             {
-                clonedOptionsDictionary.Add(option.Key, option.Value);
+                clonedOptionsDictionary.Add(key, value);
             }
 #else
             foreach (var (key, value) in message.Properties)

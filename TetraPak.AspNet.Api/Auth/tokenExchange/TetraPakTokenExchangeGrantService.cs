@@ -90,7 +90,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var ct = cancellationToken ?? CancellationToken.None;
                 var request = new HttpRequestMessage(HttpMethod.Post, discoveryDocument.TokenEndpoint)
                 {
-                    Content = new FormUrlEncodedContent(form.ToDictionary())
+                    Content = new FormUrlEncodedContent(form.ToDictionary()!)
                 };
                 var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false

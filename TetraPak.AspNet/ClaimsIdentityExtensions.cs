@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Security.Claims;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

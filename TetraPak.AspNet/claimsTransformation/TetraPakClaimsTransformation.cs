@@ -9,8 +9,6 @@ using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Identity;
 using TetraPak.Caching;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

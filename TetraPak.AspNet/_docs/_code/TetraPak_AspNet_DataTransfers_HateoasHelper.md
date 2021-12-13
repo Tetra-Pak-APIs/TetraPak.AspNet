@@ -222,3 +222,21 @@ One or more resource keys (ids), needed to locate the resource.
 [DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator')  
 A [DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator').  
   
+<a name='TetraPak_AspNet_DataTransfers_HateoasHelper_WithKeys(TetraPak_AspNet_DataTransfers_DtoRelationshipLocator_string__)'></a>
+## HateoasHelper.WithKeys(DtoRelationshipLocator, string[]) Method
+(fluent API)<br/>  
+Appends keys to the [DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator') and  
+returns a new [DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator').  
+```csharp
+public static TetraPak.AspNet.DataTransfers.DtoRelationshipLocator WithKeys(this TetraPak.AspNet.DataTransfers.DtoRelationshipLocator locator, params string[] keys);
+```
+#### Parameters
+<a name='TetraPak_AspNet_DataTransfers_HateoasHelper_WithKeys(TetraPak_AspNet_DataTransfers_DtoRelationshipLocator_string__)_locator'></a>
+`locator` [DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator')  
+  
+<a name='TetraPak_AspNet_DataTransfers_HateoasHelper_WithKeys(TetraPak_AspNet_DataTransfers_DtoRelationshipLocator_string__)_keys'></a>
+`keys` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+  
+#### Returns
+[DtoRelationshipLocator](TetraPak_AspNet_DataTransfers_DtoRelationshipLocator.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipLocator')  
+  

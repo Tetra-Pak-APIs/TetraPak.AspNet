@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -21,7 +20,7 @@ namespace TetraPak.AspNet.Identity
     {
         readonly string _instanceId = new RandomString(8);
         readonly AmbientData _ambientData;
-        readonly ITimeLimitedRepositories _cache;
+        readonly ITimeLimitedRepositories? _cache;
         
         TetraPakConfig Config => _ambientData.TetraPakConfig;
         
@@ -34,6 +33,10 @@ namespace TetraPak.AspNet.Identity
         /// </summary>
         /// <param name="accessToken">
         ///   An access token, authenticating the requesting actor. 
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <param name="cached">
         ///   (optional; default=<c>true</c>)<br/>
@@ -80,8 +83,7 @@ namespace TetraPak.AspNet.Identity
                 throw new Exception(MissingDiscoDocErrorMessage);
             }
 
-            var disco = discoOutcome.Value;
-            var userInfoEndpoint = disco!.UserInformationEndpoint;
+            var userInfoEndpoint = discoOutcome.Value!.UserInformationEndpoint!;
             var completionSource = downloadAsync(accessToken, new Uri(userInfoEndpoint), messageId);
             if (cached)
             {
@@ -161,7 +163,7 @@ namespace TetraPak.AspNet.Identity
             return tcs;
         }
 
-        async Task<object> getCachedAsync(string accessToken)
+        async Task<object?> getCachedAsync(string accessToken)
         {
             if (_cache is null)
                 return null;
@@ -193,7 +195,7 @@ namespace TetraPak.AspNet.Identity
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="ambientData"/> was unassigned.
         /// </exception>
-        public UserInformationProvider(AmbientData ambientData, ITimeLimitedRepositories cache = null)
+        public UserInformationProvider(AmbientData ambientData, ITimeLimitedRepositories? cache = null)
         {
             _ambientData = ambientData ?? throw new ArgumentNullException(nameof(ambientData));
             _cache = cache;

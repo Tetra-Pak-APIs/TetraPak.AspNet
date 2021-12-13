@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using TetraPak.DynamicEntities;
 
-#nullable enable
-
 namespace TetraPak.AspNet.DataTransfers
 {
     /// <summary>
@@ -30,7 +28,7 @@ namespace TetraPak.AspNet.DataTransfers
         public static DtoRelationshipLocator GetRelLocatorForSelf(this ControllerBase self, params HttpMethod[] methods)
         {
             var url = BuildPath(self.Url.RouteUrl(self.RouteData.Values));
-            return new DtoRelationshipLocator(url, methods.EnsureGet());
+            return new DtoRelationshipLocator(url, methods.DefaultToGetVerb());
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace TetraPak.AspNet.DataTransfers
             params HttpMethod[] methods)
         {
             var url = BuildPath(self.Url.Action(action));
-            return new DtoRelationshipLocator(url, methods.EnsureGet());
+            return new DtoRelationshipLocator(url, methods.DefaultToGetVerb());
         }
 
         /// <summary>
@@ -151,7 +149,7 @@ namespace TetraPak.AspNet.DataTransfers
             where TController : ControllerBase
         {
             var path = BuildPath(self.Url.Action(action, typeof(TController).GetControllerName()), keys, query);
-            return new DtoRelationshipLocator(path, methods.EnsureGet());
+            return new DtoRelationshipLocator(path, methods.DefaultToGetVerb());
         }
         
         /// <summary>

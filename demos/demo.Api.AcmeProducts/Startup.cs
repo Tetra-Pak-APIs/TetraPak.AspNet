@@ -8,7 +8,6 @@ using Microsoft.OpenApi.Models;
 using TetraPak.AspNet;
 using TetraPak.AspNet.Api;
 using TetraPak.AspNet.Api.Auth;
-using TetraPak.AspNet.Auth;
 
 namespace demo.AcmeProducts
 {
@@ -41,7 +40,7 @@ namespace demo.AcmeProducts
 
             app.UseRouting();
             
-            app.UseTetraPakClientAuthentication(env);
+            app.UseTetraPakApiAuthentication(env);
 
             app.UseAuthorization();
 

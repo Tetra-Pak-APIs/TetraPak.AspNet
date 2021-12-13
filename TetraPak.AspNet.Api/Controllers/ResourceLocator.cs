@@ -4,11 +4,6 @@
     {
         public string Location { get; set; }
 
-        public ResourceLocator()
-        {
-            
-        }
-        
         public ResourceLocator(string location)
         {
             Location = location;

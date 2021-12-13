@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace TetraPak.AspNet.Diagnostics
 {
+    // todo SDK: Document service diagnostics
     public class ServiceDiagnostics : IEnumerable<KeyValuePair<string,object>>
     {
         /// <summary>
@@ -16,13 +17,12 @@ namespace TetraPak.AspNet.Diagnostics
 
         readonly Dictionary<string, object> _values = new();
         
-        [JsonPropertyName("roundtripTime")]
-        public long ElapsedMilliseconds { get; set; }
-
         /// <summary>
-        ///   Stops the timer for a 
+        ///   Gets the diagnosed service's elapsed time in milliseconds.
         /// </summary>
-        /// <returns></returns>
+        [JsonPropertyName("roundtripTime")]
+        public long ElapsedMilliseconds { get; private set; }
+
         public long? StopTimer() => GetElapsedMs(TimerPrefix);
         
         /// <summary>
@@ -50,7 +50,7 @@ namespace TetraPak.AspNet.Diagnostics
         /// <returns>
         ///   The number of ticks that has elapsed since the timer was started until now (or it ended, when stopped).
         /// </returns>
-        public long? GetElapsedMs(string key = null, bool stopTimer = true)
+        public long? GetElapsedMs(string? key = null, bool stopTimer = true)
         {
             key = key is null ? TimerPrefix : timerKey(key);
             if (!_values.TryGetValue(key, out var obj) || obj is not Timer timer)
@@ -71,7 +71,7 @@ namespace TetraPak.AspNet.Diagnostics
         /// <returns>
         ///   A collection of <see cref="KeyValuePair{String,Object}"/>.
         /// </returns>
-        public IEnumerable<KeyValuePair<string, object>> GetValues(string prefix = null)
+        public IEnumerable<KeyValuePair<string, object>> GetValues(string? prefix = null)
         {
             return string.IsNullOrWhiteSpace(prefix) 
                 ? _values 
@@ -125,6 +125,7 @@ namespace TetraPak.AspNet.Diagnostics
             }
         }
 
+        /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => _values.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

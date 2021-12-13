@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>

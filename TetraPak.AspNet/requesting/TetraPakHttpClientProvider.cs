@@ -11,8 +11,6 @@ using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

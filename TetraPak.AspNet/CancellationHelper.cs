@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

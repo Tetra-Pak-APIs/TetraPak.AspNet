@@ -2,8 +2,6 @@
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

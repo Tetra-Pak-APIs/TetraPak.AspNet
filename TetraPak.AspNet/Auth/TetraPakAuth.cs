@@ -18,8 +18,6 @@ using TetraPak.AspNet.Debugging;
 using TetraPak.Caching;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Auth
 {
     // https://mauridb.medium.com/using-oauth2-middleware-with-asp-net-core-2-0-b31ffef58cd0
@@ -386,7 +384,7 @@ namespace TetraPak.AspNet.Auth
             if (!outcome)
                 return await fail();
             
-            context.Properties.UpdateTokenValue(AmbientData.Keys.AccessToken, outcome.Value!.AccessToken);
+            context.Properties.UpdateTokenValue(AmbientData.Keys.AccessToken, outcome.Value!.AccessToken!);
             var expiresAt = outcome.Value.ExpiresInSeconds.HasValue
                 ? DateTimeOffset.UtcNow.AddSeconds(outcome.Value.ExpiresInSeconds.Value)
                 : DateTimeOffset.Now;

@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TetraPak.Caching;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

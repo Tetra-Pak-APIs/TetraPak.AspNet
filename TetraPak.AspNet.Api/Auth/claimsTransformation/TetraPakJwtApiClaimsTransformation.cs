@@ -26,7 +26,10 @@ namespace TetraPak.AspNet.Api.Auth
     {
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
-        protected ITokenExchangeGrantService TokenExchangeGrantService { get; private set; }
+#pragma warning disable CS8618
+        // note: Always gets initialized from OnInitialize
+        protected ITokenExchangeGrantService TokenExchangeGrantService { get; private set; } 
+#pragma warning restore CS8618
 
         
         /// <inheritdoc />
@@ -47,7 +50,7 @@ namespace TetraPak.AspNet.Api.Auth
                 }
                 
                 // try getting a cached exchanged token ... 
-                var accessToken = accessTokenOutcome.Value;
+                var accessToken = accessTokenOutcome.Value!;
                 var cachedOutcome = await getCachedIdentityTokenAsync(accessToken);
                 if (cachedOutcome)
                     return cachedOutcome;
@@ -62,11 +65,11 @@ namespace TetraPak.AspNet.Api.Auth
                 var bearerToken = accessTokenOutcome.Value as BearerToken;
                 var isBearerToken = bearerToken is { };
                 var subjectToken = isBearerToken
-                    ? bearerToken.Value
+                    ? bearerToken!.Value
                     : accessTokenOutcome.Value!.ToString();
                 var txOutcome = await TokenExchangeGrantService.ExchangeAccessTokenAsync(
                     credentials, 
-                    subjectToken, 
+                    subjectToken!, 
                     false,
                     cancellationToken);
 

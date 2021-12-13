@@ -28,7 +28,7 @@ namespace TetraPak.AspNet
         ///   Initializes the <see cref="Count"/> and <see cref="Skip"/> values.
         /// </param>
         /// <param name="total">
-        ///   Initializes the <see cref="total"/> value.
+        ///   Initializes the <see cref="ApiMetadata.Total"/> value.
         /// </param>
         public ApiChunkedMetadata(ReadChunk chunk, int total = -1)
         {

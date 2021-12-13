@@ -12,8 +12,8 @@ namespace TetraPak.AspNet.Api.Auth
             this MessageReceivedContext context,
             JwtBearerOptions options,
             TetraPakApiConfig config,
-            ILogger logger, 
-            [NotNullWhen(true)] out ActorToken token)
+            ILogger? logger, 
+            [NotNullWhen(true)] out ActorToken? token)
         {
             using (logger?.BeginScope($"Looking for authorization in header: {config.AuthorizationHeader}"))
             {  
@@ -44,7 +44,7 @@ namespace TetraPak.AspNet.Api.Auth
 
                 if (isJwtToken)
                 {
-                    logger.Debug($"Received JWT: \n{jwt.ToDebugString()}", messageId);
+                    logger.Debug($"Received JWT: \n{jwt!.ToDebugString()}", messageId);
                     logger.Debug($"Environment: {config.Environment}", messageId);
                     logger.Debug($"Discovery document URL: {options.MetadataAddress}", messageId);
                     return true;

@@ -14,7 +14,7 @@ Derived
 ## IClientCredentialsGrantService.AcquireTokenAsync(Nullable&lt;CancellationToken&gt;, Credentials, MultiStringValue, bool) Method
 Requests a token using the OAuth Client Credentials grant.     
 ```csharp
-System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials clientCredentials=null, TetraPak.MultiStringValue scope=null, bool allowCached=true);
+System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials clientCredentials=null, TetraPak.MultiStringValue scope=null, bool forceAuthorization=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_cancellationToken'></a>
@@ -32,10 +32,11 @@ Specifies client credentials.
 (optional)<br/>  
 Scope to be requested for the authorization.  
   
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_allowCached'></a>
-`allowCached` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-(optional; default=`true`)<br/>  
-Specifies whether to reuse a cached token if available, or to cache an acquired token when successful.  
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_forceAuthorization'></a>
+`forceAuthorization` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`false`)<br/>  
+Specifies whether to force a new client credentials authorization  
+(overriding/replacing any cached authorization).   
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.AspNet.Api.Auth.ClientCredentialsResponse](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Auth.ClientCredentialsResponse 'TetraPak.AspNet.Api.Auth.ClientCredentialsResponse')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  

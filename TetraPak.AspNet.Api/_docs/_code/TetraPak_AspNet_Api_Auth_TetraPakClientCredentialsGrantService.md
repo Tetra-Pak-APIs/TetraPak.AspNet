@@ -11,41 +11,35 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Implements [IClientCredentialsGrantService](TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService.md 'TetraPak.AspNet.Api.Auth.IClientCredentialsGrantService')  
 ### Constructors
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)'></a>
-## TetraPakClientCredentialsGrantService.TetraPakClientCredentialsGrantService(TetraPakConfig, IHttpClientProvider) Constructor
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider_Microsoft_AspNetCore_Http_IHttpContextAccessor)'></a>
+## TetraPakClientCredentialsGrantService.TetraPakClientCredentialsGrantService(TetraPakConfig, IHttpClientProvider, IHttpContextAccessor) Constructor
 Initializes the [TetraPakClientCredentialsGrantService](TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService.md 'TetraPak.AspNet.Api.Auth.TetraPakClientCredentialsGrantService').  
 ```csharp
-public TetraPakClientCredentialsGrantService(TetraPak.AspNet.TetraPakConfig tetraPakConfig, TetraPak.AspNet.IHttpClientProvider httpClientProvider);
+public TetraPakClientCredentialsGrantService(TetraPak.AspNet.TetraPakConfig tetraPakConfig, TetraPak.AspNet.IHttpClientProvider httpClientProvider, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)_tetraPakConfig'></a>
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider_Microsoft_AspNetCore_Http_IHttpContextAccessor)_tetraPakConfig'></a>
 `tetraPakConfig` [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)_httpClientProvider'></a>
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider_Microsoft_AspNetCore_Http_IHttpContextAccessor)_httpClientProvider'></a>
 `httpClientProvider` [TetraPak.AspNet.IHttpClientProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IHttpClientProvider 'TetraPak.AspNet.IHttpClientProvider')  
 A HttpClient factory.  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_TetraPakClientCredentialsGrantService(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider_Microsoft_AspNetCore_Http_IHttpContextAccessor)_httpContextAccessor'></a>
+`httpContextAccessor` [Microsoft.AspNetCore.Http.IHttpContextAccessor](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHttpContextAccessor 'Microsoft.AspNetCore.Http.IHttpContextAccessor')  
+Provides access to the current request/response [TetraPak.AspNet.Api.Auth.TetraPakClientCredentialsGrantService.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Auth.TetraPakClientCredentialsGrantService.HttpContext 'TetraPak.AspNet.Api.Auth.TetraPakClientCredentialsGrantService.HttpContext').   
   
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
 Any parameter was `null`.  
-  
-### Properties
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_Logger'></a>
-## TetraPakClientCredentialsGrantService.Logger Property
-Gets a logger provider.  
-```csharp
-protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
-```
-#### Property Value
-[Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
   
 ### Methods
 <a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)'></a>
 ## TetraPakClientCredentialsGrantService.AcquireTokenAsync(Nullable&lt;CancellationToken&gt;, Credentials?, MultiStringValue?, bool) Method
 Requests a token using the OAuth Client Credentials grant.     
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials? clientCredentials=null, TetraPak.MultiStringValue? scope=null, bool allowCached=true);
+public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials? clientCredentials=null, TetraPak.MultiStringValue? scope=null, bool forceAuthorization=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_cancellationToken'></a>
@@ -63,10 +57,11 @@ Specifies client credentials.
 (optional)<br/>  
 Scope to be requested for the authorization.  
   
-<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_allowCached'></a>
-`allowCached` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-(optional; default=`true`)<br/>  
-Specifies whether to reuse a cached token if available, or to cache an acquired token when successful.  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_forceAuthorization'></a>
+`forceAuthorization` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+(optional; default=`false`)<br/>  
+Specifies whether to force a new client credentials authorization  
+(overriding/replacing any cached authorization).   
   
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[TetraPak.AspNet.Api.Auth.ClientCredentialsResponse](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Api.Auth.ClientCredentialsResponse 'TetraPak.AspNet.Api.Auth.ClientCredentialsResponse')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  

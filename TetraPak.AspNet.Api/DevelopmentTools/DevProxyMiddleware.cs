@@ -76,13 +76,13 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             }
 
             BearerToken jwtBearer;
-            context.StartDiagnosticsTime(TimerName);
+            context.DiagnosticsStartTimer(TimerName);
             var cachedJwtOutcome = await tryGetCachedJwt(accessToken);
             if (cachedJwtOutcome)
             {
                 jwtBearer = cachedJwtOutcome.Value!.Identity.ToBearerToken();
                 context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
-                context.StopDiagnosticsTime(TimerName);
+                context.DiagnosticsStopTimer(TimerName);
                 return true;
             }
 
@@ -122,14 +122,14 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                         messageId);
                     await context.RespondAsync(HttpStatusCode.Unauthorized, error);
                 });
-                context.StopDiagnosticsTime(TimerName);
+                context.DiagnosticsStopTimer(TimerName);
                 return false;
             }
 
             jwtBearer = jwtBearerOutcome.Value!.Identity.ToBearerToken();
             context.Request.Headers[_config.AuthorizationHeader] = jwtBearer.ToString();
             await cacheToken(accessToken, jwtBearerOutcome.Value);
-            context.StopDiagnosticsTime(TimerName);
+            context.DiagnosticsStopTimer(TimerName);
  
             return true;
         }

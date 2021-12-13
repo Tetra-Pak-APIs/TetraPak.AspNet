@@ -2,8 +2,6 @@
 using Newtonsoft.Json;
 using TetraPak.DynamicEntities;
 
-#nullable enable
-
 namespace TetraPak.AspNet.DataTransfers
 {
     /// <summary>

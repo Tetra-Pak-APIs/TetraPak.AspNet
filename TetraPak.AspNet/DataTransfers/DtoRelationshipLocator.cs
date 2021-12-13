@@ -2,8 +2,6 @@
 using System.Text.Json.Serialization;
 using TetraPak.DynamicEntities;
 
-#nullable enable
-
 namespace TetraPak.AspNet.DataTransfers
 {
     /// <summary>

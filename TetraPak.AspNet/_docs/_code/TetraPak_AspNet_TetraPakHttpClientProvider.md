@@ -10,7 +10,7 @@ TetraPak.AspNet.Diagnostics.ITetraPakDiagnosticsProvider
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakHttpClientProvider  
 
-Implements [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider'), [TetraPak.AspNet.Diagnostics.ITetraPakDiagnosticsProvider](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Diagnostics.ITetraPakDiagnosticsProvider 'TetraPak.AspNet.Diagnostics.ITetraPakDiagnosticsProvider')  
+Implements [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider'), [ITetraPakDiagnosticsProvider](TetraPak_AspNet_Diagnostics_ITetraPakDiagnosticsProvider.md 'TetraPak.AspNet.Diagnostics.ITetraPakDiagnosticsProvider')  
 ### Constructors
 <a name='TetraPak_AspNet_TetraPakHttpClientProvider_TetraPakHttpClientProvider(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IAuthorizationService__System_Func_TetraPak_AspNet_HttpClientOptions_System_Net_Http_HttpClient___TetraPak_AspNet_HttpClientOptions_)'></a>
 ## TetraPakHttpClientProvider.TetraPakHttpClientProvider(TetraPakConfig, IAuthorizationService?, Func&lt;HttpClientOptions,HttpClient&gt;?, HttpClientOptions?) Constructor

@@ -42,23 +42,23 @@ Allows canceling the authorization process.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
-<a name='TetraPak_AspNet_Api_IBackendService_DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.DeleteAsync(string, HttpQuery?, RequestOptions?) Method
+<a name='TetraPak_AspNet_Api_IBackendService_DeleteRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.DeleteRawAsync(string, HttpQuery?, RequestOptions?) Method
 Sends a GET request to the backend service to retrieve an object of a specified type.  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> DeleteAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> DeleteRawAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_DeleteRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_DeleteRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
 `queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
 (optional)  
 Query parameters.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_DeleteAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_DeleteRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  
@@ -68,68 +68,40 @@ Specifies options for the request.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### See Also
-- [GetAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
+- [GetRawAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetRawAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.GetAsync(string, HttpQuery?, RequestOptions?) Method
-Sends a GEt request to the backend service to retrieve a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage').  
-```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> GetAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
-`path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-The path to the requested resource.   
-  
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
-`queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
-(optional)  
-Query parameters.  
-  
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
-`options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
-(optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
-Specifies options for the request.  
-  
-#### Returns
-[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
-An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
-a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
-#### See Also
-- [GetAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
-  
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.GetAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?) Method
+<a name='TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.GetCollectionAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?) Method
 Sends a GET request to the backend service to retrieve an object of a specified type.  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpEnumOutcome<T>> GetAsync<T>(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpEnumOutcome<T>> GetCollectionAsync<T>(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Type parameters
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T'></a>
 `T`  
 Specifies the type of object to be retrieved.
   
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
 `queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
 (optional)  
 Query parameters.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  
   
 #### Returns
-[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpEnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[T](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T 'TetraPak.AspNet.Api.IBackendService.GetAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
+[System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpEnumOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[T](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_T 'TetraPak.AspNet.Api.IBackendService.GetCollectionAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpEnumOutcome-1 'TetraPak.AspNet.HttpEnumOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### See Also
-- [GetAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
+- [GetRawAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetRawAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
 <a name='TetraPak_AspNet_Api_IBackendService_GetEndpoint(string)'></a>
 ## IBackendService.GetEndpoint(string) Method
@@ -160,22 +132,23 @@ System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<s
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.Collections.Generic.KeyValuePair&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[ServiceEndpoint](TetraPak_AspNet_Api_ServiceEndpoint.md 'TetraPak.AspNet.Api.ServiceEndpoint')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.KeyValuePair-2 'System.Collections.Generic.KeyValuePair`2')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
 A collection of key value pairs with the names of endpoints as keys.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.PatchAsync(string, object?, RequestOptions?) Method
-Sends a PATCH request to the backend service.  
+<a name='TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.GetRawAsync(string, HttpQuery?, RequestOptions?) Method
+Sends a GEt request to the backend service to retrieve a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage').  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, object? data, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> GetRawAsync(string path, TetraPak.AspNet.HttpQuery? queryParameters=null, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_data'></a>
-`data` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
-The content to be patched.  
+<a name='TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_queryParameters'></a>
+`queryParameters` [TetraPak.AspNet.HttpQuery](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpQuery 'TetraPak.AspNet.HttpQuery')  
+(optional)  
+Query parameters.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_object__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  
@@ -184,23 +157,25 @@ Specifies options for the request.
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.AspNet.HttpOutcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpOutcome-1 'TetraPak.AspNet.HttpOutcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+#### See Also
+- [GetCollectionAsync&lt;T&gt;(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetCollectionAsync_T_(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetCollectionAsync&lt;T&gt;(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.PatchAsync(string, HttpContent, RequestOptions?) Method
+<a name='TetraPak_AspNet_Api_IBackendService_PatchRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.PatchRawAsync(string, HttpContent, RequestOptions?) Method
 Sends a PATCH request to the backend service.  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PatchRawAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PatchRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PatchRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be patched.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PatchAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PatchRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  
@@ -210,22 +185,22 @@ Specifies options for the request.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.PostAsync(string, HttpContent, RequestOptions?) Method
+<a name='TetraPak_AspNet_Api_IBackendService_PostRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.PostRawAsync(string, HttpContent, RequestOptions?) Method
 Sends a POST request to the backend service.  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PostAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PostRawAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PostRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PostRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be posted.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PostAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PostRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  
@@ -235,22 +210,22 @@ Specifies options for the request.
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpResponseMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpResponseMessage 'System.Net.Http.HttpResponseMessage') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
-## IBackendService.PutAsync(string, HttpContent, RequestOptions?) Method
+<a name='TetraPak_AspNet_Api_IBackendService_PutRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)'></a>
+## IBackendService.PutRawAsync(string, HttpContent, RequestOptions?) Method
 Sends a PUT request to the backend service.  
 ```csharp
-System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PutAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
+System.Threading.Tasks.Task<TetraPak.AspNet.HttpOutcome<System.Net.Http.HttpResponseMessage>> PutRawAsync(string path, System.Net.Http.HttpContent content, TetraPak.AspNet.Api.RequestOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PutRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_path'></a>
 `path` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The path to the requested resource.   
   
-<a name='TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PutRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_content'></a>
 `content` [System.Net.Http.HttpContent](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpContent 'System.Net.Http.HttpContent')  
 The content to be put.  
   
-<a name='TetraPak_AspNet_Api_IBackendService_PutAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
+<a name='TetraPak_AspNet_Api_IBackendService_PutRawAsync(string_System_Net_Http_HttpContent_TetraPak_AspNet_Api_RequestOptions_)_options'></a>
 `options` [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions')  
 (optional; default=[Default](TetraPak_AspNet_Api_RequestOptions.md#TetraPak_AspNet_Api_RequestOptions_Default 'TetraPak.AspNet.Api.RequestOptions.Default'))<br/>  
 Specifies options for the request.  

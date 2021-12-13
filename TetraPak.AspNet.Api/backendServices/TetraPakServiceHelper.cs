@@ -264,7 +264,7 @@ namespace TetraPak.AspNet.Api
             HttpMethod[]? methods)
         {
             var path = HateoasHelper.BuildPath(self.GetUrl(self.TrimHostInResponses), keys, query);
-            return new DtoRelationshipLocator(path, methods.EnsureGet());
+            return new DtoRelationshipLocator(path, methods.DefaultToGetVerb());
         }
     }
 }

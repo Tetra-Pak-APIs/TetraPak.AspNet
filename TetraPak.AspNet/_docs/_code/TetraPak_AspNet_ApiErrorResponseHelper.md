@@ -8,18 +8,18 @@ public static class ApiErrorResponseHelper
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; ApiErrorResponseHelper  
 ### Methods
-<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions)'></a>
-## ApiErrorResponseHelper.ToDictionary(object, DictionaryTransformationOptions) Method
+<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions_)'></a>
+## ApiErrorResponseHelper.ToDictionary(object, DictionaryTransformationOptions?) Method
 Transforms an object's properties and values into a dictionary.  
 ```csharp
-public static System.Collections.Generic.IDictionary<string,object> ToDictionary(this object self, TetraPak.AspNet.DictionaryTransformationOptions options=null);
+public static System.Collections.Generic.IDictionary<string,object> ToDictionary(this object self, TetraPak.AspNet.DictionaryTransformationOptions? options=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions)_self'></a>
+<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions_)_self'></a>
 `self` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
 The object being transformed into a dictionary.  
   
-<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions)_options'></a>
+<a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions_)_options'></a>
 `options` [TetraPak.AspNet.DictionaryTransformationOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.DictionaryTransformationOptions 'TetraPak.AspNet.DictionaryTransformationOptions')  
 (optional; default = [TetraPak.AspNet.DictionaryTransformationOptions.Default](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.DictionaryTransformationOptions.Default 'TetraPak.AspNet.DictionaryTransformationOptions.Default')  
 Options to control the transformation.  

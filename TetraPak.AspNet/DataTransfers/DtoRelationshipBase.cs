@@ -5,8 +5,6 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using TetraPak.DynamicEntities;
 
-#nullable enable
-
 namespace TetraPak.AspNet.DataTransfers
 {
     /// <summary>

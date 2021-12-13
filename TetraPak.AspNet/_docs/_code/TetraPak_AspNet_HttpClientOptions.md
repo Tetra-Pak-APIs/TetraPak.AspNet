@@ -12,7 +12,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ## HttpClientOptions.HttpClientOptions(bool) Constructor
 Initializes the [HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions').  
 ```csharp
-public HttpClientOptions(bool isClientTransient=true);
+public HttpClientOptions(bool isClientTransient=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_HttpClientOptions_HttpClientOptions(bool)_isClientTransient'></a>
@@ -49,8 +49,21 @@ public TetraPak.AspNet.IAuthorizationService? AuthorizationService { get; set; }
 #### Property Value
 [IAuthorizationService](TetraPak_AspNet_IAuthorizationService.md 'TetraPak.AspNet.IAuthorizationService')
   
+<a name='TetraPak_AspNet_HttpClientOptions_ForceAuthorization'></a>
+## HttpClientOptions.ForceAuthorization Property
+(intended for internal use; default=`false`)<br/>  
+Gets a value specifying whether to force a new client authorization (replacing any cached authorization).   
+```csharp
+public bool ForceAuthorization { get; set; }
+```
+#### Property Value
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')
+#### See Also
+- [RequestForcedAuthorization(bool)](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_RequestForcedAuthorization(bool) 'TetraPak.AspNet.HttpClientOptions.RequestForcedAuthorization(bool)')
+  
 <a name='TetraPak_AspNet_HttpClientOptions_IsClientTransient'></a>
 ## HttpClientOptions.IsClientTransient Property
+(default=`false`)<br/>  
 Gets or sets a value specifying whether the requested [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') should be  
 transient (otherwise a singleton instance till be returned).   
 ```csharp
@@ -72,6 +85,17 @@ public System.Net.Http.HttpMessageHandler? MessageHandler { get; set; }
 - [WithMessageHandler(HttpMessageHandler)](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_WithMessageHandler(System_Net_Http_HttpMessageHandler) 'TetraPak.AspNet.HttpClientOptions.WithMessageHandler(System.Net.Http.HttpMessageHandler)')
   
 ### Methods
+<a name='TetraPak_AspNet_HttpClientOptions_RequestForcedAuthorization(bool)'></a>
+## HttpClientOptions.RequestForcedAuthorization(bool) Method
+Clears the [ForceAuthorization](TetraPak_AspNet_HttpClientOptions.md#TetraPak_AspNet_HttpClientOptions_ForceAuthorization 'TetraPak.AspNet.HttpClientOptions.ForceAuthorization'), forcing a renewed client authorization.  
+```csharp
+public void RequestForcedAuthorization(bool value=true);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpClientOptions_RequestForcedAuthorization(bool)_value'></a>
+`value` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+  
+  
 <a name='TetraPak_AspNet_HttpClientOptions_WithAuthorization(TetraPak_ActorToken__TetraPak_AspNet_IAuthorizationService_)'></a>
 ## HttpClientOptions.WithAuthorization(ActorToken?, IAuthorizationService?) Method
 Fluid API for requesting client authorization.  

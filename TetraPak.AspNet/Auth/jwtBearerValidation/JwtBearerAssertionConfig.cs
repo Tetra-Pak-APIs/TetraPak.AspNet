@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Auth
 {
     /// <summary>

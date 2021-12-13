@@ -13,8 +13,6 @@ using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>
@@ -111,7 +109,7 @@ namespace TetraPak.AspNet
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
             var tetraPakConfig = self.RequestServices.GetRequiredService<TetraPakConfig>();
-            headerKey = forceStandardHeader || tetraPakConfig.AuthorizationHeader is null
+            headerKey = forceStandardHeader //|| tetraPakConfig.AuthorizationHeader is null obsolete
                 ? HeaderNames.Authorization
                 : tetraPakConfig.AuthorizationHeader;
             var ss = self.Request.Headers[headerKey].FirstOrDefault();
@@ -596,7 +594,7 @@ namespace TetraPak.AspNet
         }
 
         /// <summary>
-        ///   Validates the items of a <see cref="MultiStringValue"/> as HTTP methods (verbs)
+        ///   Validates the items of a <see cref="MultiStringValue"/> as HTTP httpMethods (verbs)
         ///   and returns them (on success) or throws a <see cref="FormatException"/> (on failure).  
         /// </summary>
         /// <param name="value">
@@ -636,16 +634,15 @@ namespace TetraPak.AspNet
         ///   Casts a collection of <see cref="HttpMethod"/> enum values into a collection of
         ///   equivalent <see cref="string"/> values.
         /// </summary>
-        /// <param name="methods">
+        /// <param name="httpMethods">
         ///   The enum values to be cast into <see cref="string"/>s.
         /// </param>
         /// <returns>
         ///   An array of <see cref="string"/>.
         /// </returns>
-        public static string[] ToStringVerbs(this IEnumerable<HttpMethod> methods)
-        {
-            return methods.Select(m => s_httpMethodToStringVerbMap[m]).ToArray();
-        }
+        public static string[] ToStringVerbs(this IEnumerable<HttpMethod> httpMethods) 
+            => 
+            httpMethods.Select(m => s_httpMethodToStringVerbMap[m]).ToArray();
 
         /// <summary>
         ///   Casts a <see cref="HttpMethod"/> enum value into its equivalent <see cref="string"/> value.

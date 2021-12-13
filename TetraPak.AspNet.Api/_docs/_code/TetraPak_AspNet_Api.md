@@ -3,6 +3,7 @@
 
 | Classes | |
 | :--- | :--- |
+| [ApiRequestInitiators](TetraPak_AspNet_Api_ApiRequestInitiators.md 'TetraPak.AspNet.Api.ApiRequestInitiators') | Provides [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') constants representing various standardised API related request initiators.<br/> |
 | [BackendService&lt;TEndpoints&gt;](TetraPak_AspNet_Api_BackendService_TEndpoints_.md 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;') | Supports configuration for an individual backend service, and a collection of service endpoints. <br/> |
 | [RequestOptions](TetraPak_AspNet_Api_RequestOptions.md 'TetraPak.AspNet.Api.RequestOptions') | Can be used to control the behavior of a request. <br/> |
 | [ServiceAuthConfig](TetraPak_AspNet_Api_ServiceAuthConfig.md 'TetraPak.AspNet.Api.ServiceAuthConfig') |  |

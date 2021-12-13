@@ -56,7 +56,7 @@ namespace TetraPak.AspNet
         // ReSharper disable once MemberCanBePrivate.Global
         public static bool TryGetTetraPakConfig(
             this Controller self, 
-            [NotNullWhen(true)] out TetraPakConfig tetraPakConfig)
+            [NotNullWhen(true)] out TetraPakConfig? tetraPakConfig)
         {
             tetraPakConfig = self.HttpContext.RequestServices.GetService<TetraPakConfig>();
             return tetraPakConfig is {};

@@ -32,7 +32,7 @@ namespace TetraPak.AspNet.Api.Auth
 
         ITimeLimitedRepositories? Cache => _tetraPakConfig.Cache;
 
-        HttpContext HttpContext => _httpContextAccessor.HttpContext;
+        HttpContext? HttpContext => _httpContextAccessor.HttpContext;
 
         /// <inheritdoc />
         public async Task<Outcome<ClientCredentialsResponse>> AcquireTokenAsync(
@@ -90,7 +90,7 @@ namespace TetraPak.AspNet.Api.Auth
                 {
                     Content = new FormUrlEncodedContent(keyValues)
                 };
-                var messageId = HttpContext.Request.GetMessageId(_tetraPakConfig);
+                var messageId = HttpContext?.Request.GetMessageId(_tetraPakConfig);
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
                     ? await (await request.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
                         new StringBuilder(), 
@@ -121,7 +121,7 @@ namespace TetraPak.AspNet.Api.Auth
                         stream,
                         cancellationToken: ct);
 
-                var outcome = ClientCredentialsResponse.TryParse(responseBody);
+                var outcome = ClientCredentialsResponse.TryParse(responseBody!);
                 if (outcome)
                 {
                     await OnCacheResponseAsync(basicAuthCredentials, outcome.Value!);

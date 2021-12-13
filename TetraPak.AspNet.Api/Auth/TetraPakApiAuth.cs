@@ -9,7 +9,7 @@ namespace TetraPak.AspNet.Api.Auth
         static readonly object s_syncRoot = new();
         static bool s_isTetraPakOauthServicesAdded;
         
-        internal static string Host { get; private set; }
+        internal static string? Host { get; private set; }
 
         /// <summary>
         ///   Ensures a unique message id is available through the whole request/response roundtrip. 
@@ -91,6 +91,6 @@ namespace TetraPak.AspNet.Api.Auth
 
     public class HostProvider
     {
-        internal string GetHost() => TetraPakApiAuth.Host;
+        internal string GetHost() => TetraPakApiAuth.Host!;
     }
 }

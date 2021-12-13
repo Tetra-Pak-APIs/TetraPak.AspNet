@@ -9,8 +9,6 @@ using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Documentations;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     /// <summary>

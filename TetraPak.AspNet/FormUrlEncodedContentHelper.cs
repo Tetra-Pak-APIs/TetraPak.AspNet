@@ -31,7 +31,7 @@ namespace TetraPak.AspNet
             foreach (var p in pairs)
             {
                 var pair = p.Split('=', StringSplitOptions.RemoveEmptyEntries);
-                dictionary[pair[0]] = pair.Length == 2 ? pair[1] : null;
+                dictionary[pair[0]] = pair.Length == 2 ? pair[1] : null!;
             }
 
             return dictionary;
@@ -62,7 +62,7 @@ namespace TetraPak.AspNet
             foreach (var p in pairs)
             {
                 var pair = p.Split('=', StringSplitOptions.RemoveEmptyEntries);
-                dictionary[pair[0]] = pair.Length == 2 ? pair[1] : null;
+                dictionary[pair[0]] = pair.Length == 2 ? pair[1] : null!;
             }
 
             return dictionary;

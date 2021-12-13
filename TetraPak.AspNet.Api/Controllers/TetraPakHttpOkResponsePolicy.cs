@@ -74,7 +74,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 }
 
                 return response.Value.IsCollectionOf<object>(out var items) 
-                    ? tryApplyLocatorsInBody(items!.ToArray())
+                    ? tryApplyLocatorsInBody(items.ToArray())
                     : tryApplyLocatorHeader(response.Value);
             }
 
@@ -93,7 +93,7 @@ namespace TetraPak.AspNet.Api.Controllers
                 return true;
             }
             
-            bool tryApplyLocatorsInBody(object[] items)
+            bool tryApplyLocatorsInBody(object?[] items)
             {
                 // todo consider resolving resource locators here
                 return false;

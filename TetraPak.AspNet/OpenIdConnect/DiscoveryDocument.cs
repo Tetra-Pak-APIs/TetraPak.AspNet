@@ -38,60 +38,60 @@ namespace TetraPak.AspNet.OpenIdConnect
         ///   Gets or sets the token issuer URL.
         /// </summary>
         [JsonPropertyName("issuer")]
-        public string Issuer { get; set; }
+        public string? Issuer { get; set; }
 
         /// <summary>
         ///   Gets or sets the authority endpoint.
         /// </summary>
         [JsonPropertyName("authorization_endpoint")]
-        public string AuthorizationEndpoint { get; set; }
+        public string? AuthorizationEndpoint { get; set; }
 
         /// <summary>
         ///   Gets or sets the token issuer endpoint.
         /// </summary>
         [JsonPropertyName("token_endpoint")]
-        public string TokenEndpoint { get; set; }
+        public string? TokenEndpoint { get; set; }
 
         /// <summary>
         ///   Gets or sets the user information endpoint.
         /// </summary>
         [JsonPropertyName("userinfo_endpoint")]
-        public string UserInformationEndpoint { get; set; }
+        public string? UserInformationEndpoint { get; set; }
 
         /// <summary>
         ///   Gets or sets the JWT keys endpoint.
         /// </summary>
         [JsonPropertyName("jwks_uri")]
-        public string JwksUri { get; set; }
+        public string? JwksUri { get; set; }
 
         /// <summary>
         ///   Gets or sets the supported types of responses.
         /// </summary>
         [JsonPropertyName("response_types_supported")]
-        public IEnumerable<string> ResponseTypesSupported { get; set; }
+        public IEnumerable<string>? ResponseTypesSupported { get; set; }
 
         /// <summary>
         ///   Gets or sets the supported types subject types.
         /// </summary>
         [JsonPropertyName("subject_types_supported")]
-        public IEnumerable<string> SubjectTypesSupported { get; set; }
+        public IEnumerable<string>? SubjectTypesSupported { get; set; }
 
         /// <summary>
         ///   Gets or sets the supported scope.
         /// </summary>
         [JsonPropertyName("scopes_supported")]
-        public IEnumerable<string> ScopesSupported { get; set; }
+        public IEnumerable<string>? ScopesSupported { get; set; }
 
         /// <summary>
         ///   Gets or sets the supported grant types.
         /// </summary>
         [JsonPropertyName("grant_types_supported")]
-        public IEnumerable<string> GrantTypesSupported { get; set; }
+        public IEnumerable<string>? GrantTypesSupported { get; set; }
 
         /// <summary>
         ///   Gets or sets a collection of hashing algorithms supported.
         /// </summary>
         [JsonPropertyName("id_token_signing_alg_values_supported")]
-        public IEnumerable<string> IdTokenSigningAlgValuesSupported { get; set; }
+        public IEnumerable<string>? IdTokenSigningAlgValuesSupported { get; set; }
    }
 }

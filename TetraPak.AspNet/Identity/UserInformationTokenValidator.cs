@@ -12,12 +12,12 @@ namespace TetraPak.AspNet.Identity
         /// <summary>
         ///   Gets a log provider.
         /// </summary>
-        protected ILogger Logger => Config.Logger;
+        protected ILogger? Logger => Config?.Logger;
 
         /// <summary>
         ///   Gets the auth configuration.
         /// </summary>
-        public TetraPakConfig Config { get; private set; }
+        public TetraPakConfig? Config { get; private set; }
 
         internal void Initialize(TetraPakConfig config) => Config = config;
 

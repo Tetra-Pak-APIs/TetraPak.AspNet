@@ -1,9 +1,9 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace TetraPak.AspNet.Debugging
 {
@@ -41,7 +41,7 @@ namespace TetraPak.AspNet.Debugging
         /// <returns>
         ///   A <see cref="AbstractHttpRequest"/>
         /// </returns>
-        public static AbstractHttpRequest ToAbstractHttpRequestAsync(this HttpRequest request)
+        public static AbstractHttpRequest ToAbstractHttpRequestAsync(this HttpRequest request) 
             => new()
             {
                 Method = request.Method,
@@ -78,11 +78,9 @@ namespace TetraPak.AspNet.Debugging
         /// <returns>
         ///   A <see cref="string"/> representation of the request's URI, if any; otherwise <c>null</c>.
         /// </returns>
-        public static Uri? GetUri(this HttpRequest? request)
+        public static Uri? GetUri(this HttpRequest? request) 
         {
-            var uri = request is {}
-                ? $"{request.Host}{request.PathBase}{request.QueryString}" // nisse (check outcome of this concat)
-                : null;
+            var uri = request?.GetDisplayUrl();
             return uri is { } ? new Uri(uri) : null;
         }
     }

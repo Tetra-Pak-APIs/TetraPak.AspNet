@@ -64,6 +64,25 @@ The service collection.
 [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
 The service collection.  
   
+<a name='TetraPak_AspNet_TetraPakConfigHelper_LogTetraPakConfiguration(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_Extensions_Logging_LogLevel)'></a>
+## TetraPakConfigHelper.LogTetraPakConfiguration(IApplicationBuilder, LogLevel) Method
+Builds and a state dump from a [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') object and writes it to the logger.   
+```csharp
+public static Microsoft.AspNetCore.Builder.IApplicationBuilder LogTetraPakConfiguration(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Microsoft.Extensions.Logging.LogLevel logLevel=Microsoft.Extensions.Logging.LogLevel.Trace);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakConfigHelper_LogTetraPakConfiguration(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_Extensions_Logging_LogLevel)_app'></a>
+`app` [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+The extended application builder.  
+  
+<a name='TetraPak_AspNet_TetraPakConfigHelper_LogTetraPakConfiguration(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_Extensions_Logging_LogLevel)_logLevel'></a>
+`logLevel` [Microsoft.Extensions.Logging.LogLevel](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.LogLevel 'Microsoft.Extensions.Logging.LogLevel')  
+(optional; default=[Microsoft.Extensions.Logging.LogLevel.Trace](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.LogLevel.Trace 'Microsoft.Extensions.Logging.LogLevel.Trace'))<br/>  
+A (custom) log level for the state dump information.  
+  
+#### Returns
+[Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
+  
 <a name='TetraPak_AspNet_TetraPakConfigHelper_UseTetraPakDiagnostics(Microsoft_AspNetCore_Builder_IApplicationBuilder)'></a>
 ## TetraPakConfigHelper.UseTetraPakDiagnostics(IApplicationBuilder) Method
 Enabled various types of diagnostics features, such as timers and trackable message ids.  

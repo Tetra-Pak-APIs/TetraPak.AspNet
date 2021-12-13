@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
 
-#nullable enable
-
 namespace TetraPak.AspNet
 {
     partial class ServerException

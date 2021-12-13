@@ -1,7 +1,9 @@
-﻿using System;
+﻿#if NET5_0_OR_GREATER        
+using System.Text.Json.Serialization;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TetraPak.Logging;
@@ -41,11 +43,13 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
+#pragma warning disable CS8618
 #if NET5_0_OR_GREATER        
         [JsonConstructor]
 #endif        
         public TokenExchangeConfig()
         {
         }
+#pragma warning restore CS8618
     }
 }
