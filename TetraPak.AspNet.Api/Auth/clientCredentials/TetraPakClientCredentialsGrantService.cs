@@ -12,8 +12,6 @@ using TetraPak.AspNet.Debugging;
 using TetraPak.Caching;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>

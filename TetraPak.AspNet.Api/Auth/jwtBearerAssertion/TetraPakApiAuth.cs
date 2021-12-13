@@ -12,8 +12,6 @@ using TetraPak.AspNet.Api.DevelopmentTools;
 using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.Debugging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>

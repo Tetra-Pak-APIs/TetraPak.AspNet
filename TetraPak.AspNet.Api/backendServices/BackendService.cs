@@ -16,8 +16,6 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using HttpMethod=Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

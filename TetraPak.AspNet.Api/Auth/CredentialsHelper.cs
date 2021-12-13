@@ -1,7 +1,5 @@
 ﻿using TetraPak.AspNet.Auth;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Auth
 {
     public static class CredentialsHelper

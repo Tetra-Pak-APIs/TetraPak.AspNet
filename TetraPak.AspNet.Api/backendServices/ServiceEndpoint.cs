@@ -12,8 +12,6 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

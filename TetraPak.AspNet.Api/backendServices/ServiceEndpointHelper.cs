@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using TetraPak.DynamicEntities;
 using HttpMethod=Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Controllers
 {
     /// <summary>

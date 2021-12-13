@@ -2,8 +2,6 @@
 using System.Threading;
 using TetraPak.DynamicEntities;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

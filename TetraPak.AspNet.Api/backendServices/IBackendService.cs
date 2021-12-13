@@ -5,8 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using TetraPak.AspNet.Auth;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Controllers
 {
     /// <summary>

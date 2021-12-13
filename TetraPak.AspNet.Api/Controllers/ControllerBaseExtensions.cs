@@ -15,8 +15,6 @@ using TetraPak.DynamicEntities;
 using TetraPak.Logging;
 using TetraPak.Serialization;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Controllers
 {
     /// <summary>

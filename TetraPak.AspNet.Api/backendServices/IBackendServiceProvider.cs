@@ -1,7 +1,5 @@
 ﻿using System;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

@@ -16,8 +16,6 @@ using TetraPak.Configuration;
 using TetraPak.Logging;
 using ConfigurationSection = TetraPak.Configuration.ConfigurationSection;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>

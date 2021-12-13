@@ -13,8 +13,6 @@ using TetraPak.AspNet.Auth;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.Logging;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api.Auth
 {
     /// <summary>

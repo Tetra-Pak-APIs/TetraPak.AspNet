@@ -6,8 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TetraPak.AspNet.Auth;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     // todo consider merging the code in ServiceInfo into TetraPakServiceFactory

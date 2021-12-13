@@ -15,8 +15,6 @@ using TetraPak.AspNet.DataTransfers;
 using TetraPak.AspNet.diagnostics;
 using TetraPak.AspNet.Diagnostics;
 
-#nullable enable
-
 namespace TetraPak.AspNet.Api
 {
     /// <summary>
