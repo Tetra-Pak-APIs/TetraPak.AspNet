@@ -496,8 +496,11 @@ namespace TetraPak.AspNet
             }
             
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
+            if (outcome && outcome.Value!.Secret is null)
+                Outcome<string>.Fail(new ServerConfigurationException("Secret could not be resolved"));
+                
             return outcome
-                ? Outcome<string>.Success(outcome.Value!.Secret)
+                ? Outcome<string>.Success(outcome.Value!.Secret!)
                 : Outcome<string>.Fail(outcome.Exception);
         }
 
@@ -971,7 +974,7 @@ namespace TetraPak.AspNet
             JwtBearerAssertion = new JwtBearerAssertionConfig(Section!, logger);
             IdentitySource = parseIdentitySource();
             Scope = parseScope();
-            Caching = new SimpleCacheConfig(null, Section, logger, nameof(Caching));
+            Caching = new SimpleCacheConfig(null!, Section!, logger, nameof(Caching));
             _isPkceUsed = true;
         }
     }

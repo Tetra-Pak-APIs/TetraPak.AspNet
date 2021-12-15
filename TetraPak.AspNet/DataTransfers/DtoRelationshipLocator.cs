@@ -23,7 +23,7 @@ namespace TetraPak.AspNet.DataTransfers
         [Required, JsonPropertyName("uri")]
         public string Uri
         {
-            get => Get<string>(); 
+            get => Get<string>()!; 
             set => Set(value); 
         }
 

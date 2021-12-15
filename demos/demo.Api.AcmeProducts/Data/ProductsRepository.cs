@@ -28,7 +28,7 @@ namespace demo.AcmeProducts.Data
         {
             var newId = string.IsNullOrEmpty(source.Id) ? new RandomString() : source.Id;
             return Task.FromResult(Outcome<Product>.Success(
-                new (newId)
+                new (newId!)
                 {
                     ProductCategories = source.ProductCategories,
                     Name = source.Name,

@@ -160,7 +160,7 @@ namespace TetraPak.AspNet.DataTransfers
         public static DtoRelationshipLocator WithKeys(this DtoRelationshipLocator locator, params string[] keys)
         {
             var path = ((FilePath)locator.Uri).Push(keys);
-            return new DtoRelationshipLocator(path, locator.Verbs) { Parent = locator.Parent };
+            return new DtoRelationshipLocator(path!, locator.Verbs) { Parent = locator.Parent };
         }
 
         /// <summary>
@@ -220,13 +220,13 @@ namespace TetraPak.AspNet.DataTransfers
 
             if (!query?.IsEmpty() ?? false)
             {
-                sb.Append(query!.ToString(true));
+                sb.Append(query.ToString(true));
             }
 
             return sb.ToString();
         }
 
-        /* spike (probably we're scrapping it - coders can use better mapper lib anyway)
+        /* spike (probably we're scrapping it - coders can use a better mapper lib anyway)
         
         static readonly IDictionary<Type, DtoMap> s_dtoMaps = new Dictionary<Type, DtoMap>();
         public static T MapToDataTransferObject<T>(this object entity, DataTransferMapOptions<T> options)

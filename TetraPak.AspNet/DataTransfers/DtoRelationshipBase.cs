@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.DataTransfers
         [JsonPropertyName("rel"), Newtonsoft.Json.JsonProperty("rel")]
         public string Rel
         {
-            get => Get<string>();
+            get => Get<string>()!;
             set => Set(value);
         }
         

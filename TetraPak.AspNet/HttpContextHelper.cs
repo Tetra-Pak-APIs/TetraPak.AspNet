@@ -256,7 +256,7 @@ namespace TetraPak.AspNet
         public static string? GetSingleValue(
             this IHeaderDictionary dictionary,
             string key,
-            string useDefault,
+            string? useDefault,
             bool setDefault = false)
         {
             if (dictionary.TryGetValue(key, out var values))

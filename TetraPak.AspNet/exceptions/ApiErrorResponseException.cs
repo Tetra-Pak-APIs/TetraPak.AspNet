@@ -19,7 +19,7 @@ namespace TetraPak.AspNet
         public string? MessageId => ErrorResponse.MessageId;
 
         /// <inheritdoc cref="ApiErrorResponse.Status"/>
-        public string Status => ErrorResponse.Status;
+        public string? Status => ErrorResponse.Status;
 
         /// <inheritdoc cref="ApiErrorResponse.StatusCode"/>
         public int StatusCode => ErrorResponse.StatusCode;

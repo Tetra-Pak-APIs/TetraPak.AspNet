@@ -16,7 +16,7 @@ namespace TetraPak.AspNet.DataTransfers
         [JsonPropertyName("href"), Newtonsoft.Json.JsonProperty("href")]
         public IEnumerable<DtoRelationshipLocator> Href
         {
-            get => Get<IEnumerable<DtoRelationshipLocator>>();
+            get => Get<IEnumerable<DtoRelationshipLocator>>()!;
             set
             {
                 foreach (var loc in value)

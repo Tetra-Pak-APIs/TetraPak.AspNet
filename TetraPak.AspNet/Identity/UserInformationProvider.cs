@@ -18,7 +18,7 @@ namespace TetraPak.AspNet.Identity
     /// </summary>
     public class UserInformationProvider
     {
-        readonly string _instanceId = new RandomString(8);
+        readonly string _instanceId = new RandomString(8)!;
         readonly AmbientData _ambientData;
         readonly ITimeLimitedRepositories? _cache;
         

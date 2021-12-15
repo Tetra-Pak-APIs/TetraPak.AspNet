@@ -24,7 +24,7 @@ namespace TetraPak.AspNet
         [JsonPropertyName("title")]
         public string Title 
         {
-            get => Get<string>();
+            get => Get<string>()!;
             set => Set(value);
         }
 
@@ -52,7 +52,7 @@ namespace TetraPak.AspNet
         ///   Gets the standardized error type.
         /// </summary>
         [JsonPropertyName("type")]
-        public string Type
+        public string? Type
         {
             get => Get<string>();
             set => Set(value);
@@ -62,7 +62,7 @@ namespace TetraPak.AspNet
         ///   Gets the error status element.
         /// </summary>
         [JsonPropertyName("status")]
-        public string Status
+        public string? Status
         {
             get => Get<string>();
             set => Set(value);
@@ -90,7 +90,7 @@ namespace TetraPak.AspNet
         /// </param>
         public ApiErrorResponse(string title, string? messageId)
         {
-            Title = title;
+            Title = string.IsNullOrEmpty(title) ? throw new ArgumentNullException(nameof(title)) : title;
             if (messageId is { })
             {
                 MessageId = messageId;
@@ -109,9 +109,9 @@ namespace TetraPak.AspNet
         /// <param name="messageId">
         ///   Initializes the <see cref="MessageId"/> property.
         /// </param>
-        public ApiErrorResponse(string title, object description, string? messageId)
+        public ApiErrorResponse(string title, object? description, string? messageId)
         {
-            Title = title;
+            Title = string.IsNullOrEmpty(title) ? throw new ArgumentNullException(nameof(title)) : title;
             Description = description;
             if (messageId is { })
             {

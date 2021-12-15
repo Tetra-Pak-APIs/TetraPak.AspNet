@@ -34,14 +34,16 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         ///     Specified a <see cref="HttpComparison"/> criteria that, when <c>true</c>, mutes the
         ///     DevProxy, allowing the request to just pass through to the API.
         /// </param>
-        /// <param name="isDebugDevProxy"></param>
+        /// <param name="isDebugDevProxy">
+        ///   
+        /// </param>
         /// <returns>
         ///   The <paramref name="app"/> instance.
         /// </returns>
-        public static IApplicationBuilder UseDevelopmentProxy(this IApplicationBuilder app,
+        internal static IApplicationBuilder UseDevelopmentProxy(this IApplicationBuilder app,
             IWebHostEnvironment env,
             string proxyUrl,
-            HttpComparison? isMutedWhen = null, 
+            HttpComparison? isMutedWhen = null , 
             bool isDebugDevProxy = false)
         {
             lock (s_syncRoot)
@@ -66,7 +68,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                     await next();
                 });
                 logger.Warning(() => isDebugDevProxy 
-                    ? "Local development proxy middleware WAS injected for auth debugging purposes (clients can now circumvent proxy)" 
+                    ? "Local development proxy middleware WAS injected in DEBUG mode (clients can now circumvent proxy)" 
                     : "Local development proxy middleware WAS injected");
                 s_isDevProxyConfigured = true;
                 return app;

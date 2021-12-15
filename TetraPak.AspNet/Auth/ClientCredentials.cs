@@ -11,7 +11,7 @@
         ///   <see cref="IServiceAuthConfig"/>. 
         /// </summary>
         public ClientCredentials(IServiceAuthConfig config)
-        : base(config.ClientId, config.ClientSecret)
+        : base(config.ClientId!, config.ClientSecret)
         {
         }
     }
