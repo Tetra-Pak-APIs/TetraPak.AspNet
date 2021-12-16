@@ -90,9 +90,9 @@ namespace TetraPak.AspNet.Api.Auth
                 };
                 var messageId = HttpContext?.Request.GetMessageId(_tetraPakConfig);
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
-                    ? await (await request.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                    ? await (await request.ToGenericHttpRequestAsync()).ToStringBuilderAsync(
                         new StringBuilder(), 
-                        () => TraceRequestOptions.Default(messageId)
+                        () => TraceHttpRequestOptions.Default(messageId)
                             .WithInitiator(this, HttpDirection.Out)
                             .WithDefaultHeaders(client.DefaultRequestHeaders))
                     : null;
@@ -102,7 +102,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (sb is { })
                 {
                     sb.AppendLine();
-                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(sb);
+                    await (await response.ToGenericHttpResponseAsync()).ToStringBuilderAsync(sb);
                     Logger.Trace(sb.ToString());
                 }
                 
@@ -143,18 +143,8 @@ namespace TetraPak.AspNet.Api.Auth
                 var messageId = _tetraPakConfig.AmbientData.GetMessageId(true);
                 var message = new StringBuilder();
                 message.AppendLine("Client credentials failure (state dump to follow if DEBUG log level is enabled)");
-                
                 if (Logger.IsEnabled(LogLevel.Debug))
                 {
-                    // var options = new StateDumpContext(_config) obsolete 
-                    //     .WithIgnored(
-                    //         nameof(TetraPakApiConfig.GrantType),
-                    //         nameof(TetraPakConfig.ClientId),
-                    //         nameof(TetraPakConfig.ClientSecret),
-                    //         nameof(TetraPakConfig.RequestMessageIdHeader),
-                    //         nameof(TetraPakConfig.IsPkceUsed),
-                    //         nameof(TetraPakConfig.CallbackPath))
-                    //     .WithTargetLogger(Logger);
                     var dump = new StateDump().WithStackTrace();
                     dump.AddAsync(_tetraPakConfig, "AuthConfig");
                     dump.AddAsync(clientCredentials, "Credentials");
@@ -238,7 +228,7 @@ namespace TetraPak.AspNet.Api.Auth
                     new ServerConfigurationException("Client credentials have not been provisioned")));
 
             return Task.FromResult(Outcome<Credentials>.Success(
-                new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret)));
+                new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret!)));
         }
 
         /// <summary>

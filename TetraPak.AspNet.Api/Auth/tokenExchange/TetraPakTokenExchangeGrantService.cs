@@ -92,9 +92,9 @@ namespace TetraPak.AspNet.Api.Auth
                 };
                 var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
-                    ? await (await request.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                    ? await (await request.ToGenericHttpRequestAsync()).ToStringBuilderAsync(
                         new StringBuilder(), 
-                        () => TraceRequestOptions.Default(messageId)
+                        () => TraceHttpRequestOptions.Default(messageId)
                             .WithInitiator(this, HttpDirection.Out)
                             .WithDefaultHeaders(client.DefaultRequestHeaders))
                     : null;
@@ -104,7 +104,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (sb is { })
                 {
                     sb.AppendLine();
-                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(sb);
+                    await (await response.ToGenericHttpResponseAsync()).ToStringBuilderAsync(sb);
                     Logger.Trace(sb.ToString());
                 }
                 

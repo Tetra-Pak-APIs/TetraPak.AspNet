@@ -29,7 +29,7 @@ namespace TetraPak.AspNet
         public int TraceRequestBodyBufferSize
         {
             get => GetFromFieldThenSection(0);
-            set => _traceRequestBodyBufferSize = TraceRequestOptions.AdjustBufferSize(value);
+            set => _traceRequestBodyBufferSize = TraceHttpRequestOptions.AdjustBufferSize(value);
         }
 
         /// <summary>
@@ -43,22 +43,22 @@ namespace TetraPak.AspNet
         public long TraceBodyMaxSize
         {
             get => GetFromFieldThenSection<long>();
-            set => _traceRequestBodyMaxSize = TraceRequestOptions.AdjustMaxSize(value, TraceRequestBodyBufferSize);
+            set => _traceRequestBodyMaxSize = TraceHttpRequestOptions.AdjustMaxSize(value, TraceRequestBodyBufferSize);
         }
 
         /// <summary>
-        ///   Constructs and returns a <see cref="TraceRequestOptions"/> object from the configuration.
+        ///   Constructs and returns a <see cref="TraceHttpRequestOptions"/> object from the configuration.
         ///   This can be used with the <see cref="WebLoggerHelper"/>'s tracing methods.
         /// </summary>
         /// <param name="tetraPakConfig"></param>
         /// <param name="httpContext"></param>
         /// <returns>
-        ///   A <see cref="TraceRequestOptions"/> if <see cref="TraceBodyMaxSize"/> is assigned
+        ///   A <see cref="TraceHttpRequestOptions"/> if <see cref="TraceBodyMaxSize"/> is assigned
         ///   and greater then zero (0); otherwise <c>null</c>.
         /// </returns>
-        public TraceRequestOptions? GetTraceBodyOptions(TetraPakConfig tetraPakConfig, HttpContext httpContext) 
+        public TraceHttpRequestOptions? GetTraceBodyOptions(TetraPakConfig tetraPakConfig, HttpContext httpContext) 
             => TraceBodyMaxSize > 0
-                ? TraceRequestOptions.Default(httpContext.Request.GetMessageId(tetraPakConfig, true))
+                ? TraceHttpRequestOptions.Default(httpContext.Request.GetMessageId(tetraPakConfig, true))
                 : null;
         
         /// <summary>

@@ -111,31 +111,31 @@ namespace TetraPak.AspNet.Debugging
         }
         
         /// <summary>
-        ///   Builds a textual representation of the <see cref="AbstractHttpRequest"/>.
+        ///   Builds a textual representation of the <see cref="GenericHttpRequest"/>.
         /// </summary>
         /// <param name="request">
-        ///   The <see cref="AbstractHttpRequest"/> to be textually represented.
+        ///   The <see cref="GenericHttpRequest"/> to be textually represented.
         /// </param>
         /// <param name="stringBuilder">
         ///   The <see cref="StringBuilder"/> to be used.
         /// </param>
         /// <param name="optionsFactory">
         ///   (optional)<br/>
-        ///   Provides <see cref="TraceRequestOptions"/> specifying how to build the textual representation
-        ///   of the <see cref="AbstractHttpRequest"/>.
+        ///   Provides <see cref="TraceHttpRequestOptions"/> specifying how to build the textual representation
+        ///   of the <see cref="GenericHttpRequest"/>.
         /// </param>
         /// <returns>
         ///   A <see cref="StringBuilder"/> that contains the textual representation
-        ///   of the <see cref="AbstractHttpRequest"/>.
+        ///   of the <see cref="GenericHttpRequest"/>.
         /// </returns>
         public static async Task<StringBuilder> ToStringBuilderAsync(
-            this AbstractHttpRequest request,
+            this GenericHttpRequest request,
             StringBuilder stringBuilder,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            Func<TraceHttpRequestOptions>? optionsFactory = null)
         {
             var options = optionsFactory?.Invoke();
 
-            var qualifier = TraceRequest.GetRequestQualifier(
+            var qualifier = TraceRequest.GetTraceRequestQualifier(
                 options?.Direction ?? HttpDirection.Unknown, 
                 options?.Initiator, 
                 options?.Detail);
@@ -185,32 +185,32 @@ namespace TetraPak.AspNet.Debugging
         }
         
         /// <summary>
-        ///   Builds a textual representation of the <see cref="AbstractHttpResponse"/>.
+        ///   Builds a textual representation of the <see cref="GenericHttpResponse"/>.
         /// </summary>
         /// <param name="response">
-        ///   The <see cref="AbstractHttpResponse"/> to be textually represented.
+        ///   The <see cref="GenericHttpResponse"/> to be textually represented.
         /// </param>
         /// <param name="stringBuilder">
         ///   The <see cref="StringBuilder"/> to be used.
         /// </param>
         /// <param name="optionsFactory">
         ///   (optional)<br/>
-        ///   Provides <see cref="TraceRequestOptions"/> specifying how to build the textual representation
-        ///   of the <see cref="AbstractHttpResponse"/>.
+        ///   Provides <see cref="TraceHttpRequestOptions"/> specifying how to build the textual representation
+        ///   of the <see cref="GenericHttpResponse"/>.
         /// </param>
         /// <returns>
         ///   A <see cref="StringBuilder"/> that contains the textual representation
-        ///   of the <see cref="AbstractHttpResponse"/>.
+        ///   of the <see cref="GenericHttpResponse"/>.
         /// </returns>
         public static async Task<StringBuilder> ToStringBuilderAsync(
-            this AbstractHttpResponse response,
+            this GenericHttpResponse response,
             StringBuilder stringBuilder,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            Func<TraceHttpResponseOptions>? optionsFactory = null)
         {
-            var options = (optionsFactory?.Invoke() ?? TraceRequestOptions.Default(null)).WithDirection(HttpDirection.Response);
+            var options = (optionsFactory?.Invoke() ?? TraceHttpResponseOptions.Default()).WithDirection(HttpDirection.Response);
 
             // trace qualifier (eg. "{initiator} >>> IN (detail) >>>")
-            var qualifier = TraceRequest.GetRequestQualifier(
+            var qualifier = TraceRequest.GetTraceRequestQualifier(
                 options.Direction, 
                 options.Initiator, 
                 options.Detail);
@@ -228,7 +228,7 @@ namespace TetraPak.AspNet.Debugging
             }
 
             // request Uri (optional)
-            if (response.Uri is { })
+            if (response.Uri is { } && !options.HideRequestUri)
             {
                 var requestUri = response.Uri is {} 
                     ? options.BaseAddress is { } 
@@ -283,11 +283,11 @@ namespace TetraPak.AspNet.Debugging
         }
 
         /// <summary>
-        ///   Builds a textual representation of an <see cref="AbstractHttpRequest"/> and logs it at 
+        ///   Builds a textual representation of an <see cref="GenericHttpRequest"/> and logs it at 
         ///   log level <see cref="LogLevel.Trace"/>
         /// </summary>
         /// <param name="logger">
-        ///   The logger provider
+        ///   The logger provider.
         /// </param>
         /// <param name="request">
         ///   The request to be traced.
@@ -298,8 +298,8 @@ namespace TetraPak.AspNet.Debugging
         /// </param>
         public static async Task TraceAsync(
             this ILogger? logger,
-            AbstractHttpRequest request,
-            Func<TraceRequestOptions>? optionsFactory)
+            GenericHttpRequest request,
+            Func<TraceHttpRequestOptions>? optionsFactory)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
@@ -309,5 +309,31 @@ namespace TetraPak.AspNet.Debugging
             logger.Trace(sb.ToString(), options?.MessageId);
         }
 
+        /// <summary>
+        ///   Builds a textual representation of an <see cref="GenericHttpResponse"/> and logs it at 
+        ///   log level <see cref="LogLevel.Trace"/>
+        /// </summary>
+        /// <param name="logger">
+        ///   The logger provider.
+        /// </param>
+        /// <param name="response">
+        ///   The response to be traced.
+        /// </param>
+        /// <param name="optionsFactory">
+        ///   (optional)<br/>
+        ///   Invoked to obtain options for how tracing is conducted.
+        /// </param>
+        public static async Task TraceAsync(
+            this ILogger? logger,
+            GenericHttpResponse response,
+            Func<TraceHttpResponseOptions>? optionsFactory)
+        {
+            if (logger is null || !logger.IsEnabled(LogLevel.Trace))
+                return;
+                
+            var sb = await response.ToStringBuilderAsync(new StringBuilder(), optionsFactory);
+            var options = optionsFactory?.Invoke();
+            logger.Trace(sb.ToString(), options?.MessageId);
+        }
     }
 }

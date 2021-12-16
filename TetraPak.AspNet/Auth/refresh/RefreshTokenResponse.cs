@@ -3,7 +3,7 @@
     /// <summary>
     ///   Used to present the result from a token refresh flow response.
     /// </summary>
-    public class TokenRefreshResponse
+    public class RefreshTokenResponse
     {
         /// <summary>
         ///   Gets the new access token.

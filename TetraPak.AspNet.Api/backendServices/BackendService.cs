@@ -257,9 +257,9 @@ namespace TetraPak.AspNet.Api
             try
             {
                 var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
-                    ? await (await requestMessage.ToAbstractHttpRequestAsync()).ToStringBuilderAsync(
+                    ? await (await requestMessage.ToGenericHttpRequestAsync()).ToStringBuilderAsync(
                         new StringBuilder(), 
-                        () => TraceRequestOptions
+                        () => TraceHttpRequestOptions
                         .Default(messageId)
                         .WithDirection(HttpDirection.Out, ApiRequestInitiators.SdkBackendService(this))
                         .WithBaseAddress(client.BaseAddress!)
@@ -271,10 +271,11 @@ namespace TetraPak.AspNet.Api
                 if (sb is { })
                 {
                     sb.AppendLine();
-                    await (await response.ToAbstractHttpResponseAsync()).ToStringBuilderAsync(
+                    var genericResponse = await response.ToGenericHttpResponseAsync(); 
+                    await genericResponse.ToStringBuilderAsync(
                         sb,
                         roundTripMs.HasValue
-                            ? () => TraceRequestOptions.Default(messageId).WithDetail($"{roundTripMs}ms")
+                            ? () => TraceHttpResponseOptions.Default(messageId).WithDetail($"{roundTripMs}ms")
                             : null);
                     Logger.Trace(sb.ToString(), messageId);
                 }

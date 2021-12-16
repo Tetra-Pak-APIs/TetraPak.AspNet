@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -94,21 +93,21 @@ namespace TetraPak.AspNet.Api.Auth
             }
         }
 
-        /// <summary>
-        ///   <para>
-        ///   <b>DEPRECATED!</b>
-        ///   </para>
-        ///   <para>
-        ///   This method was deprecated in SDK v1.1 and is scheduled for removal in future versions.
-        ///   Please use <see cref="UseTetraPakApiAuthentication"/> instead.
-        ///   </para> 
-        /// </summary>
-        /// <seealso cref="UseTetraPakApiAuthentication"/>
-        [Obsolete("This method is obsolete. Please call UseTetraPakAuthentication instead")] // obsolete method (replaced)
-        public static IApplicationBuilder UseTetraPakJwtAuthentication(
-            this IApplicationBuilder app, 
-            IWebHostEnvironment env)
-        => app.UseTetraPakApiAuthentication(env);
+        // /// <summary>
+        // ///   <para>
+        // ///   <b>DEPRECATED!</b>
+        // ///   </para>
+        // ///   <para>
+        // ///   This method was deprecated in SDK v1.1 and is scheduled for removal in future versions.
+        // ///   Please use <see cref="UseTetraPakApiAuthentication"/> instead.
+        // ///   </para> 
+        // /// </summary>
+        // /// <seealso cref="UseTetraPakApiAuthentication"/>
+        // [Obsolete("This method is obsolete. Please call UseTetraPakApiAuthentication instead")] // obsolete method (replaced)
+        // public static IApplicationBuilder UseTetraPakJwtAuthentication(
+        //     this IApplicationBuilder app, 
+        //     IWebHostEnvironment env)
+        // => app.UseTetraPakApiAuthentication(env);
 
         /// <summary>
         ///   Installs JWT authentication middleware
@@ -124,7 +123,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <remarks>
         ///   <para>
         ///   Enabling this mechanism is a flexible way to protect your secure endpoints. When enabled
-        ///   client must call your protected endpoints through a reversed proxy acting as your API's "sidecar".
+        ///   client must call your protected endpoints through a reversed proxy acting as your Api "sidecar".
         ///   The sidecar will handle client authentication and, when successful, replace the client's
         ///   access token with a short lived JWT Bearer token, to be exchanged only between the service and its sidecar.
         ///   This JWT Bearer will automatically be validated for every request by the middleware installed by this method.

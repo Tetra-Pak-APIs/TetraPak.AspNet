@@ -8,7 +8,7 @@
         const string ChevronsRight = ">>>";
         const string ChevronsLeft = "<<<";
         
-        internal static string GetRequestQualifier(HttpDirection direction, string? initiator, string? detail)
+        internal static string GetTraceRequestQualifier(HttpDirection direction, string? initiator, string? detail)
         {
             var nisse = direction switch
             {

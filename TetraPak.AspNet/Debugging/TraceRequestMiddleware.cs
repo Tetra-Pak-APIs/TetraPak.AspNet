@@ -14,7 +14,7 @@ namespace TetraPak.AspNet.Debugging
                 context.Request,
                 () => 
                     _tetraPakConfig.Logging.GetTraceBodyOptions(_tetraPakConfig,  context)
-                    ?? TraceRequestOptions.Default(context.Request.GetMessageId(_tetraPakConfig))
+                    ?? TraceHttpRequestOptions.Default(context.Request.GetMessageId(_tetraPakConfig))
                         .WithInitiator(RequestInitiators.Actor, HttpDirection.In));
 
         public TraceRequestMiddleware(TetraPakConfig tetraPakConfig, ILogger logger)

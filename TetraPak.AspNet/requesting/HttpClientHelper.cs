@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using TetraPak.Logging;
 
 namespace TetraPak.AspNet
 {
@@ -16,17 +18,17 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Registers a default Tetra Pak <see cref="IHttpClientProvider"/> implementation.
         /// </summary>
-        /// <param name="collection">
+        /// <param name="services">
         ///   The service collection.
         /// </param>
         /// <returns>
-        ///   The <paramref name="collection"/>.
+        ///   The <paramref name="services"/>.
         /// </returns>
-        public static IServiceCollection AddTetraPakHttpClientProvider(this IServiceCollection collection)
+        public static IServiceCollection AddTetraPakHttpClientProvider(this IServiceCollection services)
         {
-            var provider = collection.BuildServiceProvider();
+            var provider = services.BuildServiceProvider();
             var tetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
-            collection.AddTetraPakHttpClientProvider(p =>
+            services.AddTetraPakHttpClientProvider(p =>
             {
                 if (s_singleton is { })
                     return s_singleton;
@@ -37,33 +39,42 @@ namespace TetraPak.AspNet
                 return s_singleton;
             });
             TetraPakHttpClientProvider.AddDecorator(new TetraPakSdkClientDecorator(tetraPakConfig));
-            return collection;
+            return services;
         }
 
         /// <summary>
         ///   Adds a custom <see cref="IHttpClientProvider"/> factory.
         /// </summary>
-        /// <param name="collection">
+        /// <param name="services">
         ///   The service collection.
         /// </param>
         /// <param name="factory">
         ///   The <see cref="IHttpClientProvider"/> factory, used to produce <see cref="HttpClient"/>a.
         /// </param>
         /// <returns>
-        ///   The <paramref name="collection"/>.
+        ///   The <paramref name="services"/>.
         /// </returns>
         public static IServiceCollection AddTetraPakHttpClientProvider(
-            this IServiceCollection collection,
+            this IServiceCollection services,
             Func<IServiceProvider, IHttpClientProvider> factory)
         {
             lock (s_syncRoot)
             {
                 if (s_isTetraPackHttpClientProviderAdded)
-                    return collection;
+                    return services;
 
-                collection.AddSingleton(factory);
-                s_isTetraPackHttpClientProviderAdded = true;
-                return collection;
+                try
+                {
+                    services.AddSingleton(factory);
+                    s_isTetraPackHttpClientProviderAdded = true;
+                }
+                catch (Exception ex)
+                {
+                    var p = services.BuildServiceProvider();
+                    var logger = p.GetService<ILogger<TetraPakConfig>>();
+                    logger.Error(ex, "Failed to register Tetra Pak HTTP client provider (from factory) with service collection");
+                }
+                return services;
             }
         }
     }

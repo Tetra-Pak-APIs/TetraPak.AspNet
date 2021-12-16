@@ -15,7 +15,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using TetraPak.AspNet.Debugging;
-using TetraPak.Caching;
 using TetraPak.Logging;
 
 namespace TetraPak.AspNet.Auth
@@ -29,18 +28,6 @@ namespace TetraPak.AspNet.Auth
     {
         const string TetraPakScheme = "TetraPak-LoginAPI";
 
-        /// <summary>
-        ///   Adds the necessary middleware to integrate with Tetra Pak Auth Services using the
-        ///   Open Id Connection (OIDC) auth flow.
-        /// </summary>
-        /// <param name="services">
-        ///   An object implementing <see cref="IServiceCollection"/> (can be unassigned). 
-        /// </param>
-        public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
-        {
-            services.AddTetraPakOidcAuthentication<SimpleCache>();
-        }
-        
         // todo Consider adding support for claims-based user info (see URL above class declaration)
         /// <summary>
         ///   Adds and configures middleware to integrate with Tetra Pak Auth Services using the
@@ -49,33 +36,27 @@ namespace TetraPak.AspNet.Auth
         /// <param name="services">
         ///   An object implementing <see cref="IServiceCollection"/> (can be unassigned). 
         /// </param>
-        /// <typeparam name="TCache">
-        ///   Specifies class to be used for OIDC related caching purposes. 
-        /// </typeparam>
-        public static void AddTetraPakOidcAuthentication<TCache>(this IServiceCollection services)
-        where TCache : class, ITimeLimitedRepositories
+        public static void AddTetraPakOidcAuthentication(this IServiceCollection services)
+        // where TCache : class, ITimeLimitedRepositories
         {
-            // todo This method is HUGE. Consider refactoring to break it down!
+            // todo This method is HUGE. Consider refactoring to break it down
             services.AddAmbientData();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTetraPakConfiguration();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
+            services.AddTetraPakRefreshTokenGrant();
+            services.AddTetraPakClaimsTransformation();
+            services.AddTetraPakUserInformation();
+            
             var provider = services.BuildServiceProvider();
-            var tetraPakConfig = provider.GetService<TetraPakConfig>();
+            var tetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
 
             addCachingIfAllowed();
 
-            var logger = tetraPakConfig?.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
-            if (tetraPakConfig is null)
-            {
-                logger.Error(new ServerConfigurationException($"Cannot resolve service: {typeof(TetraPakConfig)}"));
-                return;
-            }
+            var logger = tetraPakConfig.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
 
-            services.AddTetraPakClaimsTransformation();
-            services.AddTetraPakUserInformation();
 
             services.AddAuthentication(options =>
                 {
@@ -89,8 +70,7 @@ namespace TetraPak.AspNet.Auth
                     {
                         OnValidatePrincipal = async context =>
                         {
-                            var messageId = context.Request.GetMessageId(tetraPakConfig, true);
-                            if (!await context.RefreshTokenIfExpiredAsync(tetraPakConfig, logger, messageId))
+                            if (!await context.RefreshTokenIfExpiredAsync(tetraPakConfig))
                                 return;
                             
                             // transfer access and id token to HttpContext, making them available as ambient values ...
@@ -200,7 +180,7 @@ namespace TetraPak.AspNet.Auth
                             var messageId = context.HttpContext.Request.GetMessageId(tetraPakConfig);
                             await logger.TraceAsync(
                                 context.Response,
-                                optionsFactory: () => TraceRequestOptions.Default(messageId));
+                                optionsFactory: () => TraceHttpResponseOptions.Default(messageId));
                         },
                         OnRedirectToIdentityProvider = _ =>
                         {
@@ -369,18 +349,17 @@ namespace TetraPak.AspNet.Auth
     {
         public static async Task<bool> RefreshTokenIfExpiredAsync(
             this CookieValidatePrincipalContext context,
-            TetraPakConfig config,
-            ILogger? logger,
-            string? messageId)
+            TetraPakConfig config)
         {
-            if (!isExpired())
+            var refreshTokenGrantService = config.GetServiceProvider().GetService<IRefreshTokenGrantService>();
+            if (!isExpired() || refreshTokenGrantService is null)
                 return true;
-
+            
             var refreshToken = context.Properties.GetTokenValue(AmbientData.Keys.RefreshToken);
             if (refreshToken is null)
                 return true;
 
-            var outcome = await config.RefreshTokenAsync(refreshToken, logger, messageId);
+            var outcome = await refreshTokenGrantService.RefreshTokenAsync( refreshToken!);
             if (!outcome)
                 return await fail();
             
@@ -413,7 +392,8 @@ namespace TetraPak.AspNet.Auth
                 var remainingTimeSpan = expiresAt.Subtract(now);
                 var refreshThresholdTimeSpan = TimeSpan.FromSeconds(config.RefreshThreshold);
                 var result = remainingTimeSpan < refreshThresholdTimeSpan;
-                
+
+                var logger = config.Logger ?? config.GetServiceProvider().GetService<ILogger<TetraPakConfig>>();
                 logger.Trace(
                     "\n>======< TOKEN TTL >======<\n"+
                     $"  time (UTC): {now}\n"+

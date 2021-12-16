@@ -68,9 +68,9 @@ namespace TetraPak.AspNet.Debugging
         public static async Task<string> GetRawBodyStringAsync(
             this Stream? stream, 
             Encoding encoding, 
-            TraceRequestOptions? options = null)
+            AbstractTraceHttpMessageOptions? options = null)
         {
-            var lengthOutcome = await stream.GetLengthAsync(options?.ForceTraceBody ?? TraceRequestOptions.DefaultForceTraceBody);
+            var lengthOutcome = await stream.GetLengthAsync(options?.ForceTraceBody ?? AbstractTraceHttpMessageOptions.DefaultForceTraceBody);
             var length = lengthOutcome.Value;
             if (length == 0)
                 return string.Empty;
@@ -78,7 +78,7 @@ namespace TetraPak.AspNet.Debugging
             if (!stream!.CanSeek)
                 return "[*** BODY UNAVAILABLE ***]";
                 
-            var bufferSize = options?.BufferSize ?? TraceRequestOptions.DefaultBuffersSize;
+            var bufferSize = options?.BufferSize ?? AbstractTraceHttpMessageOptions.DefaultBuffersSize;
 
             string body;
             if (options is null || length <= options.MaxSize)
@@ -206,7 +206,7 @@ namespace TetraPak.AspNet.Debugging
         /// </returns>
         /// <remarks>
         ///   This method is used internally to convert the various classes representing HTTP requests or responses
-        ///   into an <see cref="AbstractHttpRequest"/> or 
+        ///   into an <see cref="GenericHttpRequest"/> or 
         /// </remarks>
         public static IEnumerable<KeyValuePair<string, IEnumerable<string>>> ToKeyValuePairs(
             this IDictionary<string, StringValues> dict)
@@ -229,7 +229,7 @@ namespace TetraPak.AspNet.Debugging
         /// </returns>
         /// <remarks>
         ///   This method is used internally to convert the various classes representing HTTP requests or responses
-        ///   into an <see cref="AbstractHttpRequest"/> or 
+        ///   into an <see cref="GenericHttpRequest"/> or 
         /// </remarks>
         public static IEnumerable<KeyValuePair<string, IEnumerable<string>>> ToKeyValuePairs(
             this NameValueCollection collection)

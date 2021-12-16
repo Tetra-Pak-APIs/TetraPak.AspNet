@@ -30,23 +30,24 @@ namespace TetraPak.AspNet.Debugging
         public static async Task TraceAsync(
             this ILogger? logger,
             HttpResponse? response,
-            AbstractHttpRequest? request = null,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            GenericHttpRequest? request = null,
+            Func<TraceHttpResponseOptions>? optionsFactory = null)
         {
             if (response is null || logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
-            optionsFactory ??= () => TraceRequestOptions.Default(null).WithDirection(HttpDirection.In);
+            optionsFactory ??= () => TraceHttpResponseOptions.Default(request?.MessageId);
             var contentStream = response.Body;
+            var genericResponse = await response.ToGenericHttpResponseAsync(request);
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(response.ToAbstractHttpResponse(request), optionsFactory);
+                logger.TraceAsync(await response.ToGenericHttpResponseAsync(request), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(response.ToAbstractHttpResponse(request), optionsFactory);
+                await logger.TraceAsync(await response.ToGenericHttpResponseAsync(request), optionsFactory);
             }
         }
         
@@ -66,22 +67,22 @@ namespace TetraPak.AspNet.Debugging
         public static async Task TraceAsync(
             this ILogger? logger,
             HttpResponseMessage? response,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            Func<TraceHttpResponseOptions>? optionsFactory = null)
         {
             if (response is null || logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
-            optionsFactory ??= () => TraceRequestOptions.Default(null).WithDirection(HttpDirection.In);
+            optionsFactory ??= () => TraceHttpResponseOptions.Default();
             var contentStream = await response.Content.ReadAsStreamAsync();
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(await response.ToAbstractHttpResponseAsync(), optionsFactory);
+                logger.TraceAsync(await response.ToGenericHttpResponseAsync(), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(await response.ToAbstractHttpResponseAsync(), optionsFactory);
+                await logger.TraceAsync(await response.ToGenericHttpResponseAsync(), optionsFactory);
             }
         }
         
@@ -105,27 +106,28 @@ namespace TetraPak.AspNet.Debugging
         public static async Task TraceAsync(
             this ILogger? logger,
             WebResponse? response, 
-            AbstractHttpRequest? request,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            GenericHttpRequest? request,
+            Func<TraceHttpResponseOptions>? optionsFactory = null)
         {
             if (response is null || logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
             optionsFactory ??= () =>
-                TraceRequestOptions.Default(null).WithDirection(HttpDirection.Response).WithAsyncBodyFactory(async () 
-                    => 
-                    await response.GetResponseStream().GetRawBodyStringAsync(Encoding.Default));
+                TraceHttpResponseOptions.Default(request?.MessageId)
+                    .WithAsyncBodyFactory(async ()
+                        => 
+                        await response.GetResponseStream().GetRawBodyStringAsync(Encoding.Default));
             
             var contentStream = response.GetResponseStream();
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(response.ToAbstractHttpResponse(request), optionsFactory);
+                logger.TraceAsync( response.ToGenericHttpResponse(request), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(response.ToAbstractHttpResponse(request), optionsFactory);
+                await logger.TraceAsync(response.ToGenericHttpResponse(request), optionsFactory);
             }
         }
     }

@@ -8,23 +8,30 @@ using Microsoft.AspNetCore.Http.Extensions;
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>
-    ///   Convenient methods for working with <see cref="AbstractHttpRequest"/>s.
+    ///   Convenient methods for working with <see cref="GenericHttpRequest"/>s.
     /// </summary>
     public static class AbstractHttpRequestHelper
     {
         /// <summary>
-        ///   Constructs and returns a <see cref="AbstractHttpRequest"/> representation of a
+        ///   Constructs and returns a <see cref="GenericHttpRequest"/> representation of a
         ///   <see cref="HttpRequestMessage"/>.
         /// </summary>
         /// <param name="request">
-        ///   The request to be represented as a <see cref="AbstractHttpRequest"/>.
+        ///   The request to be represented as a <see cref="GenericHttpRequest"/>.
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <returns>
-        ///   A <see cref="AbstractHttpRequest"/>
+        ///   A <see cref="GenericHttpRequest"/>
         /// </returns>
-        public static async Task<AbstractHttpRequest> ToAbstractHttpRequestAsync(this HttpRequestMessage request)
+        public static async Task<GenericHttpRequest> ToGenericHttpRequestAsync(
+            this HttpRequestMessage request, 
+            string? messageId = null)
             => new()
             {
+                MessageId = messageId,
                 Method = request.Method.Method,
                 Uri = request.RequestUri,
                 Headers = request.Headers,
@@ -32,42 +39,49 @@ namespace TetraPak.AspNet.Debugging
             };
 
         /// <summary>
-        ///   Constructs and returns a <see cref="AbstractHttpRequest"/> representation of a
+        ///   Constructs and returns a <see cref="GenericHttpRequest"/> representation of a
         ///   <see cref="HttpRequest"/>.
         /// </summary>
         /// <param name="request">
-        ///   The request to be represented as a <see cref="AbstractHttpRequest"/>.
+        ///   The request to be represented as a <see cref="GenericHttpRequest"/>.
+        /// </param>
+        /// <param name="messageId">
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
         /// </param>
         /// <returns>
-        ///   A <see cref="AbstractHttpRequest"/>
+        ///   A <see cref="GenericHttpRequest"/>
         /// </returns>
-        public static AbstractHttpRequest ToAbstractHttpRequestAsync(this HttpRequest request) 
-            => new()
-            {
-                Method = request.Method,
-                Uri = request.GetUri(),
-                Headers = request.Headers.ToKeyValuePairs(),
-                Content = request.Body
-            };
+        public static Task<GenericHttpRequest> ToGenericHttpRequestAsync(
+            this HttpRequest request, 
+            string? messageId = null) 
+            => Task.FromResult(new GenericHttpRequest
+                {
+                    MessageId = messageId,
+                    Method = request.Method,
+                    Uri = request.GetUri(),
+                    Headers = request.Headers.ToKeyValuePairs(),
+                    Content = request.Body
+                });
         
         /// <summary>
-        ///   Constructs and returns a <see cref="AbstractHttpRequest"/> representation of a
+        ///   Constructs and returns a <see cref="GenericHttpRequest"/> representation of a
         ///   <see cref="HttpRequest"/>.
         /// </summary>
         /// <param name="request">
-        ///   The request to be represented as a <see cref="AbstractHttpRequest"/>.
+        ///   The request to be represented as a <see cref="GenericHttpRequest"/>.
         /// </param>
         /// <returns>
-        ///   A <see cref="AbstractHttpRequest"/>
+        ///   A <see cref="GenericHttpRequest"/>
         /// </returns>
-        public static AbstractHttpRequest ToAbstractHttpRequestAsync(this HttpWebRequest request)
-            => new()
+        public static Task<GenericHttpRequest> ToGenericHttpRequestAsync(this HttpWebRequest request)
+            => Task.FromResult(new GenericHttpRequest
             {
                 Method = request.Method,
                 Uri = request.RequestUri,
                 Headers = request.Headers.ToKeyValuePairs(),
                 Content = request.GetRequestStream()
-            };
+            });
         
         /// <summary>
         ///   Constructs and returns the textual representation of the <see cref="HttpRequest"/>'s URI (if any). 

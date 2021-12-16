@@ -5,10 +5,16 @@ using System.IO;
 namespace TetraPak.AspNet.Debugging
 {
     /// <summary>
-    ///   An abstract representation of a HTTP request (note: the class itself is not <c>abstract</c>).
+    ///   An abstract representation of a HTTP request.
     /// </summary>
-    public class AbstractHttpRequest
+    public abstract class AbstractHttpMessage
     {
+        /// <summary>
+        ///   (optional)<br/>
+        ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
+        /// </summary>
+        public string? MessageId { get; set; }
+        
         /// <summary>
         ///   Gets or sets a request URI.
         /// </summary>

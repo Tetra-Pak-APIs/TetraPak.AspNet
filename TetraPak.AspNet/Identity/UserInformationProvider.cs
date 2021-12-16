@@ -109,9 +109,9 @@ namespace TetraPak.AspNet.Identity
                         request.Headers.Add($"{HeaderNames.Authorization}: {bearerToken}");
                         
                         var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
-                            ? await request.ToAbstractHttpRequestAsync().ToStringBuilderAsync(
+                            ? await (await request.ToGenericHttpRequestAsync()).ToStringBuilderAsync(
                                 new StringBuilder(), 
-                                () => TraceRequestOptions.Default(messageId).WithInitiator(this, HttpDirection.Out))
+                                () => TraceHttpRequestOptions.Default(messageId).WithInitiator(this, HttpDirection.Out))
                             : null;
                         
                         // await Logger?.TraceAsync(request);
@@ -119,7 +119,7 @@ namespace TetraPak.AspNet.Identity
                         
                         if (sb is { })
                         {
-                            await response.ToAbstractHttpResponse().ToStringBuilderAsync(sb);
+                            await response.ToGenericHttpResponse().ToStringBuilderAsync(sb);
                             Logger.Trace(sb.ToString());
                         }
 

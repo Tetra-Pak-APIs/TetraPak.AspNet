@@ -25,22 +25,22 @@ namespace TetraPak.AspNet.Debugging
         public static async Task TraceAsync(
             this ILogger? logger, 
             HttpRequest request, 
-            Func<TraceRequestOptions>? optionsFactory = null)
+            Func<TraceHttpRequestOptions>? optionsFactory = null)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
-            optionsFactory ??= () => TraceRequestOptions.Default(null).WithDirection(HttpDirection.In);
+            optionsFactory ??= () => TraceHttpRequestOptions.Default(null).WithDirection(HttpDirection.In);
             var contentStream = request.Body;
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(request.ToAbstractHttpRequestAsync(), optionsFactory);
+                logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(request.ToAbstractHttpRequestAsync(), optionsFactory);
+                await logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
             }
         }
         
@@ -58,28 +58,28 @@ namespace TetraPak.AspNet.Debugging
         ///   Invoked to obtain options for how tracing is conducted. 
         /// </param>
         /// <exception cref="InvalidOperationException">
-        ///   <paramref name="request"/>'s URI is relative but <see cref="TraceRequestOptions.BaseAddress"/>
-        ///   is <c>null</c> in the <see cref="TraceRequestOptions"/> provided by <paramref name="optionsFactory"/>.
+        ///   <paramref name="request"/>'s URI is relative but <see cref="TraceHttpRequestOptions.BaseAddress"/>
+        ///   is <c>null</c> in the <see cref="TraceHttpRequestOptions"/> provided by <paramref name="optionsFactory"/>.
         /// </exception>
         public static async Task TraceAsync(
             this ILogger? logger,
             HttpRequestMessage request,
-            Func<TraceRequestOptions>? optionsFactory = null)
+            Func<TraceHttpRequestOptions>? optionsFactory = null)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
-            optionsFactory ??= () => TraceRequestOptions.Default(null).WithDirection(HttpDirection.In);
+            optionsFactory ??= () => TraceHttpRequestOptions.Default(null).WithDirection(HttpDirection.In);
             var contentStream = request.Content is {} ? await request.Content?.ReadAsStreamAsync()! : null;
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(await request.ToAbstractHttpRequestAsync(), optionsFactory);
+                logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(await request.ToAbstractHttpRequestAsync(), optionsFactory);
+                await logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
             }
         }
         
@@ -99,22 +99,22 @@ namespace TetraPak.AspNet.Debugging
         public static async Task TraceAsync(
             this ILogger? logger, 
             HttpWebRequest request, 
-            Func<TraceRequestOptions>? optionsFactory)
+            Func<TraceHttpRequestOptions>? optionsFactory)
         {
             if (logger is null || !logger.IsEnabled(LogLevel.Trace))
                 return;
 
-            optionsFactory ??= () => TraceRequestOptions.Default(null).WithDirection(HttpDirection.In);
+            optionsFactory ??= () => TraceHttpRequestOptions.Default(null).WithDirection(HttpDirection.In);
             var contentStream = request.GetRequestStream();
             if (await contentStream.ExceedsTraceThresholdAsync())
             {
 #pragma warning disable CS4014
-                logger.TraceAsync(request.ToAbstractHttpRequestAsync(), optionsFactory);
+                logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
 #pragma warning restore CS4014
             }
             else
             {
-                await logger.TraceAsync(request.ToAbstractHttpRequestAsync(), optionsFactory);
+                await logger.TraceAsync(await request.ToGenericHttpRequestAsync(), optionsFactory);
             }
         }
     }

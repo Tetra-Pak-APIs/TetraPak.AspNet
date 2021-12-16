@@ -4,17 +4,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace TetraPak.AspNet.Api.Auth
 {
-    /// <summary>
-    ///   OBSOLETE!
-    ///   This class is being deprecated. Please use <see cref="TetraPakApiConfig"/> 
-    /// </summary>
-    [Obsolete("This class is being deprecated. Please use TetraPakApiConfig")]
-    public class TetraPakApiAuthConfig : TetraPakApiConfig
-    {
-        public TetraPakApiAuthConfig(IServiceProvider provider) : base(provider)
-        {
-        }
-    }
+    // /// <summary>
+    // ///   OBSOLETE!
+    // ///   This class is being deprecated. Please use <see cref="TetraPakApiConfig"/> 
+    // /// </summary>
+    // [Obsolete("This class is being deprecated. Please use TetraPakApiConfig")]
+    // public class TetraPakApiAuthConfig : TetraPakApiConfig
+    // {
+    //     public TetraPakApiAuthConfig(IServiceProvider provider) : base(provider)
+    //     {
+    //     }
+    // }
     
     /// <summary>
     ///   Provides access to the main Tetra Pak authorization section in the configuration.  
