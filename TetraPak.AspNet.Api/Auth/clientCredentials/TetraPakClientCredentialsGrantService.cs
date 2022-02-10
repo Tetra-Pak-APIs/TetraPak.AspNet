@@ -66,7 +66,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
                 if (!clientOutcome)
                     return Outcome<ClientCredentialsResponse>.Fail(
-                        new ServerConfigurationException(
+                        new HttpServerConfigurationException(
                             "Client credentials service failed to obtain a HTTP client (see inner exception)", 
                             clientOutcome.Exception));
                 
@@ -136,7 +136,7 @@ namespace TetraPak.AspNet.Api.Auth
             
             Outcome<ClientCredentialsResponse> loggedFailedOutcome(HttpResponseMessage response)
             {
-                var ex = new ServerException(response); 
+                var ex = new HttpServerException(response); 
                 if (Logger is null)
                     return Outcome<ClientCredentialsResponse>.Fail(ex);
 
@@ -225,7 +225,7 @@ namespace TetraPak.AspNet.Api.Auth
         {
             if (string.IsNullOrWhiteSpace(_tetraPakConfig.ClientId))
                 return Task.FromResult(Outcome<Credentials>.Fail(
-                    new ServerConfigurationException("Client credentials have not been provisioned")));
+                    new HttpServerConfigurationException("Client credentials have not been provisioned")));
 
             return Task.FromResult(Outcome<Credentials>.Success(
                 new BasicAuthCredentials(_tetraPakConfig.ClientId, _tetraPakConfig.ClientSecret!)));

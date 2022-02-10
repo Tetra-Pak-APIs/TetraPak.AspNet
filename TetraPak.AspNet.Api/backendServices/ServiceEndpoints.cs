@@ -110,7 +110,7 @@ namespace TetraPak.AspNet.Api
         /// <summary>
         ///   Gets or sets the type of grant used for request authorization.
         /// </summary>
-        /// <exception cref="ServerConfigurationException">
+        /// <exception cref="HttpServerConfigurationException">
         ///   The configured value was incorrect (could not be parsed into <see cref="GrantType"/>).
         /// </exception>
         [StateDump]
@@ -123,7 +123,7 @@ namespace TetraPak.AspNet.Api
                         value = GrantType.Inherited.ToString();
                     
                     if (!TetraPakConfig.TryParseEnum(value, out grantType))
-                        throw new ServerConfigurationException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
+                        throw new HttpServerConfigurationException($"Invalid auth mechanism: '{value}' ({ConfigPath}.{nameof(GrantType)})");
 
                     if (grantType == GrantType.Inherited)
                     {
@@ -371,19 +371,19 @@ namespace TetraPak.AspNet.Api
             
             if (!ParentConfiguration.ContainsKey(sectionIdentifier))
             {
-                addIssue(new ServerConfigurationException($"Missing configuration section: {sectionIdentifier}"));
+                addIssue(new HttpServerConfigurationException($"Missing configuration section: {sectionIdentifier}"));
                 return;
             }
 
             if (Section.IsEmpty())
             {
-                addIssue(new ServerConfigurationException($"Configuration section: {sectionIdentifier} is empty"));
+                addIssue(new HttpServerConfigurationException($"Configuration section: {sectionIdentifier} is empty"));
                 return;
             }
 
             if (string.IsNullOrEmpty(Host))
             {
-                addIssue(new ServerConfigurationException($"Missing configuration: {this}.{nameof(Host)}"));
+                addIssue(new HttpServerConfigurationException($"Missing configuration: {this}.{nameof(Host)}"));
             }
         }
         
@@ -442,7 +442,7 @@ namespace TetraPak.AspNet.Api
             // the service is just one endpoint (URL) ...
             name = Section.Key;
             if (!Uri.TryCreate(Section.Value, UriKind.Absolute, out var uri))
-                throw new ServerConfigurationException($"Invalid backend service value: {Section.Value} (expected absolute URI)");
+                throw new HttpServerConfigurationException($"Invalid backend service value: {Section.Value} (expected absolute URI)");
 
             Host = $"{uri.Scheme}://{uri.Authority}";
             BasePath = uri.AbsolutePath;
@@ -468,7 +468,7 @@ namespace TetraPak.AspNet.Api
             
                 var invalidUrl = ((ServiceAuthConfig) ServiceAuthConfig).GetInvalidEndpoint(url.Name, new[]
                 {
-                    new ServerConfigurationException($"Same endpoint was configured multiple times: {url.ConfigPath}")
+                    new HttpServerConfigurationException($"Same endpoint was configured multiple times: {url.ConfigPath}")
                 });
                 endpoints[url.Name] = invalidUrl;
                 property?.SetValue(this, invalidUrl);

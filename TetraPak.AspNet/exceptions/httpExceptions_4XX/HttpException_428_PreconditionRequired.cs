@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server requires the request to be conditional.
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server requires the request to be conditional.
         ///   </para>
         ///   <para>
         ///   Typically, this means that a required precondition header, such as <c>If-Match</c>, is missing.
@@ -28,13 +28,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException PreconditionRequired(
+        public static HttpServerException PreconditionRequired(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Precondition Required", 
                 HttpStatusCode.PreconditionRequired, 
                 innerException);

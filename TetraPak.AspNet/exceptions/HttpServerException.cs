@@ -11,7 +11,7 @@ namespace TetraPak.AspNet
     ///   (see: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">list of HTTP status codes</a>).
     /// </summary>
     [DebuggerDisplay("{ToString()}")]
-    public partial class ServerException : Exception
+    public partial class HttpServerException : Exception
     {
         readonly HttpStatusCode? _statusCode;
         
@@ -30,7 +30,7 @@ namespace TetraPak.AspNet
         public override string ToString() => $"{((int)StatusCode).ToString()} ({StatusCode}) {base.ToString()}";
 
         /// <summary>
-        ///   Initializes the <see cref="ServerException"/> with a <see cref="HttpStatusCode"/>.
+        ///   Initializes the <see cref="HttpServerException"/> with a <see cref="HttpStatusCode"/>.
         /// </summary>
         /// <param name="statusCode">
         ///   The <see cref="HttpStatusCode"/> to be assigned.
@@ -43,14 +43,14 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   The exception that is the cause of the current exception.
         /// </param>
-        internal ServerException(string message, HttpStatusCode statusCode, Exception? innerException = null)
+        internal HttpServerException(string message, HttpStatusCode statusCode, Exception? innerException = null)
             : base(message, innerException)
         {
             _statusCode = statusCode;
         }
 
         /// <summary>
-        ///   Initializes the <see cref="ServerException"/> with a <see cref="HttpStatusCode"/>.
+        ///   Initializes the <see cref="HttpServerException"/> with a <see cref="HttpStatusCode"/>.
         /// </summary>
         /// <param name="statusCode">
         ///   The <see cref="HttpStatusCode"/> to be assigned.
@@ -59,14 +59,14 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   The exception that is the cause of the current exception.
         /// </param>
-        internal ServerException(HttpStatusCode statusCode, Exception? innerException = null)
+        internal HttpServerException(HttpStatusCode statusCode, Exception? innerException = null)
         : base(null, innerException)
         {
             _statusCode = statusCode;
         }
         
         /// <summary>
-        ///   Initializes the <see cref="ServerException"/> with a <see cref="HttpResponseMessage"/>.
+        ///   Initializes the <see cref="HttpServerException"/> with a <see cref="HttpResponseMessage"/>.
         ///   Please note that this also assigns the <see cref="StatusCode"/>.
         /// </summary>
         /// <param name="response">
@@ -80,7 +80,7 @@ namespace TetraPak.AspNet
         ///   (optional)<br/>
         ///   The exception that is the cause of the current exception.
         /// </param>
-        public ServerException(
+        public HttpServerException(
             HttpResponseMessage response, 
             string? message = null,
             Exception? innerException = null)

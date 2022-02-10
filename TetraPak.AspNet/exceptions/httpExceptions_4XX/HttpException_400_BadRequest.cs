@@ -3,10 +3,10 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to reflect a bad request.
+        ///   Produces a <see cref="HttpServerException"/> to reflect a bad request.
         /// </summary>
         /// <param name="message">
         ///   (optional)<br/>
@@ -17,11 +17,11 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException BadRequest(string? message = null, Exception? innerException = null)
+        public static HttpServerException BadRequest(string? message = null, Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Bad Request", 
                 HttpStatusCode.BadRequest, 
                 innerException);

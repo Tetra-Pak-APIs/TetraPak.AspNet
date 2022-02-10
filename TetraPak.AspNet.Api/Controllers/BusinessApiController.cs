@@ -117,7 +117,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns></returns>
         protected ActionResult RespondError(Exception error)
         {
-            if (error is ServerException httpException)
+            if (error is HttpServerException httpException)
             {
                 return StatusCode(
                     (int) httpException.StatusCode, 

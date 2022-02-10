@@ -18,7 +18,7 @@ namespace TetraPak.AspNet.Debugging
         #region .  Fluent API  .
 
         /// <summary>
-        ///   (fluent API)<br/>
+        ///   (fluent api)<br/>
         ///   Assigns the <see cref="AbstractTraceHttpMessageOptions.Direction"/> property and returns <c>this</c>.
         /// </summary>
         /// <param name="value">

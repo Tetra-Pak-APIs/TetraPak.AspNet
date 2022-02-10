@@ -29,7 +29,7 @@ namespace TetraPak.AspNet.Api
                 $"Error calling service: {requestToString("(Authorize)", url.StringValue, null)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
-            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
+            url.Logger.Error(new HttpServerConfigurationException(errorMessage), messageId: messageId);
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
@@ -62,7 +62,7 @@ namespace TetraPak.AspNet.Api
                 $"Error calling service: {requestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
-            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
+            url.Logger.Error(new HttpServerConfigurationException(errorMessage), messageId: messageId);
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);
@@ -84,7 +84,7 @@ namespace TetraPak.AspNet.Api
                 $"Error calling service: {requestToString(httpMethod.ToStringVerb(), path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
             var messageId = url.GetMessageId();
-            url.Logger.Error(new ServerConfigurationException(errorMessage), messageId: messageId);
+            url.Logger.Error(new HttpServerConfigurationException(errorMessage), messageId: messageId);
             return HttpOutcome<ApiDataResponse<T>>.Fail(
                 httpMethod, 
                 new Exception("Internal service configuration error (please see logs)"));
@@ -101,7 +101,7 @@ namespace TetraPak.AspNet.Api
             var errorMessage = 
                 $"Error calling service: {requestToString(httpMethod, path, queryParameters)}{Environment.NewLine}" + 
                 $"  Configuration issues:{Environment.NewLine}{issues.Select(i => i.Message).ConcatCollection(Environment.NewLine + "    ")}";
-            logger.Error(new ServerConfigurationException(errorMessage));
+            logger.Error(new HttpServerConfigurationException(errorMessage));
             
             var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var errorResponse = new ApiErrorResponse("Internal service configuration error (please see logs)", messageId);

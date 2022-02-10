@@ -6,11 +6,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate the user has sent too many requests in a given amount
+        ///   Produces a <see cref="HttpServerException"/> to indicate the user has sent too many requests in a given amount
         ///   of time ("rate limiting").
         ///   </para>
         ///   <para>
@@ -31,10 +31,10 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="TooManyRequests(DateTime,string?,Exception?)"/>
-        public static ServerException TooManyRequests(
+        public static HttpServerException TooManyRequests(
             TimeSpan? retryAfter, 
             string? message = null, 
             Exception? innerException = null)
@@ -46,12 +46,12 @@ namespace TetraPak.AspNet
                     HeaderNames.RetryAfter, 
                     Math.Truncate(retryAfter.Value.TotalSeconds).ToString(CultureInfo.InvariantCulture));
             }
-            return new ServerException(response, message, innerException);
+            return new HttpServerException(response, message, innerException);
         }
         
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate the user has sent too many requests in a given amount
+        ///   Produces a <see cref="HttpServerException"/> to indicate the user has sent too many requests in a given amount
         ///   of time ("rate limiting").
         ///   </para>
         ///   <para>
@@ -71,10 +71,10 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="TooManyRequests(Nullable{System.TimeSpan},string?,Exception?)"/>
-        public static ServerException TooManyRequests(
+        public static HttpServerException TooManyRequests(
             DateTime retryAfter, 
             string? message = null, 
             Exception? innerException = null)
@@ -83,7 +83,7 @@ namespace TetraPak.AspNet
             response.Headers.Add(
                 HeaderNames.RetryAfter, 
                 retryAfter.ToUniversalTime().ToString("R"));
-            return new ServerException(response, message, innerException);
+            return new HttpServerException(response, message, innerException);
         }
 
         static HttpResponseMessage makeResponseMessage(HttpStatusCode statusCode) => new(statusCode);

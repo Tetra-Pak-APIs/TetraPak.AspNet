@@ -6,10 +6,10 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to reflect a situation where
+        ///   Produces a <see cref="HttpServerException"/> to reflect a situation where
         ///   the request method is known by the server but is not supported by the target resource.
         /// </summary>
         /// <param name="allowedMethods">
@@ -24,16 +24,16 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException MethodNotAllowed(
+        public static HttpServerException MethodNotAllowed(
             IEnumerable<string> allowedMethods, 
             string? message = null, 
             Exception? innerException = null)
         {
             var response = new HttpResponseMessage(HttpStatusCode.MethodNotAllowed);
             response.Headers.Add(HeaderNames.Allow, allowedMethods);
-            return new ServerException(response, message ?? "Method not allowed", innerException);
+            return new HttpServerException(response, message ?? "Method not allowed", innerException);
         }
     }
 }

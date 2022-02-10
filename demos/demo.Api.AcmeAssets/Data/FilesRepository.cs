@@ -52,7 +52,7 @@ namespace demo.AcmeAssets.Data
         {
             var fileInfo = new FileInfo(path);
             if (fileInfo.Directory is null)
-                return Outcome<FileInfo>.Fail(new ServerConfigurationException("Invalid file path. No directory was configured"));
+                return Outcome<FileInfo>.Fail(new HttpServerConfigurationException("Invalid file path. No directory was configured"));
             
             if (!fileInfo.Directory!.Exists)
             {

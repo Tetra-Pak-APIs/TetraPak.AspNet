@@ -188,12 +188,13 @@ namespace TetraPak.AspNet.OpenIdConnect
 
         static async Task<Outcome<DiscoveryDocument>> readCachedAsync(ILogger? logger, TimeSpan? timeout)
         {
-            throw new NotImplementedException(); // todo support cached discovery document
+            // todo support cached discovery document
+            return Outcome<DiscoveryDocument>.Fail(new Exception("Cached discovery document is not yet supported"));
         }
 
         void cache(string? path = null)
         {
-            throw new NotImplementedException(); // todo support cached discovery document
+            // todo support cached discovery document
         }
     }
 }

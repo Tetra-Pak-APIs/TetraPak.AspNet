@@ -13,7 +13,7 @@ namespace TetraPak.AspNet.Auth
         /// <summary>
         ///   Specifies the grant type (a.k.a. OAuth "flow") used at this configuration level.
         /// </summary>
-        /// <exception cref="ServerConfigurationException">
+        /// <exception cref="HttpServerConfigurationException">
         ///   The configured (textual) value could not be parsed into a <see cref="GrantType"/> (enum) value. 
         /// </exception>
         GrantType GrantType { get; }

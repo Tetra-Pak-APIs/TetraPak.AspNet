@@ -7,11 +7,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate the user has sent too many requests in a given amount
+        ///   Produces a <see cref="HttpServerException"/> to indicate the user has sent too many requests in a given amount
         ///   of time ("rate limiting").
         ///   </para>
         ///   <para>
@@ -35,10 +35,10 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="TooManyRequests(DateTime,string?,Exception?)"/>
-        public static ServerException UnavailableForLegalReasons(
+        public static HttpServerException UnavailableForLegalReasons(
             string authorityUrl,
             bool isBlockedBy,
             string? message = null, 
@@ -52,7 +52,7 @@ namespace TetraPak.AspNet
                 link.Append("; rel=\"blocked-by\"");
             }
             response.Headers.Add("Link", link.ToString());
-            return new ServerException(response, message, innerException);
+            return new HttpServerException(response, message, innerException);
         }
     }
 }

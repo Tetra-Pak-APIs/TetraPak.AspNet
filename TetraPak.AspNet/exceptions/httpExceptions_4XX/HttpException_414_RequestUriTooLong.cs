@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the URI requested by the client is longer than
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the URI requested by the client is longer than
         ///   the server is willing to interpret.
         ///   </para>
         ///   <para>
@@ -42,13 +42,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException RequestUriTooLong(
+        public static HttpServerException RequestUriTooLong(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Request Uri too Long", 
                 HttpStatusCode.RequestUriTooLong, 
                 innerException);

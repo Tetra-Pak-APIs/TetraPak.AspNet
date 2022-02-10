@@ -88,7 +88,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             if (!jwtBearerOutcome)
             {
                 string? descriptionJson = null;
-                if (jwtBearerOutcome.Exception is ServerException { Response: { } } httpException)
+                if (jwtBearerOutcome.Exception is HttpServerException { Response: { } } httpException)
                 {
                     var targetError = (await httpException.Response.Content.ReadAsStringAsync()).Trim();
                     if (targetError.StartsWith('{'))
@@ -172,7 +172,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
                 if (!clientOutcome)
                     return Outcome<ActorToken>.Fail(
-                        new ServerConfigurationException(
+                        new HttpServerConfigurationException(
                             "Token exchange failed to obtain a HTTP client (see inner exception)", 
                             clientOutcome.Exception));
 
@@ -181,9 +181,9 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
                 var response = await client.GetAsync(_url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    var exception = new ServerException(response);
+                    var exception = new HttpServerException(response);
                     Logger.Error(exception, $"Failed on acquiring JWT bearer from: {_url}", messageId);
-                    return Outcome<ActorToken>.Fail(new ServerException(response));
+                    return Outcome<ActorToken>.Fail(new HttpServerException(response));
                 }
 
                 await using var stream = await response.Content.ReadAsStreamAsync();

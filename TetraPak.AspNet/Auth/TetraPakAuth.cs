@@ -250,7 +250,7 @@ namespace TetraPak.AspNet.Auth
             
             var provider = services.BuildServiceProvider();
             var authConfig = provider.GetService<TetraPakConfig>() 
-                             ?? throw new ServerConfigurationException($"Service location failed: {typeof(TetraPakConfig)}");
+                             ?? throw new HttpServerConfigurationException($"Service location failed: {typeof(TetraPakConfig)}");
             var logger = authConfig.Logger ?? provider.GetService<ILogger<OAuthOptions>>();
 
             services.AddAuthentication(options =>

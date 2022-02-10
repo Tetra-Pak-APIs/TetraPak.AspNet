@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
                 ct);
             if (!txOutcome)
             {
-                var ex = new ServerConfigurationException(innerException: txOutcome.Exception);
+                var ex = new HttpServerConfigurationException(innerException: txOutcome.Exception);
                 Logger.Error(ex, messageId: this.GetMessageId(true));
                 return this.RespondErrorInternalServer(ex);
             }

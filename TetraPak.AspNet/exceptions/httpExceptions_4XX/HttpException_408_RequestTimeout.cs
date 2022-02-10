@@ -5,10 +5,10 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to reflect a situation where the server would like to shut down
+        ///   Produces a <see cref="HttpServerException"/> to reflect a situation where the server would like to shut down
         ///   this unused connection. It is sent on an idle connection by some servers,
         ///   even without any previous request by the client.
         /// </summary>
@@ -21,15 +21,15 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException RequestTimeout(
+        public static HttpServerException RequestTimeout(
             string? message = null, 
             Exception? innerException = null)
         {
             var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
             response.Headers.Add(HeaderNames.Connection, "close");
-            return new ServerException(response, message ?? "Request Timeout", innerException);
+            return new HttpServerException(response, message ?? "Request Timeout", innerException);
         }
     }
 }

@@ -97,11 +97,11 @@ namespace TetraPak.AspNet
 
             if (string.IsNullOrWhiteSpace(TetraPakConfig!.ClientId))
                 return Outcome<Credentials>.Fail(
-                    new ServerConfigurationException("Could not obtain client id from configuration"));
+                    new HttpServerConfigurationException("Could not obtain client id from configuration"));
 
             return string.IsNullOrWhiteSpace(TetraPakConfig.ClientSecret)
                 ? Outcome<Credentials>.Fail(
-                    new ServerConfigurationException("Could not obtain client secret from configuration"))
+                    new HttpServerConfigurationException("Could not obtain client secret from configuration"))
                 : Outcome<Credentials>.Success(
                     new Credentials(TetraPakConfig.ClientId, TetraPakConfig.ClientSecret));
         }

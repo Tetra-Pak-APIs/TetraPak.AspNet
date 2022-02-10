@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server does not support the functionality
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server does not support the functionality
         ///   required to fulfill the request.
         ///   </para>
         ///   <para>
@@ -39,10 +39,10 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="ServiceUnavailable(DateTime,string?,Exception?)"/>
-        public static ServerException ServiceUnavailable(
+        public static HttpServerException ServiceUnavailable(
             TimeSpan? retryAfter,
             string? message = null, 
             Exception? innerException = null)
@@ -53,12 +53,12 @@ namespace TetraPak.AspNet
                 response.Headers.Add(HeaderNames.RetryAfter, Math.Truncate(retryAfter.Value.TotalSeconds).ToString(CultureInfo.InvariantCulture));
             }
             
-            return new ServerException(response, message ?? "Service Unavailable", innerException);
+            return new HttpServerException(response, message ?? "Service Unavailable", innerException);
         }
         
                 /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server does not support the functionality
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server does not support the functionality
         ///   required to fulfill the request.
         ///   </para>
         ///   <para>
@@ -87,17 +87,17 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="NotImplemented(Nullable{TimeSpan},string?,Exception?)"/>
-        public static ServerException ServiceUnavailable(
+        public static HttpServerException ServiceUnavailable(
             DateTime retryAfter,
             string? message = null, 
             Exception? innerException = null)
         {
             var response = makeResponseMessage(HttpStatusCode.ServiceUnavailable);
             response.Headers.Add(HeaderNames.RetryAfter, retryAfter.ToString("R"));
-            return new ServerException(response, message ?? "Service Unavailable", innerException);
+            return new HttpServerException(response, message ?? "Service Unavailable", innerException);
         }
     }
 }

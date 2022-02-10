@@ -6,11 +6,11 @@ using System.Text;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate the user has sent too many requests in a given amount
+        ///   Produces a <see cref="HttpServerException"/> to indicate the user has sent too many requests in a given amount
         ///   of time ("rate limiting").
         ///   </para>
         ///   <para>
@@ -31,10 +31,10 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
         /// <seealso cref="TooManyRequests(DateTime,string?,Exception?)"/>
-        public static ServerException RequestHeaderFieldsTooLarge(
+        public static HttpServerException RequestHeaderFieldsTooLarge(
             IEnumerable<string>? tooLongHeaders,
             string? message = null, 
             Exception? innerException = null)
@@ -52,7 +52,7 @@ namespace TetraPak.AspNet
             }
             
             message = sb.ToString();
-            return new ServerException(message, HttpStatusCode.RequestHeaderFieldsTooLarge, innerException);
+            return new HttpServerException(message, HttpStatusCode.RequestHeaderFieldsTooLarge, innerException);
         }
     }
 }

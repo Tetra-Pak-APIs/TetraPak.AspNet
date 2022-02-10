@@ -256,7 +256,7 @@ namespace TetraPak.AspNet.Api
                         if (options.CancellationToken.IsCancellationRequested)
                             return HttpOutcome<ApiDataResponse<T>>.Fail(
                                 HttpMethod.Get,
-                                new ServerException("Request was cancelled", HttpStatusCode.InternalServerError));
+                                new HttpServerException("Request was cancelled", HttpStatusCode.InternalServerError));
                             
                         var outcome = await getAsync(key);
                         if (outcome)
@@ -795,7 +795,7 @@ namespace TetraPak.AspNet.Api
                         if (options.CancellationToken.IsCancellationRequested)
                             return HttpOutcome<ApiDataResponse<T>>.Fail(
                                 HttpMethod.Delete,
-                                new ServerException("Request was cancelled", HttpStatusCode.InternalServerError));
+                                new HttpServerException("Request was cancelled", HttpStatusCode.InternalServerError));
                             
                         var outcome = await deleteAsync(key);
                         if (outcome)
@@ -1025,7 +1025,7 @@ namespace TetraPak.AspNet.Api
             HttpOutcome<ApiDataResponse<T>> parseResult()
             {
                 if (string.IsNullOrWhiteSpace(data))
-                    return HttpOutcome<ApiDataResponse<T>>.Fail(httpMethod, new ServerException(HttpStatusCode.NoContent));
+                    return HttpOutcome<ApiDataResponse<T>>.Fail(httpMethod, new HttpServerException(HttpStatusCode.NoContent));
                 
                 // first try parsing Tetra Pak Api Data Response format ...
                 if (data.IsJsonApiDataResponse(out _))
@@ -1076,7 +1076,7 @@ namespace TetraPak.AspNet.Api
                 =>
                 HttpOutcome<ApiDataResponse<T>>.Fail(
                     httpMethod,
-                    new ServerException("Unexpected JSON response format", HttpStatusCode.InternalServerError));
+                    new HttpServerException("Unexpected JSON response format", HttpStatusCode.InternalServerError));
                 
         }
     }

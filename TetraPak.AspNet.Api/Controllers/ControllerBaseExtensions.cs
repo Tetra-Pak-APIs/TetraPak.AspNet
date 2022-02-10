@@ -492,7 +492,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <seealso cref="RespondErrorInternalServer"/>
         public static ActionResult RespondError(this ControllerBase self, Exception error)
         {
-            if (error is ServerException httpException)
+            if (error is HttpServerException httpException)
                 return self.StatusCode(
                     (int) httpException.StatusCode, 
                     new ApiErrorResponse(error.Message, self.GetMessageId()));
@@ -595,7 +595,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   A backend service object of type <typeparamref name="TBackendService"/>.
         /// </returns>
-        /// <exception cref="ServerConfigurationException">
+        /// <exception cref="HttpServerConfigurationException">
         ///   The backend service could not be resolved.
         ///   Please ensure you haven't misspelled it in service configuration. 
         /// </exception>
@@ -620,9 +620,9 @@ namespace TetraPak.AspNet.Api.Controllers
                 return outcome.Value!;
             
             if (string.IsNullOrEmpty(serviceName))
-                throw new ServerConfigurationException($"Could not resolve a backend service for controller {self}");
+                throw new HttpServerConfigurationException($"Could not resolve a backend service for controller {self}");
             
-            throw new ServerConfigurationException(
+            throw new HttpServerConfigurationException(
                 $"Could not resolve a backend service \"{serviceName}\" "+
                 $"for controller {self} ");
         }
@@ -688,7 +688,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <returns>
         ///   An object implementing the <see cref="IBackendService"/> contract.
         /// </returns>
-        /// <exception cref="ServerConfigurationException">
+        /// <exception cref="HttpServerConfigurationException">
         ///   The backend service could not be resolved.
         ///   Please ensure you haven't misspelled it in service configuration. 
         /// </exception>
@@ -705,9 +705,9 @@ namespace TetraPak.AspNet.Api.Controllers
                 return outcome.Value!;
 
             if (string.IsNullOrEmpty(serviceName))
-                throw new ServerConfigurationException($"Could not resolve a backend service for controller {self}");
+                throw new HttpServerConfigurationException($"Could not resolve a backend service for controller {self}");
             
-            throw new ServerConfigurationException($"Could not resolve a backend service \"{serviceName}\" for controller {self} ");
+            throw new HttpServerConfigurationException($"Could not resolve a backend service \"{serviceName}\" for controller {self} ");
         }
 
         /// <summary>
@@ -1004,7 +1004,7 @@ namespace TetraPak.AspNet.Api.Controllers
         ///   A Tetra Pak (API) configuration object.
         /// </returns>
         /// <seealso cref="TryGetTetraPakApiConfig"/>
-        /// <exception cref="ServerConfigurationException">
+        /// <exception cref="HttpServerConfigurationException">
         ///   The Tetra Pak (API) configuration object could not be obtained
         /// </exception>
         public static TetraPakConfig? GetTetraPakConfig(this ControllerBase self)
@@ -1015,7 +1015,7 @@ namespace TetraPak.AspNet.Api.Controllers
             if (self is BusinessApiController apiController)
                 return apiController.GetConfig();
                 
-            throw new ServerConfigurationException($"Could not retrieve a {typeof(TetraPakApiConfig)} instance");
+            throw new HttpServerConfigurationException($"Could not retrieve a {typeof(TetraPakApiConfig)} instance");
         }
         
         static Outcome<ApiErrorResponse> tryParseTetraPakErrorResponse(string s)

@@ -35,7 +35,7 @@ namespace demo.AcmeAssets.Controllers
         public async Task<ActionResult> GetFile(string? id = null)
         {
             if (id is null)
-                return await this.RespondAsync(Outcome<string>.Fail(ServerException.BadRequest("Expected file id")));
+                return await this.RespondAsync(Outcome<string>.Fail(HttpServerException.BadRequest("Expected file id")));
                 
             var outcome = await _filesRepository.ReadAsync(new[] {id}); 
             if (!outcome)

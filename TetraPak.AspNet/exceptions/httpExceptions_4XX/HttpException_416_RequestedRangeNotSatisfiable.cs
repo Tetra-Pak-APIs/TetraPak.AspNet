@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server cannot serve the requested ranges. The
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server cannot serve the requested ranges. The
         ///   most likely reason is that the document doesn't contain such ranges, or that the Range header value,
         ///   though syntactically correct, doesn't make sense.
         ///   </para>
@@ -35,16 +35,16 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException RequestedRangeNotSatisfiable(
+        public static HttpServerException RequestedRangeNotSatisfiable(
             ulong unsatisfiedRange,
             string? message = null, 
             Exception? innerException = null)
         {
             var response = new HttpResponseMessage(HttpStatusCode.RequestedRangeNotSatisfiable);
             response.Headers.Add(HeaderNames.ContentRange, $"*/{unsatisfiedRange.ToString()}");
-            return new ServerException(response, message ?? "Request Timeout", innerException);
+            return new HttpServerException(response, message ?? "Request Timeout", innerException);
         }
     }
 }

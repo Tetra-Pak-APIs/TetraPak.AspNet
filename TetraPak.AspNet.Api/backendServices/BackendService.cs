@@ -248,7 +248,7 @@ namespace TetraPak.AspNet.Api
             if (!clientOutcome)
                 return HttpOutcome<HttpResponseMessage>.Fail(
                     httpMethod,
-                    ServerException.InternalServerError(
+                    HttpServerException.InternalServerError(
                         "Could not initialize a HTTP client (see inner exception)",
                         clientOutcome.Exception));
             
@@ -294,7 +294,7 @@ namespace TetraPak.AspNet.Api
                     goto retry;
                 }
 
-                return HttpOutcome<HttpResponseMessage>.Fail(httpMethod, new ServerException(response));
+                return HttpOutcome<HttpResponseMessage>.Fail(httpMethod, new HttpServerException(response));
             }
             catch (Exception ex)
             {

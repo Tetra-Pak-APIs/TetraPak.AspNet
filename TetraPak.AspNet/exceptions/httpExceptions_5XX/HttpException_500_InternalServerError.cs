@@ -3,11 +3,11 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server encountered an unexpected condition
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server encountered an unexpected condition
         ///   that prevented it from fulfilling the request.
         ///   </para>
         ///   <para>
@@ -26,11 +26,11 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException InternalServerError(string? message = null, Exception? innerException = null)
+        public static HttpServerException InternalServerError(string? message = null, Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Internal ServerError", 
                 HttpStatusCode.InternalServerError, 
                 innerException);

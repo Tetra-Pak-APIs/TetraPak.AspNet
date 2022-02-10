@@ -109,7 +109,7 @@ namespace TetraPak.AspNet.Auth
         }
         Outcome<RefreshTokenResponse> loggedFailedOutcome(HttpResponseMessage response)
         {
-            var ex = new ServerException(response); 
+            var ex = new HttpServerException(response); 
             if (Logger is null)
                 return Outcome<RefreshTokenResponse>.Fail(ex);
 

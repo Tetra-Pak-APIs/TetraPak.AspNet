@@ -76,7 +76,7 @@ namespace TetraPak.AspNet
             var authService = options.AuthorizationService ?? _authorizationService;
             if (authService is null)
                 return Outcome<HttpClient>.Fail(
-                    new ServerConfigurationException($"Cannot authorize client. A {nameof(IAuthorizationService)} is not available"));
+                    new HttpServerConfigurationException($"Cannot authorize client. A {nameof(IAuthorizationService)} is not available"));
 
             var grantType = options.AuthConfig?.GrantType ?? GrantType.None;
             if (grantType == GrantType.None) 
@@ -85,7 +85,7 @@ namespace TetraPak.AspNet
             var authOutcome = await authService.AuthorizeAsync(options, cancellationToken);
             if (!authOutcome)
             {
-                var exception = ServerException.Unauthorized(
+                var exception = HttpServerException.Unauthorized(
                     "Failed to authenticate an HTTP client",
                     authOutcome.Exception);
                 Logger.Error(exception, messageId: getMessageId(false));

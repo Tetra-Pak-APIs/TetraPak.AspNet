@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server refuses to accept the request
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server refuses to accept the request
         ///   without a defined <c>Content-Length</c> header.
         ///   </para>
         ///   <para>
@@ -26,13 +26,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException LengthRequired(
+        public static HttpServerException LengthRequired(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Length Required", 
                 HttpStatusCode.LengthRequired, 
                 innerException);

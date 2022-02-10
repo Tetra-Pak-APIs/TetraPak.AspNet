@@ -21,7 +21,7 @@ namespace demo.AcmeProducts.Data
                 => p.ProductCategories.ContainsAny(categories, StringComparison.InvariantCultureIgnoreCase), cancel);
             return products.Any()
                 ? EnumOutcome<Product>.Success(products)
-                : EnumOutcome<Product>.Fail(ServerException.NotFound("No products found for specified categories"));
+                : EnumOutcome<Product>.Fail(HttpServerException.NotFound("No products found for specified categories"));
         }
 
         protected override Task<Outcome<Product>> OnMakeNewItemAsync(Product source)

@@ -62,7 +62,7 @@ namespace TetraPak.AspNet
 
             async Task getFromSource(TetraPakIdentitySource identitySource)
             {
-                var ct = cancellationToken ?? new CancellationToken();
+                var ct = cancellationToken ?? CancellationToken.None;
                 switch (identitySource)
                 {
                     case TetraPakIdentitySource.IdToken:
@@ -147,7 +147,7 @@ namespace TetraPak.AspNet
             {
                 var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
                 Logger.Trace("Fetches identity from Tetra Pak User Information Service", messageId);
-                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken!, messageId);
+                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken!, cancellationToken, messageId);
                 if (!userInfoOutcome)
                 {
                     Logger.Error(

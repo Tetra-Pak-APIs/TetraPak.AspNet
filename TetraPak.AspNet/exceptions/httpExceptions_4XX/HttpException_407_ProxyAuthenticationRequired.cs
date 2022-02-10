@@ -3,10 +3,10 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to reflect a situation where
+        ///   Produces a <see cref="HttpServerException"/> to reflect a situation where
         ///   the server cannot or is unwilling to produce a response matching the request's list of acceptable
         ///   values, as defined in the content negotiation headers (Accept, Accept-Encoding, Accept-Language).
         /// </summary>
@@ -19,13 +19,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException ProxyAuthenticationRequired(
+        public static HttpServerException ProxyAuthenticationRequired(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Proxy Authentication Required", 
                 HttpStatusCode.ProxyAuthenticationRequired, 
                 innerException);

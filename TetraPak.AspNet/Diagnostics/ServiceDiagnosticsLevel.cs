@@ -3,7 +3,7 @@
 namespace TetraPak.AspNet.Diagnostics
 {
     [Flags]
-    public enum ServiceDiagnosticsLevel
+    public enum     ServiceDiagnosticsLevel
     {
         None = 0,
         

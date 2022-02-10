@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿#if NET5_0_OR_GREATER
+using System.Collections.Generic;
+#endif
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace TetraPak.AspNet
@@ -63,6 +66,28 @@ namespace TetraPak.AspNet
             }
 
             return clone;
+        }
+
+        /// <summary>
+        ///   Resets the <see cref="HttpHeaderValueCollection{T}"/> to a specified set of headers.
+        /// </summary>
+        /// <param name="self">
+        ///   The headers collection to be reset.
+        /// </param>
+        /// <param name="headers">
+        ///   The headers to be assigned.
+        /// </param>
+        /// <typeparam name="T">
+        ///   The type of headers supported by the headers collection.
+        /// </typeparam>
+        public static void ResetTo<T>(this HttpHeaderValueCollection<T> self, params T[] headers)
+        where T : class
+        {
+            self.Clear();
+            foreach (var header in headers)
+            {
+                self.Add(header);
+            }
         }
     }
 }

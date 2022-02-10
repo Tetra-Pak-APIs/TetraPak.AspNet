@@ -68,7 +68,7 @@ namespace TetraPak.AspNet
         /// </summary>
         public static void AddTetraPakUserInformation(this IServiceCollection c)
         {
-            c.TryAddScoped<TetraPakUserInformation>();
+            c.TryAddSingleton<TetraPakUserInformation>();
         }
 
         /// <summary>

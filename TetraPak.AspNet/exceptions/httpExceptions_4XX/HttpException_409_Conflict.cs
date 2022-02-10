@@ -5,10 +5,10 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to indicate a request conflict with
+        ///   Produces a <see cref="HttpServerException"/> to indicate a request conflict with
         ///   current state of the target resource.
         /// </summary>
         /// <param name="message">
@@ -20,13 +20,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException Conflict(
+        public static HttpServerException Conflict(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Conflict", 
                 HttpStatusCode.Conflict, 
                 innerException);

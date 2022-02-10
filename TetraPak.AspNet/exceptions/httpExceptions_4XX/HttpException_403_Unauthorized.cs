@@ -3,10 +3,10 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to reflect that
+        ///   Produces a <see cref="HttpServerException"/> to reflect that
         ///   the actor does not have access to the requested resource(s).
         /// </summary>
         /// <param name="message">
@@ -18,11 +18,11 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException Forbidden(string? message = null, Exception? innerException = null)
+        public static HttpServerException Forbidden(string? message = null, Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Forbidden",
                 HttpStatusCode.Forbidden, 
                 innerException);

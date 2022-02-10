@@ -195,7 +195,7 @@ namespace TetraPak.AspNet.Api
         {
             if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<TBackendService>.Fail(
-                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new HttpServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
                 
             var outcome = tetraPakApiConfig.BackendServiceProvider?.ResolveService(
@@ -203,7 +203,7 @@ namespace TetraPak.AspNet.Api
                 serviceName);
             if (outcome is null)
                 return Outcome<TBackendService>.Fail(
-                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new HttpServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
                 
             if (!outcome)
@@ -225,7 +225,7 @@ namespace TetraPak.AspNet.Api
         {
             if (!controller.TryGetTetraPakApiConfig(out var tetraPakApiConfig))
                 return Outcome<IBackendService>.Fail(
-                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new HttpServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
 
             var outcome = tetraPakApiConfig.BackendServiceProvider?.ResolveService(
@@ -233,7 +233,7 @@ namespace TetraPak.AspNet.Api
                 serviceName);
             if (outcome is null)
                 return Outcome<IBackendService>.Fail(
-                    new ServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
+                    new HttpServerConfigurationException($"Cannot resolved backend service '{serviceName}. "+
                                                $"Ensure backend service was set up (see {nameof(TetraPakServiceHelper)}.{nameof(AddTetraPakServices)})"));
 
             return outcome;

@@ -3,10 +3,10 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to indicate that the resource that is being accessed is locked.
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the resource that is being accessed is locked.
         /// </summary>
         /// <param name="message">
         ///   (optional)<br/>
@@ -17,11 +17,11 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException Locked(string? message = null, Exception? innerException = null)
+        public static HttpServerException Locked(string? message = null, Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Locked", 
                 HttpStatusCode.Locked, 
                 innerException);

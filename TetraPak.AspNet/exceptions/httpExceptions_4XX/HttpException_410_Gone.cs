@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that access to the target resource is no longer
+        ///   Produces a <see cref="HttpServerException"/> to indicate that access to the target resource is no longer
         ///   available at the origin server and that this condition is likely to be permanent.
         ///   </para>
         ///   <para>
@@ -26,13 +26,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException Gone(
+        public static HttpServerException Gone(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Gone",
                 HttpStatusCode.Gone, 
                 innerException);

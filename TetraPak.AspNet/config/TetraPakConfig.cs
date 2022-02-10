@@ -35,7 +35,7 @@ namespace TetraPak.AspNet
     }
     
     /// <summary>
-    ///   Provides a code API to the main Tetra Pak section in the configuration.  
+    ///   Provides a code api to the main Tetra Pak section in the configuration.  
     /// </summary>
     /// <seealso cref="ITetraPakConfigDelegate"/>
     public class TetraPakConfig : ConfigurationSection, IServiceAuthConfig
@@ -373,7 +373,7 @@ namespace TetraPak.AspNet
                     }
                     
                     if (!TryParseEnum(value, out grantType) || grantType == GrantType.Inherited)
-                        throw new ServerConfigurationException($"Invalid auth method: '{value}' ({DefaultSectionIdentifier}.{nameof(GrantType)})");
+                        throw new HttpServerConfigurationException($"Invalid auth method: '{value}' ({DefaultSectionIdentifier}.{nameof(GrantType)})");
 
                     return true;
                 });
@@ -421,7 +421,7 @@ namespace TetraPak.AspNet
             get
             {
                 var outcome = GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
-                return outcome ? outcome.Value! : throw new ServerConfigurationException("Scope could not be resolved");
+                return outcome ? outcome.Value! : throw new HttpServerConfigurationException("Scope could not be resolved");
             }
             set => _clientSecret = value;
         }
@@ -464,7 +464,7 @@ namespace TetraPak.AspNet
                 var value = GetFromFieldThenSection<string>(propertyName: nameof(ClientId));
                 return value is { }
                     ? Outcome<string>.Success(value)
-                    : Outcome<string>.Fail(new ServerConfigurationException("Client id could not be resolved"));
+                    : Outcome<string>.Fail(new HttpServerConfigurationException("Client id could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
@@ -492,12 +492,12 @@ namespace TetraPak.AspNet
                 var secret = GetFromFieldThenSection<string>(propertyName: nameof(ClientSecret));
                 return secret is {} 
                     ? Outcome<string>.Success(secret)
-                    : Outcome<string>.Fail(new ServerConfigurationException("Client secret could not be resolved"));
+                    : Outcome<string>.Fail(new HttpServerConfigurationException("Client secret could not be resolved"));
             }
             
             var outcome = await ConfigDelegate.GetClientCredentialsAsync(authContext, cancellationToken);
             if (outcome && outcome.Value!.Secret is null)
-                Outcome<string>.Fail(new ServerConfigurationException("Secret could not be resolved"));
+                Outcome<string>.Fail(new HttpServerConfigurationException("Secret could not be resolved"));
                 
             return outcome
                 ? Outcome<string>.Success(outcome.Value!.Secret!)

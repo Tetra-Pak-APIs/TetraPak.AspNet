@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
@@ -11,6 +12,7 @@ namespace TetraPak.AspNet.Identity
     public class TetraPakUserInformation
     {
         readonly TetraPakConfig _config;
+        readonly IHttpClientProvider _httpClientProvider;
 
         /// <summary>
         ///   Gets a logging provider.
@@ -28,6 +30,10 @@ namespace TetraPak.AspNet.Identity
         /// <param name="accessToken">
         ///   The request access token.
         /// </param>
+        /// <param name="cancellationToken">
+        ///   (optional)<br/>
+        ///   Enables cancellation of the operation.
+        /// </param>
         /// <param name="messageId">
         ///   (optional)<br/>
         ///   A unique string value for tracking a request/response (mainly for diagnostics purposes).
@@ -36,17 +42,19 @@ namespace TetraPak.AspNet.Identity
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="UserInformation"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
-        public async Task<Outcome<UserInformation>> GetUserInformationAsync(ActorToken accessToken, string? messageId)
+        public async Task<Outcome<UserInformation>> GetUserInformationAsync(
+            ActorToken accessToken, 
+            CancellationToken? cancellationToken = null, 
+            string? messageId = null)
         {
-            var loader = new UserInformationProvider(AmbientData);
+            var loader = new UserInformationProvider(AmbientData, _httpClientProvider);
             try
             {
                 // there's no point in calling the remote service for system identities (it will fail) ...
                 if (accessToken.Identity.IsSystemIdentityToken())
-                    return Outcome<UserInformation>.Fail(ServerException.BadRequest("Cannot obtain user information for system identity"));
+                    return Outcome<UserInformation>.Fail(HttpServerException.BadRequest("Cannot obtain user information for system identity"));
                 
-                var userInformation = await loader.GetUserInformationAsync(accessToken!, messageId);
-                return Outcome<UserInformation>.Success(userInformation);
+                return await loader.GetUserInformationAsync(accessToken!, cancellationToken, messageId);
             }
             catch (Exception ex)
             {
@@ -60,12 +68,16 @@ namespace TetraPak.AspNet.Identity
         /// <param name="config">
         ///   The Tetra Pak integration configuration.
         /// </param>
+        /// <param name="httpClientProvider">
+        ///   A HttpClient factory.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="config"/> was unassigned.
         /// </exception>
-        public TetraPakUserInformation(TetraPakConfig config)
+        public TetraPakUserInformation(TetraPakConfig config, IHttpClientProvider httpClientProvider)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _httpClientProvider = httpClientProvider;
         }
     }
 }

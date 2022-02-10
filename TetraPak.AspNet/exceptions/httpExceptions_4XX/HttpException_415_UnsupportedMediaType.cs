@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
         ///   <para>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server refuses to accept the request because
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server refuses to accept the request because
         ///   the payload format is in an unsupported format.
         ///   </para>
         ///   <para>
@@ -26,13 +26,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException UnsupportedMediaType(
+        public static HttpServerException UnsupportedMediaType(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Unsupported Media Type", 
                 HttpStatusCode.UnsupportedMediaType, 
                 innerException);

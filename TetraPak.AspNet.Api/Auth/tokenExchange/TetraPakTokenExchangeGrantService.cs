@@ -61,7 +61,7 @@ namespace TetraPak.AspNet.Api.Auth
             var clientOutcome = await _httpClientProvider.GetHttpClientAsync();
             if (!clientOutcome)
                 return Outcome<TokenExchangeResponse>.Fail(
-                    ServerException.InternalServerError(
+                    HttpServerException.InternalServerError(
                         "Token exchange service failed to obtain a HTTP client (see inner exception)",
                         clientOutcome.Exception));
 
@@ -77,7 +77,7 @@ namespace TetraPak.AspNet.Api.Auth
                 var discoOutcome = await TetraPakConfig.GetDiscoveryDocumentAsync();
                 if (!discoOutcome)
                     return Outcome<TokenExchangeResponse>.Fail(
-                        ServerException.InternalServerError(
+                        HttpServerException.InternalServerError(
                             "Failed to obtain an OIDC discovery document", clientOutcome.Exception));
 
                 var discoveryDocument = discoOutcome.Value!;
@@ -110,7 +110,7 @@ namespace TetraPak.AspNet.Api.Auth
                 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var ex = new ServerException(response);
+                    var ex = new HttpServerException(response);
 #if NET5_0_OR_GREATER                    
                     var body = await response.Content.ReadAsStringAsync(ct);
 #else
@@ -133,7 +133,7 @@ namespace TetraPak.AspNet.Api.Auth
             }
             catch (Exception ex)
             {
-                return Outcome<TokenExchangeResponse>.Fail(ServerException.InternalServerError(
+                return Outcome<TokenExchangeResponse>.Fail(HttpServerException.InternalServerError(
                     "Unhandled internal token exchange error (see inner exception)", 
                     ex));
             }

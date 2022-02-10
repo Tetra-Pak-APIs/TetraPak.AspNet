@@ -3,10 +3,10 @@ using System.Net;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to indicate that the server is not able to produce a response.
+        ///   Produces a <see cref="HttpServerException"/> to indicate that the server is not able to produce a response.
         ///   This can be sent by a server that is not configured to produce responses for the combination of scheme
         ///   and authority that are included in the request URI.
         /// </summary>
@@ -19,11 +19,11 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException MisdirectedRequest(string? message = null, Exception? innerException = null)
+        public static HttpServerException MisdirectedRequest(string? message = null, Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Misdirected Request", 
                 HttpStatusCode.MisdirectedRequest, 
                 innerException);

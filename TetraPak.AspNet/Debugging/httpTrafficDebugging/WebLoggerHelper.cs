@@ -20,7 +20,7 @@ namespace TetraPak.AspNet.Debugging
         static TraceRequestMiddleware? s_traceRequestMiddleware;
         
         /// <summary>
-        ///   (fluent API)<br/>
+        ///   (fluent api)<br/>
         ///   Injects middleware that traces all requests to the logger provider
         ///   when <see cref="LogLevel.Trace"/> is set.
         /// </summary>

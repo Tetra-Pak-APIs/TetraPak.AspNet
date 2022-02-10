@@ -5,10 +5,10 @@ using Microsoft.Net.Http.Headers;
 
 namespace TetraPak.AspNet
 {
-    partial class ServerException
+    partial class HttpServerException
     {
         /// <summary>
-        ///   Produces a <see cref="ServerException"/> to indicate hat access to the target resource has been denied.
+        ///   Produces a <see cref="HttpServerException"/> to indicate hat access to the target resource has been denied.
         ///   This happens with conditional requests on methods other than <c>GET</c> or <c>HEAD</c> when the condition
         ///   defined by the <c>If-Unmodified-Since</c> or <c>If-None-Match headers</c> is not fulfilled.
         ///   In that case, the request, usually an upload or a modification of a resource,
@@ -23,13 +23,13 @@ namespace TetraPak.AspNet
         ///   The exception that is the cause of the current exception.
         /// </param>
         /// <returns>
-        ///   A <see cref="ServerException"/>.
+        ///   A <see cref="HttpServerException"/>.
         /// </returns>
-        public static ServerException PreconditionFailed(
+        public static HttpServerException PreconditionFailed(
             string? message = null, 
             Exception? innerException = null)
         {
-            return new ServerException(
+            return new HttpServerException(
                 message ?? "Precondition Failed",
                 HttpStatusCode.PreconditionFailed, 
                 innerException);

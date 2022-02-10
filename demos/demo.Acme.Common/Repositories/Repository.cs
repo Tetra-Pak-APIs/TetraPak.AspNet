@@ -178,7 +178,7 @@ namespace demo.Acme.Repositories
                     continue;
                 }
                 if (failOnMissing)
-                    return EnumOutcome<T>.Fail(ServerException.NotFound($"{ItemTypeName} with id '{id}' was not found"));
+                    return EnumOutcome<T>.Fail(HttpServerException.NotFound($"{ItemTypeName} with id '{id}' was not found"));
             }
 
             return result.Count == 0
@@ -241,7 +241,7 @@ namespace demo.Acme.Repositories
             
             if (string.IsNullOrWhiteSpace(item.Id))
                 return Outcome<string>.Fail(
-                    ServerException.BadRequest($"Item must contain a valid identity ('{nameof(Model.Id)}')'"));
+                    HttpServerException.BadRequest($"Item must contain a valid identity ('{nameof(Model.Id)}')'"));
             
             if (!_items.TryGetValue(item.Id, out var existing))
                 return Outcome<string>.Fail(
@@ -272,7 +272,7 @@ namespace demo.Acme.Repositories
             
             if (string.IsNullOrWhiteSpace(item.Id))
                 return Outcome<string>.Fail(
-                    ServerException.BadRequest($"Item must contain a valid identity ({nameof(Model.Id)})'"));
+                    HttpServerException.BadRequest($"Item must contain a valid identity ({nameof(Model.Id)})'"));
             
             if (!_items.TryGetValue(item.Id, out var existing))
                 return Outcome<string>.Fail(
@@ -313,10 +313,10 @@ namespace demo.Acme.Repositories
             await SimulateSlowRepositoryAsync(cancellation);
             
             if (string.IsNullOrWhiteSpace(id))
-                return Outcome<string>.Fail(ServerException.BadRequest("Expected an item id"));
+                return Outcome<string>.Fail(HttpServerException.BadRequest("Expected an item id"));
             
             if (!await ContainsAsync(id))
-                return Outcome<string>.Fail(ServerException.NotFound($"Could not remove {ItemTypeName} '{id}'. Item was not found"));
+                return Outcome<string>.Fail(HttpServerException.NotFound($"Could not remove {ItemTypeName} '{id}'. Item was not found"));
 
             _items.Remove(id);
             return Outcome<string>.Success(id);
