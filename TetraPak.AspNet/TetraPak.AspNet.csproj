@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <LangVersion>9</LangVersion>
-        <PackageVersion>1.0.1-beta.5</PackageVersion>
+        <PackageVersion>1.0.1-beta.6</PackageVersion>
         <Title>Tetra Pak common library</Title>
         <Description>A common set of code APIs and tools for Tetra Pak ASP.NET development</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,8 +20,8 @@
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
         <Configurations>Debug;Release;Debug | Production;Debug Production</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <AssemblyVersion>1.0.1.5</AssemblyVersion>
-        <FileVersion>1.0.1.5</FileVersion>
+        <AssemblyVersion>1.0.1.6</AssemblyVersion>
+        <FileVersion>1.0.1.6</FileVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Nullable>enable</Nullable>
     </PropertyGroup>
