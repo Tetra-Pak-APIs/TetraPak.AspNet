@@ -14,7 +14,7 @@ Enables the behavior of a local "development proxy" (a.k.a. "sidecar").
 Please note that the proxy will only be enabled when the host  
 is running in a "Development" runtime environment.   
 ```csharp
-public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseDevelopmentProxy(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, string proxyUrl, TetraPak.AspNet.HttpComparison? isMutedWhen=null, bool isDebugDevProxy=false);
+internal static Microsoft.AspNetCore.Builder.IApplicationBuilder UseDevelopmentProxy(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, string proxyUrl, TetraPak.AspNet.HttpComparison? isMutedWhen=null, bool isDebugDevProxy=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_Api_DevelopmentTools_DevProxyHelper_UseDevelopmentProxy(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment_string_TetraPak_AspNet_HttpComparison__bool)_app'></a>

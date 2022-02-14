@@ -23,3 +23,25 @@ The [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
 The cloned [System.Net.Http.HttpRequestMessage](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpRequestMessage 'System.Net.Http.HttpRequestMessage').  
   
+<a name='TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)'></a>
+## HttpRequestHelper.ResetTo&lt;T&gt;(HttpHeaderValueCollection&lt;T&gt;, T[]) Method
+Resets the [System.Net.Http.Headers.HttpHeaderValueCollection&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.HttpHeaderValueCollection-1 'System.Net.Http.Headers.HttpHeaderValueCollection`1') to a specified set of headers.  
+```csharp
+public static void ResetTo<T>(this System.Net.Http.Headers.HttpHeaderValueCollection<T> self, params T[] headers)
+    where T : class;
+```
+#### Type parameters
+<a name='TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)_T'></a>
+`T`  
+The type of headers supported by the headers collection.  
+  
+#### Parameters
+<a name='TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)_self'></a>
+`self` [System.Net.Http.Headers.HttpHeaderValueCollection&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.HttpHeaderValueCollection-1 'System.Net.Http.Headers.HttpHeaderValueCollection`1')[T](TetraPak_AspNet_HttpRequestHelper.md#TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)_T 'TetraPak.AspNet.HttpRequestHelper.ResetTo&lt;T&gt;(System.Net.Http.Headers.HttpHeaderValueCollection&lt;T&gt;, T[]).T')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.Headers.HttpHeaderValueCollection-1 'System.Net.Http.Headers.HttpHeaderValueCollection`1')  
+The headers collection to be reset.  
+  
+<a name='TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)_headers'></a>
+`headers` [T](TetraPak_AspNet_HttpRequestHelper.md#TetraPak_AspNet_HttpRequestHelper_ResetTo_T_(System_Net_Http_Headers_HttpHeaderValueCollection_T__T__)_T 'TetraPak.AspNet.HttpRequestHelper.ResetTo&lt;T&gt;(System.Net.Http.Headers.HttpHeaderValueCollection&lt;T&gt;, T[]).T')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+The headers to be assigned.  
+  
+  

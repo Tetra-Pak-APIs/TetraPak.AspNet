@@ -30,7 +30,7 @@ public string? MessageId { get; }
 ## ApiErrorResponseException.Status Property
 Gets the error status element.  
 ```csharp
-public string Status { get; }
+public string? Status { get; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

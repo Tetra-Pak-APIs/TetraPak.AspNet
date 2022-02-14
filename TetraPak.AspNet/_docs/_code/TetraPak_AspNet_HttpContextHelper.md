@@ -239,30 +239,30 @@ When set, a random unique string will be generated and attached to the request.
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A unique [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') value.   
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)'></a>
-## HttpContextHelper.GetSingleValue(IHeaderDictionary, string, string, bool) Method
+<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)'></a>
+## HttpContextHelper.GetSingleValue(IHeaderDictionary, string, string?, bool) Method
 Gets (and, optionally, sets) a single header value.  
 ```csharp
-public static string? GetSingleValue(this Microsoft.AspNetCore.Http.IHeaderDictionary dictionary, string key, string useDefault, bool setDefault=false);
+public static string? GetSingleValue(this Microsoft.AspNetCore.Http.IHeaderDictionary dictionary, string key, string? useDefault, bool setDefault=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_dictionary'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_dictionary'></a>
 `dictionary` [Microsoft.AspNetCore.Http.IHeaderDictionary](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.IHeaderDictionary 'Microsoft.AspNetCore.Http.IHeaderDictionary')  
 The header dictionary to get (set) value from.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_key'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the header value.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_useDefault'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_useDefault'></a>
 `useDefault` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 (optional)<br/>  
 A default value to be used if one cannot be found in the header dictionary.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_setDefault'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_setDefault'></a>
 `setDefault` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-(optional; default=`false`); only applies if [useDefault](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_useDefault 'TetraPak.AspNet.HttpContextHelper.GetSingleValue(Microsoft.AspNetCore.Http.IHeaderDictionary, string, string, bool).useDefault') is assigned)<br/>  
-When set, the [useDefault](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string_bool)_useDefault 'TetraPak.AspNet.HttpContextHelper.GetSingleValue(Microsoft.AspNetCore.Http.IHeaderDictionary, string, string, bool).useDefault') value will automatically be added to the header dictionary,  
+(optional; default=`false`); only applies if [useDefault](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_useDefault 'TetraPak.AspNet.HttpContextHelper.GetSingleValue(Microsoft.AspNetCore.Http.IHeaderDictionary, string, string?, bool).useDefault') is assigned)<br/>  
+When set, the [useDefault](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_GetSingleValue(Microsoft_AspNetCore_Http_IHeaderDictionary_string_string__bool)_useDefault 'TetraPak.AspNet.HttpContextHelper.GetSingleValue(Microsoft.AspNetCore.Http.IHeaderDictionary, string, string?, bool).useDefault') value will automatically be added to the header dictionary,  
 affecting the request.  
   
 #### Returns
@@ -492,11 +492,11 @@ The [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://
 Casts a collection of [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod') enum values into a collection of  
 equivalent [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') values.  
 ```csharp
-public static string[] ToStringVerbs(this System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod> methods);
+public static string[] ToStringVerbs(this System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod> httpMethods);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerbs(System_Collections_Generic_IEnumerable_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_)_methods'></a>
-`methods` [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
+<a name='TetraPak_AspNet_HttpContextHelper_ToStringVerbs(System_Collections_Generic_IEnumerable_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_)_httpMethods'></a>
+`httpMethods` [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')  
 The enum values to be cast into [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
   
 #### Returns
@@ -533,7 +533,7 @@ The [value](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelp
   
 <a name='TetraPak_AspNet_HttpContextHelper_ValidateHttpMethods(TetraPak_MultiStringValue__bool)'></a>
 ## HttpContextHelper.ValidateHttpMethods(MultiStringValue?, bool) Method
-Validates the items of a [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue') as HTTP methods (verbs)  
+Validates the items of a [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue') as HTTP httpMethods (verbs)  
 and returns them (on success) or throws a [System.FormatException](https://docs.microsoft.com/en-us/dotnet/api/System.FormatException 'System.FormatException') (on failure).    
 ```csharp
 public static TetraPak.MultiStringValue? ValidateHttpMethods(TetraPak.MultiStringValue? value, bool allowNull=true);

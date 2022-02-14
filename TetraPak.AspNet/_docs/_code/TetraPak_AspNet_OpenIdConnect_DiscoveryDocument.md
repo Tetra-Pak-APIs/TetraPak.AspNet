@@ -59,7 +59,7 @@ public const string DefaultUserInfoPath = /idp/userinfo;
 ## DiscoveryDocument.AuthorizationEndpoint Property
 Gets or sets the authority endpoint.  
 ```csharp
-public string AuthorizationEndpoint { get; set; }
+public string? AuthorizationEndpoint { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -68,7 +68,7 @@ public string AuthorizationEndpoint { get; set; }
 ## DiscoveryDocument.GrantTypesSupported Property
 Gets or sets the supported grant types.  
 ```csharp
-public System.Collections.Generic.IEnumerable<string> GrantTypesSupported { get; set; }
+public System.Collections.Generic.IEnumerable<string>? GrantTypesSupported { get; set; }
 ```
 #### Property Value
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')
@@ -77,7 +77,7 @@ public System.Collections.Generic.IEnumerable<string> GrantTypesSupported { get;
 ## DiscoveryDocument.IdTokenSigningAlgValuesSupported Property
 Gets or sets a collection of hashing algorithms supported.  
 ```csharp
-public System.Collections.Generic.IEnumerable<string> IdTokenSigningAlgValuesSupported { get; set; }
+public System.Collections.Generic.IEnumerable<string>? IdTokenSigningAlgValuesSupported { get; set; }
 ```
 #### Property Value
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')
@@ -86,7 +86,7 @@ public System.Collections.Generic.IEnumerable<string> IdTokenSigningAlgValuesSup
 ## DiscoveryDocument.Issuer Property
 Gets or sets the token issuer URL.  
 ```csharp
-public string Issuer { get; set; }
+public string? Issuer { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -95,7 +95,7 @@ public string Issuer { get; set; }
 ## DiscoveryDocument.JwksUri Property
 Gets or sets the JWT keys endpoint.  
 ```csharp
-public string JwksUri { get; set; }
+public string? JwksUri { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -118,7 +118,7 @@ value and, therefore, cannot itself be set to this value).
 ## DiscoveryDocument.ResponseTypesSupported Property
 Gets or sets the supported types of responses.  
 ```csharp
-public System.Collections.Generic.IEnumerable<string> ResponseTypesSupported { get; set; }
+public System.Collections.Generic.IEnumerable<string>? ResponseTypesSupported { get; set; }
 ```
 #### Property Value
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')
@@ -127,7 +127,7 @@ public System.Collections.Generic.IEnumerable<string> ResponseTypesSupported { g
 ## DiscoveryDocument.ScopesSupported Property
 Gets or sets the supported scope.  
 ```csharp
-public System.Collections.Generic.IEnumerable<string> ScopesSupported { get; set; }
+public System.Collections.Generic.IEnumerable<string>? ScopesSupported { get; set; }
 ```
 #### Property Value
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')
@@ -136,7 +136,7 @@ public System.Collections.Generic.IEnumerable<string> ScopesSupported { get; set
 ## DiscoveryDocument.SubjectTypesSupported Property
 Gets or sets the supported types subject types.  
 ```csharp
-public System.Collections.Generic.IEnumerable<string> SubjectTypesSupported { get; set; }
+public System.Collections.Generic.IEnumerable<string>? SubjectTypesSupported { get; set; }
 ```
 #### Property Value
 [System.Collections.Generic.IEnumerable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IEnumerable-1 'System.Collections.Generic.IEnumerable`1')
@@ -145,7 +145,7 @@ public System.Collections.Generic.IEnumerable<string> SubjectTypesSupported { ge
 ## DiscoveryDocument.TokenEndpoint Property
 Gets or sets the token issuer endpoint.  
 ```csharp
-public string TokenEndpoint { get; set; }
+public string? TokenEndpoint { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -154,7 +154,7 @@ public string TokenEndpoint { get; set; }
 ## DiscoveryDocument.UserInformationEndpoint Property
 Gets or sets the user information endpoint.  
 ```csharp
-public string UserInformationEndpoint { get; set; }
+public string? UserInformationEndpoint { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

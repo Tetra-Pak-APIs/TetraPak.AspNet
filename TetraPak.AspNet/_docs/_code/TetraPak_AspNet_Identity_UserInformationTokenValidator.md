@@ -12,7 +12,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ## UserInformationTokenValidator.Config Property
 Gets the auth configuration.  
 ```csharp
-public TetraPak.AspNet.TetraPakConfig Config { get; set; }
+public TetraPak.AspNet.TetraPakConfig? Config { get; set; }
 ```
 #### Property Value
 [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')
@@ -21,7 +21,7 @@ public TetraPak.AspNet.TetraPakConfig Config { get; set; }
 ## UserInformationTokenValidator.Logger Property
 Gets a log provider.  
 ```csharp
-protected Microsoft.Extensions.Logging.ILogger Logger { get; }
+protected Microsoft.Extensions.Logging.ILogger? Logger { get; }
 ```
 #### Property Value
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')

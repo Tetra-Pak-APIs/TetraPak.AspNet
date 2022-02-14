@@ -10,29 +10,29 @@ public interface IClientCredentialsGrantService
 Derived  
 &#8627; [TetraPakClientCredentialsGrantService](TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService.md 'TetraPak.AspNet.Api.Auth.TetraPakClientCredentialsGrantService')  
 ### Methods
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)'></a>
-## IClientCredentialsGrantService.AcquireTokenAsync(Nullable&lt;CancellationToken&gt;, Credentials, MultiStringValue, bool) Method
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)'></a>
+## IClientCredentialsGrantService.AcquireTokenAsync(Nullable&lt;CancellationToken&gt;, Credentials?, MultiStringValue?, bool) Method
 Requests a token using the OAuth Client Credentials grant.     
 ```csharp
-System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials clientCredentials=null, TetraPak.MultiStringValue scope=null, bool forceAuthorization=false);
+System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Api.Auth.ClientCredentialsResponse>> AcquireTokenAsync(System.Nullable<System.Threading.CancellationToken> cancellationToken=null, TetraPak.Credentials? clientCredentials=null, TetraPak.MultiStringValue? scope=null, bool forceAuthorization=false);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_cancellationToken'></a>
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_cancellationToken'></a>
 `cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 (optional)<br/>  
 A cancellation token.  
   
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_clientCredentials'></a>
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_clientCredentials'></a>
 `clientCredentials` [TetraPak.Credentials](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Credentials 'TetraPak.Credentials')  
 (optional)<br/>  
 Specifies client credentials.  
   
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_scope'></a>
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_scope'></a>
 `scope` [TetraPak.MultiStringValue](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.MultiStringValue 'TetraPak.MultiStringValue')  
 (optional)<br/>  
 Scope to be requested for the authorization.  
   
-<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool)_forceAuthorization'></a>
+<a name='TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool)_forceAuthorization'></a>
 `forceAuthorization` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 (optional; default=`false`)<br/>  
 Specifies whether to force a new client credentials authorization  

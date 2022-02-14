@@ -1,24 +1,24 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet.Auth](TetraPak_AspNet_Auth.md 'TetraPak.AspNet.Auth')
-## TokenRefreshResponse Class
+## RefreshTokenResponse Class
 Used to present the result from a token refresh flow response.  
 ```csharp
-public class TokenRefreshResponse
+public class RefreshTokenResponse
 ```
 
-Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TokenRefreshResponse  
+Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; RefreshTokenResponse  
 ### Properties
-<a name='TetraPak_AspNet_Auth_TokenRefreshResponse_AccessToken'></a>
-## TokenRefreshResponse.AccessToken Property
+<a name='TetraPak_AspNet_Auth_RefreshTokenResponse_AccessToken'></a>
+## RefreshTokenResponse.AccessToken Property
 Gets the new access token.  
 ```csharp
-public string AccessToken { get; set; }
+public string? AccessToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
   
-<a name='TetraPak_AspNet_Auth_TokenRefreshResponse_ExpiresInSeconds'></a>
-## TokenRefreshResponse.ExpiresInSeconds Property
+<a name='TetraPak_AspNet_Auth_RefreshTokenResponse_ExpiresInSeconds'></a>
+## RefreshTokenResponse.ExpiresInSeconds Property
 Gets a value indicating the new access token's lifespan.  
 ```csharp
 public System.Nullable<int> ExpiresInSeconds { get; set; }
@@ -26,20 +26,20 @@ public System.Nullable<int> ExpiresInSeconds { get; set; }
 #### Property Value
 [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')
   
-<a name='TetraPak_AspNet_Auth_TokenRefreshResponse_IdToken'></a>
-## TokenRefreshResponse.IdToken Property
+<a name='TetraPak_AspNet_Auth_RefreshTokenResponse_IdToken'></a>
+## RefreshTokenResponse.IdToken Property
 Gets a provided identity token, if available.  
 ```csharp
-public string IdToken { get; set; }
+public string? IdToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
   
-<a name='TetraPak_AspNet_Auth_TokenRefreshResponse_RefreshToken'></a>
-## TokenRefreshResponse.RefreshToken Property
+<a name='TetraPak_AspNet_Auth_RefreshTokenResponse_RefreshToken'></a>
+## RefreshTokenResponse.RefreshToken Property
 Gets a new refresh token, if available.  
 ```csharp
-public string RefreshToken { get; set; }
+public string? RefreshToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

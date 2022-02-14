@@ -80,7 +80,7 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 There where issues with the configured options, such as client id/secret.  
   
 <a name='TetraPak_AspNet_Api_TetraPakApiAuthorizationService_OnTokenExchangeAuthenticationAsync(TetraPak_AspNet_Auth_IServiceAuthConfig_TetraPak_ActorToken__bool_System_Nullable_System_Threading_CancellationToken_)'></a>
@@ -111,6 +111,6 @@ A [System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/a
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate success/failure and, on success, also carry  
 a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') or, on failure, an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 There where issues with the configured options, such as client id/secret.  
   

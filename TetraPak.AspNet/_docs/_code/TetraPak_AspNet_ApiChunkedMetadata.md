@@ -21,7 +21,7 @@ Initializes the [Count](TetraPak_AspNet_ApiChunkedMetadata.md#TetraPak_AspNet_Ap
   
 <a name='TetraPak_AspNet_ApiChunkedMetadata_ApiChunkedMetadata(TetraPak_ReadChunk_int)_total'></a>
 `total` [System.Int32](https://docs.microsoft.com/en-us/dotnet/api/System.Int32 'System.Int32')  
-Initializes the [total](https://docs.microsoft.com/en-us/dotnet/api/total 'total') value.  
+Initializes the [Total](TetraPak_AspNet_ApiMetadata.md#TetraPak_AspNet_ApiMetadata_Total 'TetraPak.AspNet.ApiMetadata.Total') value.  
   
   
 ### Properties

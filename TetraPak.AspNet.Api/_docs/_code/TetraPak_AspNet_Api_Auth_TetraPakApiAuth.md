@@ -134,7 +134,7 @@ An [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com
 An [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder') instance.  
 ### Remarks
 Enabling this mechanism is a flexible way to protect your secure endpoints. When enabled  
-client must call your protected endpoints through a reversed proxy acting as your API's "sidecar".  
+client must call your protected endpoints through a reversed proxy acting as your Api "sidecar".  
 The sidecar will handle client authentication and, when successful, replace the client's  
 access token with a short lived JWT Bearer token, to be exchanged only between the service and its sidecar.  
 This JWT Bearer will automatically be validated for every request by the middleware installed by this method.  
@@ -185,29 +185,4 @@ your service is running in the "Development" runtime environment, regardless of 
 This is to ensure you cannot accidentally deploy it to any other environment.  
 #### See Also
 - [AddTetraPakJwtBearerAssertion(IServiceCollection, string?, JwBearerAssertionOptions?)](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_Extensions_DependencyInjection_IServiceCollection_string__TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_) 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakJwtBearerAssertion(Microsoft.Extensions.DependencyInjection.IServiceCollection, string?, TetraPak.AspNet.Api.Auth.JwBearerAssertionOptions?)')
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment)'></a>
-## TetraPakApiAuth.UseTetraPakJwtAuthentication(IApplicationBuilder, IWebHostEnvironment) Method
-<b>DEPRECATED!</b>
-
-
-
-  
-              This method was deprecated in SDK v1.1 and is scheduled for removal in future versions.  
-              Please use [UseTetraPakApiAuthentication(IApplicationBuilder, IWebHostEnvironment)](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakApiAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment) 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.UseTetraPakApiAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder, Microsoft.AspNetCore.Hosting.IWebHostEnvironment)') instead.  
-              
-```csharp
-public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseTetraPakJwtAuthentication(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment)_app'></a>
-`app` [Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakJwtAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment)_env'></a>
-`env` [Microsoft.AspNetCore.Hosting.IWebHostEnvironment](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Hosting.IWebHostEnvironment 'Microsoft.AspNetCore.Hosting.IWebHostEnvironment')  
-  
-#### Returns
-[Microsoft.AspNetCore.Builder.IApplicationBuilder](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Builder.IApplicationBuilder 'Microsoft.AspNetCore.Builder.IApplicationBuilder')  
-#### See Also
-- [UseTetraPakApiAuthentication(IApplicationBuilder, IWebHostEnvironment)](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_UseTetraPakApiAuthentication(Microsoft_AspNetCore_Builder_IApplicationBuilder_Microsoft_AspNetCore_Hosting_IWebHostEnvironment) 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.UseTetraPakApiAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder, Microsoft.AspNetCore.Hosting.IWebHostEnvironment)')
   
