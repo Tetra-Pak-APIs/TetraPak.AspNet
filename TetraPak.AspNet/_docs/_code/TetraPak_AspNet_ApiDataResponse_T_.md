@@ -43,7 +43,7 @@ Initialises the meta data "total" value ([Total](TetraPak_AspNet_ApiMetadata.md#
 <a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(System_Collections_Generic_IEnumerable_T___int_int_string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 (optional)<br/>  
-Initializes thw [messageId](https://docs.microsoft.com/en-us/dotnet/api/messageId 'messageId') property.  
+Initializes thw [MessageId](TetraPak_AspNet_ApiMetadata.md#TetraPak_AspNet_ApiMetadata_MessageId 'TetraPak.AspNet.ApiMetadata.MessageId') property.  
   
   
 <a name='TetraPak_AspNet_ApiDataResponse_T__ApiDataResponse(TetraPak_EnumOutcome_T__int_string_)'></a>

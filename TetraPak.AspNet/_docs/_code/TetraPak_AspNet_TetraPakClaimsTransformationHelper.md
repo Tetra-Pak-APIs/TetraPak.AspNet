@@ -58,29 +58,29 @@ public static void AddTetraPakUserInformation(this Microsoft.Extensions.Dependen
 `c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
   
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)'></a>
-## TetraPakClaimsTransformationHelper.TryResolveClaim(ClaimsPrincipal, string, string[]) Method
+<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)'></a>
+## TetraPakClaimsTransformationHelper.TryResolveClaim(ClaimsPrincipal, string?, string[]) Method
 Looks up a specified [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') claim and returns the outcome.   
 ```csharp
-public static bool TryResolveClaim(this System.Security.Claims.ClaimsPrincipal self, out string claimType, params string[] fallbackClaimTypes);
+public static bool TryResolveClaim(this System.Security.Claims.ClaimsPrincipal self, out string? claimType, params string[] fallbackClaimTypes);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_self'></a>
+<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_self'></a>
 `self` [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal')  
 The [System.Security.Claims.ClaimsPrincipal](https://docs.microsoft.com/en-us/dotnet/api/System.Security.Claims.ClaimsPrincipal 'System.Security.Claims.ClaimsPrincipal') carrying the requested claim.  
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_claimType'></a>
+<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_claimType'></a>
 `claimType` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The requested claim type.  
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_fallbackClaimTypes'></a>
+<a name='TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_fallbackClaimTypes'></a>
 `fallbackClaimTypes` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
 (optional)<br/>  
-One or more claim types to be looked for if [claimType](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_claimType 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string, string[]).claimType') cannot be found.   
+One or more claim types to be looked for if [claimType](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_claimType 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string?, string[]).claimType') cannot be found.   
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-`true` if the requested [claimType](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_claimType 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string, string[]).claimType')  
-              (or any [fallbackClaimTypes](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string_string__)_fallbackClaimTypes 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string, string[]).fallbackClaimTypes')) was found; otherwise `false`.   
+`true` if the requested [claimType](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_claimType 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string?, string[]).claimType')  
+              (or any [fallbackClaimTypes](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md#TetraPak_AspNet_TetraPakClaimsTransformationHelper_TryResolveClaim(System_Security_Claims_ClaimsPrincipal_string__string__)_fallbackClaimTypes 'TetraPak.AspNet.TetraPakClaimsTransformationHelper.TryResolveClaim(System.Security.Claims.ClaimsPrincipal, string?, string[]).fallbackClaimTypes')) was found; otherwise `false`.   
             
   

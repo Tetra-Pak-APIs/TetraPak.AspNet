@@ -15,7 +15,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 Gets the a security token that represents the identity of the acting party. Typically, this will  
 be the party that is authorized to use the requested security token and act on behalf of the subject.  
 ```csharp
-public string ActorToken { get; set; }
+public string? ActorToken { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -27,7 +27,7 @@ Gets the an identifier that indicates the type of the security token in the
 [ActorToken](TetraPak_AspNet_Api_Auth_TokenExchangeArgs.md#TetraPak_AspNet_Api_Auth_TokenExchangeArgs_ActorToken 'TetraPak.AspNet.Api.Auth.TokenExchangeArgs.ActorToken') parameter. This is REQUIRED when the [ActorToken](TetraPak_AspNet_Api_Auth_TokenExchangeArgs.md#TetraPak_AspNet_Api_Auth_TokenExchangeArgs_ActorToken 'TetraPak.AspNet.Api.Auth.TokenExchangeArgs.ActorToken') parameter is set  
 but MUST NOT be included otherwise.  
 ```csharp
-public string ActorTokenType { get; set; }
+public string? ActorTokenType { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -38,7 +38,7 @@ public string ActorTokenType { get; set; }
 Gets or sets the logical name of the target service where the client intends to use the  
 requested security token. See   
 ```csharp
-public string Audience { get; set; }
+public string? Audience { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -61,7 +61,7 @@ If the requested type is unspecified, the issued token type is at the discretion
 server and may be dictated by knowledge of the requirements of the service or resource indicated by the  
 resource or audience parameter.  
 ```csharp
-public string RequestedTokenType { get; set; }
+public string? RequestedTokenType { get; set; }
 ```
 #### Property Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')
@@ -72,7 +72,7 @@ public string RequestedTokenType { get; set; }
 A URI that indicates the target service or resource where the client intends to use the  
 requested security token.  
 ```csharp
-public System.Uri Resource { get; set; }
+public System.Uri? Resource { get; set; }
 ```
 #### Property Value
 [System.Uri](https://docs.microsoft.com/en-us/dotnet/api/System.Uri 'System.Uri')

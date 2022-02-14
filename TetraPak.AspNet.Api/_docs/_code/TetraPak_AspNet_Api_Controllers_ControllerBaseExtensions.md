@@ -58,7 +58,7 @@ The extended [Microsoft.AspNetCore.Mvc.ControllerBase](https://docs.microsoft.co
 [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig')  
 A Tetra Pak (API) configuration object.  
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 The Tetra Pak (API) configuration object could not be obtained  
 #### See Also
 - [TryGetTetraPakApiConfig(ControllerBase, TetraPakApiConfig?)](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_TryGetTetraPakApiConfig(Microsoft_AspNetCore_Mvc_ControllerBase_TetraPak_AspNet_Api_Auth_TetraPakApiConfig_) 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.TryGetTetraPakApiConfig(Microsoft.AspNetCore.Mvc.ControllerBase, TetraPak.AspNet.Api.Auth.TetraPakApiConfig?)')
@@ -834,7 +834,7 @@ Identifies the service.
 [IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService')  
 An object implementing the [IBackendService](TetraPak_AspNet_Api_IBackendService.md 'TetraPak.AspNet.Api.IBackendService') contract.  
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 The backend service could not be resolved.  
 Please ensure you haven't misspelled it in service configuration.   
 ### Remarks
@@ -869,7 +869,7 @@ Identifies the service.
 [TBackendService](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service_TBackendService_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_TBackendService 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service&lt;TBackendService&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string?).TBackendService')  
 A backend service object of type [TBackendService](TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions.md#TetraPak_AspNet_Api_Controllers_ControllerBaseExtensions_Service_TBackendService_(Microsoft_AspNetCore_Mvc_ControllerBase_string_)_TBackendService 'TetraPak.AspNet.Api.Controllers.ControllerBaseExtensions.Service&lt;TBackendService&gt;(Microsoft.AspNetCore.Mvc.ControllerBase, string?).TBackendService').  
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 The backend service could not be resolved.  
 Please ensure you haven't misspelled it in service configuration.   
 ### Remarks

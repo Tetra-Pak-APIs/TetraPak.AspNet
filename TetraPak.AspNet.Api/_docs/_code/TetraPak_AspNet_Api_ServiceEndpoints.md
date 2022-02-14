@@ -124,7 +124,7 @@ public virtual TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
 #### Property Value
 [TetraPak.AspNet.Auth.GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.GrantType 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[TetraPak.AspNet.ServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.ServerConfigurationException 'TetraPak.AspNet.ServerConfigurationException')  
+[TetraPak.AspNet.HttpServerConfigurationException](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.HttpServerConfigurationException 'TetraPak.AspNet.HttpServerConfigurationException')  
 The configured value was incorrect (could not be parsed into [GrantType](TetraPak_AspNet_Api_ServiceEndpoints.md#TetraPak_AspNet_Api_ServiceEndpoints_GrantType 'TetraPak.AspNet.Api.ServiceEndpoints.GrantType')).  
 
 Implements [GrantType](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  

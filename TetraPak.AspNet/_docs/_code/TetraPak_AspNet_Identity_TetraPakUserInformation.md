@@ -8,20 +8,24 @@ public class TetraPakUserInformation
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakUserInformation  
 ### Constructors
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)'></a>
-## TetraPakUserInformation.TetraPakUserInformation(TetraPakConfig) Constructor
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)'></a>
+## TetraPakUserInformation.TetraPakUserInformation(TetraPakConfig, IHttpClientProvider) Constructor
 Initializes the [TetraPakUserInformation](TetraPak_AspNet_Identity_TetraPakUserInformation.md 'TetraPak.AspNet.Identity.TetraPakUserInformation') object.  
 ```csharp
-public TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig config);
+public TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig config, TetraPak.AspNet.IHttpClientProvider httpClientProvider);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)_config'></a>
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)_config'></a>
 `config` [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig')  
 The Tetra Pak integration configuration.  
   
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)_httpClientProvider'></a>
+`httpClientProvider` [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider')  
+A HttpClient factory.  
+  
 #### Exceptions
 [System.ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/System.ArgumentNullException 'System.ArgumentNullException')  
-[config](TetraPak_AspNet_Identity_TetraPakUserInformation.md#TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig)_config 'TetraPak.AspNet.Identity.TetraPakUserInformation.TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig).config') was unassigned.  
+[config](TetraPak_AspNet_Identity_TetraPakUserInformation.md#TetraPak_AspNet_Identity_TetraPakUserInformation_TetraPakUserInformation(TetraPak_AspNet_TetraPakConfig_TetraPak_AspNet_IHttpClientProvider)_config 'TetraPak.AspNet.Identity.TetraPakUserInformation.TetraPakUserInformation(TetraPak.AspNet.TetraPakConfig, TetraPak.AspNet.IHttpClientProvider).config') was unassigned.  
             
   
 ### Properties
@@ -44,18 +48,23 @@ public Microsoft.Extensions.Logging.ILogger? Logger { get; }
 [Microsoft.Extensions.Logging.ILogger](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Logging.ILogger 'Microsoft.Extensions.Logging.ILogger')
   
 ### Methods
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)'></a>
-## TetraPakUserInformation.GetUserInformationAsync(ActorToken, string?) Method
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_System_Nullable_System_Threading_CancellationToken__string_)'></a>
+## TetraPakUserInformation.GetUserInformationAsync(ActorToken, Nullable&lt;CancellationToken&gt;, string?) Method
 Obtains and returns user information from the Tetra Pak Auth Services.   
 ```csharp
-public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Identity.UserInformation>> GetUserInformationAsync(TetraPak.ActorToken accessToken, string? messageId);
+public System.Threading.Tasks.Task<TetraPak.Outcome<TetraPak.AspNet.Identity.UserInformation>> GetUserInformationAsync(TetraPak.ActorToken accessToken, System.Nullable<System.Threading.CancellationToken> cancellationToken=null, string? messageId=null);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)_accessToken'></a>
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_System_Nullable_System_Threading_CancellationToken__string_)_accessToken'></a>
 `accessToken` [TetraPak.ActorToken](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.ActorToken 'TetraPak.ActorToken')  
 The request access token.  
   
-<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_string_)_messageId'></a>
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_System_Nullable_System_Threading_CancellationToken__string_)_cancellationToken'></a>
+`cancellationToken` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[System.Threading.CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.CancellationToken 'System.Threading.CancellationToken')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
+(optional)<br/>  
+Enables cancellation of the operation.  
+  
+<a name='TetraPak_AspNet_Identity_TetraPakUserInformation_GetUserInformationAsync(TetraPak_ActorToken_System_Nullable_System_Threading_CancellationToken__string_)_messageId'></a>
 `messageId` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 (optional)<br/>  
 A unique string value for tracking a request/response (mainly for diagnostics purposes).  

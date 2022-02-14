@@ -1,7 +1,7 @@
 #### [TetraPak.AspNet](index.md 'index')
 ### [TetraPak.AspNet](TetraPak_AspNet.md 'TetraPak.AspNet')
 ## TetraPakConfig Class
-Provides a code API to the main Tetra Pak section in the configuration.    
+Provides a code api to the main Tetra Pak section in the configuration.    
 ```csharp
 public class TetraPakConfig : TetraPak.Configuration.ConfigurationSection,
 TetraPak.AspNet.Auth.IServiceAuthConfig
@@ -200,7 +200,7 @@ public virtual TetraPak.AspNet.Auth.GrantType GrantType { get; set; }
 #### Property Value
 [GrantType](TetraPak_AspNet_Auth_GrantType.md 'TetraPak.AspNet.Auth.GrantType')
 #### Exceptions
-[ServerConfigurationException](TetraPak_AspNet_ServerConfigurationException.md 'TetraPak.AspNet.ServerConfigurationException')  
+[HttpServerConfigurationException](TetraPak_AspNet_HttpServerConfigurationException.md 'TetraPak.AspNet.HttpServerConfigurationException')  
 The configured (textual) value could not be parsed into a [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType') (enum) value.   
 
 Implements [GrantType](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GrantType 'TetraPak.AspNet.Auth.IServiceAuthConfig.GrantType')  

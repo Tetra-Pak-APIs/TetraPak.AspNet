@@ -15,7 +15,7 @@ Derived
 ## IMessageIdProvider.GetMessageId(bool) Method
 Retrieves a request message id if available.   
 ```csharp
-string GetMessageId(bool enforce=false);
+string? GetMessageId(bool enforce=false);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_IMessageIdProvider_GetMessageId(bool)_enforce'></a>

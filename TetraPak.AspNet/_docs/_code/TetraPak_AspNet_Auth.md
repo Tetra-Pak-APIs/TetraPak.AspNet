@@ -7,8 +7,8 @@
 | [ConfiguredClientCredentialsProvider](TetraPak_AspNet_Auth_ConfiguredClientCredentialsProvider.md 'TetraPak.AspNet.Auth.ConfiguredClientCredentialsProvider') | Provides client credentials from the configuration framework.<br/> |
 | [JwtBearerAssertionConfig](TetraPak_AspNet_Auth_JwtBearerAssertionConfig.md 'TetraPak.AspNet.Auth.JwtBearerAssertionConfig') | This code API enables access and manipulation for the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') (appsettings.json)<br/>sub section "JwtBearerAssertion";<br/> |
 | [JwtHelper](TetraPak_AspNet_Auth_JwtHelper.md 'TetraPak.AspNet.Auth.JwtHelper') | Provides convenience- and extension methods to assist in the use of JavaScript Web Tokens (JWT). <br/> |
+| [RefreshTokenResponse](TetraPak_AspNet_Auth_RefreshTokenResponse.md 'TetraPak.AspNet.Auth.RefreshTokenResponse') | Used to present the result from a token refresh flow response.<br/> |
 | [TetraPakAuth](TetraPak_AspNet_Auth_TetraPakAuth.md 'TetraPak.AspNet.Auth.TetraPakAuth') | Provides convenience- and extension methods to help with integrating an ASP.NET Core/5+<br/>web application with the Tetra Pak Auth Services.<br/> |
-| [TokenRefreshResponse](TetraPak_AspNet_Auth_TokenRefreshResponse.md 'TetraPak.AspNet.Auth.TokenRefreshResponse') | Used to present the result from a token refresh flow response.<br/> |
 
 | Interfaces | |
 | :--- | :--- |
@@ -16,6 +16,7 @@
 | [IClientConfigDelegate](TetraPak_AspNet_Auth_IClientConfigDelegate.md 'TetraPak.AspNet.Auth.IClientConfigDelegate') | Classes implementing this interface can be relied on to provide the app with (custom) configuration. <br/> |
 | [IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider') | Implementors of this contract can be used for obtaining client credentials,<br/>typically for token exchange, or similar flows where such credentials are needed.<br/> |
 | [IIdentityTokenProvider](TetraPak_AspNet_Auth_IIdentityTokenProvider.md 'TetraPak.AspNet.Auth.IIdentityTokenProvider') | Implementors of this class are capable of providing a identity token from a request context.<br/> |
+| [IRefreshTokenGrantService](TetraPak_AspNet_Auth_IRefreshTokenGrantService.md 'TetraPak.AspNet.Auth.IRefreshTokenGrantService') | Classes implementing this interface are able to perform the OAuth2 Refresh Token Grant flow. <br/> |
 | [IServiceAuthConfig](TetraPak_AspNet_Auth_IServiceAuthConfig.md 'TetraPak.AspNet.Auth.IServiceAuthConfig') | Classes implementing this contract can provide information needed for authorization purposes. <br/> |
 
 | Enums | |

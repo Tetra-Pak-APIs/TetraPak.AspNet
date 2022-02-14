@@ -7,6 +7,3 @@ public class TetraPakApiConfig : TetraPak.AspNet.TetraPakConfig
 ```
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; [TetraPak.Configuration.ConfigurationSection](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Configuration.ConfigurationSection 'TetraPak.Configuration.ConfigurationSection') &#129106; [TetraPak.AspNet.TetraPakConfig](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakConfig 'TetraPak.AspNet.TetraPakConfig') &#129106; TetraPakApiConfig  
-
-Derived  
-&#8627; [TetraPakApiAuthConfig](TetraPak_AspNet_Api_Auth_TetraPakApiAuthConfig.md 'TetraPak.AspNet.Api.Auth.TetraPakApiAuthConfig')  

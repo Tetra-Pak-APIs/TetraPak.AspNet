@@ -27,24 +27,24 @@ public System.Collections.Generic.IDictionary<string,string> ToDictionary();
 #### Returns
 [System.Collections.Generic.IDictionary&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IDictionary-2 'System.Collections.Generic.IDictionary`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IDictionary-2 'System.Collections.Generic.IDictionary`2')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Collections.Generic.IDictionary-2 'System.Collections.Generic.IDictionary`2')  
   
-<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T)'></a>
-## UserInformation.TryGet&lt;T&gt;(string, T) Method
+<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T_)'></a>
+## UserInformation.TryGet&lt;T&gt;(string, T?) Method
 Tries to obtain user information value.  
 ```csharp
-public bool TryGet<T>(string key, out T value);
+public bool TryGet<T>(string key, out T? value);
 ```
 #### Type parameters
-<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T)_T'></a>
+<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T_)_T'></a>
 `T`  
 Specifies the type of value.  
   
 #### Parameters
-<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T)_key'></a>
+<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T_)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the value.  
   
-<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T)_value'></a>
-`value` [T](TetraPak_AspNet_Identity_UserInformation.md#TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T)_T 'TetraPak.AspNet.Identity.UserInformation.TryGet&lt;T&gt;(string, T).T')  
+<a name='TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T_)_value'></a>
+`value` [T](TetraPak_AspNet_Identity_UserInformation.md#TetraPak_AspNet_Identity_UserInformation_TryGet_T_(string_T_)_T 'TetraPak.AspNet.Identity.UserInformation.TryGet&lt;T&gt;(string, T?).T')  
 Passes back the value when fund; otherwise `null`.  
   
 #### Returns

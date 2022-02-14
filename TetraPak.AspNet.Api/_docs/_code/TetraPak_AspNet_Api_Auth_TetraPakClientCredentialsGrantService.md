@@ -68,7 +68,7 @@ Specifies whether to force a new client credentials authorization
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') instance indicating success/failure, and the requested token  
 when successful; otherwise an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
 
-Implements [AcquireTokenAsync(Nullable<CancellationToken>, Credentials, MultiStringValue, bool)](TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService.md#TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials_TetraPak_MultiStringValue_bool) 'TetraPak.AspNet.Api.Auth.IClientCredentialsGrantService.AcquireTokenAsync(System.Nullable&lt;System.Threading.CancellationToken&gt;, TetraPak.Credentials, TetraPak.MultiStringValue, bool)')  
+Implements [AcquireTokenAsync(Nullable<CancellationToken>, Credentials?, MultiStringValue?, bool)](TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService.md#TetraPak_AspNet_Api_Auth_IClientCredentialsGrantService_AcquireTokenAsync(System_Nullable_System_Threading_CancellationToken__TetraPak_Credentials__TetraPak_MultiStringValue__bool) 'TetraPak.AspNet.Api.Auth.IClientCredentialsGrantService.AcquireTokenAsync(System.Nullable&lt;System.Threading.CancellationToken&gt;, TetraPak.Credentials?, TetraPak.MultiStringValue?, bool)')  
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakClientCredentialsGrantService_OnCacheResponseAsync(TetraPak_Credentials_TetraPak_AspNet_Api_Auth_ClientCredentialsResponse)'></a>
 ## TetraPakClientCredentialsGrantService.OnCacheResponseAsync(Credentials, ClientCredentialsResponse) Method

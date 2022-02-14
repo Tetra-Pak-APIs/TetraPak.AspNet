@@ -53,7 +53,7 @@ namespace TetraPak.AspNet.Identity
         ///   a <see cref="UserInformation"/> or, on failure, an <see cref="Exception"/>.
         /// </returns>
         public async Task<Outcome<UserInformation>> GetUserInformationAsync(
-            string accessToken,
+            ActorToken accessToken,
             CancellationToken? cancellationToken = null,
             string? messageId = null, 
             bool cached = true)
@@ -104,7 +104,7 @@ namespace TetraPak.AspNet.Identity
         }
 
         TaskCompletionSource<Outcome<UserInformation>> downloadAsync(
-            string accessToken, 
+            ActorToken accessToken, 
             Uri userInfoUri,
             CancellationToken? cancellationToken = null,
             string? messageId = null)
@@ -125,7 +125,7 @@ namespace TetraPak.AspNet.Identity
                             
                         var request = new HttpRequestMessage(HttpMethod.Get, userInfoUri);
                         request.Headers.Accept.ResetTo(new MediaTypeWithQualityHeaderValue("*/*"));
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Identity);
                         
                         var sb = Logger?.IsEnabled(LogLevel.Trace) ?? false
                             ? await (await request.ToGenericHttpRequestAsync()).ToStringBuilderAsync(

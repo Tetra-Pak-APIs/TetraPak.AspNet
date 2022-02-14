@@ -143,11 +143,11 @@ namespace TetraPak.AspNet
                 }
             }
             
-            async Task mapFromRemoteServiceAsync(string accessToken)
+            async Task mapFromRemoteServiceAsync(ActorToken accessToken)
             {
                 var messageId = HttpContext?.Request.GetMessageId(TetraPakConfig);
                 Logger.Trace("Fetches identity from Tetra Pak User Information Service", messageId);
-                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken!, cancellationToken, messageId);
+                var userInfoOutcome = await UserInformation!.GetUserInformationAsync(accessToken, cancellationToken, messageId);
                 if (!userInfoOutcome)
                 {
                     Logger.Error(

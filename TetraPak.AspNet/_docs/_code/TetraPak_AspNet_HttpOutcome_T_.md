@@ -34,7 +34,7 @@ Initializes the [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-u
   
 <a name='TetraPak_AspNet_HttpOutcome_T__HttpOutcome(bool_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T_System_Exception_)_exception'></a>
 `exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-Initializes the [Outcome<T>.Exception](https://docs.microsoft.com/en-us/dotnet/api/Outcome<T>.Exception 'Outcome<T>.Exception').  
+Initializes the [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception').  
   
   
 ### Properties
@@ -61,7 +61,7 @@ The HTTP request method used.
   
 <a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception_T)_exception'></a>
 `exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-Assigns [Outcome<T>.Exception](https://docs.microsoft.com/en-us/dotnet/api/Outcome<T>.Exception 'Outcome<T>.Exception').  
+Assigns [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception').  
   
 <a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception_T)_value'></a>
 `value` [T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')  
@@ -84,7 +84,7 @@ The HTTP request method used.
   
 <a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)_exception'></a>
 `exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-Assigns the [Outcome<T>.Exception](https://docs.microsoft.com/en-us/dotnet/api/Outcome<T>.Exception 'Outcome<T>.Exception').  
+Assigns the [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception').  
   
 #### Returns
 [TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  

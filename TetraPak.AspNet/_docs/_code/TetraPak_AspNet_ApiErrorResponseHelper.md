@@ -20,8 +20,8 @@ public static System.Collections.Generic.IDictionary<string,object> ToDictionary
 The object being transformed into a dictionary.  
   
 <a name='TetraPak_AspNet_ApiErrorResponseHelper_ToDictionary(object_TetraPak_AspNet_DictionaryTransformationOptions_)_options'></a>
-`options` [TetraPak.AspNet.DictionaryTransformationOptions](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.DictionaryTransformationOptions 'TetraPak.AspNet.DictionaryTransformationOptions')  
-(optional; default = [TetraPak.AspNet.DictionaryTransformationOptions.Default](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.DictionaryTransformationOptions.Default 'TetraPak.AspNet.DictionaryTransformationOptions.Default')  
+`options` [DictionaryTransformationOptions](TetraPak_AspNet_DictionaryTransformationOptions.md 'TetraPak.AspNet.DictionaryTransformationOptions')  
+(optional; default = [Default](TetraPak_AspNet_DictionaryTransformationOptions.md#TetraPak_AspNet_DictionaryTransformationOptions_Default 'TetraPak.AspNet.DictionaryTransformationOptions.Default')  
 Options to control the transformation.  
   
 #### Returns
