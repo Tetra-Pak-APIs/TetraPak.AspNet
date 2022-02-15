@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -130,16 +131,24 @@ namespace TetraPak.AspNet
                         
                     var jwt = jwtHandler.ReadJwtToken(token.Identity);
                     var mappedClaims = new List<Claim>();
+                    var existingTypes = new HashSet<string>(claimsIdentity.Claims.Select(i => i.Type));
                     foreach (var claim in jwt.Claims)
                     {
-                        mappedClaims.Add(s_claimsMap.TryGetValue(claim.Type, out var toType)
-                            ? new Claim(toType, claim.Value)
-                            : new Claim(claim.Type, claim.Value));
+                        var type = s_claimsMap.TryGetValue(claim.Type, out var toType)
+                            ? toType
+                            : claim.Type;
+                        if (!existingTypes.Contains(type))
+                        {
+                            mappedClaims.Add(new Claim(type, claim.Value));
+                        }                            
                     }
                     
                     claimsIdentity.BootstrapContext = token;
                     claimsIdentity.AddClaims(mappedClaims);
-                    claimsIdentity.AddClaim(new Claim(claimsIdentity.NameClaimType, jwt.Subject));
+                    if (claimsIdentity.Claims.All(i => i.Type != claimsIdentity.NameClaimType))
+                    {
+                        claimsIdentity.AddClaim(new Claim(claimsIdentity.NameClaimType, jwt.Subject));
+                    }
                 }
             }
             
