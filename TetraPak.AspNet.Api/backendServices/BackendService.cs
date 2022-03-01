@@ -93,7 +93,7 @@ namespace TetraPak.AspNet.Api
         public MultiStringValue Scope => Endpoints.Scope;
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Endpoints.GetConfiguredValue(key);
+        public string GetConfiguredValue(string key, params string[] fallbackKeys) => Endpoints.GetConfiguredValue(key);
 
         /// <inheritdoc />
         public Task<Outcome<string>> GetClientIdAsync(

@@ -315,23 +315,28 @@ Cancellation token for cancellation the operation.
 
 Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync#TetraPak_AspNet_Auth_IServiceAuthConfig_GetClientSecretAsync_TetraPak_AspNet_AuthContext,System_Nullable{System_Threading_CancellationToken}_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext,System.Nullable{System.Threading.CancellationToken})')  
   
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string)'></a>
-## ServiceEndpoint.GetConfiguredValue(string) Method
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string_string__)'></a>
+## ServiceEndpoint.GetConfiguredValue(string, string[]) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
 unaffected by delegates or other (internal) logic.  
 ```csharp
-public string GetConfiguredValue(string key);
+public string? GetConfiguredValue(string key, params string[] fallbackKeys);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string)_key'></a>
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string_string__)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the requested value.  
+  
+<a name='TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string_string__)_fallbackKeys'></a>
+`fallbackKeys` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+(optional)<br/>  
+Zero or more keys to be tested if [key](TetraPak_AspNet_Api_ServiceEndpoint.md#TetraPak_AspNet_Api_ServiceEndpoint_GetConfiguredValue(string_string__)_key 'TetraPak.AspNet.Api.ServiceEndpoint.GetConfiguredValue(string, string[]).key') does not yield a result.   
   
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') when a value is configured; otherwise `null`.  
 
-Implements [GetConfiguredValue(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String)')  
+Implements [GetConfiguredValue(string, string[])](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String,System_String[]_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String,System.String[])')  
   
 <a name='TetraPak_AspNet_Api_ServiceEndpoint_GetHashCode()'></a>
 ## ServiceEndpoint.GetHashCode() Method

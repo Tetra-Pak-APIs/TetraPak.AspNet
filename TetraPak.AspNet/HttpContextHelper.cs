@@ -5,10 +5,12 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
@@ -486,19 +488,22 @@ namespace TetraPak.AspNet
         ///   otherwise <c>null</c>.  
         /// </returns>
         public static string? GetItemValue(this HttpRequest request, HttpRequestElement element, string key)
-            => element switch
+        {
+            return element switch
             {
-                HttpRequestElement.Header => request.Headers.ContainsKey(key) 
+                HttpRequestElement.Url => request.GetDisplayUrl(),
+                HttpRequestElement.Headers => request.Headers.ContainsKey(key)
                     ? request.Headers[key].ToString()
                     : null,
-                HttpRequestElement.Query => request.Query.ContainsKey(key) 
+                HttpRequestElement.Query => request.Query.ContainsKey(key)
                     ? request.Query[key].ToString()
                     : null,
                 _ => null
             };
+        }
 
         /// <summary>
-        ///   Examines a <see cref="HttpRequest"/> applying a criteria (<see cref="HttpComparison"/>)
+        ///   Examines a <see cref="HttpRequest"/> applying a criteria (<see cref="ScriptComparisonExpression"/>)
         ///   and returns a value to indicate whether it is a match. 
         /// </summary>
         /// <param name="request">
@@ -513,13 +518,38 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>true</c> if <paramref name="criteria"/> results in a match; otherwise <c>false</c>.
         /// </returns>
-        /// <seealso cref="IsMatch(HttpComparison,HttpRequest,StringComparison)"/>
+        /// <seealso cref="IsMatch(ScriptExpression,HttpRequest,StringComparison)"/>
         public static bool IsMatch(
             this HttpRequest request,
-            HttpComparison criteria, 
+            ScriptExpression criteria, 
+            StringComparison comparison = StringComparison.InvariantCulture) 
+            =>
+            criteria.IsMatch(request, comparison);
+
+        /// <summary>
+        ///   Examines a <see cref="HttpRequest"/> applying a criteria (<see cref="ScriptComparisonExpression"/>)
+        ///   and returns a value to indicate whether it is a match. 
+        /// </summary>
+        /// <param name="request">
+        ///   The extended <see cref="HttpRequest"/>.
+        /// </param>
+        /// <param name="criteria">
+        ///   Specifies the criteria in its textual representation.
+        /// </param>
+        /// <param name="comparison">
+        ///   Specifies how to compare <see cref="string"/>s.
+        /// </param>
+        /// <returns>
+        ///   <c>true</c> if <paramref name="criteria"/> results in a match; otherwise <c>false</c>.
+        /// </returns>
+        /// <seealso cref="IsMatch(ScriptExpression,HttpRequest,StringComparison)"/>
+        public static bool IsMatch(
+            this HttpRequest request,
+            string criteria, 
             StringComparison comparison = StringComparison.InvariantCulture)
         {
-            return criteria.IsMatch(request, comparison);
+            var parseOutcome = ScriptExpression.Parse(criteria);
+            return parseOutcome && request.IsMatch(parseOutcome.Value!, comparison);
         }
         
         /// <summary>
@@ -527,8 +557,9 @@ namespace TetraPak.AspNet
         ///   and returns a value to indicate whether it is a match.
         /// </summary>
         /// <param name="criteria">
-        ///   The extended <see cref="HttpComparison"/> criteria.
-        /// </param>        /// <param name="request">
+        ///   The extended <see cref="ScriptComparisonExpression"/> criteria.
+        /// </param>
+        /// <param name="request">
         ///   The <see cref="HttpRequest"/>.
         /// </param>
         /// <param name="comparison">
@@ -537,15 +568,14 @@ namespace TetraPak.AspNet
         /// <returns>
         ///   <c>true</c> if <paramref name="criteria"/> results in a match; otherwise <c>false</c>.
         /// </returns>
-        /// <seealso cref="IsMatch(HttpRequest,HttpComparison,StringComparison)"/>
+        /// <seealso cref="IsMatch(HttpRequest,ScriptExpression,StringComparison)"/>
         public static bool IsMatch(
-            this HttpComparison criteria, 
+            this ScriptExpression criteria, 
             HttpRequest request, 
-            StringComparison comparison = StringComparison.InvariantCulture)
-        {
-            return criteria.IsMatch(request, comparison);
-        }
-        
+            StringComparison comparison = StringComparison.InvariantCulture) 
+            =>
+            criteria.IsMatch(request, comparison);
+
         /// <summary>
         ///   Validates a <see cref="string"/> as a HTTP method (verb) and throws a <see cref="FormatException"/>
         ///   if it is not recognised.  

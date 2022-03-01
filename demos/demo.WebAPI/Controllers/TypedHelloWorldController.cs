@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
                     userId = userIdentity?.Name ?? "(unresolved)" 
                 } );
 
-            // transient API, using token exchange (TX) or client credentials (CC) ...
+            // transient Api, using token exchange (TX) or client credentials (CC) ...
             HttpQuery query = id is null
                 ? null!
                 : $"id={id}";
@@ -79,9 +79,7 @@ namespace WebAPI.Controllers
                 case "cc": 
                     // note This is an example of how you can use a POC property to fetch the endpoint:
                     return await this.RespondAsync(
-                        await _helloWorldService.Endpoints.HelloWorldWithClientCredentials
-                            .GetRawAsync(query)
-                        );
+                        await _helloWorldService.Endpoints.HelloWorldWithTokenExchange.GetRawAsync(query));
                 
                 default:
                     return await this.RespondAsync(Outcome<object>.Fail(new Exception($"Invalid proxy value: '{svc}'")));

@@ -7,9 +7,9 @@ namespace TetraPak.AspNet
     /// <summary>
     ///   A string compatible (criteria) expression for use with HTTP requests.
     /// </summary>
-    public class HttpComparison : StringValueBase
+    public class ScriptComparisonExpression : ScriptExpression
     {
-        static readonly Regex s_regex = new Regex(@"(?<element>[a-zA-Z]+)\s*\[\s*(?<key>.+)\s*\]\s*(?<operator>[\=\!]+)\s*(?<value>.+)", 
+        static readonly Regex s_regex = new Regex(@"(?<element>[a-zA-Z]+)\s*(?<index>\[\s*(?<key>.+)\s*\]\s*)?(?<operator>[\=\~\!]+)\s*(?<value>.+)", 
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         
         /// <summary>
@@ -17,6 +17,11 @@ namespace TetraPak.AspNet
         /// </summary>
         public static class Elements
         {
+            /// <summary>
+            ///   Represents the request URL.
+            /// </summary>
+            public const string Url = "url";
+
             /// <summary>
             ///   Represents request headers collection.
             /// </summary>
@@ -26,22 +31,6 @@ namespace TetraPak.AspNet
             ///   Represents request query.
             /// </summary>
             public const string Query = "query";
-        }
-
-        /// <summary>
-        ///   Specifies recognized comparison operators.
-        /// </summary>
-        public static class Operators
-        {
-            /// <summary>
-            ///   The "is equal" operator.
-            /// </summary>
-            public const string IsEqual = "==";
-
-            /// <summary>
-            ///   The "is not equal" operator.
-            /// </summary>
-            public const string IsNotEqual = "!=";
         }
 
         /// <summary>
@@ -71,8 +60,8 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Specifies the comparative operator.
         /// </summary>
-        /// <seealso cref="ComparisonOperation"/>
-        public ComparisonOperation Operation { get; private set; }
+        /// <seealso cref="ScriptComparisonOperator"/>
+        public ScriptComparisonOperator Operator { get; private set; }
 
         /// <summary>
         ///   Gets the value to be matched with the specified <see cref="Key"/>. 
@@ -94,10 +83,17 @@ namespace TetraPak.AspNet
         ///   <c>true</c> if <see cref="ItemValue"/> matches <see cref="Value"/>;
         ///   otherwise <c>false</c>.
         /// </returns>
-        public bool IsMatch(HttpRequest request, StringComparison comparison = StringComparison.InvariantCulture)
+        public override bool IsMatch(HttpRequest request, StringComparison comparison = StringComparison.InvariantCulture)
         {
             var itemValue = ItemValue(request);
             return itemValue is not null && isMatch(itemValue, comparison);
+        }
+
+        internal override ScriptExpression Invert()
+        {
+            var op = Operator.Invert();
+            var stringValue = $"{Element}[{Key}] {op.ToStringToken()} {Value}";
+            return new ScriptComparisonExpression(stringValue);
         }
 
         /// <summary>
@@ -119,7 +115,8 @@ namespace TetraPak.AspNet
 
             var element = match.Groups["element"].Value.ToLowerInvariant() switch
             {
-                Elements.Headers => HttpRequestElement.Header,
+                Elements.Url => HttpRequestElement.Url,
+                Elements.Headers => HttpRequestElement.Headers,
                 Elements.Query => HttpRequestElement.Query,
                 _ => HttpRequestElement.None
             };
@@ -127,17 +124,19 @@ namespace TetraPak.AspNet
             if (element == HttpRequestElement.None)
                 return null;
 
-            var operation = match.Groups["operator"].Value switch
+            var opToken = match.Groups["operator"].Value switch
             {
-                Operators.IsEqual => ComparisonOperation.IsEqual,
-                Operators.IsNotEqual => ComparisonOperation.IsNotEqual,
-                _ => ComparisonOperation.None
+                ScriptOperators.IsEqual => ScriptComparisonOperator.IsEqual,
+                ScriptOperators.IsNotEqual => ScriptComparisonOperator.NotEqual,
+                ScriptOperators.Contains => ScriptComparisonOperator.Contains,
+                ScriptOperators.NotContains => ScriptComparisonOperator.NotContains,
+                _ => ScriptComparisonOperator.None
             };
-            if (operation is ComparisonOperation.None)
+            if (opToken is ScriptComparisonOperator.None)
                 return null;
                 
             Element = element;
-            Operation = operation;
+            Operator = opToken;
             Key = match.Groups["key"].Value!;
             Value = match.Groups["value"].Value!;
             return stringValue;
@@ -145,81 +144,34 @@ namespace TetraPak.AspNet
 
         bool isMatch(string value, StringComparison comparison)
         {
-            return Operation switch
+            return Operator switch
             {
-                ComparisonOperation.IsEqual => value.Equals(Value, comparison),
-                ComparisonOperation.IsNotEqual => !value.Equals(Value, comparison),
+                ScriptComparisonOperator.IsEqual => value.Equals(Value, comparison),
+                ScriptComparisonOperator.NotEqual => !value.Equals(Value, comparison),
+                ScriptComparisonOperator.Contains => value.Contains(Value!, comparison),
+                ScriptComparisonOperator.NotContains => !value.Contains(Value!, comparison),
                 _ => false
             };
         }
 
         /// <summary>
-        ///   Implicit type cast operation <see cref="string"/> => <see cref="HttpComparison"/>. 
+        ///   Implicit type cast operation <see cref="string"/> => <see cref="ScriptComparisonExpression"/>. 
         /// </summary>
         /// <param name="stringValue">
-        ///   The textual representation of a <see cref="HttpComparison"/> value.
+        ///   The textual representation of a <see cref="ScriptComparisonExpression"/> value.
         /// </param>
         /// <returns></returns>
-        public static implicit operator HttpComparison(string? stringValue) => new(stringValue);
+        public static implicit operator ScriptComparisonExpression(string? stringValue) => new(stringValue);
 
         /// <summary>
-        ///   Initializes the <see cref="HttpComparison"/>. 
+        ///   Initializes the <see cref="ScriptComparisonExpression"/>. 
         /// </summary>
         /// <param name="value">
-        ///   A textual representation of a <see cref="HttpComparison"/> value.
+        ///   A textual representation of a <see cref="ScriptComparisonExpression"/> value.
         /// </param>
-        public HttpComparison(string? value)
+        public ScriptComparisonExpression(string? value)
         : base(value)
         {
-            
         }
-    }
-    
-    /// <summary>
-    ///   Used to express a HTTP request element.
-    /// </summary>
-    /// <seealso cref="HttpComparison"/>
-    public enum HttpRequestElement
-    {
-        /// <summary>
-        ///   No element is specified.
-        /// </summary>
-        None,
-        
-        /// <summary>
-        ///   Specifies the <see cref="HttpRequest.Query"/> element.
-        /// </summary>
-        Query,
-        
-        /// <summary>
-        ///   Specifies the <see cref="HttpRequest.Headers"/> element.
-        /// </summary>
-        Header,
-        
-        /// <summary>
-        ///   Specifies the <see cref="HttpRequest.Body"/> element.
-        /// </summary>
-        Body
-    }
-
-    /// <summary>
-    ///   used to express a comparison operation.
-    /// </summary>
-    public enum ComparisonOperation
-    {
-        /// <summary>
-        ///   No (recognized) comparison operation is expressed. 
-        /// </summary>
-        None,
-        
-        /// <summary>
-        ///   Specified the "is equal" operation.
-        /// </summary>
-        IsEqual,
-        
-        /// <summary>
-        ///   Specified the "is not equal" operation.
-        /// </summary>
-        IsNotEqual
     }
 }

@@ -21,7 +21,7 @@ namespace TetraPak.AspNet.Api.Auth
         /// <summary>
         ///   Configures the app service for Jwt Bearer Authentication while specifying a cache implementation.
         /// </summary>
-        /// <param name="c">
+        /// <param name="collection">
         ///   A <see cref="IServiceCollection"/>, to be configured for the requested auth flow.
         /// </param>
         /// <param name="defaultScheme">
@@ -36,16 +36,17 @@ namespace TetraPak.AspNet.Api.Auth
         /// </returns>
         /// <seealso cref="UseTetraPakApiAuthentication"/>
         public static AuthenticationBuilder AddTetraPakJwtBearerAssertion(
-            this IServiceCollection c,
+            this IServiceCollection collection,
             string? defaultScheme = null, 
             JwBearerAssertionOptions? options = null)
         {
-            return c.AddAuthentication(defaultScheme ?? JwtBearerDefaults.AuthenticationScheme)
+            return collection.AddTetraPakConfigDelegate<TetraPakApiConfigDelegate>()
+                    .AddAuthentication(defaultScheme ?? JwtBearerDefaults.AuthenticationScheme)
                     .AddTetraPakJwtBearerAssertion(options);
         }
 
         /// <summary>
-        ///   Adds Tetra Pak recommended JWT bearer assertion to the API while specifying
+        ///   Adds Tetra Pak recommended JWT bearer assertion to the api while specifying
         ///   the caching implementation type.
         /// </summary>
         /// <param name="builder">

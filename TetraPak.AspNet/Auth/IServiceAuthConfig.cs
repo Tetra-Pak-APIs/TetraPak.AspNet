@@ -84,10 +84,14 @@ namespace TetraPak.AspNet.Auth
         /// <param name="key">
         ///   Identifies the requested value.
         /// </param>
+        /// <param name="fallbackKeys">
+        ///   (optional)<br/>
+        ///   Zero or more keys to be tested if <paramref name="key"/> does not yield a result. 
+        /// </param>
         /// <returns>
         ///   A <see cref="string"/> when a value is configured; otherwise <c>null</c>.
         /// </returns>
-        string? GetConfiguredValue(string key);
+        string? GetConfiguredValue(string key, params string[] fallbackKeys);
 
         /// <summary>
         ///   Gets the configuration path.

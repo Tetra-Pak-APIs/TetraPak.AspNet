@@ -443,7 +443,21 @@ namespace TetraPak.AspNet
             CancellationToken? cancellationToken = null) => OnGetScopeAsync(authContext, useDefault, cancellationToken);
 
         /// <inheritdoc />
-        public string? GetConfiguredValue(string key) => Section![key];
+        public string? GetConfiguredValue(string key, params string[] fallbackKeys)
+        {
+            var value = Section![key];
+            if (!string.IsNullOrWhiteSpace(value) || !fallbackKeys.Any())
+                return value;
+
+            foreach (var fallbackKey in fallbackKeys)
+            {
+                value = Section![fallbackKey];
+                if (!string.IsNullOrWhiteSpace(value))
+                    return value;
+            }
+
+            return null;
+        }
 
         /// <summary>
         ///   Gets a client id.

@@ -19,7 +19,7 @@ namespace TetraPak.AspNet.Auth
         bool? _validateLifetime;
         string? _devProxy;
         string? _authenticationScheme;
-        HttpComparison? _devProxyIsMutedWhen;
+        ScriptComparisonExpression? _devProxyIsMutedWhen;
         // ReSharper restore NotAccessedField.Local
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace TetraPak.AspNet.Auth
         ///   Gets or sets a criteria that (when true) disables the DevProxy during the current
         ///   request/response round trip. 
         /// </summary>
-        public HttpComparison? DevProxyIsMutedWhen
+        public ScriptComparisonExpression? DevProxyIsMutedWhen
         {
             get => GetFromFieldThenSection<string>();
             set => _devProxyIsMutedWhen = value;

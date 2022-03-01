@@ -123,17 +123,22 @@ Cancellation token for cancellation the operation.
 #### Returns
 [System.Threading.Tasks.Task&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')[TetraPak.Outcome&lt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Threading.Tasks.Task-1 'System.Threading.Tasks.Task`1')  
   
-<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string)'></a>
-## IServiceAuthConfig.GetConfiguredValue(string) Method
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string_string__)'></a>
+## IServiceAuthConfig.GetConfiguredValue(string, string[]) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
 unaffected by delegates or other (internal) logic.  
 ```csharp
-string? GetConfiguredValue(string key);
+string? GetConfiguredValue(string key, params string[] fallbackKeys);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string)_key'></a>
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string_string__)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the requested value.  
+  
+<a name='TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string_string__)_fallbackKeys'></a>
+`fallbackKeys` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+(optional)<br/>  
+Zero or more keys to be tested if [key](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string_string__)_key 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(string, string[]).key') does not yield a result.   
   
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  

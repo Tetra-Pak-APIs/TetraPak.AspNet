@@ -24,7 +24,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         
         readonly string _url;
         readonly TetraPakConfig _config;
-        readonly HttpComparison? _isMutedWhenCriteria;
+        readonly ScriptComparisonExpression? _isMutedWhenCriteria;
 
         readonly IHttpClientProvider _httpClientProvider;
 
@@ -221,7 +221,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
             TetraPakConfig config, 
             IHttpClientProvider httpClientProvider, 
             string url,
-            HttpComparison? isMutedWhenCriteria,
+            ScriptComparisonExpression? isMutedWhenCriteria,
             bool isDebugging)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));

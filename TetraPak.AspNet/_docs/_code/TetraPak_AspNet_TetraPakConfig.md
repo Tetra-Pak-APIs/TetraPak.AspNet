@@ -504,23 +504,28 @@ Cancellation token for cancellation the operation.
 
 Implements [GetClientSecretAsync(AuthContext, Nullable<CancellationToken>)](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetClientSecretAsync(TetraPak_AspNet_AuthContext_System_Nullable_System_Threading_CancellationToken_) 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetClientSecretAsync(TetraPak.AspNet.AuthContext, System.Nullable&lt;System.Threading.CancellationToken&gt;)')  
   
-<a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string)'></a>
-## TetraPakConfig.GetConfiguredValue(string) Method
+<a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string_string__)'></a>
+## TetraPakConfig.GetConfiguredValue(string, string[]) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
 unaffected by delegates or other (internal) logic.  
 ```csharp
-public string? GetConfiguredValue(string key);
+public string? GetConfiguredValue(string key, params string[] fallbackKeys);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string)_key'></a>
+<a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string_string__)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the requested value.  
+  
+<a name='TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string_string__)_fallbackKeys'></a>
+`fallbackKeys` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+(optional)<br/>  
+Zero or more keys to be tested if [key](TetraPak_AspNet_TetraPakConfig.md#TetraPak_AspNet_TetraPakConfig_GetConfiguredValue(string_string__)_key 'TetraPak.AspNet.TetraPakConfig.GetConfiguredValue(string, string[]).key') does not yield a result.   
   
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') when a value is configured; otherwise `null`.  
 
-Implements [GetConfiguredValue(string)](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string) 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(string)')  
+Implements [GetConfiguredValue(string, string[])](TetraPak_AspNet_Auth_IServiceAuthConfig.md#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue(string_string__) 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(string, string[])')  
   
 <a name='TetraPak_AspNet_TetraPakConfig_GetDiscoveryDocumentAsync()'></a>
 ## TetraPakConfig.GetDiscoveryDocumentAsync() Method

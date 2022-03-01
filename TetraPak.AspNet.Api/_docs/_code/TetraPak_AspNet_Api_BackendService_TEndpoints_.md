@@ -325,23 +325,28 @@ Implements [GetCollectionAsync<T>(string, HttpQuery?, RequestOptions?)](TetraPak
 #### See Also
 - [GetRawAsync(string, HttpQuery?, RequestOptions?)](TetraPak_AspNet_Api_IBackendService.md#TetraPak_AspNet_Api_IBackendService_GetRawAsync(string_TetraPak_AspNet_HttpQuery__TetraPak_AspNet_Api_RequestOptions_) 'TetraPak.AspNet.Api.IBackendService.GetRawAsync(string, TetraPak.AspNet.HttpQuery?, TetraPak.AspNet.Api.RequestOptions?)')
   
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string)'></a>
-## BackendService&lt;TEndpoints&gt;.GetConfiguredValue(string) Method
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string_string__)'></a>
+## BackendService&lt;TEndpoints&gt;.GetConfiguredValue(string, string[]) Method
 Gets a "raw" configured value, as it is specified within the [Microsoft.Extensions.Configuration.IConfiguration](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.Configuration.IConfiguration 'Microsoft.Extensions.Configuration.IConfiguration') sources,  
 unaffected by delegates or other (internal) logic.  
 ```csharp
-public string GetConfiguredValue(string key);
+public string GetConfiguredValue(string key, params string[] fallbackKeys);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string)_key'></a>
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string_string__)_key'></a>
 `key` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 Identifies the requested value.  
+  
+<a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string_string__)_fallbackKeys'></a>
+`fallbackKeys` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
+(optional)<br/>  
+Zero or more keys to be tested if [key](TetraPak_AspNet_Api_BackendService_TEndpoints_.md#TetraPak_AspNet_Api_BackendService_TEndpoints__GetConfiguredValue(string_string__)_key 'TetraPak.AspNet.Api.BackendService&lt;TEndpoints&gt;.GetConfiguredValue(string, string[]).key') does not yield a result.   
   
 #### Returns
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 A [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') when a value is configured; otherwise `null`.  
 
-Implements [GetConfiguredValue(string)](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String)')  
+Implements [GetConfiguredValue(string, string[])](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue#TetraPak_AspNet_Auth_IServiceAuthConfig_GetConfiguredValue_System_String,System_String[]_ 'TetraPak.AspNet.Auth.IServiceAuthConfig.GetConfiguredValue(System.String,System.String[])')  
   
 <a name='TetraPak_AspNet_Api_BackendService_TEndpoints__GetEndpoint(string)'></a>
 ## BackendService&lt;TEndpoints&gt;.GetEndpoint(string) Method

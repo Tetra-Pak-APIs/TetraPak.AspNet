@@ -283,7 +283,21 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public string GetConfiguredValue(string key) => Configuration[key];
+        public string? GetConfiguredValue(string key, params string[] fallbackKeys)
+        {
+            var value = Configuration![key];
+            if (!string.IsNullOrWhiteSpace(value) || !fallbackKeys.Any())
+                return value;
+
+            foreach (var fallbackKey in fallbackKeys)
+            {
+                value = Configuration![fallbackKey];
+                if (!string.IsNullOrWhiteSpace(value))
+                    return value;
+            }
+
+            return null;
+        }
 
         internal ServiceEndpoint WithConfig(TetraPakConfig tetraPakConfig, IConfiguration config)
         {

@@ -12,6 +12,7 @@
 | [ServiceEndpoints](TetraPak_AspNet_Api_ServiceEndpoints.md 'TetraPak.AspNet.Api.ServiceEndpoints') | A specialized [TetraPak.Configuration.ConfigurationSection](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Configuration.ConfigurationSection 'TetraPak.Configuration.ConfigurationSection') for named URLs.<br/> |
 | [ServiceInvalidEndpoint](TetraPak_AspNet_Api_ServiceInvalidEndpoint.md 'TetraPak.AspNet.Api.ServiceInvalidEndpoint') | Represents a service endpoint with issues.<br/>The reason for such endpoints is to assist in creating meaningful error handling.<br/> |
 | [TetraPakApiAuthorizationService](TetraPak_AspNet_Api_TetraPakApiAuthorizationService.md 'TetraPak.AspNet.Api.TetraPakApiAuthorizationService') | This class is intended to be instantiated via a dependency injection mechanism. <br/> |
+| [TetraPakApiConfigDelegate](TetraPak_AspNet_Api_TetraPakApiConfigDelegate.md 'TetraPak.AspNet.Api.TetraPakApiConfigDelegate') | Provides api-specific configuration support.   <br/> |
 | [TetraPakServiceHelper](TetraPak_AspNet_Api_TetraPakServiceHelper.md 'TetraPak.AspNet.Api.TetraPakServiceHelper') | Assists in configuring support for Tetra Pak managed services consumption.<br/> |
 
 | Interfaces | |

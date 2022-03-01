@@ -14,10 +14,10 @@ namespace TetraPak.AspNet
     public class TetraPakConfigDelegate : ITetraPakConfigDelegate
     {
         readonly ITetraPakSecretsProvider? _secretsProvider;
-        IServiceAuthConfig? _authConfig;
+        protected IServiceAuthConfig? _authConfig;
 
         /// <inheritdoc />
-        public virtual RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue) 
+        public RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue) 
             => OnResolveConfiguredEnvironment(configuredValue);
 
         /// <inheritdoc />
@@ -53,13 +53,13 @@ namespace TetraPak.AspNet
         /// </remarks>
         protected virtual Task<Outcome<Credentials>> OnGetClientCredentialsAsync(AuthContext authContext)
         {
-            validateConfigIsInitialized();
+            ValidateConfigIsInitialized();
             return _secretsProvider is { }
                 ? getClientCredentialsFromSecretsProvider(authContext)
-                : getClientCredentialsFromConfiguration(authContext.GrantType);
+                : OnGetClientCredentialsFromConfiguration(authContext.GrantType);
         }
 
-        void validateConfigIsInitialized()
+        protected void ValidateConfigIsInitialized()
         {
             if (_authConfig is null)
                 throw new InvalidOperationException(
@@ -77,7 +77,7 @@ namespace TetraPak.AspNet
             else
             {
                 // no client id provided from secrets provider; try resolve it from configuration ...
-                var clientCredentialsOutcome = await getClientCredentialsFromConfiguration(GrantType.None);
+                var clientCredentialsOutcome = await OnGetClientCredentialsFromConfiguration(GrantType.None);
                 if (!clientCredentialsOutcome)
                     return Outcome<Credentials>.Fail(clientCredentialsOutcome.Exception);
 
@@ -95,7 +95,7 @@ namespace TetraPak.AspNet
             return Outcome<Credentials>.Success(new Credentials(clientId, clientSecret));
         }
 
-        Task<Outcome<Credentials>> getClientCredentialsFromConfiguration(GrantType grantType)
+        protected virtual Task<Outcome<Credentials>> OnGetClientCredentialsFromConfiguration(GrantType grantType)
         {
             var clientId = _authConfig!.GetConfiguredValue(nameof(TetraPakConfig.ClientId));
             if (string.IsNullOrWhiteSpace(clientId))
@@ -111,16 +111,6 @@ namespace TetraPak.AspNet
 
             return Task.FromResult(Outcome<Credentials>.Success(new Credentials(clientId, clientSecret)));
         }
-
-        // bool tryGetTetraPakConfig(out IConfigurationSection section)
-        // {
-        //     var key = TetraPakAuthConfig.DefaultSectionIdentifier;
-        //     section = _tetraPakConfig.GetSection(key);
-        //     if (section is null || section.IsEmpty())
-        //         return false;
-        //
-        //     return true;
-        // }
 
         /// <summary>
         ///   Called to obtain the client's requested scope.

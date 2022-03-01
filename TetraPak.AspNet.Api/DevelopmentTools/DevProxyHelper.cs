@@ -31,7 +31,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         /// </param>
         /// <param name="isMutedWhen">
         ///     (optional)<br/>
-        ///     Specified a <see cref="HttpComparison"/> criteria that, when <c>true</c>, mutes the
+        ///     Specified a <see cref="ScriptComparisonExpression"/> criteria that, when <c>true</c>, mutes the
         ///     DevProxy, allowing the request to just pass through to the API.
         /// </param>
         /// <param name="isDebugDevProxy">
@@ -40,10 +40,11 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
         /// <returns>
         ///   The <paramref name="app"/> instance.
         /// </returns>
-        internal static IApplicationBuilder UseDevelopmentProxy(this IApplicationBuilder app,
+        internal static IApplicationBuilder UseDevelopmentProxy(
+            this IApplicationBuilder app,
             IWebHostEnvironment env,
             string proxyUrl,
-            HttpComparison? isMutedWhen = null , 
+            ScriptComparisonExpression? isMutedWhen = null , 
             bool isDebugDevProxy = false)
         {
             lock (s_syncRoot)

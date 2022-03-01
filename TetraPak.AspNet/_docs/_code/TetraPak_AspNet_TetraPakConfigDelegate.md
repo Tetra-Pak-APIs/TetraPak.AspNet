@@ -127,7 +127,7 @@ A [TetraPak.RuntimeEnvironment](https://docs.microsoft.com/en-us/dotnet/api/Tetr
 ## TetraPakConfigDelegate.ResolveConfiguredEnvironment(string) Method
 Called to resolve the configured (or null, when un-configured) runtime environment.  
 ```csharp
-public virtual TetraPak.RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue);
+public TetraPak.RuntimeEnvironment ResolveConfiguredEnvironment(string configuredValue);
 ```
 #### Parameters
 <a name='TetraPak_AspNet_TetraPakConfigDelegate_ResolveConfiguredEnvironment(string)_configuredValue'></a>

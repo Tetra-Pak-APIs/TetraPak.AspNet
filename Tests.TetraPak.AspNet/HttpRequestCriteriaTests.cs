@@ -14,15 +14,15 @@ namespace Tests.TetraPak.AspNet
         [Fact]
         public void TestParsing()
         {
-            HttpComparison criteria = "query[phrase]==world";
+            ScriptComparisonExpression criteria = "query[phrase]==world";
             Assert.Equal(HttpRequestElement.Query, criteria.Element);
-            Assert.Equal(ComparisonOperation.IsEqual, criteria.Operation);
+            Assert.Equal(ScriptComparisonOperator.IsEqual, criteria.Operator);
             Assert.Equal("phrase", criteria.Key);
             Assert.Equal("world", criteria.Value);
             
             criteria = "query[phrase]!=world";
             Assert.Equal(HttpRequestElement.Query, criteria.Element);
-            Assert.Equal(ComparisonOperation.IsNotEqual, criteria.Operation);
+            Assert.Equal(ScriptComparisonOperator.NotEqual, criteria.Operator);
             Assert.Equal("phrase", criteria.Key);
             Assert.Equal("world", criteria.Value);
         }
@@ -41,7 +41,7 @@ namespace Tests.TetraPak.AspNet
             Assert.False(request.IsMatch("query[phrase] == world"));       // unmatched value
             Assert.True(request.IsMatch("query[PHRASE] == WORLD", IgnoreCase));
             
-            Assert.False(request.IsMatch("unknown[phrase] == world"));          // unrecognized element
+            Assert.False(request.IsMatch("unknown[phrase] == world"));     // unrecognized element
             Assert.False(request.IsMatch("query [ say ] == world"));       // unmatched key
             Assert.False(request.IsMatch("query[phrase] == unmatched"));   // unmatched value
         }
@@ -50,20 +50,51 @@ namespace Tests.TetraPak.AspNet
         public void TestHeadersMatch()
         {
             const StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
-            var headers = new Dictionary<string, string> { ["X-test"] = "World" };
+            var headers = new Dictionary<string, string> { ["X-test"] = "Hello Cruel World" };
             var request = makeRequest("https://test.nu/hello", headers);
-            Assert.True(request.IsMatch("headers[X-test] == World"));
+            Assert.True(request.IsMatch("headers[X-test] == Hello Cruel World"));
             Assert.True(request.IsMatch("headers[X-test] != Unmatched"));
 
             // test case sensitivity (element and key is always case-insensitive)
-            Assert.True(request.IsMatch("HEADERS[X-test] == World"));
-            Assert.True(request.IsMatch("headers[X-TEST] == World"));
-            Assert.False(request.IsMatch("headers[X-test] == world"));          // unmatched value
-            Assert.True(request.IsMatch("headers[X-test] == WORLD", IgnoreCase));
+            Assert.True(request.IsMatch("HEADERS[X-test] == Hello Cruel World"));
+            Assert.True(request.IsMatch("headers[X-TEST] == Hello Cruel World"));
+            Assert.False(request.IsMatch("headers[X-test] == Hello Sweet World"));  // unmatched value
+            Assert.True(request.IsMatch("headers[X-test] == HELLO CRUEL WORLD", IgnoreCase));
             
-            Assert.False(request.IsMatch("unknown[phrase] == world"));          // unrecognized element
-            Assert.False(request.IsMatch("headers [ say ] == world"));       // unmatched key
-            Assert.False(request.IsMatch("headers[X-test] == unmatched"));   // unmatched value
+            Assert.False(request.IsMatch("unknown[phrase] == hello cruel world"));  // unrecognized element
+            Assert.False(request.IsMatch("headers [ say ] == hello cruel world"));  // unmatched key
+            Assert.False(request.IsMatch("headers[X-test] == unmatched"));          // unmatched value
+        }
+
+        [Fact]
+        public void TestContainsMatch()
+        {
+            const StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
+            var headers = new Dictionary<string, string> { ["X-test"] = "Hello Cruel World" };
+            var request = makeRequest("https://test.nu/api/hello", headers);
+            Assert.True(request.IsMatch("headers[X-test] ~~ Cruel"));
+            Assert.True(request.IsMatch("headers[X-test] !~ Sweet"));
+            Assert.True(request.IsMatch("url ~~ /api/"));
+            Assert.False(request.IsMatch("url !~ /api/"));
+            Assert.True(request.IsMatch("url ~~ /api/ && headers[X-test] ~~ World"));
+            Assert.False(request.IsMatch("url ~~ /api/ && headers[X-test] !~ World"));
+        }
+
+        [Fact]
+        public void TestLogicalExpressions()
+        {
+            const StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
+            var headers = new Dictionary<string, string> { ["X-test"] = "Hello", ["Y-test"] = "World" };
+            var request = makeRequest("https://test.nu/hello?say=Hello&scope=World", headers);
+            var criteria = "headers[X-test] == Hello && headers[Y-test] == World || query[say] == Hello && query[scope] == World";
+            Assert.True(request.IsMatch(criteria, IgnoreCase));
+            criteria = "headers[X-test] == Hi && headers[Y-test] == World || query[say] == Hi && query[scope] == World";
+            Assert.False(request.IsMatch(criteria, IgnoreCase));
+
+            criteria = "!(headers[X-test] == Hi && headers[Y-test] == World) && query[scope] == World";
+            Assert.True(request.IsMatch(criteria, IgnoreCase));
+            criteria = "query[scope] == World && !(headers[X-test] == Hi && headers[Y-test] == World)";
+            Assert.True(request.IsMatch(criteria, IgnoreCase));
         }
 
         static HttpRequest makeRequest(string url, Dictionary<string,string>? headers = null)
@@ -75,6 +106,7 @@ namespace Tests.TetraPak.AspNet
                 {
                     Method = "GET",
                     Scheme = uri.Scheme,
+                    Host = new HostString(uri.Host),
                     Path = uri.AbsolutePath,
                     QueryString = new QueryString(uri.Query)
                 }
