@@ -107,16 +107,20 @@ namespace TetraPak.AspNet.Auth
                         ? new PathString(tetraPakConfig.CallbackPath) 
                         : null;
                     options.GetClaimsFromUserInfoEndpoint = true;
-                    
+
+                    // note: The Tetra Pak Login api automatically grants all configured scope (and adds "openid")
+                    //       unless we state a configured, custom, scope here. This is not according to the OIDC RFC
+                    //       but we need to remove default scope for that feature to work
+                    options.Scope.Clear();   
                     foreach (var scopeItem in tetraPakConfig.Scope)
                     {
                         options.Scope.Add(scopeItem);
                     }
 
-                    if (options.Scope.All(s => s != "openid"))
-                    {
-                        options.Scope.Add("openid");
-                    }
+                    // if (options.Scope.All(s => s != "openid")) obsolete we no longer pass default scope
+                    // {
+                    //     options.Scope.Add("openid");
+                    // }
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

@@ -27,9 +27,6 @@
 | [Headers](TetraPak_AspNet_Headers.md 'TetraPak.AspNet.Headers') | Provides constants for SDK supported headers <br/> |
 | [HttpClientHelper](TetraPak_AspNet_HttpClientHelper.md 'TetraPak.AspNet.HttpClientHelper') | Provides convenient methods for registering a [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider').<br/> |
 | [HttpClientOptions](TetraPak_AspNet_HttpClientOptions.md 'TetraPak.AspNet.HttpClientOptions') | Used to configure a [System.Net.Http.HttpClient](https://docs.microsoft.com/en-us/dotnet/api/System.Net.Http.HttpClient 'System.Net.Http.HttpClient') through a [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider').<br/> |
-| [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison') | A string compatible (criteria) expression for use with HTTP requests.<br/> |
-| [HttpComparison.Elements](TetraPak_AspNet_HttpComparison_Elements.md 'TetraPak.AspNet.HttpComparison.Elements') | Specifies recognized elements of a HTTP request, for use in comparison operations.<br/> |
-| [HttpComparison.Operators](TetraPak_AspNet_HttpComparison_Operators.md 'TetraPak.AspNet.HttpComparison.Operators') | Specifies recognized comparison operators.<br/> |
 | [HttpContextHelper](TetraPak_AspNet_HttpContextHelper.md 'TetraPak.AspNet.HttpContextHelper') | Provides extension and convenience method for [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpContext 'Microsoft.AspNetCore.Http.HttpContext').<br/> |
 | [HttpEnumOutcome&lt;T&gt;](TetraPak_AspNet_HttpEnumOutcome_T_.md 'TetraPak.AspNet.HttpEnumOutcome&lt;T&gt;') | Represents the outcome of a HTTP request.<br/> |
 | [HttpOutcome&lt;T&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;') | Represents the outcome of a HTTP request.<br/> |
@@ -42,6 +39,9 @@
 | [HttpServerException](TetraPak_AspNet_HttpServerException.md 'TetraPak.AspNet.HttpServerException') | An exception that codifies the issue using a standard HTTP status code.<br/>Very suitable for many server related exceptions.<br/>(see: <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">list of HTTP status codes</a>).<br/> |
 | [HttpVerbs](TetraPak_AspNet_HttpVerbs.md 'TetraPak.AspNet.HttpVerbs') | Provides [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String') constants for standard HTTP methods.<br/> |
 | [RoutingHelper](TetraPak_AspNet_RoutingHelper.md 'TetraPak.AspNet.RoutingHelper') | Convenient extension methods for working with controllers and endpoints. <br/> |
+| [ScriptComparisonExpression](TetraPak_AspNet_ScriptComparisonExpression.md 'TetraPak.AspNet.ScriptComparisonExpression') | A string compatible (criteria) expression for use with HTTP requests.<br/> |
+| [ScriptComparisonExpression.Elements](TetraPak_AspNet_ScriptComparisonExpression_Elements.md 'TetraPak.AspNet.ScriptComparisonExpression.Elements') | Specifies recognized elements of a HTTP request, for use in comparison operations.<br/> |
+| [ScriptExpression](TetraPak_AspNet_ScriptExpression.md 'TetraPak.AspNet.ScriptExpression') | Abstracts a HTTP expression <br/> |
 | [TetraPakAuthConfig](TetraPak_AspNet_TetraPakAuthConfig.md 'TetraPak.AspNet.TetraPakAuthConfig') | OBSOLETE!<br/>Please use the [TetraPakConfig](TetraPak_AspNet_TetraPakConfig.md 'TetraPak.AspNet.TetraPakConfig') class instead.<br/> |
 | [TetraPakClaimsTransformation](TetraPak_AspNet_TetraPakClaimsTransformation.md 'TetraPak.AspNet.TetraPakClaimsTransformation') | A basic (abstract) implementation of the [ITetraPakClaimsTransformation](TetraPak_AspNet_ITetraPakClaimsTransformation.md 'TetraPak.AspNet.ITetraPakClaimsTransformation') interface.<br/> |
 | [TetraPakClaimsTransformationHelper](TetraPak_AspNet_TetraPakClaimsTransformationHelper.md 'TetraPak.AspNet.TetraPakClaimsTransformationHelper') | Provides convenience methods fo setting up claims transformation.<br/> |
@@ -63,6 +63,6 @@
 
 | Enums | |
 | :--- | :--- |
-| [ComparisonOperation](TetraPak_AspNet_ComparisonOperation.md 'TetraPak.AspNet.ComparisonOperation') | used to express a comparison operation.<br/> |
 | [HttpRequestElement](TetraPak_AspNet_HttpRequestElement.md 'TetraPak.AspNet.HttpRequestElement') | Used to express a HTTP request element.<br/> |
+| [ScriptComparisonOperator](TetraPak_AspNet_ScriptComparisonOperator.md 'TetraPak.AspNet.ScriptComparisonOperator') | used to express a comparison operation.<br/> |
 | [ServiceScope](TetraPak_AspNet_ServiceScope.md 'TetraPak.AspNet.ServiceScope') | Can be used to specify a scope when configuring (DI) services. <br/> |

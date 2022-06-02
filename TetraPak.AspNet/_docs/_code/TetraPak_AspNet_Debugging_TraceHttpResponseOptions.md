@@ -94,6 +94,25 @@ public TetraPak.AspNet.Debugging.TraceHttpResponseOptions WithDetail(string valu
 #### See Also
 - [Detail](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Detail 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Detail')
   
+<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection)'></a>
+## TraceHttpResponseOptions.WithDirection(HttpDirection) Method
+(fluent API)<br/>  
+Assigns the [Direction](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Direction 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Direction') property and returns `this`.  
+```csharp
+public TetraPak.AspNet.Debugging.TraceHttpResponseOptions WithDirection(TetraPak.AspNet.Debugging.HttpDirection value);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection)_value'></a>
+`value` [HttpDirection](TetraPak_AspNet_Debugging_HttpDirection.md 'TetraPak.AspNet.Debugging.HttpDirection')  
+The [HttpDirection](TetraPak_AspNet_Debugging_HttpDirection.md 'TetraPak.AspNet.Debugging.HttpDirection') value.  
+  
+#### Returns
+[TraceHttpResponseOptions](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions')  
+#### See Also
+- [Direction](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Direction 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Direction')
+- [WithInitiator(string, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(string_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(string, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
+- [WithInitiator(object, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(object, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
+  
 <a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_object_)'></a>
 ## TraceHttpResponseOptions.WithDirection(HttpDirection, object?) Method
 (fluent API)<br/>  
@@ -142,24 +161,24 @@ Assign this value to also invoke [WithInitiator(string, Nullable&lt;HttpDirectio
 - [WithInitiator(string, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(string_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(string, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
 - [WithInitiator(object, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(object, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
   
-<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection)'></a>
-## TraceHttpResponseOptions.WithDirection(HttpDirection) Method
+<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object)'></a>
+## TraceHttpResponseOptions.WithInitiator(object) Method
 (fluent API)<br/>  
 Assigns the [Direction](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Direction 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Direction') property and returns `this`.  
 ```csharp
-public TetraPak.AspNet.Debugging.TraceHttpResponseOptions WithDirection(TetraPak.AspNet.Debugging.HttpDirection value);
+public TetraPak.AspNet.Debugging.TraceHttpResponseOptions WithInitiator(object initiator);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection)_value'></a>
-`value` [HttpDirection](TetraPak_AspNet_Debugging_HttpDirection.md 'TetraPak.AspNet.Debugging.HttpDirection')  
-The [HttpDirection](TetraPak_AspNet_Debugging_HttpDirection.md 'TetraPak.AspNet.Debugging.HttpDirection') value.  
+<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object)_initiator'></a>
+`initiator` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
+The [Initiator](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Initiator 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Initiator') value.  
   
 #### Returns
 [TraceHttpResponseOptions](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions')  
 #### See Also
-- [Direction](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Direction 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Direction')
-- [WithInitiator(string, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(string_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(string, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
-- [WithInitiator(object, Nullable&lt;HttpDirection&gt;)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithInitiator(object, System.Nullable&lt;TetraPak.AspNet.Debugging.HttpDirection&gt;)')
+- [Initiator](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Initiator 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Initiator')
+- [WithDirection(HttpDirection, string?)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_string_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithDirection(TetraPak.AspNet.Debugging.HttpDirection, string?)')
+- [WithDirection(HttpDirection, object?)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_object_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithDirection(TetraPak.AspNet.Debugging.HttpDirection, object?)')
   
 <a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object_System_Nullable_TetraPak_AspNet_Debugging_HttpDirection_)'></a>
 ## TraceHttpResponseOptions.WithInitiator(object, Nullable&lt;HttpDirection&gt;) Method
@@ -177,25 +196,6 @@ The [Initiator](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#Tet
 `direction` [System.Nullable&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')[HttpDirection](TetraPak_AspNet_Debugging_HttpDirection.md 'TetraPak.AspNet.Debugging.HttpDirection')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Nullable-1 'System.Nullable`1')  
 (optional)<br/>  
 Assign this value to also invoke [WithDirection(HttpDirection, object?)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_object_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithDirection(TetraPak.AspNet.Debugging.HttpDirection, object?)').  
-  
-#### Returns
-[TraceHttpResponseOptions](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions')  
-#### See Also
-- [Initiator](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Initiator 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Initiator')
-- [WithDirection(HttpDirection, string?)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_string_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithDirection(TetraPak.AspNet.Debugging.HttpDirection, string?)')
-- [WithDirection(HttpDirection, object?)](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md#TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithDirection(TetraPak_AspNet_Debugging_HttpDirection_object_) 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions.WithDirection(TetraPak.AspNet.Debugging.HttpDirection, object?)')
-  
-<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object)'></a>
-## TraceHttpResponseOptions.WithInitiator(object) Method
-(fluent API)<br/>  
-Assigns the [Direction](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Direction 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Direction') property and returns `this`.  
-```csharp
-public TetraPak.AspNet.Debugging.TraceHttpResponseOptions WithInitiator(object initiator);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Debugging_TraceHttpResponseOptions_WithInitiator(object)_initiator'></a>
-`initiator` [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object')  
-The [Initiator](TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions.md#TetraPak_AspNet_Debugging_AbstractTraceHttpMessageOptions_Initiator 'TetraPak.AspNet.Debugging.AbstractTraceHttpMessageOptions.Initiator') value.  
   
 #### Returns
 [TraceHttpResponseOptions](TetraPak_AspNet_Debugging_TraceHttpResponseOptions.md 'TetraPak.AspNet.Debugging.TraceHttpResponseOptions')  

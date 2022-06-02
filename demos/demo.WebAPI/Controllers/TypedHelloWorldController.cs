@@ -64,6 +64,10 @@ namespace WebAPI.Controllers
             HttpQuery query = id is null
                 ? null!
                 : $"id={id}";
+
+            
+            
+            
             switch (svc.ToLowerInvariant())
             {
                 case "tx":

@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj" />
+      <PackageReference Include="TetraPak.Common" Version="1.0.1-beta.6" />
     </ItemGroup>
 
 </Project>

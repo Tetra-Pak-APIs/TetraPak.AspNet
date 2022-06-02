@@ -18,8 +18,8 @@ namespace demo.WebApp.Controllers
         [Authorize]
         public async Task<IActionResult> Details()
         {
-            var token = await this.GetAccessTokenAsync();
-            return View(new DetailsModel(User.Identity, token));
+            var tokenOutcome = await this.GetAccessTokenAsync();
+            return View(new DetailsModel(User.Identity, tokenOutcome.Value));
         }
 
         public IActionResult Privacy()

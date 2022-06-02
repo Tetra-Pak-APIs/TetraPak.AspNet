@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using TetraPak.AspNet.Debugging;
 using TetraPak.AspNet.Diagnostics;
 using TetraPak.Logging;
 using TetraPak.Serialization;
@@ -111,7 +110,7 @@ namespace TetraPak.AspNet
                 return Task.FromResult(Outcome<ActorToken>.Success(actorToken));
 
             var tetraPakConfig = self.RequestServices.GetRequiredService<TetraPakConfig>();
-            headerKey = forceStandardHeader //|| tetraPakConfig.AuthorizationHeader is null obsolete
+            headerKey = forceStandardHeader 
                 ? HeaderNames.Authorization
                 : tetraPakConfig.AuthorizationHeader;
             var ss = self.Request.Headers[headerKey].FirstOrDefault();
@@ -190,6 +189,7 @@ namespace TetraPak.AspNet
 
             return Task.FromResult(Outcome<ActorToken>.Fail(new Exception("Id token not found")));
         }
+        
         
         /// <summary>
         ///   Gets all tokens from an <see cref="HttpContext"/>.

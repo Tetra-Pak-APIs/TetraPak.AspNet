@@ -72,12 +72,12 @@ namespace Tests.TetraPak.AspNet
             const StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
             var headers = new Dictionary<string, string> { ["X-test"] = "Hello Cruel World" };
             var request = makeRequest("https://test.nu/api/hello", headers);
-            Assert.True(request.IsMatch("headers[X-test] ~~ Cruel"));
-            Assert.True(request.IsMatch("headers[X-test] !~ Sweet"));
-            Assert.True(request.IsMatch("url ~~ /api/"));
-            Assert.False(request.IsMatch("url !~ /api/"));
-            Assert.True(request.IsMatch("url ~~ /api/ && headers[X-test] ~~ World"));
-            Assert.False(request.IsMatch("url ~~ /api/ && headers[X-test] !~ World"));
+            Assert.True(request.IsMatch("headers[X-test] ~~ Cruel", IgnoreCase));
+            Assert.True(request.IsMatch("headers[X-test] !~ Sweet", IgnoreCase));
+            Assert.True(request.IsMatch("url ~~ /api/", IgnoreCase));
+            Assert.False(request.IsMatch("url !~ /api/", IgnoreCase));
+            Assert.True(request.IsMatch("url ~~ /api/ && headers[X-test] ~~ World", IgnoreCase));
+            Assert.False(request.IsMatch("url ~~ /api/ && headers[X-test] !~ World", IgnoreCase));
         }
 
         [Fact]

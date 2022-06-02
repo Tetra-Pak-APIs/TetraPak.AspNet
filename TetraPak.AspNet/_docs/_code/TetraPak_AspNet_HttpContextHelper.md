@@ -316,59 +316,86 @@ The extended [Microsoft.AspNetCore.Http.HttpContext](https://docs.microsoft.com/
 `true` if an endpoint is resolved and protected.   
             
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)'></a>
-## HttpContextHelper.IsMatch(HttpRequest, HttpComparison, StringComparison) Method
-Examines a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') applying a criteria ([HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison'))  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_string_System_StringComparison)'></a>
+## HttpContextHelper.IsMatch(HttpRequest, string, StringComparison) Method
+Examines a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') applying a criteria ([ScriptComparisonExpression](TetraPak_AspNet_ScriptComparisonExpression.md 'TetraPak.AspNet.ScriptComparisonExpression'))  
 and returns a value to indicate whether it is a match.   
 ```csharp
-public static bool IsMatch(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.HttpComparison criteria, System.StringComparison comparison=System.StringComparison.InvariantCulture);
+public static bool IsMatch(this Microsoft.AspNetCore.Http.HttpRequest request, string criteria, System.StringComparison comparison=System.StringComparison.InvariantCulture);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_request'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_string_System_StringComparison)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_criteria'></a>
-`criteria` [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')  
-Specifies the criteria.  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_string_System_StringComparison)_criteria'></a>
+`criteria` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Specifies the criteria in its textual representation.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_comparison'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_string_System_StringComparison)_comparison'></a>
 `comparison` [System.StringComparison](https://docs.microsoft.com/en-us/dotnet/api/System.StringComparison 'System.StringComparison')  
 Specifies how to compare [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.HttpComparison, System.StringComparison).criteria') results in a match; otherwise `false`.  
+`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_string_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, string, System.StringComparison).criteria') results in a match; otherwise `false`.  
             
 #### See Also
-- [IsMatch(HttpComparison, HttpRequest, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.HttpComparison, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison)')
+- [IsMatch(ScriptExpression, HttpRequest, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.ScriptExpression, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison)')
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)'></a>
-## HttpContextHelper.IsMatch(HttpComparison, HttpRequest, StringComparison) Method
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison)'></a>
+## HttpContextHelper.IsMatch(HttpRequest, ScriptExpression, StringComparison) Method
+Examines a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest') applying a criteria ([ScriptComparisonExpression](TetraPak_AspNet_ScriptComparisonExpression.md 'TetraPak.AspNet.ScriptComparisonExpression'))  
+and returns a value to indicate whether it is a match.   
+```csharp
+public static bool IsMatch(this Microsoft.AspNetCore.Http.HttpRequest request, TetraPak.AspNet.ScriptExpression criteria, System.StringComparison comparison=System.StringComparison.InvariantCulture);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison)_request'></a>
+`request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
+The extended [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison)_criteria'></a>
+`criteria` [ScriptExpression](TetraPak_AspNet_ScriptExpression.md 'TetraPak.AspNet.ScriptExpression')  
+Specifies the criteria.  
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison)_comparison'></a>
+`comparison` [System.StringComparison](https://docs.microsoft.com/en-us/dotnet/api/System.StringComparison 'System.StringComparison')  
+Specifies how to compare [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
+  
+#### Returns
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.ScriptExpression, System.StringComparison).criteria') results in a match; otherwise `false`.  
+            
+#### See Also
+- [IsMatch(ScriptExpression, HttpRequest, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.ScriptExpression, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison)')
+  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)'></a>
+## HttpContextHelper.IsMatch(ScriptExpression, HttpRequest, StringComparison) Method
 Applies a criteria to a [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 and returns a value to indicate whether it is a match.  
 ```csharp
-public static bool IsMatch(this TetraPak.AspNet.HttpComparison criteria, Microsoft.AspNetCore.Http.HttpRequest request, System.StringComparison comparison=System.StringComparison.InvariantCulture);
+public static bool IsMatch(this TetraPak.AspNet.ScriptExpression criteria, Microsoft.AspNetCore.Http.HttpRequest request, System.StringComparison comparison=System.StringComparison.InvariantCulture);
 ```
 #### Parameters
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria'></a>
-`criteria` [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')  
-The extended [HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison') criteria.  
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria'></a>
+`criteria` [ScriptExpression](TetraPak_AspNet_ScriptExpression.md 'TetraPak.AspNet.ScriptExpression')  
+The extended [ScriptComparisonExpression](TetraPak_AspNet_ScriptComparisonExpression.md 'TetraPak.AspNet.ScriptComparisonExpression') criteria.  
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_request'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_request'></a>
 `request` [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest')  
 The [Microsoft.AspNetCore.Http.HttpRequest](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Http.HttpRequest 'Microsoft.AspNetCore.Http.HttpRequest').  
   
-<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_comparison'></a>
+<a name='TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_comparison'></a>
 `comparison` [System.StringComparison](https://docs.microsoft.com/en-us/dotnet/api/System.StringComparison 'System.StringComparison')  
 Specifies how to compare [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')s.  
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_HttpComparison_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.HttpComparison, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison).criteria') results in a match; otherwise `false`.  
+`true` if [criteria](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(TetraPak_AspNet_ScriptExpression_Microsoft_AspNetCore_Http_HttpRequest_System_StringComparison)_criteria 'TetraPak.AspNet.HttpContextHelper.IsMatch(TetraPak.AspNet.ScriptExpression, Microsoft.AspNetCore.Http.HttpRequest, System.StringComparison).criteria') results in a match; otherwise `false`.  
             
 #### See Also
-- [IsMatch(HttpRequest, HttpComparison, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_HttpComparison_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.HttpComparison, System.StringComparison)')
+- [IsMatch(HttpRequest, ScriptExpression, StringComparison)](TetraPak_AspNet_HttpContextHelper.md#TetraPak_AspNet_HttpContextHelper_IsMatch(Microsoft_AspNetCore_Http_HttpRequest_TetraPak_AspNet_ScriptExpression_System_StringComparison) 'TetraPak.AspNet.HttpContextHelper.IsMatch(Microsoft.AspNetCore.Http.HttpRequest, TetraPak.AspNet.ScriptExpression, System.StringComparison)')
   
 <a name='TetraPak_AspNet_HttpContextHelper_RespondAsync(Microsoft_AspNetCore_Http_HttpContext_System_Net_HttpStatusCode_object__System_Threading_CancellationToken)'></a>
 ## HttpContextHelper.RespondAsync(HttpContext, HttpStatusCode, object?, CancellationToken) Method

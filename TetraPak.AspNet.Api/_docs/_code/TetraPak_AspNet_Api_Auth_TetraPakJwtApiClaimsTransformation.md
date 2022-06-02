@@ -5,7 +5,7 @@ Performs automatic claims transformation but ensures the access token used to
 call the user information service gets exchanged (necessary for APIs).  
 (See [TetraPak.AspNet.TetraPakJwtClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakJwtClaimsTransformation 'TetraPak.AspNet.TetraPakJwtClaimsTransformation') for more details).  
 ```csharp
-public class TetraPakJwtApiClaimsTransformation : TetraPak.AspNet.TetraPakJwtClaimsTransformation
+public sealed class TetraPakJwtApiClaimsTransformation : TetraPak.AspNet.TetraPakJwtClaimsTransformation
 ```
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; [TetraPak.AspNet.TetraPakClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakClaimsTransformation 'TetraPak.AspNet.TetraPakClaimsTransformation') &#129106; [TetraPak.AspNet.TetraPakJwtClaimsTransformation](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.TetraPakJwtClaimsTransformation 'TetraPak.AspNet.TetraPakJwtClaimsTransformation') &#129106; TetraPakJwtApiClaimsTransformation  

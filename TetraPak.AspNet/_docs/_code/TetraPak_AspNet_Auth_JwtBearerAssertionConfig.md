@@ -75,10 +75,10 @@ public string? DevProxy { get; set; }
 Gets or sets a criteria that (when true) disables the DevProxy during the current  
 request/response round trip.   
 ```csharp
-public TetraPak.AspNet.HttpComparison? DevProxyIsMutedWhen { get; set; }
+public TetraPak.AspNet.ScriptComparisonExpression? DevProxyIsMutedWhen { get; set; }
 ```
 #### Property Value
-[HttpComparison](TetraPak_AspNet_HttpComparison.md 'TetraPak.AspNet.HttpComparison')
+[ScriptComparisonExpression](TetraPak_AspNet_ScriptComparisonExpression.md 'TetraPak.AspNet.ScriptComparisonExpression')
   
 <a name='TetraPak_AspNet_Auth_JwtBearerAssertionConfig_IsDebugDevProxy'></a>
 ## JwtBearerAssertionConfig.IsDebugDevProxy Property

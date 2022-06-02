@@ -208,9 +208,9 @@ namespace TetraPak.AspNet.Api
             HttpRequestMessage request, 
             HttpClientOptions? clientOptions = null,
             CancellationToken? cancellationToken = null) 
-        => sendAsync(request, resolveDiagnosticsTimer(request), clientOptions, cancellationToken);
+        => OnSendAsync(request, resolveDiagnosticsTimer(request), clientOptions, cancellationToken);
 
-        async Task<HttpOutcome<HttpResponseMessage>> sendAsync(
+        protected virtual async Task<HttpOutcome<HttpResponseMessage>> OnSendAsync(
             HttpRequestMessage requestMessage, 
             string? timer,
             HttpClientOptions? clientOptions,
@@ -316,12 +316,11 @@ namespace TetraPak.AspNet.Api
         }
 
         /// <inheritdoc />
-        public Task<HttpOutcome<HttpResponseMessage>> PostRawAsync(
-            string path,
+        public Task<HttpOutcome<HttpResponseMessage>> PostRawAsync(string path,
             HttpContent content,
             RequestOptions? options = null) 
         =>
-            sendAsync(
+            OnSendAsync(
                 OnMakeRequestMessage(HttpMethod.Post, path, content), 
                 TimerPost, 
                 options?.ClientOptions,
@@ -351,40 +350,43 @@ namespace TetraPak.AspNet.Api
             {
                 Content = content
             };
-
-            if (!content.Headers.Any())
-                return message;
-                
-            var headers = message.Headers.ToDictionary(i => i.Key);
-            if (!headers.Any())
-            {
-                foreach (var (key, value) in content.Headers)
-                {
-                    message.Headers.TryAddWithoutValidation(key, value);
-                }
-
-                return message;
-            }
-            
-            foreach (var header in content.Headers)
-            {
-                if (!headers.ContainsKey(header.Key))
-                {
-                    message.Headers.Add(header.Key, header.Value);
-                    continue;
-                }
-
-                var values = message.Headers.GetValues(header.Key).ToList();
-                var append = header.Value.Where(i => !values.Contains(i));
-                foreach (var value in append)
-                {
-                    message.Headers.TryAddWithoutValidation(header.Key, value);
-                }
-            }
-            content.Headers.Clear();
-            message.Content = content;
-
             return message;
+
+            // if (!content.Headers.Any())
+            //     return message;
+            //
+            // message.TryAddHeadersFrom(content);
+            //     
+            // var headers = message.Headers.ToDictionary(i => i.Key);
+            // if (!headers.Any())
+            // {
+            //     foreach (var (key, value) in content.Headers)
+            //     {
+            //         message.Headers.TryAddWithoutValidation(key, value);
+            //     }
+            //
+            //     return message;
+            // }
+            //
+            // foreach (var header in content.Headers)
+            // {
+            //     if (!headers.ContainsKey(header.Key))
+            //     {
+            //         message.Headers.Add(header.Key, header.Value);
+            //         continue;
+            //     }
+            //
+            //     var values = message.Headers.GetValues(header.Key).ToList();
+            //     var append = header.Value.Where(i => !values.Contains(i));
+            //     foreach (var value in append)
+            //     {
+            //         message.Headers.TryAddWithoutValidation(header.Key, value);
+            //     }
+            // }
+            // content.Headers.Clear();
+            // message.Content = content;
+            //
+            // return message;
         }
 
         /// <inheritdoc />
@@ -393,7 +395,7 @@ namespace TetraPak.AspNet.Api
             HttpContent content, 
             RequestOptions? options = null) 
         =>
-            sendAsync(
+            OnSendAsync(
                 OnMakeRequestMessage(HttpMethod.Put, path, content),
                 TimerPut,
                 options?.ClientOptions,
@@ -404,7 +406,7 @@ namespace TetraPak.AspNet.Api
             string path, 
             HttpContent content,RequestOptions? options = null)
         => 
-            sendAsync(
+            OnSendAsync(
                 OnMakeRequestMessage(HttpMethod.Patch, path, content),
                 TimerPatch,
                 options?.ClientOptions,
@@ -421,7 +423,7 @@ namespace TetraPak.AspNet.Api
             var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
             var get = new System.Net.Http.HttpMethod(HttpVerbs.Get); 
             var request = new HttpRequestMessage(get, usePath.TrimStart('/'));
-            return sendAsync(request, TimerGet, options?.ClientOptions, options?.CancellationToken);
+            return OnSendAsync(request, TimerGet, options?.ClientOptions, options?.CancellationToken);
         }
 
         /// <inheritdoc />
@@ -459,7 +461,7 @@ namespace TetraPak.AspNet.Api
             var usePath = $"{OnConstructPath(path)}{(useQuery ? queryParameters!.ToString(true) : "")}";
             var delete = new System.Net.Http.HttpMethod(HttpVerbs.Delete); 
             var request = new HttpRequestMessage(delete, usePath.TrimStart('/'));
-            return sendAsync(request, TimerDelete, options?.ClientOptions, options?.CancellationToken);
+            return OnSendAsync(request, TimerDelete, options?.ClientOptions, options?.CancellationToken);
         }
 
         /// <summary>

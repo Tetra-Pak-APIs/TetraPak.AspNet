@@ -16,18 +16,19 @@ using WebAPI.spike_customAuthScheme;
 
 namespace WebAPI
 {
-    public class Startup
+    public sealed class Startup
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+            public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
             services.AddSingleton<ITetraPakSecretsProvider, MySecretsProvider>();
             services.AddSingleton<ITetraPakConfigDelegate, MyConfigDelegate>();
+            
             services.AddTetraPakJwtBearerAssertion()
                     .AddJwtBearer("obsolete", options => // <-- spike: test additional (AAD) JWT Bearer auth scheme
                     {

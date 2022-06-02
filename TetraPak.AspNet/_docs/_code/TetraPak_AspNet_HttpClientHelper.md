@@ -8,6 +8,21 @@ public static class HttpClientHelper
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; HttpClientHelper  
 ### Methods
+<a name='TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
+## HttpClientHelper.AddTetraPakHttpClientProvider(IServiceCollection) Method
+Registers a default Tetra Pak [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider') implementation.  
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakHttpClientProvider(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services'></a>
+`services` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The service collection.  
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The [services](TetraPak_AspNet_HttpClientHelper.md#TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services 'TetraPak.AspNet.HttpClientHelper.AddTetraPakHttpClientProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection).services').  
+  
 <a name='TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IHttpClientProvider_)'></a>
 ## HttpClientHelper.AddTetraPakHttpClientProvider(IServiceCollection, Func&lt;IServiceProvider,IHttpClientProvider&gt;) Method
 Adds a custom [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider') factory.  
@@ -26,19 +41,4 @@ The [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNe
 #### Returns
 [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
 The [services](TetraPak_AspNet_HttpClientHelper.md#TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IHttpClientProvider_)_services 'TetraPak.AspNet.HttpClientHelper.AddTetraPakHttpClientProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func&lt;System.IServiceProvider,TetraPak.AspNet.IHttpClientProvider&gt;).services').  
-  
-<a name='TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
-## HttpClientHelper.AddTetraPakHttpClientProvider(IServiceCollection) Method
-Registers a default Tetra Pak [IHttpClientProvider](TetraPak_AspNet_IHttpClientProvider.md 'TetraPak.AspNet.IHttpClientProvider') implementation.  
-```csharp
-public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakHttpClientProvider(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);
-```
-#### Parameters
-<a name='TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services'></a>
-`services` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The service collection.  
-  
-#### Returns
-[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The [services](TetraPak_AspNet_HttpClientHelper.md#TetraPak_AspNet_HttpClientHelper_AddTetraPakHttpClientProvider(Microsoft_Extensions_DependencyInjection_IServiceCollection)_services 'TetraPak.AspNet.HttpClientHelper.AddTetraPakHttpClientProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection).services').  
   

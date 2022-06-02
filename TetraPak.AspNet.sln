@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demonstration Projects", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo.WebApp", "demos\demo.WebApp\demo.WebApp.csproj", "{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.Common", "..\TetraPak.Common\TetraPak.Common\TetraPak.Common.csproj", "{3F5B7F9B-6380-4915-B474-B9501A656E3B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo.WebAPI", "demos\demo.WebAPI\demo.WebAPI.csproj", "{09C524DA-F015-4231-BF80-85CFE8502580}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetraPak.AspNet.Api", "TetraPak.AspNet.Api\TetraPak.AspNet.Api.csproj", "{1D1C0D4C-BF00-46DA-B054-59B4B804BE2F}"
@@ -83,10 +81,6 @@ Global
 		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4500B2EF-8BEC-44E3-B8C2-9610363F74E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F5B7F9B-6380-4915-B474-B9501A656E3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09C524DA-F015-4231-BF80-85CFE8502580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09C524DA-F015-4231-BF80-85CFE8502580}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09C524DA-F015-4231-BF80-85CFE8502580}.Release|Any CPU.ActiveCfg = Release|Any CPU

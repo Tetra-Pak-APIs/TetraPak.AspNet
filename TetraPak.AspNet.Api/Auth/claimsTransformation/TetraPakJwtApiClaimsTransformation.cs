@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TetraPak.AspNet.Auth;
 using TetraPak.Logging;
 
@@ -22,19 +23,20 @@ namespace TetraPak.AspNet.Api.Auth
     ///   }
     ///   </code>
     /// </example> 
-    public class TetraPakJwtApiClaimsTransformation : TetraPakJwtClaimsTransformation
+    public sealed class TetraPakJwtApiClaimsTransformation : TetraPakJwtClaimsTransformation
     {
         const string CacheRepository = CacheRepositories.Tokens.Identity;
         
 #pragma warning disable CS8618
         // note: Always gets initialized from OnInitialize
-        protected ITokenExchangeGrantService TokenExchangeGrantService { get; private set; } 
+        ITokenExchangeGrantService TokenExchangeGrantService { get; set; } 
 #pragma warning restore CS8618
 
         
         /// <inheritdoc />
         protected override async Task<Outcome<ActorToken>> OnGetAccessTokenAsync(CancellationToken cancellationToken)
         {
+            var messageId = GetMessageId();
             try
             {
                 var accessTokenOutcome = await base.OnGetAccessTokenAsync(cancellationToken);
@@ -45,7 +47,7 @@ namespace TetraPak.AspNet.Api.Auth
                 if (token!.IsSystemIdentityToken())
                 {
                     var error = HttpServerException.BadRequest("Claims transformation not supported for system identity");
-                    Logger.Warning(error.Message, GetMessageId());
+                    Logger.Warning(error.Message, messageId);
                     return Outcome<ActorToken>.Fail();
                 }
                 
@@ -60,8 +62,10 @@ namespace TetraPak.AspNet.Api.Auth
                 if (!ccOutcome)
                     return Outcome<ActorToken>.Fail(ccOutcome.Exception);
 
+                if (string.IsNullOrEmpty(ccOutcome.Value!.Secret))
+                    return Outcome<ActorToken>.Fail(new Exception("Claims transformation failure: No client was provisioned"));
+                    
                 var credentials = new BasicAuthCredentials(ccOutcome.Value!.Identity, ccOutcome.Value.Secret);
-
                 var bearerToken = accessTokenOutcome.Value as BearerToken;
                 var isBearerToken = bearerToken is { };
                 var subjectToken = isBearerToken
@@ -74,8 +78,10 @@ namespace TetraPak.AspNet.Api.Auth
                     cancellationToken);
 
                 if (!txOutcome || !ActorToken.TryParse(txOutcome.Value!.AccessToken!, out var actorToken))
-                    throw txOutcome.Exception;
-
+                    return Outcome<ActorToken>.Fail(
+                        new Exception($"Claims transformation failure during token exchange: {txOutcome.Exception.Message}. "+
+                                      $"Please enable '{nameof(LogLevel.Trace)}' for more information"));
+                
                 var exchangedToken = isBearerToken
                     ? new BearerToken(actorToken.Identity, false)
                     : actorToken;
@@ -87,7 +93,7 @@ namespace TetraPak.AspNet.Api.Auth
             catch (Exception ex)
             {
                 ex = HttpServerException.InternalServerError($"Claims transformation failure: {ex.Message}", ex);
-                Logger.Error(ex, GetMessageId());
+                Logger.Error(ex, messageId);
                 return Outcome<ActorToken>.Fail(ex);
             }
         }
@@ -97,7 +103,7 @@ namespace TetraPak.AspNet.Api.Auth
             if (Cache is null)
                 return Outcome<ActorToken>.Fail(new Exception("Caching is not supported"));
 
-            return await Cache.GetAsync<ActorToken>(CacheRepository, accessToken);
+            return await Cache.GetAsync<ActorToken>(CacheRepository, accessToken!);
         }
 
         async Task cacheTokenExchangeAsync(ActorToken accessToken, ActorToken exchangedToken)
@@ -106,7 +112,7 @@ namespace TetraPak.AspNet.Api.Auth
             {
                 await Cache.AddOrUpdateAsync(
                     CacheRepository, 
-                    accessToken,
+                    accessToken!,
                     exchangedToken);
             }
         }

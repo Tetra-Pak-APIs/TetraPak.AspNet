@@ -27,21 +27,6 @@ The delegate type (must be a reference type that implements [ITetraPakConfigDele
 #### Returns
 [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
   
-<a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
-## TetraPakConfigHelper.AddTetraPakConfiguration(IServiceCollection) Method
-Adds the Tetra Pak configuration code API as a (DI) service.   
-```csharp
-public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakConfiguration(this Microsoft.Extensions.DependencyInjection.IServiceCollection c);
-```
-#### Parameters
-<a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration(Microsoft_Extensions_DependencyInjection_IServiceCollection)_c'></a>
-`c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The service collection.  
-  
-#### Returns
-[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The service collection.  
-  
 <a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration_T_(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
 ## TetraPakConfigHelper.AddTetraPakConfiguration&lt;T&gt;(IServiceCollection) Method
 Adds a specific implementation for the Tetra Pak configuration API as a (DI) service.   
@@ -57,6 +42,21 @@ The type implementing the Tetra Pak integration configuration code API
   
 #### Parameters
 <a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration_T_(Microsoft_Extensions_DependencyInjection_IServiceCollection)_c'></a>
+`c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The service collection.  
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The service collection.  
+  
+<a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
+## TetraPakConfigHelper.AddTetraPakConfiguration(IServiceCollection) Method
+Adds the Tetra Pak configuration code API as a (DI) service.   
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakConfiguration(this Microsoft.Extensions.DependencyInjection.IServiceCollection c);
+```
+#### Parameters
+<a name='TetraPak_AspNet_TetraPakConfigHelper_AddTetraPakConfiguration(Microsoft_Extensions_DependencyInjection_IServiceCollection)_c'></a>
 `c` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
 The service collection.  
   

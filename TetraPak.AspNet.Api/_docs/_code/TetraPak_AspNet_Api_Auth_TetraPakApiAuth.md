@@ -8,26 +8,6 @@ public static class TetraPakApiAuth
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; TetraPakApiAuth  
 ### Methods
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)'></a>
-## TetraPakApiAuth.AddTetraPakAuthorizationService(IServiceCollection, Func&lt;IServiceProvider,IAuthorizationService&gt;) Method
-Registers a [TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService') for Tetra Pak integration use  
-while providing a factory callback handler.  
-```csharp
-public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakAuthorizationService(this Microsoft.Extensions.DependencyInjection.IServiceCollection collection, System.Func<System.IServiceProvider,TetraPak.AspNet.IAuthorizationService> factory);
-```
-#### Parameters
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_collection'></a>
-`collection` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The extended [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection').  
-  
-<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_factory'></a>
-`factory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  
-The factory callback handler responsible for producing the service.   
-  
-#### Returns
-[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
-The [collection](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_collection 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakAuthorizationService(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func&lt;System.IServiceProvider,TetraPak.AspNet.IAuthorizationService&gt;).collection').  
-  
 <a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService_T_(Microsoft_Extensions_DependencyInjection_IServiceCollection)'></a>
 ## TetraPakApiAuth.AddTetraPakAuthorizationService&lt;T&gt;(IServiceCollection) Method
 Registers a [TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService') type for Tetra Pak integration use.  
@@ -47,6 +27,26 @@ The extended [Microsoft.Extensions.DependencyInjection.IServiceCollection](https
 #### Returns
 [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
 The [collection](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService_T_(Microsoft_Extensions_DependencyInjection_IServiceCollection)_collection 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakAuthorizationService&lt;T&gt;(Microsoft.Extensions.DependencyInjection.IServiceCollection).collection').  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)'></a>
+## TetraPakApiAuth.AddTetraPakAuthorizationService(IServiceCollection, Func&lt;IServiceProvider,IAuthorizationService&gt;) Method
+Registers a [TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService') for Tetra Pak integration use  
+while providing a factory callback handler.  
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddTetraPakAuthorizationService(this Microsoft.Extensions.DependencyInjection.IServiceCollection collection, System.Func<System.IServiceProvider,TetraPak.AspNet.IAuthorizationService> factory);
+```
+#### Parameters
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_collection'></a>
+`collection` [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The extended [Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection').  
+  
+<a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_factory'></a>
+`factory` [System.Func&lt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[System.IServiceProvider](https://docs.microsoft.com/en-us/dotnet/api/System.IServiceProvider 'System.IServiceProvider')[,](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')[TetraPak.AspNet.IAuthorizationService](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.AspNet.IAuthorizationService 'TetraPak.AspNet.IAuthorizationService')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/System.Func-2 'System.Func`2')  
+The factory callback handler responsible for producing the service.   
+  
+#### Returns
+[Microsoft.Extensions.DependencyInjection.IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.Extensions.DependencyInjection.IServiceCollection 'Microsoft.Extensions.DependencyInjection.IServiceCollection')  
+The [collection](TetraPak_AspNet_Api_Auth_TetraPakApiAuth.md#TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakAuthorizationService(Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_System_IServiceProvider_TetraPak_AspNet_IAuthorizationService_)_collection 'TetraPak.AspNet.Api.Auth.TetraPakApiAuth.AddTetraPakAuthorizationService(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func&lt;System.IServiceProvider,TetraPak.AspNet.IAuthorizationService&gt;).collection').  
   
 <a name='TetraPak_AspNet_Api_Auth_TetraPakApiAuth_AddTetraPakJwtBearerAssertion(Microsoft_AspNetCore_Authentication_AuthenticationBuilder_TetraPak_AspNet_Api_Auth_JwBearerAssertionOptions_)'></a>
 ## TetraPakApiAuth.AddTetraPakJwtBearerAssertion(AuthenticationBuilder, JwBearerAssertionOptions?) Method

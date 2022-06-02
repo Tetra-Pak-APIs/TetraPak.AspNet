@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +16,7 @@ using TetraPak.Serialization;
 
 namespace TetraPak.AspNet.Api.DevelopmentTools
 {
-    class DevProxyMiddleware
+    sealed class DevProxyMiddleware
     {
         const string DevProxy = nameof(DevProxy);
         const string CacheRepository = CacheRepositories.Tokens.DevProxy;
@@ -236,7 +235,7 @@ namespace TetraPak.AspNet.Api.DevelopmentTools
 
 #pragma warning disable 8618
         // this class is only initiated from JSON deserialization 
-        class ProxyResponseBody
+        sealed class ProxyResponseBody
         {
             [JsonPropertyName("assertion")]
             public string Token { get; set; }

@@ -31,7 +31,7 @@ namespace TetraPak.AspNet
         /// <summary>
         ///   Gets a Tetra Client Credentials flow service.  
         /// </summary>
-        protected IClientCredentialsProvider? ClientCredentials { get; private set; }
+        protected IClientCredentialsProvider? ClientCredentialsProvider { get; private set; }
 
         /// <summary>
         ///   Gets the current HTTP context.
@@ -92,8 +92,8 @@ namespace TetraPak.AspNet
         /// </returns>
         protected async Task<Outcome<Credentials>> GetClientCredentials()
         {
-            if (ClientCredentials is { })
-                return await ClientCredentials.GetClientCredentialsAsync();
+            if (ClientCredentialsProvider is { })
+                return await ClientCredentialsProvider.GetClientCredentialsAsync();
 
             if (string.IsNullOrWhiteSpace(TetraPakConfig!.ClientId))
                 return Outcome<Credentials>.Fail(
@@ -132,7 +132,7 @@ namespace TetraPak.AspNet
             TetraPakConfig = provider.GetRequiredService<TetraPakConfig>();
             IdentitySource = TetraPakConfig.IdentitySource; 
             UserInformation = provider.GetRequiredService<TetraPakUserInformation>();
-            ClientCredentials = provider.GetService<IClientCredentialsProvider>();
+            ClientCredentialsProvider = provider.GetService<IClientCredentialsProvider>();
         }
     }
 }

@@ -20,6 +20,18 @@ Initializes an empty [DtoRelationshipBase](TetraPak_AspNet_DataTransfers_DtoRela
 public DtoRelationshipBase();
 ```
   
+<a name='TetraPak_AspNet_DataTransfers_DtoRelationshipBase_DtoRelationshipBase(string)'></a>
+## DtoRelationshipBase.DtoRelationshipBase(string) Constructor
+Initializes the [DtoRelationshipBase](TetraPak_AspNet_DataTransfers_DtoRelationshipBase.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipBase').  
+```csharp
+protected DtoRelationshipBase(string type);
+```
+#### Parameters
+<a name='TetraPak_AspNet_DataTransfers_DtoRelationshipBase_DtoRelationshipBase(string)_type'></a>
+`type` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+Initializes the relationship [Rel](TetraPak_AspNet_DataTransfers_DtoRelationshipBase.md#TetraPak_AspNet_DataTransfers_DtoRelationshipBase_Rel 'TetraPak.AspNet.DataTransfers.DtoRelationshipBase.Rel').  
+  
+  
 <a name='TetraPak_AspNet_DataTransfers_DtoRelationshipBase_DtoRelationshipBase(string_Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod__)'></a>
 ## DtoRelationshipBase.DtoRelationshipBase(string, HttpMethod[]) Constructor
 Initializes the [DtoRelationshipBase](TetraPak_AspNet_DataTransfers_DtoRelationshipBase.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipBase').  
@@ -35,18 +47,6 @@ Initializes the relationship [Rel](TetraPak_AspNet_DataTransfers_DtoRelationship
 `verbs` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')[[]](https://docs.microsoft.com/en-us/dotnet/api/System.Array 'System.Array')  
 (optional)<br/>  
 One or more HTTP methods supported by all related resources.  
-  
-  
-<a name='TetraPak_AspNet_DataTransfers_DtoRelationshipBase_DtoRelationshipBase(string)'></a>
-## DtoRelationshipBase.DtoRelationshipBase(string) Constructor
-Initializes the [DtoRelationshipBase](TetraPak_AspNet_DataTransfers_DtoRelationshipBase.md 'TetraPak.AspNet.DataTransfers.DtoRelationshipBase').  
-```csharp
-protected DtoRelationshipBase(string type);
-```
-#### Parameters
-<a name='TetraPak_AspNet_DataTransfers_DtoRelationshipBase_DtoRelationshipBase(string)_type'></a>
-`type` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
-Initializes the relationship [Rel](TetraPak_AspNet_DataTransfers_DtoRelationshipBase.md#TetraPak_AspNet_DataTransfers_DtoRelationshipBase_Rel 'TetraPak.AspNet.DataTransfers.DtoRelationshipBase.Rel').  
   
   
 ### Properties

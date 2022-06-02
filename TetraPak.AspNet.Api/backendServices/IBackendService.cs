@@ -61,15 +61,16 @@ namespace TetraPak.AspNet.Api
         ///   Sends a POST request to the backend service.
         /// </summary>
         /// <param name="path">
-        ///   The path to the requested resource. 
+        ///     The path to the requested resource. 
         /// </param>
         /// <param name="content">
-        ///   The content to be posted.
+        ///     The content to be posted.
         /// </param>
         /// <param name="options">
-        ///   (optional; default=<see cref="RequestOptions.Default"/>)<br/>
-        ///   Specifies options for the request.
+        ///     (optional; default=<see cref="RequestOptions.Default"/>)<br/>
+        ///     Specifies options for the request.
         /// </param>
+        /// <param name="requestMessageDecorator"></param>
         /// <returns>
         ///   An <see cref="Outcome{T}"/> to indicate success/failure and, on success, also carry
         ///   a <see cref="HttpResponseMessage"/> or, on failure, an <see cref="Exception"/>.

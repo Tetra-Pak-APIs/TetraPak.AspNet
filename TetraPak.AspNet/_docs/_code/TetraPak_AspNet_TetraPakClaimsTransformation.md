@@ -24,11 +24,11 @@ protected TetraPak.Caching.ITimeLimitedRepositories? Cache { get; }
 #### Property Value
 [TetraPak.Caching.ITimeLimitedRepositories](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Caching.ITimeLimitedRepositories 'TetraPak.Caching.ITimeLimitedRepositories')
   
-<a name='TetraPak_AspNet_TetraPakClaimsTransformation_ClientCredentials'></a>
-## TetraPakClaimsTransformation.ClientCredentials Property
+<a name='TetraPak_AspNet_TetraPakClaimsTransformation_ClientCredentialsProvider'></a>
+## TetraPakClaimsTransformation.ClientCredentialsProvider Property
 Gets a Tetra Client Credentials flow service.    
 ```csharp
-protected TetraPak.AspNet.Auth.IClientCredentialsProvider? ClientCredentials { get; set; }
+protected TetraPak.AspNet.Auth.IClientCredentialsProvider? ClientCredentialsProvider { get; set; }
 ```
 #### Property Value
 [IClientCredentialsProvider](TetraPak_AspNet_Auth_IClientCredentialsProvider.md 'TetraPak.AspNet.Auth.IClientCredentialsProvider')

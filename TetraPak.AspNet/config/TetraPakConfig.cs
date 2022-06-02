@@ -46,7 +46,7 @@ namespace TetraPak.AspNet
         public static string DefaultSectionIdentifier { get; set; } = "TetraPak";
         
         static readonly object s_syncRoot = new();
-        static readonly MultiStringValue s_defaultScope = new(new []{ "general", "profile", "email", "openid" });
+        // static readonly MultiStringValue s_defaultScope = new(new [] { "general", "profile", "email", "openid" }); obsolete (we no longer pass default scope)
 
         const string KeyAuthorityUrl = "KeyAuthorityUrl";
         const string KeyTokenIssuerUrl = "TokenIssuerUrl";
@@ -423,7 +423,7 @@ namespace TetraPak.AspNet
                 var outcome = GetScopeAsync(new AuthContext(GrantType, this), MultiStringValue.Empty).Result;
                 return outcome ? outcome.Value! : throw new HttpServerConfigurationException("Scope could not be resolved");
             }
-            set => _clientSecret = value;
+            set => _scope = value;
         }
 
         /// <inheritdoc />
@@ -946,13 +946,13 @@ namespace TetraPak.AspNet
         {
             // todo allow config delegate to resolve scope 
             var scope = Section!.GetList<string>(KeyScope, Logger);
-            if (scope.Count == 0)
-                return s_defaultScope;
+            // if (scope.Count == 0) obsolete (we no longer pass default scope)
+            //     return s_defaultScope;
 
-            if (scope.All(i => !i.Equals("openid", StringComparison.InvariantCultureIgnoreCase)))
-            {
-                scope.Add("openid");
-            }
+            // if (scope.All(i => !i.Equals("openid", StringComparison.InvariantCultureIgnoreCase)))
+            // {
+            //     scope.Add("openid");
+            // }
 
             return new MultiStringValue(scope.ToArray());
         }

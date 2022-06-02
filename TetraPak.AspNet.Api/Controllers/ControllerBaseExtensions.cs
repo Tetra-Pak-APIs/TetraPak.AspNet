@@ -162,7 +162,7 @@ namespace TetraPak.AspNet.Api.Controllers
         /// <remarks>
         ///   <para>
         ///   This method automatically resolves whether the outcome is a success or failure and constructs
-        ///   a well-formed response, adhering to Tetra Pak API recommendations. Relying on this method
+        ///   a well-formed response, adhering to Tetra Pak Api recommendations. Relying on this method
         ///   for constructing responses will relieve you from having to write the corresponding boiler plate
         ///   code yourself. Also, should Tetra Pak recommendations change you can simply upgrade the SDK
         ///   tp stay current. 

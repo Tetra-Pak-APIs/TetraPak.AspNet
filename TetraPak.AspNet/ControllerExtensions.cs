@@ -38,7 +38,7 @@ namespace TetraPak.AspNet
         /// </returns>
         public static Task<Outcome<ActorToken>> GetIdentityTokenAsync(this Controller self)
         {
-            return self.HttpContext.Request.GetAccessTokenAsync();
+            return self.HttpContext.GetIdentityTokenAsync();
         }
 
         /// <summary>

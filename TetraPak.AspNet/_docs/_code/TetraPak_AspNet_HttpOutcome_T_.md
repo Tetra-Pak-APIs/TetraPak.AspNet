@@ -48,6 +48,40 @@ public Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod Method 
 [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')
   
 ### Methods
+<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)'></a>
+## HttpOutcome&lt;T&gt;.Fail(HttpMethod) Method
+Creates and returns a failed outcome.  
+```csharp
+public static TetraPak.AspNet.HttpOutcome<T> Fail(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)_method'></a>
+`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+  
+#### Returns
+[TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
+An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate failure and also carry a default  
+value of type [T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T').  
+  
+<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)'></a>
+## HttpOutcome&lt;T&gt;.Fail(HttpMethod, Exception) Method
+Creates and returns a failed outcome that carries an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
+```csharp
+public static TetraPak.AspNet.HttpOutcome<T> Fail(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, System.Exception exception);
+```
+#### Parameters
+<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)_method'></a>
+`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
+The HTTP request method used.  
+  
+<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)_exception'></a>
+`exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
+Assigns the [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception').  
+  
+#### Returns
+[TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
+An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate failure.  
+  
 <a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception_T)'></a>
 ## HttpOutcome&lt;T&gt;.Fail(HttpMethod, Exception, T) Method
 Creates and returns a failed outcome that carries an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception') as well as a value.  
@@ -66,25 +100,6 @@ Assigns [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api
 <a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception_T)_value'></a>
 `value` [T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')  
 Assigns [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1.Value 'TetraPak.Outcome`1.Value').  
-  
-#### Returns
-[TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
-An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate failure.  
-  
-<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)'></a>
-## HttpOutcome&lt;T&gt;.Fail(HttpMethod, Exception) Method
-Creates and returns a failed outcome that carries an [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception').  
-```csharp
-public static TetraPak.AspNet.HttpOutcome<T> Fail(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method, System.Exception exception);
-```
-#### Parameters
-<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)_method'></a>
-`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
-The HTTP request method used.  
-  
-<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_System_Exception)_exception'></a>
-`exception` [System.Exception](https://docs.microsoft.com/en-us/dotnet/api/System.Exception 'System.Exception')  
-Assigns the [TetraPak.Outcome.Exception](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome.Exception 'TetraPak.Outcome.Exception').  
   
 #### Returns
 [TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
@@ -109,21 +124,6 @@ Assigns [TetraPak.Outcome&lt;&gt;.Value](https://docs.microsoft.com/en-us/dotnet
 #### Returns
 [TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
 An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate failure.  
-  
-<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)'></a>
-## HttpOutcome&lt;T&gt;.Fail(HttpMethod) Method
-Creates and returns a failed outcome.  
-```csharp
-public static TetraPak.AspNet.HttpOutcome<T> Fail(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod method);
-```
-#### Parameters
-<a name='TetraPak_AspNet_HttpOutcome_T__Fail(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod)_method'></a>
-`method` [Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod](https://docs.microsoft.com/en-us/dotnet/api/Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod 'Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod')  
-  
-#### Returns
-[TetraPak.AspNet.HttpOutcome&lt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')[T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T')[&gt;](TetraPak_AspNet_HttpOutcome_T_.md 'TetraPak.AspNet.HttpOutcome&lt;T&gt;')  
-An [TetraPak.Outcome&lt;&gt;](https://docs.microsoft.com/en-us/dotnet/api/TetraPak.Outcome-1 'TetraPak.Outcome`1') to indicate failure and also carry a default  
-value of type [T](TetraPak_AspNet_HttpOutcome_T_.md#TetraPak_AspNet_HttpOutcome_T__T 'TetraPak.AspNet.HttpOutcome&lt;T&gt;.T').  
   
 <a name='TetraPak_AspNet_HttpOutcome_T__Success(Microsoft_AspNetCore_Server_Kestrel_Core_Internal_Http_HttpMethod_T)'></a>
 ## HttpOutcome&lt;T&gt;.Success(HttpMethod, T) Method

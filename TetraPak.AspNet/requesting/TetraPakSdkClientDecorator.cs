@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TetraPak.AspNet
 {
-    class TetraPakSdkClientDecorator : IHttpClientDecorator
+    sealed class TetraPakSdkClientDecorator : IHttpClientDecorator
     {
         readonly TetraPakConfig _tetraPakConfig;
 
